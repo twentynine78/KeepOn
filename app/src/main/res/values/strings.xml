@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name" translatable="false">KeepOn</string>
+    <string name="app_desc">Keep your screen on smartly!</string>
+
+    <string name="app_intro">KeepOn Intro</string>
+    <string name="menu_theme_title">Theme</string>
+    <string name="intro_perm_img">Logo permission</string>
+    <string name="splashscreen_logo">Logo Splash screen</string>
+
+    <string name="timeout_settings">Settings</string>
+    <string name="timeout_settings_label">Choose the values that will be available in the Android Quick Settings:</string>
+    <string name="reset_checkbox">Reset screen timeout to default value when screen is turning off.</string>
+    <string name="settings_save">Configuration saved!</string>
+
+    <string name="timeout_15_seconds">15 seconds</string>
+    <string name="timeout_30_seconds">30 seconds</string>
+    <string name="timeout_1_minute">1 minute</string>
+    <string name="timeout_2_minutes">2 minutes</string>
+    <string name="timeout_5_minutes">5 minutes</string>
+    <string name="timeout_10_minutes">10 minutes</string>
+    <string name="timeout_30_minutes">30 minutes</string>
+    <string name="timeout_1_hour">1 hour</string>
+    <string name="timeout_infinite">Indefinitely</string>
+
+    <string name="about_card_title">About</string>
+    <string name="about_card_version">&lt;b>Version:&lt;/b></string>
+    <string name="about_card_author"><b>Author:</b> TwentyNine78</string>
+    <string name="about_card_credits"><b>Credits:</b> AppIntro, MultiProcessPreferences</string>
+    <string name="about_card_source"><b>Source Code:</b> <a href="https://github.com/twentynine78/KeepOn">https://github.com/twentynine78/KeepOn</a></string>
+
+    <string name="qs_service_name">Keep screen on</string>
+    <string name="qs_tile_label">Keep screen on</string>
+    <string name="qs_tile_desc">Keep screen on</string>
+    <string name="qs_short_second">s</string>
+    <string name="qs_short_minute">m</string>
+    <string name="qs_short_hour">h</string>
+    <string name="qs_short_infinite" translatable="false">∞</string>
+
+    <string name="dialog_permission_title">Permission needed</string>
+    <string name="dialog_permission_text">KeepOn need to modify system settings permission to change screen timeout.
+        \nPermission must be granted for the application to work.
+    </string>
+    <string name="dialog_permission_button">Grant</string>
+
+    <string name="dialog_notification_title">Disable notification</string>
+    <string name="dialog_notification_text">Disable notifications for a better experience!</string>
+    <string name="dialog_notification_button">Disable</string>
+
+    <string name="dialog_missing_settings_text">Select at least one additional value to use the Android Quick Settings tile!</string>
+    <string name="dialog_missing_settings_button">OK</string>
+
+    <string name="intro_home_title">Welcome!</string>
+    <string name="intro_home_desc">Keep your screen on smartly!
+        \n\nKeepOn allows you to keep your device\'s screen on for the desired duration and also allows you to return to the default settings when the screen turns off.
+        \nThe application is free and open-source, without any ads/analytics.</string>
+    <string name="intro_four_title">Suitable for your device</string>
+    <string name="intro_four_desc">KeepOn adapts to your device\'s configuration for easy use!
+        \n\nThe default value is automatically selected and retained for reapplication.</string>
+    <string name="intro_five_title">Don\'t forget</string>
+    <string name="intro_five_desc">KeepOn detects by default when the screen turns off to reapply the initial value!
+        \n\nThis setting can be disabled at any time in the settings.</string>
+    <string name="intro_six_title">Easy to use</string>
+    <string name="intro_six_desc">Once the configuration is complete, simply add the KeepOn tile to the Android Quick Settings to use it!</string>
+    <string name="intro_toast_permission_needed">This permission is required for the application to work!</string>
+</resources>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/image_dialog"
+        android:gravity="center"
+        android:elevation="2dp"
+        android:src="@mipmap/img_intro_home"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/app_name" />
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="1dp"
+        android:layout_below="@id/image_dialog"
+        android:layout_marginTop="-20dp"
+        android:background="@drawable/dialog_background">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_dialog"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="50dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:textSize="16sp"
+            android:textColor="@color/colorText"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
+            tool:text="TEXT" />
+
+        <Button
+            android:id="@+id/btn_dialog"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/text_dialog"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:elevation="1dp"
+            android:background="@drawable/dialog_button_background"
+            android:textColor="@color/colorText"
+            tool:text="Button" />
+    </RelativeLayout>
+</RelativeLayout>

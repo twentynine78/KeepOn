@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="24dp"
+    android:paddingBottom="90dp"
+    android:background="#000000">
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/AppIntroDefaultHeading"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="28sp"
+        android:padding="8dp"
+        app:layout_constraintVertical_weight="2"
+        app:layout_constraintBottom_toTopOf="@+id/image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="spread"
+        tool:text="Intro with button" />
+
+    <ImageView
+        android:id="@+id/image"
+        android:contentDescription="@string/intro_perm_img"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="32dp"
+        android:scaleType="centerInside"
+        app:layout_constraintVertical_weight="5"
+        app:layout_constraintBottom_toTopOf="@+id/description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        tool:src="@mipmap/img_intro_perm" />
+
+    <TextView
+        android:id="@+id/description"
+        style="@style/AppIntroDefaultText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"
+        android:padding="16dp"
+        android:layout_marginBottom="20dp"
+        android:text="@string/dialog_permission_text"
+        android:textSize="16sp"
+        app:layout_constraintVertical_weight="3"
+        app:layout_constraintBottom_toTopOf="@id/button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image"
+        tool:text="This is a demo of the AppIntro Library" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_height="50dp"
+        android:layout_width="150dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@android:color/white"
+        app:layout_constraintVertical_weight="5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tool:text="Button" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

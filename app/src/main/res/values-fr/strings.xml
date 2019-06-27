@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_desc">Garde ton écran allumé intelligemment !</string>
+
+    <string name="app_intro">KeepOn Intro</string>
+    <string name="menu_theme_title">Theme</string>
+    <string name="intro_perm_img">Logo permission</string>
+    <string name="splashscreen_logo">Logo Splash screen</string>
+
+    <string name="timeout_settings">Réglages</string>
+    <string name="timeout_settings_label">Choisi les valeurs qui seront disponibles dans les réglages rapides d\'Android :</string>
+    <string name="reset_checkbox">Réinitialiser le délai d\'attente de l\'écran à sa valeur par default lorsque l\'écran s\'éteint.</string>
+    <string name="settings_save">Configuration sauvegardée !</string>
+
+    <string name="timeout_15_seconds">15 secondes</string>
+    <string name="timeout_30_seconds">30 secondes</string>
+    <string name="timeout_1_minute">1 minute</string>
+    <string name="timeout_2_minutes">2 minutes</string>
+    <string name="timeout_5_minutes">5 minutes</string>
+    <string name="timeout_10_minutes">10 minutes</string>
+    <string name="timeout_30_minutes">30 minutes</string>
+    <string name="timeout_1_hour">1 heure</string>
+    <string name="timeout_infinite">Indéfiniment</string>
+
+    <string name="about_card_title">A propos</string>
+    <string name="about_card_version">&lt;b>Version :&lt;/b></string>
+    <string name="about_card_author"><b>Auteur :</b> TwentyNine78</string>
+    <string name="about_card_credits"><b>Crédits :</b> AppIntro, MultiProcessPreferences</string>
+    <string name="about_card_source"><b>Code source :</b> <a href="https://github.com/twentynine78/KeepOn">https://github.com/twentynine78/KeepOn</a></string>
+
+    <string name="qs_service_name">Maintenir l\'écran allumé</string>
+    <string name="qs_tile_label">Maintenir l\'écran allumé</string>
+    <string name="qs_tile_desc">Maintenir l\'écran allumé</string>
+    <string name="qs_short_second">s</string>
+    <string name="qs_short_minute">m</string>
+    <string name="qs_short_hour">h</string>
+
+    <string name="dialog_permission_title">Permission nécessaire</string>
+    <string name="dialog_permission_text">KeepOn a besoin de modifier les paramètres du système pour changer le délai d\'expiration de l\'écran.
+        \nLa permission doit être accordée pour que l\'application fonctionne.
+    </string>
+    <string name="dialog_permission_button">Accorder</string>
+
+    <string name="dialog_notification_title">Désactiver la notification</string>
+    <string name="dialog_notification_text">Désactive les notifications pour une meilleure expérience !</string>
+    <string name="dialog_notification_button">Désactiver</string>
+
+    <string name="dialog_missing_settings_text">Sélectionne au moins une valeur supplémentaire pour utiliser la tuile des réglages rapides d\'Android!</string>
+    <string name="dialog_missing_settings_button">OK</string>
+
+    <string name="intro_home_title">Bienvenue !</string>
+    <string name="intro_home_desc">Garde ton écran allumé intelligemment !
+        \n\nKeepOn te permet de garder l\'écran de ton appareil allumé pendant la durée désirée et te permet également de revenir aux réglages par défaut lorsque l\'écran s\'éteint.
+        \nL\'application est gratuite et open-source, sans aucune publicité/analyse.</string>
+    <string name="intro_four_title">Adapté pour ton appareil</string>
+    <string name="intro_four_desc">KeepOn s\'adapte à la configuration de ton appareil pour une utilisation facile !
+        \n\nLa valeur par défaut est automatiquement sélectionnée et est conservée pour pourvoir être ré appliquée.</string>
+    <string name="intro_five_title">Pas d\'oublis</string>
+    <string name="intro_five_desc">KeepOn détecte par défaut quand l\'écran s\'éteint pour ré appliqué la valeur initiale !
+        \n\nCe réglage peut être désactivé à tout moment dans les paramètres.</string>
+    <string name="intro_six_title">Facile à utiliser</string>
+    <string name="intro_six_desc">Une fois la configuration terminée, il te suffit simplement d\'ajouter la tuile KeepOn aux réglages rapides d\'Android pour l\'utiliser !</string>
+    <string name="intro_toast_permission_needed">Cette permission est obligatoire pour que l\'application fonctionne !</string>
+</resources>

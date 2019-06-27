@@ -1,0 +1,43 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
+        <item name="android:windowDisablePreview">true</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.SplashScreen">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:navigationBarColor">@color/colorBackground</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="Base.ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="AppTheme.PopupOverlay" parent="Base.ThemeOverlay.AppCompat.Light"/>
+
+    <style name="MyCardViewStyle" parent="Base.CardView">
+        <item name="cardBackgroundColor">@color/colorBackgroundCard</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="cardElevation">2dp</item>
+        <item name="cardCornerRadius">5dp</item>
+        <item name="android:clickable">false</item>
+    </style>
+
+    <style name="StyleDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+        <item name="android:windowAnimationStyle">@style/StyleDialogAnimation</item>
+    </style>
+    <style name="StyleDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/dialog_pop_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_pop_out</item>
+    </style>
+</resources>
