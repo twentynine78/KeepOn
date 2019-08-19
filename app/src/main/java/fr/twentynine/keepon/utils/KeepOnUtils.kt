@@ -11,19 +11,16 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.text.TextUtils
-import android.util.LruCache
 import android.view.Window
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.services.ScreenOffReceiverService
-import fr.twentynine.keepon.services.ScreenTimeoutObserverService
+import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.preferences.Preferences
 import java.util.*
 
@@ -65,47 +62,41 @@ object KeepOnUtils {
         return returnDisplayTimeout
     }
 
-    @JvmStatic fun getBitmapFromText(timeout: Int, memoryCache: LruCache<String, Bitmap>, context: Context): Bitmap {
+    @JvmStatic fun getBitmapFromText(timeout: Int, context: Context): Bitmap {
         val returnBitmap by lazy {
-            val cachedBitmap = memoryCache.get(timeout.toString())
-            if (cachedBitmap != null) {
-                cachedBitmap
-            } else {
-                val imageWidth = 250
-                val imageHeight = 200
+            val imageWidth = 250
+            val imageHeight = 200
 
-                val displayTimeout = getDisplayTimeout(timeout, context)
-                val textSize = when {
-                    displayTimeout.length == 1 -> 170f
-                    displayTimeout.length == 2 -> 140f
-                    displayTimeout.length == 3 -> 120f
-                    else -> 100f
-                }
-
-                val bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888)
-                val canvas = Canvas(bitmap)
-                canvas.drawColor(Color.TRANSPARENT)
-                val paint by lazy {
-                    Paint()
-                }
-                paint.textAlign = Align.CENTER
-                paint.isAntiAlias = true
-                paint.textSize = textSize
-                paint.typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
-                paint.color = Color.WHITE
-
-                canvas.drawText(
-                    displayTimeout,
-                    ((paint.strokeWidth / 2) + (imageWidth / 2)),
-                    ((imageHeight / 2) + (textSize / 3)),
-                    paint
-                )
-                canvas.save()
-                canvas.restore()
-
-                memoryCache.put(timeout.toString(), bitmap)
-                memoryCache.get(timeout.toString())
+            val displayTimeout = getDisplayTimeout(timeout, context)
+            val textSize = when {
+                displayTimeout.length == 1 -> 170f
+                displayTimeout.length == 2 -> 140f
+                displayTimeout.length == 3 -> 120f
+                else -> 100f
             }
+
+            val bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            canvas.drawColor(Color.TRANSPARENT)
+            val paint by lazy {
+                Paint()
+            }
+            paint.textAlign = Align.CENTER
+            paint.isAntiAlias = true
+            paint.textSize = textSize
+            paint.typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+            paint.color = Color.WHITE
+
+            canvas.drawText(
+                displayTimeout,
+                ((paint.strokeWidth / 2) + (imageWidth / 2)),
+                ((imageHeight / 2) + (textSize / 3)),
+                paint
+            )
+            canvas.save()
+            canvas.restore()
+
+            bitmap
         }
         return returnBitmap
     }
@@ -128,39 +119,27 @@ object KeepOnUtils {
     }
 
     @JvmStatic fun startScreenOffReceiverService(context: Context) {
-        if (!isMyServiceRunning(ScreenOffReceiverService::class.java, context)) {
-            val intent = Intent(context, ScreenOffReceiverService::class.java)
-            intent.action = ScreenOffReceiverService.ACTION_START_FOREGROUND_SERVICE
-            context.startService(intent)
-        }
+        val broadcastIntent = Intent(context, ServicesManagerReceiver::class.java)
+        broadcastIntent.action = ServicesManagerReceiver.ACTION_START_FOREGROUND_SCREEN_OFF_SERVICE
+        context.sendBroadcast(broadcastIntent)
     }
 
     @JvmStatic fun stopScreenOffReceiverService(context: Context) {
-        if (isMyServiceRunning(ScreenOffReceiverService::class.java, context)) {
-            val intent = Intent(context, ScreenOffReceiverService::class.java)
-            intent.action = ScreenOffReceiverService.ACTION_STOP_FOREGROUND_SERVICE
-            context.startService(intent)
-        }
+        val broadcastIntent = Intent(context, ServicesManagerReceiver::class.java)
+        broadcastIntent.action = ServicesManagerReceiver.ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE
+        context.sendBroadcast(broadcastIntent)
     }
 
     @JvmStatic fun startScreenTimeoutObserverService(context: Context) {
-        if (!isMyServiceRunning(ScreenTimeoutObserverService::class.java, context)) {
-            val intent = Intent(context, ScreenTimeoutObserverService::class.java)
-            intent.action = ScreenTimeoutObserverService.ACTION_START_FOREGROUND_SERVICE
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                ContextCompat.startForegroundService(context, intent)
-            } else {
-                context.startService(intent)
-            }
-        }
+        val broadcastIntent = Intent(context, ServicesManagerReceiver::class.java)
+        broadcastIntent.action = ServicesManagerReceiver.ACTION_START_FOREGROUND_TIMEOUT_SERVICE
+        context.sendBroadcast(broadcastIntent)
     }
 
     @JvmStatic fun stopScreenTimeoutObserverService(context: Context) {
-        if (isMyServiceRunning(ScreenTimeoutObserverService::class.java, context)) {
-            val intent = Intent(context, ScreenTimeoutObserverService::class.java)
-            intent.action = ScreenTimeoutObserverService.ACTION_STOP_FOREGROUND_SERVICE
-            context.startService(intent)
-        }
+        val broadcastIntent = Intent(context, ServicesManagerReceiver::class.java)
+        broadcastIntent.action = ServicesManagerReceiver.ACTION_STOP_FOREGROUND_TIMEOUT_SERVICE
+        context.sendBroadcast(broadcastIntent)
     }
 
     @Suppress("DEPRECATION")
@@ -291,7 +270,7 @@ object KeepOnUtils {
         return missingSettingsDialog
     }
 
-    @JvmStatic fun createNotification(context: Context): Notification {
+    @JvmStatic fun buildNotification(context: Context, contentText: String): Notification {
         val returnNotification by lazy {
             val channelId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -307,8 +286,11 @@ object KeepOnUtils {
             } else {
                 ""
             }
-            val builder = NotificationCompat.Builder(context, channelId)
-            builder.build()
+            val notification = NotificationCompat.Builder(context, channelId)
+            notification.setContentTitle(context.getString(R.string.app_name))
+            notification.setContentText(contentText)
+            notification.setSmallIcon(R.mipmap.ic_qs_keepon)
+            notification.build()
         }
         return returnNotification
     }

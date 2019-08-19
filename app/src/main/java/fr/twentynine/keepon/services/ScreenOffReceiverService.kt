@@ -4,8 +4,9 @@ import android.app.Service
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.IBinder
+import fr.twentynine.keepon.R
 import fr.twentynine.keepon.receivers.ScreenOffReceiver
-import fr.twentynine.keepon.receivers.ServicesRestarterReceiver
+import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.KeepOnUtils
 
 
@@ -29,9 +30,7 @@ class ScreenOffReceiverService : Service() {
         unregisterScreenOffReceiver()
 
         if (restart) {
-            val broadcastIntent = Intent(this, ServicesRestarterReceiver::class.java)
-            broadcastIntent.action = ServicesRestarterReceiver.RESTART_SCREEN_OFF_RECEIVER_SERVICE
-            sendBroadcast(broadcastIntent)
+            KeepOnUtils.startScreenOffReceiverService(this)
         }
 
         super.onDestroy()
@@ -45,8 +44,8 @@ class ScreenOffReceiverService : Service() {
 
             if (action != null) {
                 when (action) {
-                    ACTION_START_FOREGROUND_SERVICE -> startForegroundService()
-                    ACTION_STOP_FOREGROUND_SERVICE -> stopForegroundService()
+                    ServicesManagerReceiver.ACTION_START_FOREGROUND_SCREEN_OFF_SERVICE -> startForegroundService()
+                    ServicesManagerReceiver.ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE -> stopForegroundService()
                 }
             }
         }
@@ -54,7 +53,7 @@ class ScreenOffReceiverService : Service() {
     }
 
     private fun startForegroundService() {
-        startForeground(2, KeepOnUtils.createNotification(this))
+        startForeground(1111, KeepOnUtils.buildNotification(this, getString(R.string.notficiation_screen_off_service)))
     }
 
     fun stopForegroundService() {
@@ -83,10 +82,5 @@ class ScreenOffReceiverService : Service() {
             e.printStackTrace()
         }
 
-    }
-
-    companion object {
-        const val ACTION_START_FOREGROUND_SERVICE = "ACTION_START_FOREGROUND_SERVICE"
-        const val ACTION_STOP_FOREGROUND_SERVICE = "ACTION_STOP_FOREGROUND_SERVICE"
     }
 }

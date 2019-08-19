@@ -2,13 +2,11 @@ package fr.twentynine.keepon.services
 
 import android.content.ComponentName
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.drawable.Icon
 import android.os.IBinder
 import android.provider.Settings
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
-import android.util.LruCache
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.SplashScreen
 import fr.twentynine.keepon.utils.KeepOnUtils
@@ -16,29 +14,8 @@ import fr.twentynine.keepon.utils.KeepOnUtils
 
 class KeepOnTileService : TileService() {
 
-    private lateinit var memoryCache: LruCache<String, Bitmap>
-
-    override fun onCreate() {
-        super.onCreate()
-        memoryCache = object : LruCache<String, Bitmap>(2 * 1024 * 1024) {
-            override fun sizeOf(key: String, bitmap: Bitmap): Int {
-                return bitmap.byteCount
-            }
-        }
-    }
-
     override fun onBind(intent: Intent?): IBinder? {
         requestListeningState(this, ComponentName(this, KeepOnTileService::class.java))
-
-        if (!KeepOnUtils.isMyServiceRunning(ScreenTimeoutObserverService::class.java, this))
-            KeepOnUtils.startScreenTimeoutObserverService(this)
-
-        if (!KeepOnUtils.isMyServiceRunning(ScreenOffReceiverService::class.java, this)
-            && KeepOnUtils.getKeepOn(this)
-        ) {
-            KeepOnUtils.startScreenOffReceiverService(this)
-        }
-
         return super.onBind(intent)
     }
 
@@ -73,17 +50,18 @@ class KeepOnTileService : TileService() {
     override fun onStartListening() {
         super.onStartListening()
 
-        val currentTimeout = KeepOnUtils.getCurrentTimeout(this)
-
         val keeponTile = qsTile
 
-        if (keeponTile != null) {
-            if (currentTimeout == KeepOnUtils.getOriginalTimeout(this))
-                keeponTile.state = Tile.STATE_INACTIVE
-            else
-                keeponTile.state = Tile.STATE_ACTIVE
+        if (keeponTile.state == Tile.STATE_UNAVAILABLE) this.stopSelf()
 
-            keeponTile.icon = Icon.createWithBitmap(KeepOnUtils.getBitmapFromText(currentTimeout, memoryCache, this))
+        val currentTimeout = KeepOnUtils.getCurrentTimeout(this)
+        val originalTimeout = KeepOnUtils.getOriginalTimeout(this)
+        val tileState = if (currentTimeout == originalTimeout) Tile.STATE_INACTIVE else Tile.STATE_ACTIVE
+        val tileIcon = Icon.createWithBitmap(KeepOnUtils.getBitmapFromText(currentTimeout, this))
+
+        if (keeponTile != null && tileIcon != null) {
+            keeponTile.state = tileState
+            keeponTile.icon = tileIcon
             keeponTile.label = getString(R.string.qs_tile_label)
             keeponTile.contentDescription = getString(R.string.qs_tile_desc)
 

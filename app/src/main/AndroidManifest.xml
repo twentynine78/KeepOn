@@ -8,6 +8,7 @@
 
     <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
             android:allowBackup="true"
@@ -70,9 +71,15 @@
         </service>
 
         <receiver
-                android:name=".receivers.ServicesRestarterReceiver"
+                android:name=".receivers.ServicesManagerReceiver"
                 android:enabled="true"
-                android:exported="false">
+                android:exported="false"
+                android:process=":services">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
         </receiver>
 
         <provider

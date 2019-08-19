@@ -7,6 +7,9 @@
     <string name="intro_perm_img">Logo permission</string>
     <string name="splashscreen_logo">Logo Splash screen</string>
 
+    <string name="notficiation_screen_off_service">Surveillance de l\'extinction de l\'écran…</string>
+    <string name="notficiation_timeout_service">Surveillance de la modification du délai d\'expiration de l\'écran…</string>
+
     <string name="timeout_settings">Réglages</string>
     <string name="timeout_settings_label">Choisi les valeurs qui seront disponibles dans les réglages rapides d\'Android :</string>
     <string name="reset_checkbox">Réinitialiser le délai d\'attente de l\'écran à sa valeur par default lorsque l\'écran s\'éteint.</string>

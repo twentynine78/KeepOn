@@ -11,7 +11,7 @@ import fr.twentynine.keepon.services.ScreenOffReceiverService
 import fr.twentynine.keepon.utils.KeepOnUtils
 
 
-class ScreenTimeoutObserver(handler: Handler, val context: Context) : ContentObserver(handler) {
+class ScreenTimeoutObserver(handler: Handler?, val context: Context) : ContentObserver(handler) {
 
     private var previousTimeout = KeepOnUtils.getCurrentTimeout(context)
 

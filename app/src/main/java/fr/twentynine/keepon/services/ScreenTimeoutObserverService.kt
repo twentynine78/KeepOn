@@ -3,11 +3,11 @@ package fr.twentynine.keepon.services
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.os.Handler
 import android.os.IBinder
 import android.provider.Settings
+import fr.twentynine.keepon.R
 import fr.twentynine.keepon.observer.ScreenTimeoutObserver
-import fr.twentynine.keepon.receivers.ServicesRestarterReceiver
+import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.KeepOnUtils
 
 
@@ -24,7 +24,8 @@ class ScreenTimeoutObserverService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        screenTimeoutObserver = ScreenTimeoutObserver(Handler(), this)
+
+        screenTimeoutObserver = ScreenTimeoutObserver(null, this) //ScreenTimeoutObserver(Handler(), this)
         registerScreenTimeoutObserver(screenTimeoutObserver!!, this)
     }
 
@@ -32,9 +33,7 @@ class ScreenTimeoutObserverService : Service() {
         unregisterScreenTimeoutObserver(screenTimeoutObserver!!, this)
 
         if (restart) {
-            val broadcastIntent = Intent(this, ServicesRestarterReceiver::class.java)
-            broadcastIntent.action = ServicesRestarterReceiver.RESTART_SCREEN_TIMEOUT_OBSERVER_SERVICE
-            sendBroadcast(broadcastIntent)
+            KeepOnUtils.startScreenTimeoutObserverService(this)
         }
 
         super.onDestroy()
@@ -48,8 +47,8 @@ class ScreenTimeoutObserverService : Service() {
 
             if (action != null) {
                 when (action) {
-                    ACTION_START_FOREGROUND_SERVICE -> startForegroundService()
-                    ACTION_STOP_FOREGROUND_SERVICE -> stopForegroundService()
+                    ServicesManagerReceiver.ACTION_START_FOREGROUND_TIMEOUT_SERVICE -> startForegroundService()
+                    ServicesManagerReceiver.ACTION_STOP_FOREGROUND_TIMEOUT_SERVICE -> stopForegroundService()
                 }
             }
         }
@@ -57,7 +56,7 @@ class ScreenTimeoutObserverService : Service() {
     }
 
     private fun startForegroundService() {
-        startForeground(1, KeepOnUtils.createNotification(this))
+        startForeground(1110, KeepOnUtils.buildNotification(this, getString(R.string.notficiation_timeout_service)))
     }
 
     private fun stopForegroundService() {
@@ -79,10 +78,5 @@ class ScreenTimeoutObserverService : Service() {
         val contentResolver = context.contentResolver
 
         contentResolver.unregisterContentObserver(screenTimeoutObserver)
-    }
-
-    companion object {
-        const val ACTION_START_FOREGROUND_SERVICE = "ACTION_START_FOREGROUND_SERVICE"
-        const val ACTION_STOP_FOREGROUND_SERVICE = "ACTION_STOP_FOREGROUND_SERVICE"
     }
 }
