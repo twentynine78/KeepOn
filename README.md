@@ -19,6 +19,10 @@ KeepOn adapts to your device's configuration to easy use!
 
 You can read / audit code and compile your own apk if you want!
 
+## Download
+
+- KeepOn Releases: *https://github.com/twentynine78/KeepOn/releases*
+
 ## Credit
 
 - AppIntro: *https://github.com/AppIntro/AppIntro*
@@ -28,3 +32,4 @@ You can read / audit code and compile your own apk if you want!
 
 ![screenshot1](.github/screenshot1.jpg?raw=true "Screenshot1")
 ![screenshot2](.github/screenshot2.jpg?raw=true "Screenshot2")
+![screenshot3](.github/screenshot3.jpg?raw=true "Screenshot3")
