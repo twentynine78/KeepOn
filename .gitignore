@@ -17,6 +17,7 @@ keystore.jks
 .idea
 *.apk
 fabric.properties
+app/debug
 app/release
 app/libs
 app/src/androidTest
