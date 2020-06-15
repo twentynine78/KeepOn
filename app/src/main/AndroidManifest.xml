@@ -85,7 +85,8 @@
         <provider
                 android:name=".utils.preferences.MultiProvider"
                 android:authorities="fr.twentynine.keepon.utils.preferences.MultiProvider"
-                android:exported="false"/>
+                android:exported="false"
+                android:process=":preferences"/>
 
         <service
                 android:name=".services.ScreenOffReceiverService"

@@ -1,129 +1,107 @@
 package fr.twentynine.keepon.utils.preferences
 
-import android.content.ContentValues
-import android.content.Context
+import android.content.ContentResolver
+import androidx.annotation.Nullable
+import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.CODE_BOOLEAN
+import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.CODE_INTEGER
+import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.CODE_LONG
+import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.CODE_PREFS
+import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.CODE_REMOVE_KEY
+import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.CODE_STRING
+import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.createContentValues
+import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.createQueryUri
+import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.extractBooleanFromCursor
+import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.extractIntFromCursor
+import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.extractLongFromCursor
+import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.extractStringFromCursor
+import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.performQuery
 
-// Multi Preference class : allows access to Shared Preferences across processes through a Content Provider
-object MultiPreferences {
-    
-    private val multiProvider = MultiProvider
 
-
-    @JvmStatic fun setString(key: String, value: String, mFileName: String, mContext: Context) {
-        val updateUri = multiProvider.createQueryUri(mFileName, key, multiProvider.CODE_STRING)
-
-        val contentValues = ContentValues()
-        contentValues.put(multiProvider.KEY, key)
-        contentValues.put(multiProvider.VALUE, value)
-
-        mContext.contentResolver.update(updateUri, contentValues, null, null)
+/**
+ * Multi Preference class
+ *
+ *
+ * - allows access to Shared Preferences across processes through a
+ * Content Provider
+ */
+class MultiPreferences(private val mName: String, private val resolver: ContentResolver) {
+    fun setString(key: String, value: String) {
+        resolver.update(
+            createQueryUri(mName, key, CODE_STRING),
+            createContentValues(key, value),
+            null,
+            null
+        )
     }
 
-    @JvmStatic fun getString(key: String, defaultValue: String, mFileName: String, mContext: Context): String {
-        var value = defaultValue
-
-        val queryUri = multiProvider.createQueryUri(mFileName, key, multiProvider.CODE_STRING)
-
-        val cursor = mContext.contentResolver.query(queryUri, null, null, null, null, null)
-        if (cursor != null && cursor.moveToFirst()) {
-            val tempValue = cursor.getString(cursor.getColumnIndexOrThrow(multiProvider.VALUE))
-            if (tempValue != "") {
-                value = tempValue
-            }
-            cursor.close()
-        }
-        return value
+    @Nullable
+    fun getString(key: String, defaultValue: String): String {
+        return extractStringFromCursor(
+            performQuery(
+                createQueryUri(mName, key, CODE_STRING),
+                resolver
+            ), defaultValue
+        )
     }
 
-
-    @JvmStatic fun setInt(key: String, value: Int, mFileName: String, mContext: Context) {
-        val updateUri = multiProvider.createQueryUri(mFileName, key, multiProvider.CODE_INTEGER)
-
-        val contentValues = ContentValues()
-        contentValues.put(multiProvider.KEY, key)
-        contentValues.put(multiProvider.VALUE, value)
-
-        mContext.contentResolver.update(updateUri, contentValues, null, null)
+    fun setInt(key: String, value: Int) {
+        resolver.update(
+            createQueryUri(mName, key, CODE_INTEGER),
+            createContentValues(key, value),
+            null,
+            null
+        )
     }
 
-    @JvmStatic fun getInt(key: String, defaultValue: Int, mFileName: String, mContext: Context): Int {
-        var value = defaultValue
-
-        val queryUri = multiProvider.createQueryUri(mFileName, key, multiProvider.CODE_INTEGER)
-
-        val cursor = mContext.contentResolver.query(queryUri, null, null, null, null, null)
-        if (cursor != null && cursor.moveToFirst()) {
-            val tempValue = cursor.getInt(cursor.getColumnIndexOrThrow(multiProvider.VALUE))
-            if (tempValue != -1) {
-                value = tempValue
-            }
-            cursor.close()
-        }
-        return value
+    fun getInt(key: String, defaultValue: Int): Int {
+        return extractIntFromCursor(
+            performQuery(
+                createQueryUri(mName, key, CODE_INTEGER),
+                resolver
+            ), defaultValue
+        )
     }
 
-
-    @JvmStatic fun setLong(key: String, value: Long, mFileName: String, mContext: Context) {
-        val updateUri = multiProvider.createQueryUri(mFileName, key, multiProvider.CODE_LONG)
-
-        val contentValues = ContentValues()
-        contentValues.put(multiProvider.KEY, key)
-        contentValues.put(multiProvider.VALUE, value)
-
-        mContext.contentResolver.update(updateUri, contentValues, null, null)
+    fun setLong(key: String, value: Long) {
+        resolver.update(
+            createQueryUri(mName, key, CODE_LONG),
+            createContentValues(key, value),
+            null,
+            null
+        )
     }
 
-    @JvmStatic fun getLong(key: String, defaultValue: Long, mFileName: String, mContext: Context): Long {
-        var value = defaultValue
-
-        val queryUri = multiProvider.createQueryUri(mFileName, key, multiProvider.CODE_LONG)
-
-        val cursor = mContext.contentResolver.query(queryUri, null, null, null, null, null)
-        if (cursor != null && cursor.moveToFirst()) {
-            val tempValue = cursor.getInt(cursor.getColumnIndexOrThrow(multiProvider.VALUE))
-            if (tempValue != -1) {
-                value = tempValue.toLong()
-            }
-            cursor.close()
-        }
-        return value
+    fun getLong(key: String, defaultValue: Long): Long {
+        return extractLongFromCursor(
+            performQuery(createQueryUri(mName, key, CODE_LONG), resolver),
+            defaultValue
+        )
     }
 
-
-    @JvmStatic fun setBoolean(key: String, value: Boolean, mFileName: String, mContext: Context) {
-        val updateUri = multiProvider.createQueryUri(mFileName, key, multiProvider.CODE_BOOLEAN)
-
-        val contentValues = ContentValues()
-        contentValues.put(multiProvider.KEY, key)
-        contentValues.put(multiProvider.VALUE, value)
-
-        mContext.contentResolver.update(updateUri, contentValues, null, null)
+    fun setBoolean(key: String, value: Boolean) {
+        resolver.update(
+            createQueryUri(mName, key, CODE_BOOLEAN),
+            createContentValues(key, value),
+            null,
+            null
+        )
     }
 
-    @JvmStatic fun getBoolean(key: String, defaultValue: Boolean, mFileName: String, mContext: Context): Boolean {
-        var value = if (defaultValue) 1 else 0
-
-        val queryUri = multiProvider.createQueryUri(mFileName, key, multiProvider.CODE_BOOLEAN)
-
-        val cursor = mContext.contentResolver.query(queryUri, null, null, null, null, null)
-        if (cursor != null && cursor.moveToFirst()) {
-            val tempValue = cursor.getInt(cursor.getColumnIndexOrThrow(multiProvider.VALUE))
-            if (tempValue != value) {
-                value = tempValue
-            }
-            cursor.close()
-        }
-        return value == 1
+    fun getBoolean(key: String, defaultValue: Boolean): Boolean {
+        return extractBooleanFromCursor(
+            performQuery(
+                createQueryUri(mName, key, CODE_BOOLEAN),
+                resolver
+            ), defaultValue
+        )
     }
 
-
-    @JvmStatic fun removePreference(key: String, mFileName: String, mContext: Context) {
-        val deleteUri = multiProvider.createQueryUri(mFileName, key, multiProvider.CODE_INTEGER)
-        mContext.contentResolver.delete(deleteUri, null, null)
+    fun removePreference(key: String) {
+        resolver.delete(createQueryUri(mName, key, CODE_REMOVE_KEY), null, null)
     }
 
-    @JvmStatic fun clearPreferences(mFileName: String, mContext: Context) {
-        val clearPrefsUri = multiProvider.createQueryUri(mFileName, "", multiProvider.CODE_PREFS)
-        mContext.contentResolver.delete(clearPrefsUri, null, null)
+    fun clearPreferences() {
+        resolver.delete(createQueryUri(mName, "", CODE_PREFS), null, null)
     }
+
 }
