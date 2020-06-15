@@ -56,7 +56,7 @@ class ScreenTimeoutObserverService : Service() {
     }
 
     private fun startForegroundService() {
-        startForeground(1110, KeepOnUtils.buildNotification(this, getString(R.string.notficiation_timeout_service)))
+        startForeground(1110, KeepOnUtils.buildNotification(this, getString(R.string.notification_timeout_service)))
     }
 
     private fun stopForegroundService() {

@@ -7,8 +7,8 @@
     <string name="intro_perm_img">Logo permission</string>
     <string name="splashscreen_logo">Logo Splash screen</string>
 
-    <string name="notficiation_screen_off_service">Monitoring of the screen shutdown…</string>
-    <string name="notficiation_timeout_service">Monitoring of the modification of the screen timeout…</string>
+    <string name="notification_screen_off_service">Monitoring of the screen shutdown…</string>
+    <string name="notification_timeout_service">Monitoring of the modification of the screen timeout…</string>
 
     <string name="timeout_settings">Settings</string>
     <string name="timeout_settings_label">Choose the values that will be available in the Android Quick Settings:</string>

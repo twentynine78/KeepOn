@@ -68,10 +68,10 @@ object KeepOnUtils {
             val imageHeight = 200
 
             val displayTimeout = getDisplayTimeout(timeout, context)
-            val textSize = when {
-                displayTimeout.length == 1 -> 170f
-                displayTimeout.length == 2 -> 140f
-                displayTimeout.length == 3 -> 120f
+            val textSize = when (displayTimeout.length) {
+                1 -> 170f
+                2 -> 140f
+                3 -> 120f
                 else -> 100f
             }
 
