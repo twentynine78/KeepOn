@@ -1,5 +1,6 @@
 package fr.twentynine.keepon.services
 
+import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
 import android.graphics.drawable.Icon
@@ -13,6 +14,11 @@ import fr.twentynine.keepon.utils.KeepOnUtils
 
 
 class KeepOnTileService : TileService() {
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
+        return Service.START_STICKY
+    }
 
     override fun onBind(intent: Intent?): IBinder? {
         requestListeningState(this, ComponentName(this, KeepOnTileService::class.java))
@@ -52,12 +58,18 @@ class KeepOnTileService : TileService() {
 
         val keeponTile = qsTile
 
-        if (keeponTile.state == Tile.STATE_UNAVAILABLE) this.stopSelf()
+        if (qsTile.state == Tile.STATE_UNAVAILABLE) this.stopSelf()
 
-        val currentTimeout = KeepOnUtils.getCurrentTimeout(this)
+        val newTimeout = if (KeepOnUtils.getNewTimeout(this) >= 0) {
+            KeepOnUtils.getNewTimeout(this)
+        } else {
+            KeepOnUtils.getCurrentTimeout(this)
+        }
+        KeepOnUtils.setNewTimeout(-1, this)
+
         val originalTimeout = KeepOnUtils.getOriginalTimeout(this)
-        val tileState = if (currentTimeout == originalTimeout) Tile.STATE_INACTIVE else Tile.STATE_ACTIVE
-        val tileIcon = Icon.createWithBitmap(KeepOnUtils.getBitmapFromText(currentTimeout, this))
+        val tileState = if (newTimeout == originalTimeout) Tile.STATE_INACTIVE else Tile.STATE_ACTIVE
+        val tileIcon = Icon.createWithBitmap(KeepOnUtils.getBitmapFromText(newTimeout, this))
 
         if (keeponTile != null && tileIcon != null) {
             keeponTile.state = tileState
@@ -103,6 +115,8 @@ class KeepOnTileService : TileService() {
             availableTimeout[currentIndex + 1]
         }
 
+        KeepOnUtils.setNewTimeout(newTimeout, this)
+        requestListeningState(this, ComponentName(this, KeepOnTileService::class.java))
         applyNewTimeout(newTimeout)
     }
 

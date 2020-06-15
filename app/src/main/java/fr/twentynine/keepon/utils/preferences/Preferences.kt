@@ -16,6 +16,7 @@ object Preferences {
     private const val DARK_THEME = "darkTheme"
     private const val VALUE_CHANGE = "valueChange"
     private const val TILE_ADDED = "tileAdded"
+    private const val NEW_TIMEOUT = "newTimeout"
 
 
     private fun getStringFromListInt(listInt: ArrayList<Int>): String {
@@ -110,5 +111,12 @@ object Preferences {
     @JvmStatic fun setTileAdded(value: Boolean, context: Context) {
         MultiPreferences(PREFS_FILENAME, context.contentResolver).setBoolean(TILE_ADDED, value)
     }
+
+    @JvmStatic fun getNewTimeout(context: Context): Int {
+        return MultiPreferences(PREFS_FILENAME, context.contentResolver).getInt(NEW_TIMEOUT, -1)
+    }
+
+    @JvmStatic fun setNewTimeout(value: Int, context: Context) {
+        MultiPreferences(PREFS_FILENAME, context.contentResolver).setInt(NEW_TIMEOUT, value)
     }
 }

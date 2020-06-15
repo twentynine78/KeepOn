@@ -399,4 +399,12 @@ object KeepOnUtils {
     @JvmStatic fun setTileAdded(value: Boolean, context: Context) {
         Preferences.setTileAdded(value, context)
     }
+
+    @JvmStatic fun getNewTimeout(context: Context): Int {
+        return Preferences.getNewTimeout(context)
+    }
+
+    @JvmStatic fun setNewTimeout(value: Int, context: Context) {
+        Preferences.setNewTimeout(value, context)
+    }
 }
