@@ -39,75 +39,76 @@ object Preferences {
     }
 
     @JvmStatic fun getOriginalTimeout(context: Context): Int {
-        return MultiPreferences.getInt(ORIGINAL_TIMEOUT, 0, PREFS_FILENAME, context.applicationContext)
+        return MultiPreferences(PREFS_FILENAME, context.contentResolver).getInt(ORIGINAL_TIMEOUT, 0)
     }
 
     @JvmStatic fun setOriginalTimeout(value: Int, context: Context) {
-        MultiPreferences.setInt(ORIGINAL_TIMEOUT, value, PREFS_FILENAME, context.applicationContext)
+        MultiPreferences(PREFS_FILENAME, context.contentResolver).setInt(ORIGINAL_TIMEOUT, value)
     }
 
 
     @JvmStatic fun getSelectedTimeout(context: Context): ArrayList<Int> {
-        return getListIntFromString(MultiPreferences.getString(SELECTED_TIMEOUT, "", PREFS_BACKUP_FILENAME, context.applicationContext))
+        return getListIntFromString(MultiPreferences(PREFS_BACKUP_FILENAME, context.contentResolver).getString(SELECTED_TIMEOUT, ""))
     }
 
     @JvmStatic fun setSelectedTimeout(value: ArrayList<Int>, context: Context) {
-        MultiPreferences.setString(SELECTED_TIMEOUT, getStringFromListInt(value), PREFS_BACKUP_FILENAME, context.applicationContext)
+        MultiPreferences(PREFS_BACKUP_FILENAME, context.contentResolver).setString(SELECTED_TIMEOUT, getStringFromListInt(value))
     }
 
 
     @JvmStatic fun getKeepOn(context: Context): Boolean {
-        return MultiPreferences.getBoolean(KEEP_ON, false, PREFS_FILENAME, context.applicationContext)
+        return MultiPreferences(PREFS_FILENAME, context.contentResolver).getBoolean(KEEP_ON, false)
     }
 
     @JvmStatic fun setKeepOn(value: Boolean, context: Context) {
-        MultiPreferences.setBoolean(KEEP_ON, value, PREFS_FILENAME, context.applicationContext)
+        MultiPreferences(PREFS_FILENAME, context.contentResolver).setBoolean(KEEP_ON, value)
     }
 
 
     @JvmStatic fun getResetTimeoutOnScreenOff(context: Context): Boolean {
         // Reverse boolean to prevent mistake on default value on true
-        return !MultiPreferences.getBoolean(RESET_TIMEOUT_ON_SCREEN_OFF, false, PREFS_BACKUP_FILENAME, context.applicationContext)
+        return !MultiPreferences(PREFS_BACKUP_FILENAME, context.contentResolver).getBoolean(RESET_TIMEOUT_ON_SCREEN_OFF, false)
     }
 
     @JvmStatic fun setResetTimeoutOnScreenOff(value: Boolean, context: Context) {
         // Reverse boolean to prevent mistake on default value on true
-        MultiPreferences.setBoolean(RESET_TIMEOUT_ON_SCREEN_OFF, !value, PREFS_BACKUP_FILENAME, context.applicationContext)
+        MultiPreferences(PREFS_BACKUP_FILENAME, context.contentResolver).setBoolean(RESET_TIMEOUT_ON_SCREEN_OFF, !value)
     }
 
 
     @JvmStatic fun getSkipIntro(context: Context): Boolean {
-        return MultiPreferences.getBoolean(SKIP_INTRO, false, PREFS_BACKUP_FILENAME, context.applicationContext)
+        return MultiPreferences(PREFS_BACKUP_FILENAME, context.contentResolver).getBoolean(SKIP_INTRO, false)
     }
 
     @JvmStatic fun setSkipIntro(value: Boolean, context: Context) {
-        MultiPreferences.setBoolean(SKIP_INTRO, value, PREFS_BACKUP_FILENAME, context.applicationContext)
+        MultiPreferences(PREFS_BACKUP_FILENAME, context.contentResolver).setBoolean(SKIP_INTRO, value)
     }
 
 
     @JvmStatic fun getDarkTheme(context: Context): Boolean {
-        return MultiPreferences.getBoolean(DARK_THEME, false, PREFS_FILENAME, context.applicationContext)
+        return MultiPreferences(PREFS_FILENAME, context.contentResolver).getBoolean(DARK_THEME, false)
     }
 
     @JvmStatic fun setDarkTheme(value: Boolean, context: Context) {
-        MultiPreferences.setBoolean(DARK_THEME, value, PREFS_FILENAME, context.applicationContext)
+        MultiPreferences(PREFS_FILENAME, context.contentResolver).setBoolean(DARK_THEME, value)
     }
 
 
     @JvmStatic fun getValueChange(context: Context): Boolean {
-        return MultiPreferences.getBoolean(VALUE_CHANGE, false, PREFS_FILENAME, context.applicationContext)
+        return MultiPreferences(PREFS_FILENAME, context.contentResolver).getBoolean(VALUE_CHANGE, false)
     }
 
     @JvmStatic fun setValueChange(value: Boolean, context: Context) {
-        MultiPreferences.setBoolean(VALUE_CHANGE, value, PREFS_FILENAME, context.applicationContext)
+        MultiPreferences(PREFS_FILENAME, context.contentResolver).setBoolean(VALUE_CHANGE, value)
     }
 
 
     @JvmStatic fun getTileAdded(context: Context): Boolean {
-        return MultiPreferences.getBoolean(TILE_ADDED, false, PREFS_FILENAME, context.applicationContext)
+        return MultiPreferences(PREFS_FILENAME, context.contentResolver).getBoolean(TILE_ADDED, false)
     }
 
     @JvmStatic fun setTileAdded(value: Boolean, context: Context) {
-        MultiPreferences.setBoolean(TILE_ADDED, value, PREFS_FILENAME, context.applicationContext)
+        MultiPreferences(PREFS_FILENAME, context.contentResolver).setBoolean(TILE_ADDED, value)
+    }
     }
 }
