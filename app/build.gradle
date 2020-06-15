@@ -49,5 +49,5 @@ dependencies {
     implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0"
     implementation 'androidx.cardview:cardview:1.0.0'
 
-    implementation 'com.github.AppIntro:AppIntro:5.1.0'
+    implementation 'com.github.AppIntro:AppIntro:6.0.0'
 }

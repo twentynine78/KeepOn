@@ -6,10 +6,11 @@ import android.graphics.Color
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.TextView
+import com.github.appintro.AppIntro2
+import com.github.appintro.AppIntroFragment
+import com.github.appintro.model.SliderPage
 import androidx.fragment.app.Fragment
-import com.github.paolorotolo.appintro.AppIntro2
-import com.github.paolorotolo.appintro.AppIntroFragment
-import com.github.paolorotolo.appintro.model.SliderPage
+import com.github.appintro.AppIntroPageTransformerType
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.intro.fragments.IntroFragmentNotification
@@ -26,25 +27,25 @@ class IntroActivity : AppIntro2() {
         sliderPageHome.title = getString(R.string.intro_home_title)
         sliderPageHome.description = getString(R.string.intro_home_desc)
         sliderPageHome.imageDrawable = R.mipmap.img_intro_home
-        sliderPageHome.bgColor = Color.parseColor(COLOR_SLIDE_HOME)
+        sliderPageHome.backgroundColor = COLOR_SLIDE_HOME
 
         val sliderPageFour = SliderPage()
         sliderPageFour.title = getString(R.string.intro_four_title)
         sliderPageFour.description = getString(R.string.intro_four_desc)
         sliderPageFour.imageDrawable = R.mipmap.img_intro_four
-        sliderPageFour.bgColor = Color.parseColor(COLOR_SLIDE_FOUR)
+        sliderPageFour.backgroundColor = COLOR_SLIDE_FOUR
 
         val sliderPageFive = SliderPage()
         sliderPageFive.title = getString(R.string.intro_five_title)
         sliderPageFive.description = getString(R.string.intro_five_desc)
         sliderPageFive.imageDrawable = R.mipmap.img_intro_five
-        sliderPageFive.bgColor = Color.parseColor(COLOR_SLIDE_FIVE)
+        sliderPageFive.backgroundColor = COLOR_SLIDE_FIVE
 
         val sliderPageSix = SliderPage()
         sliderPageSix.title = getString(R.string.intro_six_title)
         sliderPageSix.description = getString(R.string.intro_six_desc)
         sliderPageSix.imageDrawable = R.mipmap.img_intro_six
-        sliderPageSix.bgColor = Color.parseColor(COLOR_SLIDE_SIX)
+        sliderPageSix.backgroundColor = COLOR_SLIDE_SIX
 
         addSlide(AppIntroFragment.newInstance(sliderPageHome))
         addSlide(IntroFragmentPermission())
@@ -53,14 +54,21 @@ class IntroActivity : AppIntro2() {
         addSlide(AppIntroFragment.newInstance(sliderPageFive))
         addSlide(AppIntroFragment.newInstance(sliderPageSix))
 
-        setFadeAnimation()
-        showSkipButton(false)
-        isProgressButtonEnabled = true
+        //setTransformer(AppIntroPageTransformerType.Depth)
+        setTransformer(AppIntroPageTransformerType.Parallax(
+            titleParallaxFactor = 1.0,
+            imageParallaxFactor = -1.0,
+            descriptionParallaxFactor = 2.0
+        ))
+        isSkipButtonEnabled = false
+        isButtonsEnabled = false
+        showStatusBar(true)
+        isColorTransitionsEnabled = true
 
         KeepOnUtils.startScreenTimeoutObserverService(this)
     }
 
-    override fun onDonePressed(currentFragment: Fragment) {
+    override fun onDonePressed(currentFragment: Fragment?) {
         if (Settings.System.canWrite(this)) {
             super.onDonePressed(currentFragment)
 
@@ -73,8 +81,8 @@ class IntroActivity : AppIntro2() {
     override fun onSlideChanged(oldFragment: Fragment?, newFragment: Fragment?) {
         super.onSlideChanged(oldFragment, newFragment)
 
-        if (newFragment != null) {
-            val title: TextView = newFragment.view!!.findViewById(R.id.title)
+        if (newFragment != null && newFragment.view != null) {
+            val title: TextView = newFragment.requireView().findViewById(R.id.title)
 
             when (title.text) {
                 getString(R.string.intro_home_title) -> setNavBarColor(COLOR_SLIDE_HOME)
@@ -93,12 +101,12 @@ class IntroActivity : AppIntro2() {
     }
 
     companion object {
-        const val COLOR_SLIDE_PERM = "#ffd800"
-        const val COLOR_SLIDE_NOTIF = "#00c3ff"
-        private const val COLOR_SLIDE_SIX = "#4caf50"
-        private const val COLOR_SLIDE_FIVE = "#bb8930"
-        private const val COLOR_SLIDE_FOUR = "#00bcd4"
-        private const val COLOR_SLIDE_HOME = "#222222"
+        val COLOR_SLIDE_PERM = Color.parseColor("#ffd800")
+        val COLOR_SLIDE_NOTIF = Color.parseColor("#00c3ff")
+        private val COLOR_SLIDE_SIX = Color.parseColor("#4caf50")
+        private val COLOR_SLIDE_FIVE = Color.parseColor("#bb8930")
+        private val COLOR_SLIDE_FOUR = Color.parseColor("#00bcd4")
+        private val COLOR_SLIDE_HOME = Color.parseColor("#222222")
 
         fun newIntent(context: Context): Intent {
             return Intent(context, IntroActivity::class.java)

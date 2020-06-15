@@ -2,7 +2,6 @@ package fr.twentynine.keepon.intro.fragments
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -16,27 +15,27 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
-import com.github.paolorotolo.appintro.ISlideBackgroundColorHolder
-import com.github.paolorotolo.appintro.ISlidePolicy
+import com.github.appintro.SlideBackgroundColorHolder
+import com.github.appintro.SlidePolicy
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_NOTIF
 import fr.twentynine.keepon.utils.KeepOnUtils
 
 
-class IntroFragmentNotification : Fragment(), ISlideBackgroundColorHolder, ISlidePolicy {
+class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
 
     private lateinit var mContext: Context
     private lateinit var mView: View
     private lateinit var mButton: Button
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mContext = context!!
+        mContext = requireContext()
         mView = inflater.inflate(R.layout.fragment_intro_button, container, false)
 
         setBackgroundColor(defaultBackgroundColor)
 
         mButton = mView.findViewById(R.id.button)
-        mButton.setBackgroundColor(Color.parseColor(KeepOnUtils.darkerColor(COLOR_SLIDE_NOTIF, 0.4f)))
+        mButton.setBackgroundColor(KeepOnUtils.darkerColor(COLOR_SLIDE_NOTIF, 0.4f))
         mButton.text = getString(R.string.dialog_notification_button)
         mButton.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -44,7 +43,7 @@ class IntroFragmentNotification : Fragment(), ISlideBackgroundColorHolder, ISlid
                     val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
                         .putExtra(Settings.EXTRA_APP_PACKAGE, mContext.packageName)
                         .putExtra(Settings.EXTRA_CHANNEL_ID, KeepOnUtils.NOTIFICATION_CHANNEL_ID)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        //.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                         .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
                     mContext.startActivity(intent)
@@ -63,6 +62,11 @@ class IntroFragmentNotification : Fragment(), ISlideBackgroundColorHolder, ISlid
         val mImage = mView.findViewById<ImageView>(R.id.image)
         mImage.setImageResource(R.mipmap.img_intro_notif)
 
+        if (KeepOnUtils.isNotificationEnabled(mContext))
+            mButton.visibility = View.VISIBLE
+        else
+            mButton.visibility = View.INVISIBLE
+
         return mView
     }
 
@@ -74,20 +78,18 @@ class IntroFragmentNotification : Fragment(), ISlideBackgroundColorHolder, ISlid
             mButton.visibility = View.INVISIBLE
     }
 
+    override val isPolicyRespected: Boolean
+        get() = true
+
     override fun onUserIllegallyRequestedNextPage() {
         return
     }
 
-    override fun isPolicyRespected(): Boolean {
-        return true
-    }
+    override val defaultBackgroundColor: Int
+        get() = COLOR_SLIDE_NOTIF
 
     override fun setBackgroundColor(backgroundColor: Int) {
         val constraintLayout = mView.findViewById<ConstraintLayout>(R.id.main)
         constraintLayout.setBackgroundColor(backgroundColor)
-    }
-
-    override fun getDefaultBackgroundColor(): Int {
-        return Color.parseColor(COLOR_SLIDE_NOTIF)
     }
 }

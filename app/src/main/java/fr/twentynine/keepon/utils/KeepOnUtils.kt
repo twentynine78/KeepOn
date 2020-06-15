@@ -307,11 +307,8 @@ object KeepOnUtils {
         context.sendBroadcast(missingIntent)
     }
 
-    @JvmStatic fun darkerColor(color: String, factor: Float): String {
-        val tempColor = color.replace("#", "")
-        val intColor = Integer.parseInt(tempColor, 16)
-
-        return "#" + ColorUtils.blendARGB(intColor, Color.BLACK, factor).toString(16)
+    @JvmStatic fun darkerColor(color: Int, factor: Float): Int {
+        return ColorUtils.blendARGB(color, Color.BLACK, factor)
     }
 
     @JvmStatic fun getAppVersion(context: Context): String {
