@@ -53,7 +53,7 @@ class ScreenOffReceiverService : Service() {
     }
 
     private fun startForegroundService() {
-        startForeground(1111, KeepOnUtils.buildNotification(this, getString(R.string.notficiation_screen_off_service)))
+        startForeground(1111, KeepOnUtils.buildNotification(this, getString(R.string.notification_screen_off_service)))
     }
 
     fun stopForegroundService() {
