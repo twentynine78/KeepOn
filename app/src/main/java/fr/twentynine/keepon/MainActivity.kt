@@ -251,7 +251,7 @@ class MainActivity : AppCompatActivity() {
             switch.trackDrawable.colorFilter = null
         }
 
-        if (originalTimeout != currentTimeout && currentTimeout == timeout) {
+        if (currentTimeout == timeout) {
             switch.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
         } else {
             switch.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
