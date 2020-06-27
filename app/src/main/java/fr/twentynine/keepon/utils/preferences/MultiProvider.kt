@@ -171,7 +171,7 @@ class MultiProvider : ContentProvider() {
      * @param preferenceName the name of the preference file
      * @return a new interactor, or current one in the map
      */
-    fun getPreferenceInteractor(preferenceName: String): PreferenceInteractor? {
+    private fun getPreferenceInteractor(preferenceName: String): PreferenceInteractor? {
         return if (mPreferenceMap.containsKey(preferenceName)) {
             mPreferenceMap[preferenceName]
         } else {

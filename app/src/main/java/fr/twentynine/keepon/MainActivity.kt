@@ -15,7 +15,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewAnimationUtils
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.LinearLayout
+import android.widget.Switch
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
@@ -25,7 +28,6 @@ import fr.twentynine.keepon.services.KeepOnTileService
 import fr.twentynine.keepon.services.ScreenOffReceiverService
 import fr.twentynine.keepon.utils.KeepOnUtils
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlin.collections.ArrayList
 import kotlin.math.hypot
 
 

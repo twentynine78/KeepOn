@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -16,7 +17,7 @@ import fr.twentynine.keepon.utils.KeepOnUtils
 
 class SplashScreen : AppCompatActivity() {
     
-    private val mHandler = Handler()
+    private val mHandler = Handler(Looper.myLooper()!!)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
