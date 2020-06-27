@@ -15,7 +15,7 @@ class ScreenTimeoutObserver(handler: Handler?, val context: Context) : ContentOb
 
     private var previousTimeout = KeepOnUtils.getCurrentTimeout(context)
 
-    override fun onChange(selfChange: Boolean, uri: Uri) {
+    override fun onChange(selfChange: Boolean, uri: Uri?) {
         super.onChange(selfChange, uri)
         processChange()
     }
