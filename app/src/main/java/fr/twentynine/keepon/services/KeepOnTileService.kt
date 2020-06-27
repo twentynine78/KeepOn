@@ -21,6 +21,11 @@ class KeepOnTileService : TileService() {
     }
 
     override fun onBind(intent: Intent?): IBinder? {
+        KeepOnUtils.setTileAdded(true, this)
+
+        if (!KeepOnUtils.isMyScreenTimeoutObserverServiceRunning())
+            KeepOnUtils.startScreenTimeoutObserverService(this)
+
         requestListeningState(this, ComponentName(this, KeepOnTileService::class.java))
         return super.onBind(intent)
     }
@@ -83,6 +88,7 @@ class KeepOnTileService : TileService() {
 
     override fun onClick() {
         super.onClick()
+        KeepOnUtils.setTileAdded(true, this)
 
         if (KeepOnUtils.getOriginalTimeout(this) == 0
             || KeepOnUtils.getSelectedTimeout(this).size <= 1
