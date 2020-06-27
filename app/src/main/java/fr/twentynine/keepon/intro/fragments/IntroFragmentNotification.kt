@@ -5,6 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -18,6 +20,7 @@ import androidx.fragment.app.Fragment
 import com.github.appintro.SlideBackgroundColorHolder
 import com.github.appintro.SlidePolicy
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_NOTIF
 import fr.twentynine.keepon.utils.KeepOnUtils
 
@@ -34,6 +37,18 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
 
         setBackgroundColor(defaultBackgroundColor)
 
+        val handler = Handler(Looper.myLooper()!!)
+        val checkSettingOn: Runnable = object : Runnable {
+            override fun run() {
+                if (!KeepOnUtils.isNotificationEnabled(mContext)) {
+                    val intent = Intent(mContext, IntroActivity::class.java)
+                    startActivity(intent)
+                    return
+                }
+                handler.postDelayed(this, 200)
+            }
+        }
+
         mButton = mView.findViewById(R.id.button)
         mButton.setBackgroundColor(KeepOnUtils.darkerColor(COLOR_SLIDE_NOTIF, 0.4f))
         mButton.text = getString(R.string.dialog_notification_button)
@@ -43,9 +58,10 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
                     val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
                         .putExtra(Settings.EXTRA_APP_PACKAGE, mContext.packageName)
                         .putExtra(Settings.EXTRA_CHANNEL_ID, KeepOnUtils.NOTIFICATION_CHANNEL_ID)
-                        //.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                         .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+
+                    handler.postDelayed(checkSettingOn, 1000)
                     mContext.startActivity(intent)
                 }
             } else {

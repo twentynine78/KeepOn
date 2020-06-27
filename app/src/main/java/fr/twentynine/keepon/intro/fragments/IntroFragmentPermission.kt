@@ -3,7 +3,10 @@ package fr.twentynine.keepon.intro.fragments
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +20,7 @@ import com.github.appintro.SlideBackgroundColorHolder
 import com.github.appintro.SlidePolicy
 import com.google.android.material.snackbar.Snackbar
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_PERM
 import fr.twentynine.keepon.utils.KeepOnUtils
 
@@ -33,15 +37,28 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
 
         setBackgroundColor(defaultBackgroundColor)
 
+        val handler = Handler(Looper.myLooper()!!)
+        val checkSettingOn: Runnable = object : Runnable {
+            override fun run() {
+                if (Settings.System.canWrite(requireContext().applicationContext)) {
+                    val intent = Intent(mContext, IntroActivity::class.java)
+                    startActivity(intent)
+                    return
+                }
+                handler.postDelayed(this, 200)
+            }
+        }
+
         mButton = mView.findViewById(R.id.button)
         mButton.setBackgroundColor(KeepOnUtils.darkerColor(COLOR_SLIDE_PERM, 0.4f))
         mButton.text = getString(R.string.dialog_permission_button)
         mButton.setOnClickListener {
             val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
                 .setData(Uri.parse("package:" + mContext.packageName))
-                //.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+
+            handler.postDelayed(checkSettingOn, 1000)
             mContext.startActivity(intent)
         }
 
