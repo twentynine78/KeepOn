@@ -21,6 +21,8 @@ import androidx.core.graphics.ColorUtils
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
+import fr.twentynine.keepon.services.ScreenOffReceiverService
+import fr.twentynine.keepon.services.ScreenTimeoutObserverService
 import fr.twentynine.keepon.utils.preferences.Preferences
 import java.util.*
 
@@ -142,18 +144,12 @@ object KeepOnUtils {
         context.sendBroadcast(broadcastIntent)
     }
 
-    @Suppress("DEPRECATION")
-    @JvmStatic fun isMyServiceRunning(serviceClass: Class<*>, context: Context): Boolean {
-        val returnIsServiceRunning by lazy {
-            val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-            var running = false
-            for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
-                if (serviceClass.name == service.service.className)
-                    running = true
-            }
-            running
-        }
-        return returnIsServiceRunning
+    @JvmStatic fun isMyScreenOffReceiverServiceRunning(): Boolean {
+        return ScreenOffReceiverService.isInstanceCreated()
+    }
+
+    @JvmStatic fun isMyScreenTimeoutObserverServiceRunning(): Boolean {
+        return ScreenTimeoutObserverService.isInstanceCreated()
     }
 
     @JvmStatic fun isNotificationEnabled(context: Context): Boolean {
