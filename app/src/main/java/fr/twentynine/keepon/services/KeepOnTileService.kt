@@ -88,12 +88,12 @@ class KeepOnTileService : TileService() {
         KeepOnUtils.setTileAdded(true, this)
 
         if (KeepOnUtils.getOriginalTimeout(this) == 0
-            || KeepOnUtils.getSelectedTimeout(this).size <= 1
+            || KeepOnUtils.getSelectedTimeout(this).size < 1
             || !Settings.System.canWrite(this)
         ) {
             val mainIntent = SplashScreen.newIntent(this.applicationContext)
             mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            if (KeepOnUtils.getSelectedTimeout(this).size <= 1)
+            if (KeepOnUtils.getSelectedTimeout(this).size < 1)
                 mainIntent.putExtra(KeepOnUtils.TAG_MISSING_SETTINGS, true)
             startActivityAndCollapse(mainIntent)
 

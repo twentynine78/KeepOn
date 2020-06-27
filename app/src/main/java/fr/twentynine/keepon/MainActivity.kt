@@ -270,8 +270,8 @@ class MainActivity : AppCompatActivity() {
         val resultList: ArrayList<Int> = ArrayList()
 
         for (timeoutSwitch in timeoutSwitchs) {
-            if (timeoutSwitch.switch.isChecked)
-                    resultList.add(timeoutSwitch.timeoutValue)
+            if (timeoutSwitch.switch.isChecked && timeoutSwitch.timeoutValue != KeepOnUtils.getOriginalTimeout(this))
+                resultList.add(timeoutSwitch.timeoutValue)
         }
 
         return resultList
