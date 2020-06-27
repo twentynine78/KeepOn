@@ -4,7 +4,6 @@
 
     <string name="app_intro">KeepOn Intro</string>
     <string name="menu_theme_title">Theme</string>
-    <string name="intro_perm_img">Logo permission</string>
     <string name="splashscreen_logo">Logo Splash screen</string>
 
     <string name="notification_screen_off_service">Monitoring of the screen shutdown…</string>
