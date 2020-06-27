@@ -84,12 +84,11 @@ class MainActivity : AppCompatActivity() {
         screenOffCheckBox!!.setOnCheckedChangeListener { view, isChecked ->
             KeepOnUtils.setResetOnScreenOff(isChecked, this)
 
-            if (KeepOnUtils.isMyScreenOffReceiverServiceRunning() && !isChecked) {
+            if (!isChecked) {
                 KeepOnUtils.stopScreenOffReceiverService(this)
             }
 
-            if (!KeepOnUtils.isMyScreenOffReceiverServiceRunning()
-                && KeepOnUtils.getKeepOn(this)
+            if (KeepOnUtils.getKeepOn(this)
                 && isChecked
             ) {
                 KeepOnUtils.startScreenOffReceiverService(this)
@@ -143,7 +142,7 @@ class MainActivity : AppCompatActivity() {
                 KeepOnUtils.updateOriginalTimeout(this)
 
             // Start ScreenTimeoutObserverService if QSTile is added
-            if (KeepOnUtils.getTileAdded(this) && !KeepOnUtils.isMyScreenTimeoutObserverServiceRunning())
+            if (KeepOnUtils.getTileAdded(this))
                 KeepOnUtils.startScreenTimeoutObserverService(this)
 
             // Request QSTile update

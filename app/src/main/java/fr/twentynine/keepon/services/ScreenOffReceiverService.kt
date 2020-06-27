@@ -11,14 +11,6 @@ import fr.twentynine.keepon.utils.KeepOnUtils
 
 
 class ScreenOffReceiverService : Service() {
-    companion object {
-        private var instance: ScreenOffReceiverService? = null
-
-        fun isInstanceCreated(): Boolean {
-            return instance != null
-        }
-    }
-
     private var screenOffReceiver: ScreenOffReceiver? = null
     private var restart = true
 
@@ -28,7 +20,6 @@ class ScreenOffReceiverService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        instance = this
         registerScreenOffReceiver()
     }
 
@@ -38,7 +29,6 @@ class ScreenOffReceiverService : Service() {
         if (restart) {
             KeepOnUtils.startScreenOffReceiverService(this)
         }
-        instance = null
         super.onDestroy()
     }
 

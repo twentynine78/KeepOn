@@ -23,8 +23,7 @@ class KeepOnTileService : TileService() {
     override fun onBind(intent: Intent?): IBinder? {
         KeepOnUtils.setTileAdded(true, this)
 
-        if (!KeepOnUtils.isMyScreenTimeoutObserverServiceRunning())
-            KeepOnUtils.startScreenTimeoutObserverService(this)
+        KeepOnUtils.startScreenTimeoutObserverService(this)
 
         requestListeningState(this, ComponentName(this, KeepOnTileService::class.java))
         return super.onBind(intent)
@@ -45,11 +44,9 @@ class KeepOnTileService : TileService() {
         KeepOnUtils.setTimeout(KeepOnUtils.getOriginalTimeout(this), this)
         KeepOnUtils.setKeepOn(false, this)
 
-        if (KeepOnUtils.isMyScreenTimeoutObserverServiceRunning())
-            KeepOnUtils.stopScreenTimeoutObserverService(this)
+        KeepOnUtils.stopScreenTimeoutObserverService(this)
 
-        if (KeepOnUtils.isMyScreenOffReceiverServiceRunning())
-            KeepOnUtils.stopScreenOffReceiverService(this)
+        KeepOnUtils.stopScreenOffReceiverService(this)
 
         KeepOnUtils.setTileAdded(false, this)
 
@@ -104,8 +101,7 @@ class KeepOnTileService : TileService() {
             return
         }
 
-        if (!KeepOnUtils.isMyScreenTimeoutObserverServiceRunning())
-            KeepOnUtils.startScreenTimeoutObserverService(this)
+        KeepOnUtils.startScreenTimeoutObserverService(this)
 
         val availableTimeout: ArrayList<Int> = ArrayList()
         availableTimeout.addAll(KeepOnUtils.getSelectedTimeout(this))
@@ -129,13 +125,10 @@ class KeepOnTileService : TileService() {
     private fun applyNewTimeout(timeout: Int) {
         if (timeout == KeepOnUtils.getOriginalTimeout(this)) {
             KeepOnUtils.setKeepOn(false, this)
-            if (KeepOnUtils.isMyScreenOffReceiverServiceRunning())
-                KeepOnUtils.stopScreenOffReceiverService(this)
+            KeepOnUtils.stopScreenOffReceiverService(this)
         } else {
             KeepOnUtils.setKeepOn(true, this)
-            if (!KeepOnUtils.isMyScreenOffReceiverServiceRunning()
-                && KeepOnUtils.getResetOnScreenOff(this)
-            )
+            if (KeepOnUtils.getResetOnScreenOff(this))
                 KeepOnUtils.startScreenOffReceiverService(this)
         }
 
