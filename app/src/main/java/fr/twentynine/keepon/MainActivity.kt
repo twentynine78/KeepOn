@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity() {
             // Show Dialog to disable notifications if enabled
             if (KeepOnUtils.isNotificationEnabled(this)) {
                 if (notificationDialog == null) {
-                    notificationDialog = KeepOnUtils.getNotificationDialog(this)
+                    notificationDialog = KeepOnUtils.getNotificationDialog(this, MainActivity::class.java)
                     notificationDialog!!.show()
                 } else {
                     if (!notificationDialog!!.isShowing) {
@@ -155,7 +155,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             // Show permission Dialog
             if (permissionDialog == null) {
-                permissionDialog = KeepOnUtils.getPermissionDialog(this)
+                permissionDialog = KeepOnUtils.getPermissionDialog(this, MainActivity::class.java)
                 permissionDialog!!.show()
             } else {
                 if (!permissionDialog!!.isShowing) {
