@@ -34,7 +34,7 @@ class ScreenTimeoutObserver(handler: Handler?, val context: Context) : ContentOb
                 KeepOnUtils.setKeepOn(false, context)
                 KeepOnUtils.updateOriginalTimeout(context)
 
-                if (KeepOnUtils.isMyServiceRunning(ScreenOffReceiverService::class.java, context))
+                if (KeepOnUtils.isMyScreenOffReceiverServiceRunning())
                     KeepOnUtils.stopScreenOffReceiverService(context)
             } else {
                 KeepOnUtils.setValueChange(false, context)

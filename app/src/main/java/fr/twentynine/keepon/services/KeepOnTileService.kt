@@ -40,10 +40,10 @@ class KeepOnTileService : TileService() {
         KeepOnUtils.setTimeout(KeepOnUtils.getOriginalTimeout(this), this)
         KeepOnUtils.setKeepOn(false, this)
 
-        if (KeepOnUtils.isMyServiceRunning(ScreenTimeoutObserverService::class.java, this))
+        if (KeepOnUtils.isMyScreenTimeoutObserverServiceRunning())
             KeepOnUtils.stopScreenTimeoutObserverService(this)
 
-        if (KeepOnUtils.isMyServiceRunning(ScreenOffReceiverService::class.java, this))
+        if (KeepOnUtils.isMyScreenOffReceiverServiceRunning())
             KeepOnUtils.stopScreenOffReceiverService(this)
 
         KeepOnUtils.setTileAdded(false, this)
@@ -98,7 +98,7 @@ class KeepOnTileService : TileService() {
             return
         }
 
-        if (!KeepOnUtils.isMyServiceRunning(ScreenTimeoutObserverService::class.java, this))
+        if (!KeepOnUtils.isMyScreenTimeoutObserverServiceRunning())
             KeepOnUtils.startScreenTimeoutObserverService(this)
 
         val availableTimeout: ArrayList<Int> = ArrayList()
@@ -123,11 +123,11 @@ class KeepOnTileService : TileService() {
     private fun applyNewTimeout(timeout: Int) {
         if (timeout == KeepOnUtils.getOriginalTimeout(this)) {
             KeepOnUtils.setKeepOn(false, this)
-            if (KeepOnUtils.isMyServiceRunning(ScreenOffReceiverService::class.java, this))
+            if (KeepOnUtils.isMyScreenOffReceiverServiceRunning())
                 KeepOnUtils.stopScreenOffReceiverService(this)
         } else {
             KeepOnUtils.setKeepOn(true, this)
-            if (!KeepOnUtils.isMyServiceRunning(ScreenOffReceiverService::class.java, this)
+            if (!KeepOnUtils.isMyScreenOffReceiverServiceRunning()
                 && KeepOnUtils.getResetOnScreenOff(this)
             )
                 KeepOnUtils.startScreenOffReceiverService(this)

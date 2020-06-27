@@ -82,11 +82,11 @@ class MainActivity : AppCompatActivity() {
         screenOffCheckBox!!.setOnCheckedChangeListener { view, isChecked ->
             KeepOnUtils.setResetOnScreenOff(isChecked, this)
 
-            if (KeepOnUtils.isMyServiceRunning(ScreenOffReceiverService::class.java, this) && !isChecked) {
+            if (KeepOnUtils.isMyScreenOffReceiverServiceRunning() && !isChecked) {
                 KeepOnUtils.stopScreenOffReceiverService(this)
             }
 
-            if (!KeepOnUtils.isMyServiceRunning(ScreenOffReceiverService::class.java, this)
+            if (!KeepOnUtils.isMyScreenOffReceiverServiceRunning()
                 && KeepOnUtils.getKeepOn(this)
                 && isChecked
             ) {

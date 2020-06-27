@@ -12,6 +12,13 @@ import fr.twentynine.keepon.utils.KeepOnUtils
 
 
 class ScreenTimeoutObserverService : Service() {
+    companion object {
+        private var instance: ScreenTimeoutObserverService? = null
+
+        fun isInstanceCreated(): Boolean {
+            return instance != null
+        }
+    }
 
     private var screenTimeoutObserver: ScreenTimeoutObserver? = null
     private var restart = true
@@ -23,8 +30,7 @@ class ScreenTimeoutObserverService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-
-
+        instance = this
         screenTimeoutObserver = ScreenTimeoutObserver(null, this) //ScreenTimeoutObserver(Handler(), this)
         registerScreenTimeoutObserver(screenTimeoutObserver!!, this)
     }
@@ -35,7 +41,7 @@ class ScreenTimeoutObserverService : Service() {
         if (restart) {
             KeepOnUtils.startScreenTimeoutObserverService(this)
         }
-
+        instance = null
         super.onDestroy()
     }
 
