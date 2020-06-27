@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Handler
 import android.service.quicksettings.TileService
 import fr.twentynine.keepon.services.KeepOnTileService
-import fr.twentynine.keepon.services.ScreenOffReceiverService
 import fr.twentynine.keepon.utils.KeepOnUtils
 
 
