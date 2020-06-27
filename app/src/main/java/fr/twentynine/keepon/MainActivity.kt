@@ -25,7 +25,6 @@ import androidx.cardview.widget.CardView
 import androidx.core.text.HtmlCompat
 import com.google.android.material.snackbar.Snackbar
 import fr.twentynine.keepon.services.KeepOnTileService
-import fr.twentynine.keepon.services.ScreenOffReceiverService
 import fr.twentynine.keepon.utils.KeepOnUtils
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.math.hypot
@@ -81,6 +80,7 @@ class MainActivity : AppCompatActivity() {
 
         // Manage checkbox for monitor screen off or not
         screenOffCheckBox = this.findViewById(R.id.checkBoxScreenOff)
+        screenOffCheckBox!!.isChecked = KeepOnUtils.getResetOnScreenOff(this)
         screenOffCheckBox!!.setOnCheckedChangeListener { view, isChecked ->
             KeepOnUtils.setResetOnScreenOff(isChecked, this)
 
@@ -141,9 +141,6 @@ class MainActivity : AppCompatActivity() {
             // If no custom screen timeout set update OriginalTimeout in saved preference
             if (!KeepOnUtils.getKeepOn(this))
                 KeepOnUtils.updateOriginalTimeout(this)
-
-            // Set state of screen of monitor engine checkbox from saved preference
-            screenOffCheckBox!!.isChecked = KeepOnUtils.getResetOnScreenOff(this)
 
             // Start ScreenTimeoutObserverService if QSTile is added
             if (KeepOnUtils.getTileAdded(this) && !KeepOnUtils.isMyScreenTimeoutObserverServiceRunning())
