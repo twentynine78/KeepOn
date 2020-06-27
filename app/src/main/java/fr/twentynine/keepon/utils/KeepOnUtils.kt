@@ -12,6 +12,8 @@ import android.graphics.Paint.Align
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.text.TextUtils
 import android.view.Window
@@ -160,7 +162,19 @@ object KeepOnUtils {
         return returnIsServiceRunning
     }
 
-    @JvmStatic fun getNotificationDialog(context: Context): Dialog {
+    @JvmStatic fun getNotificationDialog(context: Context, returnClass: Class<*>): Dialog {
+        val handler = Handler(Looper.myLooper()!!)
+        val checkSettingOn: Runnable = object : Runnable {
+            override fun run() {
+                if (!isNotificationEnabled(context)) {
+                    val intent = Intent(context, returnClass)
+                    context.startActivity(intent)
+                    return
+                }
+                handler.postDelayed(this, 200)
+            }
+        }
+
         val notificationDialog by lazy {
             val dialog = Dialog(context, R.style.StyleDialog)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -182,17 +196,19 @@ object KeepOnUtils {
                         val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
                             .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
                             .putExtra(Settings.EXTRA_CHANNEL_ID, NOTIFICATION_CHANNEL_ID)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                             .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+
+                        handler.postDelayed(checkSettingOn, 1000)
                         context.startActivity(intent)
                     }
                 } else {
                     val uri = Uri.fromParts("package", context.packageName, null)
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(uri)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                     intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+
+                    handler.postDelayed(checkSettingOn, 1000)
                     context.startActivity(intent)
                 }
             }
@@ -203,7 +219,19 @@ object KeepOnUtils {
         return notificationDialog
     }
 
-    @JvmStatic fun getPermissionDialog(context: Context): Dialog {
+    @JvmStatic fun getPermissionDialog(context: Context, returnClass: Class<*>): Dialog {
+        val handler = Handler(Looper.myLooper()!!)
+        val checkSettingOn: Runnable = object : Runnable {
+            override fun run() {
+                if (Settings.System.canWrite(context.applicationContext)) {
+                    val intent = Intent(context, returnClass)
+                   context.startActivity(intent)
+                    return
+                }
+                handler.postDelayed(this, 200)
+            }
+        }
+
         val permissionDialog by lazy {
             val dialog = Dialog(context, R.style.StyleDialog)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -222,9 +250,10 @@ object KeepOnUtils {
                 dialog.dismiss()
                 val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
                     .setData(Uri.parse("package:" + context.packageName))
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+
+                handler.postDelayed(checkSettingOn, 1000)
                 context.startActivity(intent)
             }
             dialog.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))

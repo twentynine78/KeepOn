@@ -67,6 +67,10 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
             } else {
                 val uri = Uri.fromParts("package", mContext.packageName, null)
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(uri)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+
+                handler.postDelayed(checkSettingOn, 1000)
                 mContext.startActivity(intent)
             }
         }
