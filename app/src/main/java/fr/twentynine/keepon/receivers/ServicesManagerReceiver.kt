@@ -22,49 +22,37 @@ class ServicesManagerReceiver : BroadcastReceiver() {
                 Intent.ACTION_BOOT_COMPLETED -> {
                     TileService.requestListeningState(context, ComponentName(context, KeepOnTileService::class.java))
 
-                    if (!KeepOnUtils.isMyScreenTimeoutObserverServiceRunning()) {
-                        val startIntent = Intent(context, ScreenTimeoutObserverService::class.java)
-                        startIntent.action = ACTION_START_FOREGROUND_TIMEOUT_SERVICE
-                        ContextCompat.startForegroundService(context, startIntent)
-                    }
+                    val startIntentScreenTimeout = Intent(context, ScreenTimeoutObserverService::class.java)
+                    startIntentScreenTimeout.action = ACTION_START_FOREGROUND_TIMEOUT_SERVICE
+                    ContextCompat.startForegroundService(context, startIntentScreenTimeout)
 
-                    if (!KeepOnUtils.isMyScreenOffReceiverServiceRunning()
-                        && KeepOnUtils.getKeepOn(context)
-                    ) {
-                        val startIntent = Intent(context, ScreenOffReceiverService::class.java)
-                        startIntent.action = ACTION_START_FOREGROUND_SCREEN_OFF_SERVICE
-                        ContextCompat.startForegroundService(context, startIntent)
+                    if (KeepOnUtils.getKeepOn(context)) {
+                        val startIntentScreenOff = Intent(context, ScreenOffReceiverService::class.java)
+                        startIntentScreenOff.action = ACTION_START_FOREGROUND_SCREEN_OFF_SERVICE
+                        ContextCompat.startForegroundService(context, startIntentScreenOff)
                     }
                 }
                 ACTION_START_FOREGROUND_TIMEOUT_SERVICE -> {
-                    if (!KeepOnUtils.isMyScreenTimeoutObserverServiceRunning()) {
-                        val startIntent = Intent(context, ScreenTimeoutObserverService::class.java)
+                    val startIntent = Intent(context, ScreenTimeoutObserverService::class.java)
+                    startIntent.action = action
+                    ContextCompat.startForegroundService(context, startIntent)
+                }
+                ACTION_STOP_FOREGROUND_TIMEOUT_SERVICE -> {
+                    val stopIntent = Intent(context, ScreenTimeoutObserverService::class.java)
+                    stopIntent.action = action
+                    ContextCompat.startForegroundService(context, stopIntent)
+                }
+                ACTION_START_FOREGROUND_SCREEN_OFF_SERVICE -> {
+                    if (KeepOnUtils.getTileAdded(context)) {
+                        val startIntent = Intent(context, ScreenOffReceiverService::class.java)
                         startIntent.action = action
                         ContextCompat.startForegroundService(context, startIntent)
                     }
                 }
-                ACTION_STOP_FOREGROUND_TIMEOUT_SERVICE -> {
-                    if (KeepOnUtils.isMyScreenTimeoutObserverServiceRunning()) {
-                        val stopIntent = Intent(context, ScreenTimeoutObserverService::class.java)
-                        stopIntent.action = action
-                        ContextCompat.startForegroundService(context, stopIntent)
-                    }
-                }
-                ACTION_START_FOREGROUND_SCREEN_OFF_SERVICE -> {
-                    if (KeepOnUtils.getTileAdded(context)) {
-                        if (!KeepOnUtils.isMyScreenOffReceiverServiceRunning()) {
-                            val startIntent = Intent(context, ScreenOffReceiverService::class.java)
-                            startIntent.action = action
-                            ContextCompat.startForegroundService(context, startIntent)
-                        }
-                    }
-                }
                 ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE -> {
-                    if (KeepOnUtils.isMyScreenOffReceiverServiceRunning()) {
-                        val stopIntent = Intent(context, ScreenOffReceiverService::class.java)
-                        stopIntent.action = action
-                        ContextCompat.startForegroundService(context, stopIntent)
-                    }
+                    val stopIntent = Intent(context, ScreenOffReceiverService::class.java)
+                    stopIntent.action = action
+                    ContextCompat.startForegroundService(context, stopIntent)
                 }
             }
         }

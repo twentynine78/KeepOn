@@ -24,8 +24,6 @@ import androidx.core.graphics.ColorUtils
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
-import fr.twentynine.keepon.services.ScreenOffReceiverService
-import fr.twentynine.keepon.services.ScreenTimeoutObserverService
 import fr.twentynine.keepon.utils.preferences.Preferences
 import java.util.*
 
@@ -145,14 +143,6 @@ object KeepOnUtils {
         val broadcastIntent = Intent(context, ServicesManagerReceiver::class.java)
         broadcastIntent.action = ServicesManagerReceiver.ACTION_STOP_FOREGROUND_TIMEOUT_SERVICE
         context.sendBroadcast(broadcastIntent)
-    }
-
-    @JvmStatic fun isMyScreenOffReceiverServiceRunning(): Boolean {
-        return ScreenOffReceiverService.isInstanceCreated()
-    }
-
-    @JvmStatic fun isMyScreenTimeoutObserverServiceRunning(): Boolean {
-        return ScreenTimeoutObserverService.isInstanceCreated()
     }
 
     @JvmStatic fun isNotificationEnabled(context: Context): Boolean {
