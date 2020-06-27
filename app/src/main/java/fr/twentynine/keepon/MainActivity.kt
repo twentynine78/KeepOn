@@ -143,6 +143,10 @@ class MainActivity : AppCompatActivity() {
             // Set state of screen of monitor engine checkbox from saved preference
             screenOffCheckBox!!.isChecked = KeepOnUtils.getResetOnScreenOff(this)
 
+            // Start ScreenTimeoutObserverService if QSTile is added
+            if (KeepOnUtils.getTileAdded(this) && !KeepOnUtils.isMyScreenTimeoutObserverServiceRunning())
+                KeepOnUtils.startScreenTimeoutObserverService(this)
+
             // Request QSTile update
             val componentName = ComponentName(this.applicationContext, KeepOnTileService::class.java)
             TileService.requestListeningState(this, componentName)
