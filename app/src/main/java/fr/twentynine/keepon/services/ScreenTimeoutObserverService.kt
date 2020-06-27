@@ -25,6 +25,7 @@ class ScreenTimeoutObserverService : Service() {
 
         screenTimeoutObserver = ScreenTimeoutObserver(null, this)
         registerScreenTimeoutObserver(screenTimeoutObserver!!, this)
+        startForegroundService()
     }
 
     override fun onDestroy() {
