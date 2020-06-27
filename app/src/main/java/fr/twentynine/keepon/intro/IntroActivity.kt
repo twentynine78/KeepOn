@@ -6,11 +6,11 @@ import android.graphics.Color
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.github.appintro.AppIntro2
 import com.github.appintro.AppIntroFragment
-import com.github.appintro.model.SliderPage
-import androidx.fragment.app.Fragment
 import com.github.appintro.AppIntroPageTransformerType
+import com.github.appintro.model.SliderPage
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.intro.fragments.IntroFragmentNotification
