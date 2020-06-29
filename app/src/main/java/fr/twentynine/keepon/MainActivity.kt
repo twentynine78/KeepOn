@@ -34,19 +34,53 @@ class MainActivity : AppCompatActivity() {
     data class TimeoutSwitch(val switch: Switch, val timeoutValue: Int)
 
     private val animDuration: Long = 300
-    private lateinit var timeoutSwitchs: Array<TimeoutSwitch>
-    private lateinit var receiver: BroadcastReceiver
+    private var timeoutSwitchs: Array<TimeoutSwitch> = arrayOf ()
     private var screenOffCheckBox: CheckBox? = null
     private var selectionCard: CardView? = null
     private var aboutCard: CardView? = null
     private var missingSettingsDialog: Dialog? = null
     private var permissionDialog: Dialog? = null
     private var notificationDialog: Dialog? = null
+    private var receiverRegistered = false
+
+    private val receiver: BroadcastReceiver = object : BroadcastReceiver()  {
+        override fun onReceive(contxt: Context?, intent: Intent?) {
+            when (intent?.action) {
+                ACTION_UPDATE_UI -> {
+                    // Update all switch from saved preference
+                    for (timeoutSwitch in timeoutSwitchs)
+                        updateSwitch(timeoutSwitch.timeoutValue, timeoutSwitch.switch)
+                }
+                ACTION_MISSING_SETTINGS -> {
+                    // Show missing settings dialog
+                    if (KeepOnUtils.getSelectedTimeout(contxt!!).size <= 1) {
+                        if (missingSettingsDialog == null) {
+                            missingSettingsDialog = KeepOnUtils.getMissingSettingsDialog(contxt)
+                            missingSettingsDialog!!.show()
+                        } else {
+                            if (!missingSettingsDialog!!.isShowing) {
+                                missingSettingsDialog!!.show()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        registerBroadcastReceiver(this)
+        if (!KeepOnUtils.getSkipIntro(this)) {
+            //Start SplashScreen
+            val splashIntent = SplashScreen.newIntent(this.applicationContext)
+            splashIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(splashIntent)
+            finish()
+            return
+        }
+
+        registerBroadcastReceiver()
 
         // Set DarkTheme
         if (KeepOnUtils.getDarkTheme(this))
@@ -104,6 +138,22 @@ class MainActivity : AppCompatActivity() {
         versionTextView.text = Html.fromHtml(sVersion, HtmlCompat.FROM_HTML_MODE_LEGACY)
 
         animateCardView()
+
+        // Show dialog if missing settings on tile click
+        if (intent.extras != null) {
+            if (intent.extras!!.getBoolean(KeepOnUtils.TAG_MISSING_SETTINGS, false)
+                && KeepOnUtils.getSelectedTimeout(this).size <= 1
+            ) {
+                if (missingSettingsDialog == null) {
+                    missingSettingsDialog = KeepOnUtils.getMissingSettingsDialog(this)
+                    missingSettingsDialog!!.show()
+                } else {
+                    if (!missingSettingsDialog!!.isShowing) {
+                        missingSettingsDialog!!.show()
+                    }
+                }
+            }
+        }
     }
 
     override fun onResume() {
@@ -111,21 +161,6 @@ class MainActivity : AppCompatActivity() {
 
         // Check permission to write settings
         if (canWrite(this)) {
-            // Show dialog if missing settings on tile click
-            if (intent.extras != null) {
-                if (intent.extras!!.getBoolean(KeepOnUtils.TAG_MISSING_SETTINGS, false)
-                    && KeepOnUtils.getSelectedTimeout(this).size <= 1
-                ) {
-                    if (missingSettingsDialog == null) {
-                        missingSettingsDialog = KeepOnUtils.getMissingSettingsDialog(this)
-                        missingSettingsDialog!!.show()
-                    } else {
-                        if (!missingSettingsDialog!!.isShowing) {
-                            missingSettingsDialog!!.show()
-                        }
-                    }
-                }
-            }
             // Show Dialog to disable notifications if enabled
             if (KeepOnUtils.isNotificationEnabled(this)) {
                 if (notificationDialog == null) {
@@ -137,6 +172,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+
             // If no custom screen timeout set update OriginalTimeout in saved preference
             if (!KeepOnUtils.getKeepOn(this))
                 KeepOnUtils.updateOriginalTimeout(this)
@@ -190,40 +226,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        unregisterReceiver(receiver)
+        if (receiverRegistered)
+            unregisterReceiver(receiver)
         super.onDestroy()
     }
 
-    private fun registerBroadcastReceiver(context: Context) {
-        receiver = object : BroadcastReceiver()  {
-            override fun onReceive(contxt: Context?, intent: Intent?) {
-                when (intent?.action) {
-                    ACTION_UPDATE_UI -> {
-                        // Update all switch from saved preference
-                        for (timeoutSwitch in timeoutSwitchs)
-                            updateSwitch(timeoutSwitch.timeoutValue, timeoutSwitch.switch)
-                    }
-                    ACTION_MISSING_SETTINGS -> {
-                        // Show missing settings dialog
-                        if (KeepOnUtils.getSelectedTimeout(context).size <= 1) {
-                            if (missingSettingsDialog == null) {
-                                missingSettingsDialog = KeepOnUtils.getMissingSettingsDialog(context)
-                                missingSettingsDialog!!.show()
-                            } else {
-                                if (!missingSettingsDialog!!.isShowing) {
-                                    missingSettingsDialog!!.show()
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
+    private fun registerBroadcastReceiver() {
         val intentFiler = IntentFilter()
         intentFiler.addAction(ACTION_UPDATE_UI)
         intentFiler.addAction(ACTION_MISSING_SETTINGS)
         registerReceiver(receiver, intentFiler)
+        receiverRegistered = true
     }
 
     private fun updateSwitch(timeout: Int, switch: Switch) {

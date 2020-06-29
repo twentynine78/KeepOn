@@ -57,8 +57,6 @@ class SplashScreen : AppCompatActivity() {
             // Launch MainActivity
             mHandler.postDelayed({
                 val mainIntent = MainActivity.newIntent(applicationContext)
-                if (intent.extras != null)
-                    mainIntent.putExtra(KeepOnUtils.TAG_MISSING_SETTINGS, intent.extras!!.getBoolean(KeepOnUtils.TAG_MISSING_SETTINGS, false))
                 startActivity(mainIntent)
                 finish()
             }, SPLASH_TIME_OUT)

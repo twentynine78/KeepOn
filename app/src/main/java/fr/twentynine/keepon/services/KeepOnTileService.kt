@@ -8,6 +8,7 @@ import android.os.IBinder
 import android.provider.Settings
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
+import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.SplashScreen
 import fr.twentynine.keepon.utils.KeepOnUtils
@@ -91,13 +92,15 @@ class KeepOnTileService : TileService() {
             || KeepOnUtils.getSelectedTimeout(this).size < 1
             || !Settings.System.canWrite(this)
         ) {
-            val mainIntent = SplashScreen.newIntent(this.applicationContext)
+            val mainIntent = MainActivity.newIntent(this.applicationContext)
             mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            if (KeepOnUtils.getSelectedTimeout(this).size < 1)
-                mainIntent.putExtra(KeepOnUtils.TAG_MISSING_SETTINGS, true)
-            startActivityAndCollapse(mainIntent)
 
-            KeepOnUtils.sendBroadcastMissingSettings(this)
+            if (KeepOnUtils.getSelectedTimeout(this).size < 1 && Settings.System.canWrite(this)) {
+                mainIntent.putExtra(KeepOnUtils.TAG_MISSING_SETTINGS, true)
+                KeepOnUtils.sendBroadcastMissingSettings(this)
+            }
+
+            startActivityAndCollapse(mainIntent)
             return
         }
 
