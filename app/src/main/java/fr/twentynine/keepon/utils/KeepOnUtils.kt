@@ -177,7 +177,7 @@ object KeepOnUtils {
         }
 
         val notificationDialog by lazy {
-            val dialog = Dialog(context, R.style.StyleDialog)
+            val dialog = Dialog(context, R.style.DialogStyle)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setContentView(R.layout.dialog_custom)
             dialog.setCancelable(true)
@@ -235,7 +235,7 @@ object KeepOnUtils {
         }
 
         val permissionDialog by lazy {
-            val dialog = Dialog(context, R.style.StyleDialog)
+            val dialog = Dialog(context, R.style.DialogStyle)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setContentView(R.layout.dialog_custom)
             dialog.setCancelable(false)
@@ -267,7 +267,7 @@ object KeepOnUtils {
 
     @JvmStatic fun getMissingSettingsDialog(context: Context): Dialog {
         val missingSettingsDialog by lazy {
-            val dialog = Dialog(context, R.style.StyleDialog)
+            val dialog = Dialog(context, R.style.DialogStyle)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setContentView(R.layout.dialog_custom)
             dialog.setCancelable(true)

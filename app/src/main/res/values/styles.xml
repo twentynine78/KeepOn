@@ -1,29 +1,27 @@
 <resources>
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:navigationBarColor">@color/colorPrimary</item>
         <item name="android:windowDisablePreview">true</item>
+        <item name="materialButtonStyle">@style/DialogButtonStyle</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.SplashScreen">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="AppTheme.SplashScreen" parent="AppTheme">
         <item name="android:navigationBarColor">@color/colorBackground</item>
+        <item name="colorPrimary">@color/colorBackground</item>
+        <item name="colorPrimaryDark">@color/colorBackground</item>
+        <item name="colorAccent">@color/colorBackground</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar"/>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents"/>
 
-    <style name="MyCardViewStyle" parent="Base.CardView">
+    <style name="CardViewStyle" parent="Widget.MaterialComponents.CardView">
         <item name="cardBackgroundColor">@color/colorBackgroundCard</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
         <item name="cardElevation">2dp</item>
@@ -31,14 +29,30 @@
         <item name="android:clickable">false</item>
     </style>
 
-    <style name="StyleDialog" parent="@android:style/Theme.Dialog">
+    <style name="DialogStyle" parent="Theme.MaterialComponents.Dialog">
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>
-        <item name="android:windowAnimationStyle">@style/StyleDialogAnimation</item>
+        <item name="android:windowAnimationStyle">@style/DialogAnimationStyle</item>
+        <item name="materialButtonStyle">@style/DialogButtonStyle</item>
     </style>
 
-    <style name="StyleDialogAnimation">
+    <style name="DialogAnimationStyle">
         <item name="android:windowEnterAnimation">@anim/dialog_pop_in</item>
         <item name="android:windowExitAnimation">@anim/dialog_pop_out</item>
+    </style>
+
+    <style name="DialogButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:textAppearance">@style/DialogButtonTextStyle</item>
+        <item name="materialThemeOverlay">@style/DialogButtonThemeOverlay</item>
+    </style>
+
+    <style name="DialogButtonTextStyle" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:textColor">@color/colorText</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="DialogButtonThemeOverlay" parent="Widget.MaterialComponents.Button">
+        <item name="colorPrimary">@color/colorPrimaryLight</item>
+        <item name="colorOnPrimary">@color/colorPrimaryLight</item>
     </style>
 </resources>
