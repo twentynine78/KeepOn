@@ -16,8 +16,8 @@ import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.utils.KeepOnUtils
 
 class SplashScreen : AppCompatActivity() {
-    
-    private val mHandler = Handler(Looper.myLooper()!!)
+    private val looper: Looper = if (Looper.myLooper() != null) Looper.myLooper()!! else Looper.getMainLooper()
+    private val mHandler = Handler(looper)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -163,7 +163,8 @@ object KeepOnUtils {
     }
 
     @JvmStatic fun getNotificationDialog(context: Context, returnClass: Class<*>): Dialog {
-        val handler = Handler(Looper.myLooper()!!)
+        val looper: Looper = if (Looper.myLooper() != null) Looper.myLooper()!! else Looper.getMainLooper()
+        val handler = Handler(looper)
         val checkSettingOn: Runnable = object : Runnable {
             override fun run() {
                 if (!isNotificationEnabled(context)) {
@@ -220,7 +221,8 @@ object KeepOnUtils {
     }
 
     @JvmStatic fun getPermissionDialog(context: Context, returnClass: Class<*>): Dialog {
-        val handler = Handler(Looper.myLooper()!!)
+        val looper: Looper = if (Looper.myLooper() != null) Looper.myLooper()!! else Looper.getMainLooper()
+        val handler = Handler(looper)
         val checkSettingOn: Runnable = object : Runnable {
             override fun run() {
                 if (Settings.System.canWrite(context.applicationContext)) {
