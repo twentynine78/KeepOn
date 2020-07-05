@@ -217,7 +217,7 @@ class MainActivity : AppCompatActivity() {
                 else
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
-                val intent = Intent(this, MainActivity::class.java)
+                val intent = Intent(this.applicationContext, MainActivity::class.java)
                 startActivity(intent)
                 return true
             }

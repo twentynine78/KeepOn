@@ -67,7 +67,7 @@ class SplashScreen : AppCompatActivity() {
         const val SPLASH_TIME_OUT: Long = 1000
 
         fun newIntent(context: Context): Intent {
-            return Intent(context, SplashScreen::class.java)
+            return Intent(context.applicationContext, SplashScreen::class.java)
         }
     }
 }

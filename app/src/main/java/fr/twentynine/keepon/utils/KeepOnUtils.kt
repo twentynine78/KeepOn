@@ -124,25 +124,25 @@ object KeepOnUtils {
     }
 
     @JvmStatic fun startScreenOffReceiverService(context: Context) {
-        val broadcastIntent = Intent(context, ServicesManagerReceiver::class.java)
+        val broadcastIntent = Intent(context.applicationContext, ServicesManagerReceiver::class.java)
         broadcastIntent.action = ServicesManagerReceiver.ACTION_START_FOREGROUND_SCREEN_OFF_SERVICE
         context.sendBroadcast(broadcastIntent)
     }
 
     @JvmStatic fun stopScreenOffReceiverService(context: Context) {
-        val broadcastIntent = Intent(context, ServicesManagerReceiver::class.java)
+        val broadcastIntent = Intent(context.applicationContext, ServicesManagerReceiver::class.java)
         broadcastIntent.action = ServicesManagerReceiver.ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE
         context.sendBroadcast(broadcastIntent)
     }
 
     @JvmStatic fun startScreenTimeoutObserverService(context: Context) {
-        val broadcastIntent = Intent(context, ServicesManagerReceiver::class.java)
+        val broadcastIntent = Intent(context.applicationContext, ServicesManagerReceiver::class.java)
         broadcastIntent.action = ServicesManagerReceiver.ACTION_START_FOREGROUND_TIMEOUT_SERVICE
         context.sendBroadcast(broadcastIntent)
     }
 
     @JvmStatic fun stopScreenTimeoutObserverService(context: Context) {
-        val broadcastIntent = Intent(context, ServicesManagerReceiver::class.java)
+        val broadcastIntent = Intent(context.applicationContext, ServicesManagerReceiver::class.java)
         broadcastIntent.action = ServicesManagerReceiver.ACTION_STOP_FOREGROUND_TIMEOUT_SERVICE
         context.sendBroadcast(broadcastIntent)
     }
@@ -168,7 +168,7 @@ object KeepOnUtils {
         val checkSettingOn: Runnable = object : Runnable {
             override fun run() {
                 if (!isNotificationEnabled(context)) {
-                    val intent = Intent(context, returnClass)
+                    val intent = Intent(context.applicationContext, returnClass)
                     context.startActivity(intent)
                     return
                 }
@@ -226,7 +226,7 @@ object KeepOnUtils {
         val checkSettingOn: Runnable = object : Runnable {
             override fun run() {
                 if (Settings.System.canWrite(context.applicationContext)) {
-                    val intent = Intent(context, returnClass)
+                    val intent = Intent(context.applicationContext, returnClass)
                    context.startActivity(intent)
                     return
                 }

@@ -109,7 +109,7 @@ class IntroActivity : AppIntro2() {
         private val COLOR_SLIDE_HOME = Color.parseColor("#222222")
 
         fun newIntent(context: Context): Intent {
-            return Intent(context, IntroActivity::class.java)
+            return Intent(context.applicationContext, IntroActivity::class.java)
         }
     }
 }

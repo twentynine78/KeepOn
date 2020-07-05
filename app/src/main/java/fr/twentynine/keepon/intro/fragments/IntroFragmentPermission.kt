@@ -41,7 +41,7 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
         val checkSettingOn: Runnable = object : Runnable {
             override fun run() {
                 if (Settings.System.canWrite(requireContext().applicationContext)) {
-                    val intent = Intent(mContext, IntroActivity::class.java)
+                    val intent = Intent(mContext.applicationContext, IntroActivity::class.java)
                     startActivity(intent)
                     return
                 }

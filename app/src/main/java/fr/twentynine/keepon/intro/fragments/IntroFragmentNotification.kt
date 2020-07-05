@@ -42,7 +42,7 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
         val checkSettingOn: Runnable = object : Runnable {
             override fun run() {
                 if (!KeepOnUtils.isNotificationEnabled(mContext)) {
-                    val intent = Intent(mContext, IntroActivity::class.java)
+                    val intent = Intent(mContext.applicationContext, IntroActivity::class.java)
                     startActivity(intent)
                     return
                 }
