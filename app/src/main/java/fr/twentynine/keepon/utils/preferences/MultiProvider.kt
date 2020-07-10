@@ -8,6 +8,7 @@ import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
 import androidx.annotation.Nullable
+import androidx.collection.ArrayMap
 
 
 /**
@@ -158,8 +159,7 @@ class MultiProvider : ContentProvider() {
     /**
      * Map to hold all current Inter actors with shared preferences
      */
-    private val mPreferenceMap: MutableMap<String, PreferenceInteractor> =
-        HashMap()
+    private val mPreferenceMap: ArrayMap<String, PreferenceInteractor> = ArrayMap()
 
     override fun onCreate(): Boolean {
         return true

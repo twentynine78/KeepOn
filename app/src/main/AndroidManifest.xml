@@ -60,6 +60,7 @@
                 android:name=".services.KeepOnTileService"
                 android:enabled="true"
                 android:exported="true"
+                android:process=":tile"
                 android:icon="@mipmap/ic_qs_keepon"
                 android:label="@string/qs_service_name"
                 android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">

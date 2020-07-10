@@ -27,12 +27,10 @@
     <string name="about_card_title">About</string>
     <string name="about_card_version">&lt;b>Version:&lt;/b></string>
     <string name="about_card_author"><b>Author:</b> TwentyNine78</string>
-    <string name="about_card_credits"><b>Credits:</b> AppIntro, MultiProcessPreferences</string>
+    <string name="about_card_credits"><b>Credits:</b> AppIntro, MultiProcessPreferences, Glide</string>
     <string name="about_card_source"><b>Source Code:</b> <a href="https://github.com/twentynine78/KeepOn">https://github.com/twentynine78/KeepOn</a></string>
 
     <string name="qs_service_name">Keep screen on</string>
-    <string name="qs_tile_label">Keep screen on</string>
-    <string name="qs_tile_desc">Keep screen on</string>
     <string name="qs_short_second">s</string>
     <string name="qs_short_minute">m</string>
     <string name="qs_short_hour">h</string>
