@@ -1,20 +1,65 @@
 package fr.twentynine.keepon.services
 
 import android.app.Service
+import android.content.ComponentCallbacks2
 import android.content.ComponentName
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.os.IBinder
 import android.provider.Settings
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
+import com.bumptech.glide.Glide
+import com.bumptech.glide.MemoryCategory
+import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.RequestManager
+import com.bumptech.glide.load.DecodeFormat
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
+import com.bumptech.glide.signature.ObjectKey
 import fr.twentynine.keepon.MainActivity
-import fr.twentynine.keepon.R
-import fr.twentynine.keepon.SplashScreen
 import fr.twentynine.keepon.utils.KeepOnUtils
 
 
-class KeepOnTileService : TileService() {
+class KeepOnTileService: TileService() {
+    private var glideRequestBuilder: RequestBuilder<Bitmap>? = null
+    private var glideRequestManager: RequestManager? = null
+    private var glideTarget: CustomTarget<Bitmap>? = null
+
+    companion object {
+        private var glide: Glide? = null
+
+        private var newTimeout: Int = 0
+        private var originalTimeout: Int = 0
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+
+        // Set glide components
+        if (glide == null)
+            glide = Glide.get(this)
+
+        if (glideRequestManager == null)
+            glideRequestManager = Glide.with(this)
+
+        if (glideRequestBuilder == null)
+            setGlideRequestBuilder()
+
+        if (glideTarget == null)
+            setGlideTarget()
+    }
+
+    override fun onDestroy() {
+        // Clear glide target and trim memory
+        glideRequestManager!!.clear(glideTarget)
+        glide!!.trimMemory(ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN)
+
+        super.onDestroy()
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
@@ -46,7 +91,6 @@ class KeepOnTileService : TileService() {
         KeepOnUtils.setKeepOn(false, this)
 
         KeepOnUtils.stopScreenTimeoutObserverService(this)
-
         KeepOnUtils.stopScreenOffReceiverService(this)
 
         KeepOnUtils.setTileAdded(false, this)
@@ -59,20 +103,8 @@ class KeepOnTileService : TileService() {
     override fun onStartListening() {
         super.onStartListening()
 
-        val keeponTile = qsTile
-
         if (qsTile.state == Tile.STATE_UNAVAILABLE) this.stopSelf()
-
-        val newTimeout = if (KeepOnUtils.getNewTimeout(this) >= 0) {
-            KeepOnUtils.getNewTimeout(this)
-        } else {
-            KeepOnUtils.getCurrentTimeout(this)
-        }
-        KeepOnUtils.setNewTimeout(-1, this)
-
-        val originalTimeout = KeepOnUtils.getOriginalTimeout(this)
-        val tileState = if (newTimeout == originalTimeout) Tile.STATE_INACTIVE else Tile.STATE_ACTIVE
-        val tileIcon = Icon.createWithBitmap(KeepOnUtils.getBitmapFromText(newTimeout, this))
+        /* val tileIcon = Icon.createWithBitmap(KeepOnUtils.getBitmapFromText(newTimeout, this))
 
         if (keeponTile != null && tileIcon != null) {
             keeponTile.state = tileState
@@ -81,7 +113,23 @@ class KeepOnTileService : TileService() {
             keeponTile.contentDescription = getString(R.string.qs_tile_desc)
 
             keeponTile.updateTile()
+        } */
+        originalTimeout = KeepOnUtils.getOriginalTimeout(this)
+        newTimeout = if (KeepOnUtils.getNewTimeout(this) >= 0) {
+            KeepOnUtils.getNewTimeout(this)
+        } else {
+            KeepOnUtils.getCurrentTimeout(this)
         }
+        KeepOnUtils.setNewTimeout(-1, this)
+
+        // Clear previous glide target
+        glideRequestManager!!.clear(glideTarget)
+
+        // Create bitmap and load to tile icon
+        glideRequestBuilder!!
+            .signature(ObjectKey(KeepOnUtils.getBitmapSignature(this, newTimeout)))
+            .load(KeepOnUtils.getBitmapFromText(newTimeout, this))
+            .into(glideTarget!!)
     }
 
     override fun onClick() {
@@ -136,5 +184,33 @@ class KeepOnTileService : TileService() {
         }
 
         KeepOnUtils.setTimeout(timeout, this)
+    }
+
+    private fun setGlideTarget() {
+        glideTarget = object: CustomTarget<Bitmap>() {
+            private var bitmap: Bitmap? = null
+            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                bitmap = resource
+                val keeponTile = qsTile
+                val tileIcon = Icon.createWithBitmap(resource)
+                if (keeponTile != null && tileIcon != null) {
+                    keeponTile.state = if (newTimeout == originalTimeout) Tile.STATE_INACTIVE else Tile.STATE_ACTIVE
+                    keeponTile.icon = tileIcon
+
+                    keeponTile.updateTile()
+                }
+            }
+            override fun onLoadCleared(placeholder: Drawable?) {
+            }
+        }
+    }
+
+    private fun setGlideRequestBuilder() {
+        glide!!.setMemoryCategory(MemoryCategory.LOW)
+        glideRequestBuilder = glideRequestManager!!
+            .asBitmap()
+            .format(DecodeFormat.PREFER_ARGB_8888)
+            .circleCrop()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
     }
 }
