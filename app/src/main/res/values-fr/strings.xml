@@ -61,4 +61,24 @@
     <string name="intro_six_title">Facile à utiliser</string>
     <string name="intro_six_desc">Une fois la configuration terminée, il te suffit simplement d\'ajouter la tuile KeepOn aux réglages rapides d\'Android pour l\'utiliser !</string>
     <string name="intro_toast_permission_needed">Cette permission est obligatoire pour que l\'application fonctionne !</string>
+
+    <string name="bottom_sheet_preview_desc">Aperçu des réglages rapide</string>
+    <string name="bottom_sheet_arrow_desc">Afficher/Cacher</string>
+    <string name="bottom_sheet_peek_text">Style des réglages rapide</string>
+    <string name="bottom_sheet_font_options_label">Options de police</string>
+    <string name="bottom_sheet_size_label">Taille</string>
+    <string name="bottom_sheet_skew_label">Inclinaison</string>
+    <string name="bottom_sheet_position_label">Position</string>
+    <string name="bottom_sheet_typeface_label">Police de caractères</string>
+    <string name="bottom_sheet_font_styles_label">Styles de police</string>
+    <string name="bottom_sheet_text_style_label">Style du texte</string>
+    <string name="bottom_sheet_typeface_san_serif">San serif</string>
+    <string name="bottom_sheet_typeface_serif">Serif</string>
+    <string name="bottom_sheet_typeface_monospace">Monospace</string>
+    <string name="bottom_sheet_style_bold">Gras</string>
+    <string name="bottom_sheet_style_underline">Souligner</string>
+    <string name="bottom_sheet_style_smcp">Petites majuscules</string>
+    <string name="bottom_sheet_style_fill">Remplissage</string>
+    <string name="bottom_sheet_style_fill_and_stroke">Remplissage et contours</string>
+    <string name="bottom_sheet_style_stroke">Contours</string>
 </resources>

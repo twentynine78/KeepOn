@@ -89,7 +89,9 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
         get() = Settings.System.canWrite(requireContext().applicationContext)
 
     override fun onUserIllegallyRequestedNextPage() {
-        return Snackbar.make(mView, getString(R.string.intro_toast_permission_needed), Snackbar.LENGTH_LONG).show()
+        return Snackbar.make(mView, getString(R.string.intro_toast_permission_needed), Snackbar.LENGTH_LONG)
+            .setAnchorView(R.id.bottomSheet)
+            .show()
     }
 
     override val defaultBackgroundColor: Int

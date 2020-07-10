@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FF000000</color>
+    <color name="colorPrimary">#FF0D0D0D</color>
     <color name="colorPrimaryDark">#FF000000</color>
     <color name="colorPrimaryLight">#FF151515</color>
     <color name="colorAccent">#FF448AFF</color>
@@ -10,4 +10,7 @@
     <color name="colorText">#FFDBDBDB</color>
     <color name="colorTextDisabled">#FF6B6B6B</color>
     <color name="colorBorder">#FF111111</color>
+    <color name="colorBottomSheet">#FF0D0D0D</color>
+    <color name="colorPreviewBackground">#FF000000</color>
+    <color name="colorNavigationBar">#FF000000</color>
 </resources>

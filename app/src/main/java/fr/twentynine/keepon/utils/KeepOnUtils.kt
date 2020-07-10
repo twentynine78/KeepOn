@@ -14,6 +14,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Paint.Align
+import android.graphics.Rect
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -44,36 +45,102 @@ class KeepOnUtils {
         private const val NOTIFICATION_CHANNEL_DESC = "KeepOn Services"
         private const val NOTIFICATION_CHANNEL_IMPORTANCE = NotificationManager.IMPORTANCE_MIN
 
+        private val Float.px: Float
+            get() = (this * Resources.getSystem().displayMetrics.density)
 
+        private val Int.px: Int
+            get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
         fun getBitmapFromText(timeout: Int, context: Context, bigSize: Boolean = false): Bitmap {
-            val imageWidth = 250
-            val imageHeight = 200
+            // Set scale ratio to 3 for small size
+            val scaleRatio = if (bigSize) 1 else 3
+
+            val imageWidth = 150.px / scaleRatio
+            val imageHeight = 150.px / scaleRatio
 
             val displayTimeout = getDisplayTimeout(timeout, context)
-            val textSize = when (displayTimeout.length) {
-                1 -> 170f
-                2 -> 140f
-                3 -> 120f
-                else -> 100f
-            }
-
             val bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             val paint = Paint()
 
             canvas.drawColor(Color.TRANSPARENT)
+
+            var textSize = when (displayTimeout.length) {
+                1 -> 115f.px / scaleRatio
+                2 -> 86f.px / scaleRatio
+                3 -> 70f.px / scaleRatio
+                else -> 60f.px / scaleRatio
             }
+            // Set text size from saved preference
+            textSize += (Preferences.getQSStyleFontSize(context) * 2).px / scaleRatio
+            paint.textSize = textSize
+
+            // Set typeface from saved preference
+            val bold = Preferences.getQSStyleFontBold(context)
+            val typeface: Typeface =  when {
+                Preferences.getQSStyleTypefaceSansSerif(context) -> {
+                    if (bold) {
+                        Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+                    } else {
+                        Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
+                    }
+                }
+                Preferences.getQSStyleTypefaceSerif(context) -> {
+                    if (bold) {
+                        Typeface.create(Typeface.SERIF, Typeface.BOLD)
+                    } else {
+                        Typeface.create(Typeface.SERIF, Typeface.NORMAL)
+                    }
+                }
+                Preferences.getQSStyleTypefaceMonospace(context) -> {
+                    if (bold) {
+                        Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+                    } else {
+                        Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
+                    }
+                }
+                else -> Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+            }
+            paint.typeface = typeface
+
+            // Set text style from saved preference
+            val paintStyle: Paint.Style = when {
+                Preferences.getQSStyleTextFill(context) -> {
+                    Paint.Style.FILL
+                }
+                Preferences.getQSStyleTextFillStroke(context) -> {
+                    paint.strokeWidth = 3f.px / scaleRatio
+                    Paint.Style.FILL_AND_STROKE
+                }
+                Preferences.getQSStyleTextStroke(context) -> {
+                    paint.strokeWidth = 3f.px / scaleRatio
+                    Paint.Style.STROKE
+                }
+                else -> Paint.Style.FILL
+            }
+            paint.style = paintStyle
+
+            // Set text skew from preference
+            paint.textSkewX = (-(Preferences.getQSStyleFontSkew(context) / 1.7).toFloat())
+
+            // Set font SMCP from preference
+            if (Preferences.getQSStyleFontSMCP(context)) {
+                paint.fontFeatureSettings = "smcp"
+            }
+
+            // Set font underline from preference
+            paint.isUnderlineText = Preferences.getQSStyleFontUnderline(context)
+
             paint.textAlign = Align.CENTER
             paint.isAntiAlias = true
-            paint.textSize = textSize
-            paint.typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
             paint.color = Color.WHITE
 
+            // Calculate coordinates and draw text
+            val originTextBound = calculateOriginTextBound(paint, displayTimeout)
             canvas.drawText(
                 displayTimeout,
-                ((paint.strokeWidth / 2) + (imageWidth / 2)),
-                ((imageHeight / 2) + (textSize / 3)),
+                ((imageWidth / 2) - (paint.strokeWidth / 4) + ((Preferences.getQSStyleFontSpacing(context) * 7).px / scaleRatio)),
+                ((imageHeight / 2) - (paint.strokeWidth / 4) - originTextBound.exactCenterY()),
                 paint
             )
             canvas.save()
@@ -82,6 +149,24 @@ class KeepOnUtils {
             return bitmap
         }
 
+        fun getBitmapSignature(context: Context, timeout: Int): String {
+            return String.format(Locale.getDefault(),
+                "%d,%d,%d,%d,%b,%b,%b,%b,%b,%b,%b,%b,%b",
+                timeout,
+                Preferences.getQSStyleFontSize(context),
+                Preferences.getQSStyleFontSkew(context),
+                Preferences.getQSStyleFontSpacing(context),
+                Preferences.getQSStyleTypefaceSansSerif(context),
+                Preferences.getQSStyleTypefaceSerif(context),
+                Preferences.getQSStyleTypefaceMonospace(context),
+                Preferences.getQSStyleFontBold(context),
+                Preferences.getQSStyleFontUnderline(context),
+                Preferences.getQSStyleFontSMCP(context),
+                Preferences.getQSStyleTextFill(context),
+                Preferences.getQSStyleTextFillStroke(context),
+                Preferences.getQSStyleTextStroke(context)
+                )
+        }
 
         fun updateOriginalTimeout(context: Context) {
             Preferences.setOriginalTimeout(getCurrentTimeout(context), context)
@@ -409,6 +494,12 @@ class KeepOnUtils {
                     context.getString(R.string.qs_short_second)
                 )
             }
+        }
+
+        private fun calculateOriginTextBound(paintText: Paint, drawText: String): Rect {
+            val textBound = Rect()
+            paintText.getTextBounds(drawText, 0, drawText.length, textBound)
+            return textBound
         }
     }
 }

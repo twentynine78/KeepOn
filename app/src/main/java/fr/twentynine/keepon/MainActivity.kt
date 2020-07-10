@@ -3,10 +3,19 @@ package fr.twentynine.keepon
 import android.animation.Animator
 import android.app.Dialog
 import android.app.admin.DevicePolicyManager
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.res.ColorStateList
+import android.content.res.Resources
+import android.graphics.Bitmap
 import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.provider.Settings.System.canWrite
 import android.service.quicksettings.TileService
@@ -15,19 +24,31 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewAnimationUtils
-import android.widget.CheckBox
-import android.widget.LinearLayout
-import android.widget.Switch
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DecodeFormat
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
+import com.bumptech.glide.signature.ObjectKey
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import fr.twentynine.keepon.services.KeepOnTileService
 import fr.twentynine.keepon.utils.KeepOnUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.bottom_sheet_tile_settings.*
+import kotlinx.android.synthetic.main.card_main_about.*
+import kotlinx.android.synthetic.main.card_main_settings.*
+import kotlinx.android.synthetic.main.content_main.*
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.hypot
+import kotlin.math.roundToInt
 
 
 class MainActivity : AppCompatActivity() {
@@ -35,21 +56,29 @@ class MainActivity : AppCompatActivity() {
 
     private val animDuration: Long = 300
     private var timeoutSwitchs: Array<TimeoutSwitch> = arrayOf ()
-    private var screenOffCheckBox: CheckBox? = null
-    private var selectionCard: CardView? = null
-    private var aboutCard: CardView? = null
     private var missingSettingsDialog: Dialog? = null
     private var permissionDialog: Dialog? = null
     private var notificationDialog: Dialog? = null
     private var receiverRegistered = false
+    private lateinit var glideTarget: CustomTarget<Bitmap>
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
+
+    private val Int.px: Int
+        get() = (this * Resources.getSystem().displayMetrics.density).toInt()
+
+    private val Int.dp: Int
+        get() = (this / Resources.getSystem().displayMetrics.density).toInt()
+
 
     private val receiver: BroadcastReceiver = object : BroadcastReceiver()  {
         override fun onReceive(contxt: Context?, intent: Intent?) {
             when (intent?.action) {
                 ACTION_UPDATE_UI -> {
                     // Update all switch from saved preference
-                    for (timeoutSwitch in timeoutSwitchs)
-                        updateSwitch(timeoutSwitch.timeoutValue, timeoutSwitch.switch)
+                    updateSwitchs(timeoutSwitchs)
+
+                    // Set tile preview Image View
+                    updateTilePreview()
                 }
                 ACTION_MISSING_SETTINGS -> {
                     // Show missing settings dialog
@@ -89,9 +118,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        selectionCard = this.findViewById(R.id.selectionCard)
-        aboutCard = this.findViewById(R.id.aboutCard)
-
         // Create an array of TimeoutSwitch
         timeoutSwitchs = arrayOf (
             TimeoutSwitch(this.findViewById(R.id.switch15s), 15000),
@@ -113,9 +139,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Manage checkbox for monitor screen off or not
-        screenOffCheckBox = this.findViewById(R.id.checkBoxScreenOff)
-        screenOffCheckBox!!.isChecked = KeepOnUtils.getResetOnScreenOff(this)
-        screenOffCheckBox!!.setOnCheckedChangeListener { view, isChecked ->
+        checkBoxScreenOff!!.isChecked = KeepOnUtils.getResetOnScreenOff(this)
+        checkBoxScreenOff!!.setOnCheckedChangeListener { view, isChecked ->
             KeepOnUtils.setResetOnScreenOff(isChecked, this)
 
             if (!isChecked) {
@@ -128,14 +153,15 @@ class MainActivity : AppCompatActivity() {
                 KeepOnUtils.startScreenOffReceiverService(this)
             }
 
-            Snackbar.make(view, getString(R.string.settings_save), Snackbar.LENGTH_LONG).show()
+            Snackbar.make(view, getString(R.string.settings_save), Snackbar.LENGTH_LONG)
+                .setAnchorView(R.id.bottomSheet)
+                .show()
         }
 
         // Set application version on about card
-        val versionTextView = this.findViewById<TextView>(R.id.card_about_version)
         var sVersion = getString(R.string.about_card_version)
-        sVersion += String.format(" %s", KeepOnUtils.getAppVersion(this))
-        versionTextView.text = Html.fromHtml(sVersion, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        sVersion += String.format(Locale.getDefault(), " %s", KeepOnUtils.getAppVersion(this))
+        card_about_version.text = Html.fromHtml(sVersion, HtmlCompat.FROM_HTML_MODE_LEGACY)
 
         animateCardView()
 
@@ -154,6 +180,50 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        // Set OnClick listener for bottom sheet peek views
+        bottomSheetPeekTextView.setOnClickListener {
+            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED)
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            else
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+        tilePreview.setOnClickListener {
+            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED)
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            else
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+
+        // Define glide target to set bitmap to tile preview
+        glideTarget = object: CustomTarget<Bitmap>() {
+            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                tilePreview.setImageBitmap(resource)
+                tilePreview.imageTintMode = PorterDuff.Mode.SRC_IN
+                tilePreview.imageTintList = getColorStateList(android.R.color.white)
+            }
+            override fun onLoadCleared(placeholder: Drawable?) {
+                tilePreview.setImageDrawable(placeholder)
+            }
+        }
+
+        // Set onSlide bottom sheet behavior
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                setOnSlideBottomSheetAnim(slideOffset)
+            }
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+            }
+
+        })
+
+        // Simulate expanded state to render bottom sheet correctly
+        setOnSlideBottomSheetAnim(1.0f)
+        setOnSlideBottomSheetAnim(0.0f)
+
+        // Load QS Style preference
+        loadQSStylePreferences()
     }
 
     override fun onResume() {
@@ -186,8 +256,10 @@ class MainActivity : AppCompatActivity() {
             TileService.requestListeningState(this, componentName)
 
             // Update all switch from saved preference
-            for (timeoutSwitch in timeoutSwitchs)
-                updateSwitch(timeoutSwitch.timeoutValue, timeoutSwitch.switch)
+            updateSwitchs(timeoutSwitchs)
+
+            // Set tile preview Image View
+            updateTilePreview()
         } else {
             // Show permission Dialog
             if (permissionDialog == null) {
@@ -228,7 +300,18 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         if (receiverRegistered)
             unregisterReceiver(receiver)
+
+        Glide.with(applicationContext).clear(glideTarget)
+
         super.onDestroy()
+    }
+
+    override fun onBackPressed() {
+        if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        } else {
+            super.onBackPressed()
+        }
     }
 
     private fun registerBroadcastReceiver() {
@@ -239,42 +322,63 @@ class MainActivity : AppCompatActivity() {
         receiverRegistered = true
     }
 
-    private fun updateSwitch(timeout: Int, switch: Switch) {
-        val selectedSwitch = KeepOnUtils.getSelectedTimeout(this)
-        val originalTimeout = KeepOnUtils.getOriginalTimeout(this)
+    private fun updateTilePreview() {
+        // Clear previous target
+        Glide.with(applicationContext).clear(glideTarget)
+
+        // Set Bitmap to Tile Preview
         val currentTimeout = KeepOnUtils.getCurrentTimeout(this)
+        Glide.with(applicationContext)
+            .asBitmap()
+            .format(DecodeFormat.PREFER_ARGB_8888)
+            .circleCrop()
+            .signature(ObjectKey(KeepOnUtils.getBitmapSignature(this, currentTimeout)))
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .skipMemoryCache(true)
+            .load(KeepOnUtils.getBitmapFromText(currentTimeout, this, true))
+            .into(glideTarget)
 
-        // Check for DevicePolicy restriction
-        val mDPM = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-        var adminTimeout = mDPM.getMaximumTimeToLock(null)
-        if (adminTimeout == 0.toLong()) adminTimeout = Long.MAX_VALUE
+        // Request QSTile update
+        val componentName = ComponentName(this.applicationContext, KeepOnTileService::class.java)
+        TileService.requestListeningState(this, componentName)
+    }
 
-        switch.isChecked = (selectedSwitch.contains(timeout) || originalTimeout == timeout)
+    private fun updateSwitchs(switchsArray: Array<TimeoutSwitch>) {
+        for (timeoutSwitch in switchsArray) {
+            val switch = timeoutSwitch.switch
+            val timeout = timeoutSwitch.timeoutValue
+            val selectedSwitch = KeepOnUtils.getSelectedTimeout(this)
+            val originalTimeout = KeepOnUtils.getOriginalTimeout(this)
+            val currentTimeout = KeepOnUtils.getCurrentTimeout(this)
 
-        if (originalTimeout == timeout) {
-            switch.isClickable = false
-            switch.setTextColor(getColor(R.color.colorTextDisabled))
-            switch.thumbDrawable.colorFilter =
-                PorterDuffColorFilter(getColor(R.color.colorAccentVariation), PorterDuff.Mode.SRC_IN)
-            switch.trackDrawable.colorFilter =
-                PorterDuffColorFilter(getColor(R.color.colorAccentVariation), PorterDuff.Mode.MULTIPLY)
-        } else {
-            switch.isClickable = true
-            switch.setTextColor(getColor(R.color.colorText))
-            switch.thumbDrawable.colorFilter = null
-            switch.trackDrawable.colorFilter = null
-        }
+            // Check for DevicePolicy restriction
+            val mDPM = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+            var adminTimeout = mDPM.getMaximumTimeToLock(null)
+            if (adminTimeout == 0.toLong()) adminTimeout = Long.MAX_VALUE
 
-        if (currentTimeout == timeout) {
-            switch.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
-        } else {
-            switch.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
-        }
+            switch.isChecked = (selectedSwitch.contains(timeout) || originalTimeout == timeout)
 
-        if (adminTimeout < timeout) {
-            switch.visibility = View.GONE
-        } else {
-            switch.visibility = View.VISIBLE
+            if (originalTimeout == timeout) {
+                switch.isClickable = false
+                switch.isEnabled = false
+                switch.setTextColor(getColor(R.color.colorTextDisabled))
+            } else {
+                switch.isClickable = true
+                switch.isEnabled = true
+                switch.setTextColor(getColor(R.color.colorText))
+            }
+
+            if (currentTimeout == timeout) {
+                switch.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
+            } else {
+                switch.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
+            }
+
+            if (adminTimeout < timeout) {
+                switch.visibility = View.GONE
+            } else {
+                switch.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -291,11 +395,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun saveSelectedSwitch(view: View) {
         KeepOnUtils.setSelectedTimeout(getListIntFromSwitch(), this)
-        Snackbar.make(view, getString(R.string.settings_save), Snackbar.LENGTH_LONG).show()
+        Snackbar.make(view, getString(R.string.settings_save), Snackbar.LENGTH_LONG)
+            .setAnchorView(R.id.bottomSheet)
+            .show()
     }
 
     private fun animateCardView() {
-        val cardViewContainer = findViewById<LinearLayout>(R.id.cardViewContainer)
         cardViewContainer.post {
             processCardViewAnim(selectionCard!!, 0)
             processCardViewAnim(aboutCard!!, animDuration)
@@ -321,6 +426,152 @@ class MainActivity : AppCompatActivity() {
             override fun onAnimationRepeat(animation: Animator) {}
         })
         anim.start()
+    }
+
+    private fun setOnSlideBottomSheetAnim(slideOffset: Float) {
+        // Define default and max size of views and coefficient
+        val defaultPreviewSize = 60.px
+        val defaultPreviewPadding = 12.px
+        val defaultBottomMarginViewHeight = 50.px
+        val maxPreviewSize = 110.px
+        val maxPreviewPadding = 19.px
+        val coefficientStartMarginPeek = 1.1
+
+        // Change background color
+        transitionBottomSheetBackgroundColor(slideOffset)
+
+        // Adapt tile preview image view
+        tilePreview.layoutParams.width = defaultPreviewSize + (slideOffset * (maxPreviewSize - defaultPreviewSize).dp).roundToInt().px
+        tilePreview.layoutParams.height = defaultPreviewSize + (slideOffset * (maxPreviewSize - defaultPreviewSize).dp).roundToInt().px
+
+        // Set padding to tile preview image view
+        val newPadding = defaultPreviewPadding + (slideOffset * (maxPreviewPadding - defaultPreviewPadding).dp).roundToInt().px
+        tilePreview.setPadding(newPadding, newPadding, newPadding, newPadding)
+
+        // Adapt bottom sheet text view left margin
+        val params: ConstraintLayout.LayoutParams = ConstraintLayout.LayoutParams(bottomSheetPeekTextView.layoutParams)
+        params.setMargins((10.px + ((slideOffset * (maxPreviewSize - defaultPreviewSize).dp * coefficientStartMarginPeek))).roundToInt().px, 10.px, 10.px, 10.px)
+        bottomSheetPeekTextView.layoutParams = params
+
+        // Rotate peek arrow
+        bottomSheetPeekArrow.pivotX = (bottomSheetPeekArrow.measuredWidth / 2).toFloat()
+        bottomSheetPeekArrow.pivotY = (bottomSheetPeekArrow.measuredHeight / 2).toFloat()
+        bottomSheetPeekArrow.rotation = slideOffset * -180
+
+        // Adapt bottom and top margin
+        bottomMarginView.layoutParams.height = defaultBottomMarginViewHeight - (slideOffset * (maxPreviewSize - defaultPreviewSize).dp).roundToInt().px
+        bottomSheet.setPadding(0, ((slideOffset * (maxPreviewSize - defaultPreviewSize).dp).roundToInt().px / 2), 0, 0)
+
+        // Apply modification
+        tilePreview.requestLayout()
+        bottomSheetPeekTextView.requestLayout()
+        bottomSheetPeekArrow.requestLayout()
+        bottomMarginView.requestLayout()
+        bottomSheet.requestLayout()
+    }
+
+    private fun transitionBottomSheetBackgroundColor(slideOffset: Float) {
+        val colorFrom = resources.getColor(R.color.colorBottomSheet, theme)
+        val colorTo = resources.getColor(R.color.colorBackgroundCard, theme)
+
+        val layerDrawableBottomSheep: LayerDrawable = bottomSheetBackground.background as LayerDrawable
+        val bottomSheetBackgroundShape = layerDrawableBottomSheep.findDrawableByLayerId(R.id.shape_bottom_sheet_background) as GradientDrawable
+        bottomSheetBackgroundShape.color = ColorStateList.valueOf(interpolateColor(slideOffset, colorFrom, colorTo))
+
+        val layerDrawableCircle: LayerDrawable = tilePreviewBackground.drawable as LayerDrawable
+        val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
+        circleBackgroundShape.setStroke(3.px, ColorStateList.valueOf(interpolateColor(slideOffset, colorFrom, colorTo)))
+    }
+
+    private fun interpolateColor(fraction: Float, startValue: Int, endValue: Int): Int {
+        val startA = startValue shr 24 and 0xff
+        val startR = startValue shr 16 and 0xff
+        val startG = startValue shr 8 and 0xff
+        val startB = startValue and 0xff
+        val endA = endValue shr 24 and 0xff
+        val endR = endValue shr 16 and 0xff
+        val endG = endValue shr 8 and 0xff
+        val endB = endValue and 0xff
+        return startA + (fraction * (endA - startA)).toInt() shl 24 or
+                (startR + (fraction * (endR - startR)).toInt() shl 16) or
+                (startG + (fraction * (endG - startG)).toInt() shl 8) or
+                startB + (fraction * (endB - startB)).toInt()
+    }
+
+    private fun loadQSStylePreferences() {
+        // Load value from preferences
+        slider_size.value = Preferences.getQSStyleFontSize(this).toFloat()
+        seek_skew.value = Preferences.getQSStyleFontSkew(this).toFloat()
+        seek_space.value = Preferences.getQSStyleFontSpacing(this).toFloat()
+
+        radio_typeface_san_serif.isChecked = Preferences.getQSStyleTypefaceSansSerif(this)
+        radio_typeface_serif.isChecked = Preferences.getQSStyleTypefaceSerif(this)
+        radio_typeface_monospace.isChecked = Preferences.getQSStyleTypefaceMonospace(this)
+
+        radio_style_fill.isChecked = Preferences.getQSStyleTextFill(this)
+        radio_style_fill_stroke.isChecked = Preferences.getQSStyleTextFillStroke(this)
+        radio_style_stroke.isChecked = Preferences.getQSStyleTextStroke(this)
+
+        switch_fake_bold.isChecked = Preferences.getQSStyleFontBold(this)
+        switch_underline.isChecked = Preferences.getQSStyleFontUnderline(this)
+        switch_smcp.isChecked = Preferences.getQSStyleFontSMCP(this)
+
+        // Set OnClickListener and OnSeekBarChangeListener for QS Style controls
+        val qsStyleOnChangeListener = Slider.OnChangeListener { _, _, _ -> saveQSStyleSlidePreferences() }
+        val qsStyleOnclickListener = View.OnClickListener { saveQSStyleClickPreferences() }
+        val qsStyleOnclickListenerTypeface = View.OnClickListener {
+            if (radio_typeface_san_serif.isChecked) {
+                switch_smcp.isEnabled = true
+                switch_smcp.isChecked = Preferences.getQSStyleFontSMCP(this)
+            } else {
+                switch_smcp.isEnabled = false
+                switch_smcp.isChecked = false
+            }
+            saveQSStyleClickPreferences()
+        }
+
+        slider_size.addOnChangeListener(qsStyleOnChangeListener)
+        seek_skew.addOnChangeListener(qsStyleOnChangeListener)
+        seek_space.addOnChangeListener(qsStyleOnChangeListener)
+
+        radio_style_fill.setOnClickListener(qsStyleOnclickListener)
+        radio_style_fill_stroke.setOnClickListener(qsStyleOnclickListener)
+        radio_style_stroke.setOnClickListener(qsStyleOnclickListener)
+
+        switch_fake_bold.setOnClickListener(qsStyleOnclickListener)
+        switch_underline.setOnClickListener(qsStyleOnclickListener)
+        switch_smcp.setOnClickListener(qsStyleOnclickListener)
+
+        radio_typeface_san_serif.setOnClickListener(qsStyleOnclickListenerTypeface)
+        radio_typeface_serif.setOnClickListener(qsStyleOnclickListenerTypeface)
+        radio_typeface_monospace.setOnClickListener(qsStyleOnclickListenerTypeface)
+    }
+
+    private fun saveQSStyleSlidePreferences() {
+        Preferences.setQSStyleFontSize(slider_size.value.toInt(), this)
+        Preferences.setQSStyleFontSkew(seek_skew.value.toInt(), this)
+        Preferences.setQSStyleFontSpacing(seek_space.value.toInt(), this)
+
+        updateTilePreview()
+    }
+
+    private fun saveQSStyleClickPreferences() {
+        // Save all values to Preferences
+        Preferences.setQSStyleTextFill(radio_style_fill.isChecked, this)
+        Preferences.setQSStyleTextFillStroke(radio_style_fill_stroke.isChecked, this)
+        Preferences.setQSStyleTextStroke(radio_style_stroke.isChecked,this)
+
+        Preferences.setQSStyleFontBold(switch_fake_bold.isChecked,this)
+        Preferences.setQSStyleFontUnderline(switch_underline.isChecked,this)
+        if (switch_smcp.isEnabled) {
+            Preferences.setQSStyleFontSMCP(switch_smcp.isChecked, this)
+        }
+
+        Preferences.setQSStyleTypefaceSansSerif(radio_typeface_san_serif.isChecked, this)
+        Preferences.setQSStyleTypefaceSerif(radio_typeface_serif.isChecked, this)
+        Preferences.setQSStyleTypefaceMonospace(radio_typeface_monospace.isChecked, this)
+
+        updateTilePreview()
     }
 
     companion object {

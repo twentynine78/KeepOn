@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/bottomSheet"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="24dp"
+    android:outlineProvider="none"
+    android:layout_gravity="clip_vertical"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="75dp"
+    app:gestureInsetBottomIgnored="true"
+    tools:context=".MainActivity">
+
+    <View
+        android:id="@+id/guideline"
+        android:layout_width="1px"
+        android:layout_height="1px"
+        android:background="#00000000"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintStart_toStartOf="@id/tilePreview"
+        app:layout_constraintEnd_toEndOf="@id/tilePreview"
+        app:layout_constraintTop_toTopOf="@+id/tilePreview"
+        app:layout_constraintBottom_toBottomOf="@+id/tilePreview"/>
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="25dp"
+        android:elevation="19dp"
+        android:background="@drawable/circle_background_border"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/bottom_sheet_preview_desc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tilePreview"
+        app:layout_constraintBottom_toBottomOf="@+id/tilePreview" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomSheetBackground"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:elevation="20dp"
+        android:background="@drawable/bottom_sheet_background"
+        android:paddingBottom="10dp"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline">
+
+        <TextView
+            android:id="@+id/bottomSheetPeekTextView"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textColor="@color/colorText"
+            android:gravity="center"
+            android:paddingBottom="6dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textStyle="bold"
+            android:text="@string/bottom_sheet_peek_text"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="12sp"
+            app:autoSizeMaxTextSize="14sp"
+            app:autoSizeStepGranularity="2sp"/>
+
+        <ImageView
+            android:id="@+id/bottomSheetPeekArrow"
+            android:layout_width="30dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="30dp"
+            android:scaleType="fitCenter"
+            android:paddingBottom="4dp"
+            android:foregroundGravity="center"
+            android:src="@drawable/ic_arrow_up"
+            android:contentDescription="@string/bottom_sheet_arrow_desc"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bottomSheetPeekTextView"
+            app:layout_constraintVertical_bias="1.0">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="15dp"
+                android:layout_gravity="center_vertical"
+                android:paddingBottom="25dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@color/colorText"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:text="@string/bottom_sheet_font_options_label"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:baselineAligned="false"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="18dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorText"
+                            android:text="@string/bottom_sheet_size_label"/>
+
+                        <com.google.android.material.slider.Slider
+                            android:id="@+id/slider_size"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:valueFrom="-5.0"
+                            android:valueTo="5.0"
+                            android:stepSize="1.0"
+                            android:value="0"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorText"
+                            android:text="@string/bottom_sheet_skew_label"/>
+
+                        <com.google.android.material.slider.Slider
+                            android:id="@+id/seek_skew"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:valueFrom="-1.0"
+                            android:valueTo="1.0"
+                            android:stepSize="1.0"
+                            android:value="0"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorText"
+                            android:text="@string/bottom_sheet_position_label"/>
+
+                        <com.google.android.material.slider.Slider
+                            android:id="@+id/seek_space"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:max="10"
+                            android:valueFrom="-5.0"
+                            android:valueTo="5.0"
+                            android:stepSize="1.0"
+                            android:value="0"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="12dp">
+
+                        <TextView android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:layout_marginBottom="12dp"
+                            android:textColor="@color/colorText"
+                            android:textStyle="bold"
+                            android:textSize="14sp"
+                            android:text="@string/bottom_sheet_typeface_label"/>
+
+                        <RadioGroup
+                            android:layout_gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorText">
+
+                            <com.google.android.material.radiobutton.MaterialRadioButton
+                                android:id="@+id/radio_typeface_san_serif"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorText"
+                                android:text="@string/bottom_sheet_typeface_san_serif"/>
+
+                            <com.google.android.material.radiobutton.MaterialRadioButton
+                                android:id="@+id/radio_typeface_serif"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorText"
+                                android:text="@string/bottom_sheet_typeface_serif"/>
+
+                            <com.google.android.material.radiobutton.MaterialRadioButton
+                                android:id="@+id/radio_typeface_monospace"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorText"
+                                android:text="@string/bottom_sheet_typeface_monospace"/>
+                        </RadioGroup>
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:layout_marginTop="12dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="12dp"
+                        android:textColor="@color/colorText"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:text="@string/bottom_sheet_font_styles_label"/>
+
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/switch_fake_bold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:layout_marginStart="7dp"
+                            android:gravity="center|start"
+                            android:paddingTop="9dp"
+                            android:paddingBottom="9dp"
+                            android:textColor="@color/colorText"
+                            android:text="@string/bottom_sheet_style_bold"/>
+
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/switch_underline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:layout_marginStart="7dp"
+                            android:gravity="center|start"
+                            android:paddingTop="9dp"
+                            android:paddingBottom="9dp"
+                            android:textColor="@color/colorText"
+                            android:text="@string/bottom_sheet_style_underline"/>
+
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/switch_smcp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:layout_marginStart="7dp"
+                            android:gravity="center|start"
+                            android:paddingTop="9dp"
+                            android:paddingBottom="9dp"
+                            android:textColor="@color/colorText"
+                            android:text="@string/bottom_sheet_style_smcp"/>
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginTop="12dp">
+
+                        <TextView android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:layout_marginBottom="12dp"
+                            android:textColor="@color/colorText"
+                            android:textStyle="bold"
+                            android:textSize="14sp"
+                            android:text="@string/bottom_sheet_text_style_label"/>
+
+                        <RadioGroup
+                            android:layout_gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <com.google.android.material.radiobutton.MaterialRadioButton
+                                android:id="@+id/radio_style_fill"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorText"
+                                android:text="@string/bottom_sheet_style_fill"/>
+
+                            <com.google.android.material.radiobutton.MaterialRadioButton
+                                android:id="@+id/radio_style_fill_stroke"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorText"
+                                android:text="@string/bottom_sheet_style_fill_and_stroke"/>
+
+                            <com.google.android.material.radiobutton.MaterialRadioButton
+                                android:id="@+id/radio_style_stroke"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorText"
+                                android:text="@string/bottom_sheet_style_stroke"/>
+
+                        </RadioGroup>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/tilePreviewBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="25dp"
+        android:elevation="21dp"
+        android:outlineProvider="none"
+        android:padding="2dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/circle_background"
+        android:contentDescription="@string/bottom_sheet_preview_desc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tilePreview"
+        app:layout_constraintBottom_toBottomOf="@+id/tilePreview"/>
+
+    <ImageView
+        android:id="@+id/tilePreview"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="25dp"
+        android:foregroundGravity="center"
+        android:elevation="22dp"
+        android:outlineProvider="none"
+        android:contentDescription="@string/bottom_sheet_preview_desc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <View
+        android:id="@+id/bottomMarginView"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bottomSheetBackground"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

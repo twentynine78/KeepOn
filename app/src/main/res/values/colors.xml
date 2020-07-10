@@ -8,6 +8,9 @@
     <color name="colorBackground">#FFF7F7F7</color>
     <color name="colorBackgroundCard">#FFFCFCFC</color>
     <color name="colorText">#FF515151</color>
-    <color name="colorTextDisabled">#FF8F8F8F</color>
+    <color name="colorTextDisabled">#FFA8A8A8</color>
     <color name="colorBorder">#FFEDEDED</color>
+    <color name="colorBottomSheet">#FFFCFCFC</color>
+    <color name="colorPreviewBackground">#FF03A9F4</color>
+    <color name="colorNavigationBar">#FF03A9F4</color>
 </resources>

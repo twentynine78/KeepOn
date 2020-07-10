@@ -62,4 +62,24 @@
     <string name="intro_six_title">Easy to use</string>
     <string name="intro_six_desc">Once the configuration is complete, simply add the KeepOn tile to the Android Quick Settings to use it!</string>
     <string name="intro_toast_permission_needed">This permission is required for the application to work!</string>
+
+    <string name="bottom_sheet_preview_desc">Quick settings preview</string>
+    <string name="bottom_sheet_arrow_desc">Show/Hide</string>
+    <string name="bottom_sheet_peek_text">Quick settings style</string>
+    <string name="bottom_sheet_font_options_label">Font Options</string>
+    <string name="bottom_sheet_size_label">Size</string>
+    <string name="bottom_sheet_skew_label">Skew</string>
+    <string name="bottom_sheet_position_label">Position</string>
+    <string name="bottom_sheet_typeface_label">Typeface</string>
+    <string name="bottom_sheet_font_styles_label">Font Styles</string>
+    <string name="bottom_sheet_text_style_label">Text Style</string>
+    <string name="bottom_sheet_typeface_san_serif">San serif</string>
+    <string name="bottom_sheet_typeface_serif">Serif</string>
+    <string name="bottom_sheet_typeface_monospace">Monospace</string>
+    <string name="bottom_sheet_style_bold">Bold</string>
+    <string name="bottom_sheet_style_underline">Underline</string>
+    <string name="bottom_sheet_style_smcp">Small capital</string>
+    <string name="bottom_sheet_style_fill">Fill</string>
+    <string name="bottom_sheet_style_fill_and_stroke">Fill and Stroke</string>
+    <string name="bottom_sheet_style_stroke">Stroke</string>
 </resources>
