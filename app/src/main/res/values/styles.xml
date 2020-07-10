@@ -1,13 +1,23 @@
 <resources>
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:navigationBarColor">@color/colorPrimary</item>
+        <item name="android:navigationBarColor">@color/colorNavigationBar</item>
         <item name="android:windowDisablePreview">true</item>
         <item name="materialButtonStyle">@style/DialogButtonStyle</item>
+        <item name="snackbarStyle">@style/SnackbarStyle</item>
+        <item name="sliderStyle">@style/SliderStyle</item>
+    </style>
+
+    <style name="SliderStyle" parent="Widget.MaterialComponents.Slider">
+        <item name="materialThemeOverlay">@style/SliderStyleThemeOverlay</item>
+    </style>
+
+    <style name="SliderStyleThemeOverlay" parent="">
+        <item name="colorPrimary">@color/colorAccent</item>
+        <item name="colorOnPrimary">@color/colorAccentVariation</item>
+        <item name="colorOnSurface">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.SplashScreen" parent="AppTheme">
@@ -24,7 +34,7 @@
     <style name="CardViewStyle" parent="Widget.MaterialComponents.CardView">
         <item name="cardBackgroundColor">@color/colorBackgroundCard</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
-        <item name="cardElevation">2dp</item>
+        <item name="cardElevation">1dp</item>
         <item name="cardCornerRadius">5dp</item>
         <item name="android:clickable">false</item>
     </style>
@@ -54,5 +64,11 @@
     <style name="DialogButtonThemeOverlay" parent="Widget.MaterialComponents.Button">
         <item name="colorPrimary">@color/colorPrimaryLight</item>
         <item name="colorOnPrimary">@color/colorPrimaryLight</item>
+    </style>
+
+    <style name="SnackbarStyle" parent="Widget.MaterialComponents.Snackbar">
+        <item name="android:layout_margin">20dp</item>
+        <item name="elevation">25dp</item>
+        <item name="animationMode">fade</item>
     </style>
 </resources>

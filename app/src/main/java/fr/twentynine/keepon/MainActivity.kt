@@ -36,7 +36,9 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.switchmaterial.SwitchMaterial
 import fr.twentynine.keepon.services.KeepOnTileService
 import fr.twentynine.keepon.utils.KeepOnUtils
 import fr.twentynine.keepon.utils.preferences.Preferences
@@ -52,7 +54,7 @@ import kotlin.math.roundToInt
 
 
 class MainActivity : AppCompatActivity() {
-    data class TimeoutSwitch(val switch: Switch, val timeoutValue: Int)
+    data class TimeoutSwitch(val switch: SwitchMaterial, val timeoutValue: Int)
 
     private val animDuration: Long = 300
     private var timeoutSwitchs: Array<TimeoutSwitch> = arrayOf ()
@@ -120,15 +122,15 @@ class MainActivity : AppCompatActivity() {
 
         // Create an array of TimeoutSwitch
         timeoutSwitchs = arrayOf (
-            TimeoutSwitch(this.findViewById(R.id.switch15s), 15000),
-            TimeoutSwitch(this.findViewById(R.id.switch30s), 30000),
-            TimeoutSwitch(this.findViewById(R.id.switch1m), 60000),
-            TimeoutSwitch(this.findViewById(R.id.switch2m), 120000),
-            TimeoutSwitch(this.findViewById(R.id.switch5m), 300000),
-            TimeoutSwitch(this.findViewById(R.id.switch10m), 600000),
-            TimeoutSwitch(this.findViewById(R.id.switch30m), 1800000),
-            TimeoutSwitch(this.findViewById(R.id.switch1h), 3600000),
-            TimeoutSwitch(this.findViewById(R.id.switchInfinite), Int.MAX_VALUE)
+            TimeoutSwitch(switch15s, 15000),
+            TimeoutSwitch(switch30s, 30000),
+            TimeoutSwitch(switch1m, 60000),
+            TimeoutSwitch(switch2m, 120000),
+            TimeoutSwitch(switch5m, 300000),
+            TimeoutSwitch(switch10m, 600000),
+            TimeoutSwitch(switch30m, 1800000),
+            TimeoutSwitch(switch1h, 3600000),
+            TimeoutSwitch(switchInfinite, Int.MAX_VALUE)
         )
 
         // Set OnClickListener for each switch
