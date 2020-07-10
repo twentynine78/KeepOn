@@ -10,7 +10,7 @@ KeepOn is free and open-source (FOSS), without any ads/tracks and no Internet us
 
 KeepOn allows you to keep your device's screen on for the desired duration and also allows you to return to the default settings automaticaly when the screen turns off.
 
-KeepOn adapts to your device's configuration to easy use!
+KeepOn adapts to your device's configuration to easy use and allow you to customize the Quick Settings view!
 
 ## Permissions
 
@@ -27,6 +27,7 @@ You can read / audit code and compile your own apk if you want!
 
 - AppIntro: *https://github.com/AppIntro/AppIntro*
 - MultiProcessPreferences: *https://github.com/TreeFrogApps/MultiProcessPreferences*
+- Glide: *https://github.com/bumptech/glide*
 
 ## Screenshots
 
