@@ -346,6 +346,35 @@ class KeepOnUtils {
             return dialog
         }
 
+        fun getDefaultTimeoutDialog(timeout: Int, timeoutText: String, context: Context): Dialog {
+            val dialog = Dialog(context, R.style.DialogStyle)
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setContentView(R.layout.dialog_custom)
+            dialog.setCancelable(true)
+
+            val image = dialog.findViewById(R.id.image_dialog) as ImageView
+            image.setImageBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.dialog_logo_default))
+
+            val text = dialog.findViewById(R.id.text_dialog) as TextView
+            text.text = String.format(Locale.getDefault(), context.getString(R.string.dialog_default_timeout_text), timeoutText.toLowerCase(
+                Locale.getDefault()))
+
+            val button = dialog.findViewById(R.id.btn_dialog) as Button
+            button.text = context.getString(R.string.dialog_default_timeout_button)
+            button.setOnClickListener {
+                val previousOriginalTimeout = getOriginalTimeout(context)
+                updateOriginalTimeout(timeout, context)
+                if (getCurrentTimeout(context) == previousOriginalTimeout) {
+                    setTimeout(timeout, context)
+                }
+                sendBroadcastUpdateMainUI(context)
+                dialog.dismiss()
+            }
+            dialog.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
+
+            return dialog
+        }
+
         fun getCreditsDialog(context: Context): Dialog {
             val dialog = Dialog(context, R.style.DialogStyle)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -521,6 +550,8 @@ class KeepOnUtils {
             }
         }
 
+        private fun updateOriginalTimeout(newTimeout: Int, context: Context) {
+            Preferences.setOriginalTimeout(newTimeout, context)
         }
     }
 }

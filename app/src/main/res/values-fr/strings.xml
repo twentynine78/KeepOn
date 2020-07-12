@@ -49,6 +49,9 @@
     <string name="dialog_missing_settings_text">Sélectionne au moins une valeur supplémentaire pour utiliser la tuile des réglages rapides d\'Android!</string>
     <string name="dialog_missing_settings_button">OK</string>
 
+    <string name="dialog_default_timeout_text">Es-tu sûr de vouloir régler le délai d\'expiration de l\'écran par défaut à %s?</string>
+    <string name="dialog_default_timeout_button">Oui</string>
+
     <string name="dialog_credits_text">
         <font size="12">
         &#160;&#160;&#160;<font size="14"><b>AppIntro</b></font>

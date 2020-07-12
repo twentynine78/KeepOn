@@ -137,6 +137,12 @@ class MainActivity : AppCompatActivity() {
             timeoutSwitch.switch.setOnClickListener { view ->
                 saveSelectedSwitch(view)
             }
+            timeoutSwitch.switch.setOnLongClickListener {
+                KeepOnUtils.getDefaultTimeoutDialog(timeoutSwitch.timeoutValue, timeoutSwitch.switch.text.toString(), this).show()
+                true
+            }
+        }
+
         // Set OnClickListener to open credits dialog
         card_about_credits_label.setOnClickListener {
             KeepOnUtils.getCreditsDialog(this).show()

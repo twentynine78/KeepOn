@@ -50,6 +50,9 @@
     <string name="dialog_missing_settings_text">Select at least one additional value to use the Android Quick Settings tile!</string>
     <string name="dialog_missing_settings_button">OK</string>
 
+    <string name="dialog_default_timeout_text">Are you sur you want to set default screen timeout to %s?</string>
+    <string name="dialog_default_timeout_button">Yes</string>
+
     <string name="dialog_credits_text">
         <font size="12">
         &#160;&#160;&#160;<font size="14"><b>AppIntro</b></font>
