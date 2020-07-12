@@ -27,7 +27,8 @@
     <string name="about_card_title">About</string>
     <string name="about_card_version">&lt;b>Version:&lt;/b></string>
     <string name="about_card_author"><b>Author:</b> TwentyNine78</string>
-    <string name="about_card_credits"><b>Credits:</b> AppIntro, MultiProcessPreferences, Glide</string>
+    <string name="about_card_credits_label"><b>Credits:</b></string>
+    <string name="about_card_credits"><u>AppIntro, MultiProcessPreferences, Glide</u></string>
     <string name="about_card_source"><b>Source Code:</b> <a href="https://github.com/twentynine78/KeepOn">https://github.com/twentynine78/KeepOn</a></string>
 
     <string name="qs_service_name">Keep screen on</string>
@@ -48,6 +49,22 @@
 
     <string name="dialog_missing_settings_text">Select at least one additional value to use the Android Quick Settings tile!</string>
     <string name="dialog_missing_settings_button">OK</string>
+
+    <string name="dialog_credits_text">
+        <font size="12">
+        &#160;&#160;&#160;<font size="14"><b>AppIntro</b></font>
+        \n\nGitHub: https://github.com/AppIntro/AppIntro
+        \nLicence: https://github.com/AppIntro/AppIntro/blob/master/LICENSE
+        \n\n\n
+        &#160;&#160;&#160;<font size="14"><b>MultiProcessPreferences</b></font>
+        \n\nGitHub: https://github.com/TreeFrogApps/MultiProcessPreferences
+        \n\n\n
+        &#160;&#160;&#160;<font size="14"><b>Glide</b></font>
+        \n\nGitHub: https://github.com/bumptech/glide
+        \nLicence: https://github.com/bumptech/glide/blob/master/LICENSE
+        </font>
+    </string>
+    <string name="dialog_credits_button">Close</string>
 
     <string name="intro_home_title">Welcome!</string>
     <string name="intro_home_desc">Keep your screen on smartly!

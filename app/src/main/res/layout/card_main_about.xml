@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
     android:layout_marginBottom="20dp">
 
     <com.google.android.material.card.MaterialCardView
@@ -13,25 +12,30 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"
         android:elevation="1dp"
         android:visibility="invisible"
         style="@style/CardViewStyle">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="10dp"
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/about_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/about_card_title"
                 android:textColor="@color/colorText"
                 android:textAlignment="center"
                 android:textSize="17sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
                 android:id="@+id/card_about_version"
@@ -42,9 +46,13 @@
                 android:layout_marginBottom="2dp"
                 android:text="@string/about_card_version"
                 android:textColor="@color/colorText"
-                android:textAlignment="textStart" />
+                android:textAlignment="textStart"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/about_header" />
 
             <TextView
+                android:id="@+id/card_about_author"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -52,31 +60,53 @@
                 android:layout_marginBottom="2dp"
                 android:text="@string/about_card_author"
                 android:textColor="@color/colorText"
-                android:textAlignment="textStart" />
+                android:textAlignment="textStart"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/card_about_version" />
 
             <TextView
-                android:layout_width="match_parent"
+                android:id="@+id/card_about_credits_label"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
-                android:text="@string/about_card_credits"
+                android:text="@string/about_card_credits_label"
                 android:textColor="@color/colorText"
                 android:textAlignment="textStart"
-                android:autoLink="web" />
+                android:autoLink="web"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/card_about_author" />
+
+            <TextView
+                android:id="@+id/card_about_credits"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:text="@string/about_card_credits"
+                android:textColor="@color/colorTextLink"
+                android:textAlignment="textStart"
+                app:layout_constraintStart_toEndOf="@+id/card_about_credits_label"
+                app:layout_constraintTop_toBottomOf="@+id/card_about_author" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="2dp"
-                android:layout_marginBottom="10dp"
+                android:paddingBottom="15dp"
                 android:text="@string/about_card_source"
                 android:textColor="@color/colorText"
-                android:textColorLink="@color/colorTextDisabled"
+                android:textColorLink="@color/colorTextLink"
                 android:textAlignment="textStart"
-                android:autoLink="web" />
+                android:autoLink="web"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/card_about_credits" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </LinearLayout>

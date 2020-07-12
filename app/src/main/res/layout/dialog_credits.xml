@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/image_dialog"
+        android:gravity="center"
+        android:elevation="2dp"
+        android:src="@mipmap/dialog_logo_credit"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/app_name" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:elevation="1dp"
+        android:layout_below="@id/image_dialog"
+        android:layout_marginTop="-20dp"
+        android:background="@drawable/dialog_background" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp">
+
+        <TextView
+            android:id="@+id/credits_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="10dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:textSize="16sp"
+            android:textColor="@color/colorText"
+            android:textColorLink="@color/colorTextLink"
+            android:textAlignment="textStart"
+            android:autoLink="web"
+            android:text="@string/dialog_credits_text"/>
+
+        <Button
+            android:id="@+id/btn_close"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:elevation="1dp"
+            android:background="@drawable/dialog_button_background"
+            android:textColor="@color/colorText"
+            android:text="@string/dialog_credits_button"
+            android:layout_below="@+id/credits_text" />
+
+        </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
+</RelativeLayout>

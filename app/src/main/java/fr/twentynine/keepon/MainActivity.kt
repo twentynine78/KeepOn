@@ -138,6 +138,12 @@ class MainActivity : AppCompatActivity() {
             timeoutSwitch.switch.setOnClickListener { view ->
                 saveSelectedSwitch(view)
             }
+        // Set OnClickListener to open credits dialog
+        card_about_credits_label.setOnClickListener {
+            KeepOnUtils.getCreditsDialog(this).show()
+        }
+        card_about_credits.setOnClickListener {
+            KeepOnUtils.getCreditsDialog(this).show()
         }
 
         // Manage checkbox for monitor screen off or not
