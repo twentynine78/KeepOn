@@ -11,7 +11,7 @@
 
     <string name="timeout_settings">Réglages</string>
     <string name="timeout_settings_label">Choisi les valeurs qui seront disponibles dans les réglages rapides d\'Android :</string>
-    <string name="reset_checkbox">Réinitialiser le délai d\'attente de l\'écran à sa valeur par default lorsque l\'écran s\'éteint.</string>
+    <string name="reset_checkbox">Restaurer la valeur à %s après avoir verrouillé l\'appareil</string>
     <string name="settings_save">Configuration sauvegardée !</string>
 
     <string name="timeout_15_seconds">15 secondes</string>

@@ -376,6 +376,12 @@ class MainActivity : AppCompatActivity() {
                 switch.isClickable = false
                 switch.isEnabled = false
                 switch.setTextColor(getColor(R.color.colorTextDisabled))
+
+                // Set original timeout in checkBoxScreenOff text
+                checkBoxScreenOff.text = String.format(
+                    Locale.getDefault(),
+                    getString(R.string.reset_checkbox), switch.text.toString().toLowerCase(Locale.getDefault())
+                )
             } else {
                 switch.isClickable = true
                 switch.isEnabled = true
