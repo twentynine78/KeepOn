@@ -66,16 +66,6 @@ class MultiProvider : ContentProvider() {
             return defaultVal
         }
 
-        fun extractLongFromCursor(cursor: Cursor?, defaultVal: Long): Long {
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    return cursor.getInt(cursor.getColumnIndex(VALUE)).toLong()
-                }
-                cursor.close()
-            }
-            return defaultVal
-        }
-
         fun extractBooleanFromCursor(cursor: Cursor?, defaultVal: Boolean): Boolean {
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
@@ -288,4 +278,15 @@ class MultiProvider : ContentProvider() {
         builder.add(value)
         return matrixCursor
     }
+
+    /* Unused functions
+    fun extractLongFromCursor(cursor: Cursor?, defaultVal: Long): Long {
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                return cursor.getInt(cursor.getColumnIndex(VALUE)).toLong()
+            }
+            cursor.close()
+        }
+        return defaultVal
+    } */
 }

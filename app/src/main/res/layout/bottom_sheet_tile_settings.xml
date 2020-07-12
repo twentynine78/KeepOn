@@ -8,7 +8,6 @@
     android:layout_height="wrap_content"
     android:elevation="24dp"
     android:outlineProvider="none"
-    android:layout_gravity="clip_vertical"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     app:behavior_hideable="false"
     app:behavior_peekHeight="75dp"
@@ -375,6 +374,8 @@
         android:foregroundGravity="center"
         android:elevation="22dp"
         android:outlineProvider="none"
+        android:scaleType="centerInside"
+        android:padding="14dp"
         android:contentDescription="@string/bottom_sheet_preview_desc"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -382,7 +383,7 @@
     <View
         android:id="@+id/bottomMarginView"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="26dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bottomSheetBackground"/>

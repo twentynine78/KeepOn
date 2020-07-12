@@ -131,16 +131,25 @@ class KeepOnUtils {
             // Set font underline from preference
             paint.isUnderlineText = Preferences.getQSStyleFontUnderline(context)
 
-            paint.textAlign = Align.CENTER
+            //paint.textAlign = Align.CENTER
+            paint.textAlign = Align.LEFT
             paint.isAntiAlias = true
             paint.color = Color.WHITE
 
-            // Calculate coordinates and draw text
-            val originTextBound = calculateOriginTextBound(paint, displayTimeout)
+            // Calculate coordinates
+            val rect = Rect()
+            canvas.getClipBounds(rect)
+            val canvasHeight = rect.height()
+            val canvasWidth = rect.width()
+            paint.getTextBounds(displayTimeout, 0, displayTimeout.length, rect)
+            val x = canvasWidth / 2f - rect.width() / 2f - rect.left
+            val y = canvasHeight / 2f + rect.height() / 2f - rect.bottom
+
+            // Draw text
             canvas.drawText(
                 displayTimeout,
-                ((imageWidth / 2) - (paint.strokeWidth / 4) + ((Preferences.getQSStyleFontSpacing(context) * 7).px / scaleRatio)),
-                ((imageHeight / 2) - (paint.strokeWidth / 4) - originTextBound.exactCenterY()),
+                x + ((Preferences.getQSStyleFontSpacing(context) * 7).px / scaleRatio),
+                y,
                 paint
             )
             canvas.save()
@@ -401,13 +410,14 @@ class KeepOnUtils {
         }
 
         fun setTimeout(timeout: Int, context: Context) {
-            setValueChange(true, context)
             try {
+                setValueChange(true, context)
                 Settings.System.putInt(
                     context.contentResolver,
                     Settings.System.SCREEN_OFF_TIMEOUT, timeout
                 )
             } catch (e: Exception) {
+                setValueChange(false, context)
                 e.printStackTrace()
             }
         }
@@ -511,10 +521,6 @@ class KeepOnUtils {
             }
         }
 
-        private fun calculateOriginTextBound(paintText: Paint, drawText: String): Rect {
-            val textBound = Rect()
-            paintText.getTextBounds(drawText, 0, drawText.length, textBound)
-            return textBound
         }
     }
 }

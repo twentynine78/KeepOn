@@ -47,7 +47,7 @@ import kotlinx.android.synthetic.main.bottom_sheet_tile_settings.*
 import kotlinx.android.synthetic.main.card_main_about.*
 import kotlinx.android.synthetic.main.card_main_settings.*
 import kotlinx.android.synthetic.main.content_main.*
-import java.util.*
+import java.util.Locale
 import kotlin.collections.ArrayList
 import kotlin.math.hypot
 import kotlin.math.roundToInt
@@ -62,15 +62,14 @@ class MainActivity : AppCompatActivity() {
     private var permissionDialog: Dialog? = null
     private var notificationDialog: Dialog? = null
     private var receiverRegistered = false
-    private lateinit var glideTarget: CustomTarget<Bitmap>
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
+    private var glideTarget: CustomTarget<Bitmap>? = null
+    private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
 
     private val Int.px: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
     private val Int.dp: Int
         get() = (this / Resources.getSystem().displayMetrics.density).toInt()
-
 
     private val receiver: BroadcastReceiver = object : BroadcastReceiver()  {
         override fun onReceive(contxt: Context?, intent: Intent?) {
@@ -147,8 +146,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Manage checkbox for monitor screen off or not
-        checkBoxScreenOff!!.isChecked = KeepOnUtils.getResetOnScreenOff(this)
-        checkBoxScreenOff!!.setOnCheckedChangeListener { view, isChecked ->
+        checkBoxScreenOff.isChecked = KeepOnUtils.getResetOnScreenOff(this)
+        checkBoxScreenOff.setOnCheckedChangeListener { view, isChecked ->
             KeepOnUtils.setResetOnScreenOff(isChecked, this)
 
             if (!isChecked) {
@@ -189,18 +188,21 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Set bottom sheet behavior
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+
         // Set OnClick listener for bottom sheet peek views
         bottomSheetPeekTextView.setOnClickListener {
-            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED)
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            if (bottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED)
+                bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
             else
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
         }
         tilePreview.setOnClickListener {
-            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED)
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            if (bottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED)
+                bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
             else
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
         // Define glide target to set bitmap to tile preview
@@ -216,8 +218,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Set onSlide bottom sheet behavior
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-        bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior!!.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 setOnSlideBottomSheetAnim(slideOffset)
             }
@@ -226,9 +227,8 @@ class MainActivity : AppCompatActivity() {
 
         })
 
-        // Simulate expanded state to render bottom sheet correctly
-        setOnSlideBottomSheetAnim(1.0f)
-        setOnSlideBottomSheetAnim(0.0f)
+        // Set initial bottom sheet state
+        bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
 
         // Load QS Style preference
         loadQSStylePreferences()
@@ -315,8 +315,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        if (bottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
         } else {
             super.onBackPressed()
         }
@@ -344,7 +344,7 @@ class MainActivity : AppCompatActivity() {
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .skipMemoryCache(true)
             .load(KeepOnUtils.getBitmapFromText(currentTimeout, this, true))
-            .into(glideTarget)
+            .into(glideTarget!!)
 
         // Request QSTile update
         val componentName = ComponentName(this.applicationContext, KeepOnTileService::class.java)
@@ -439,8 +439,8 @@ class MainActivity : AppCompatActivity() {
     private fun setOnSlideBottomSheetAnim(slideOffset: Float) {
         // Define default and max size of views and coefficient
         val defaultPreviewSize = 60.px
-        val defaultPreviewPadding = 12.px
-        val defaultBottomMarginViewHeight = 50.px
+        val defaultPreviewPadding = 14.px
+        val defaultBottomMarginViewHeight = 26.px
         val maxPreviewSize = 110.px
         val maxPreviewPadding = 19.px
         val coefficientStartMarginPeek = 1.1
@@ -466,9 +466,8 @@ class MainActivity : AppCompatActivity() {
         bottomSheetPeekArrow.pivotY = (bottomSheetPeekArrow.measuredHeight / 2).toFloat()
         bottomSheetPeekArrow.rotation = slideOffset * -180
 
-        // Adapt bottom and top margin
-        bottomMarginView.layoutParams.height = defaultBottomMarginViewHeight - (slideOffset * (maxPreviewSize - defaultPreviewSize).dp).roundToInt().px
-        bottomSheet.setPadding(0, ((slideOffset * (maxPreviewSize - defaultPreviewSize).dp).roundToInt().px / 2), 0, 0)
+        // Adapt bottom margin view
+        bottomMarginView.layoutParams.height = defaultBottomMarginViewHeight - ((slideOffset * (maxPreviewSize - defaultPreviewSize).dp).roundToInt().px / 2)
 
         // Apply modification
         tilePreview.requestLayout()

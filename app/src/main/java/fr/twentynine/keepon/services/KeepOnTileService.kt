@@ -104,16 +104,7 @@ class KeepOnTileService: TileService() {
         super.onStartListening()
 
         if (qsTile.state == Tile.STATE_UNAVAILABLE) this.stopSelf()
-        /* val tileIcon = Icon.createWithBitmap(KeepOnUtils.getBitmapFromText(newTimeout, this))
 
-        if (keeponTile != null && tileIcon != null) {
-            keeponTile.state = tileState
-            keeponTile.icon = tileIcon
-            keeponTile.label = getString(R.string.qs_tile_label)
-            keeponTile.contentDescription = getString(R.string.qs_tile_desc)
-
-            keeponTile.updateTile()
-        } */
         originalTimeout = KeepOnUtils.getOriginalTimeout(this)
         newTimeout = if (KeepOnUtils.getNewTimeout(this) >= 0) {
             KeepOnUtils.getNewTimeout(this)

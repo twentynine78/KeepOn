@@ -8,6 +8,7 @@
     <color name="colorBackground">#FF000000</color>
     <color name="colorBackgroundCard">#FF222222</color>
     <color name="colorText">#FFDBDBDB</color>
+    <color name="colorTextLink">#FF9c9c9c</color>
     <color name="colorTextDisabled">#FF6B6B6B</color>
     <color name="colorBorder">#FF111111</color>
     <color name="colorBottomSheet">#FF0D0D0D</color>

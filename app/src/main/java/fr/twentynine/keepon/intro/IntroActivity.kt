@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -47,9 +49,12 @@ class IntroActivity : AppIntro2() {
         sliderPageSix.imageDrawable = R.mipmap.img_intro_six
         sliderPageSix.backgroundColor = COLOR_SLIDE_SIX
 
+        val looper: Looper = if (Looper.myLooper() != null) Looper.myLooper()!! else Looper.getMainLooper()
+        val handler = Handler(looper)
+
         addSlide(AppIntroFragment.newInstance(sliderPageHome))
-        addSlide(IntroFragmentPermission())
-        addSlide(IntroFragmentNotification())
+        addSlide(IntroFragmentPermission(handler))
+        addSlide(IntroFragmentNotification(handler))
         addSlide(AppIntroFragment.newInstance(sliderPageFour))
         addSlide(AppIntroFragment.newInstance(sliderPageFive))
         addSlide(AppIntroFragment.newInstance(sliderPageSix))

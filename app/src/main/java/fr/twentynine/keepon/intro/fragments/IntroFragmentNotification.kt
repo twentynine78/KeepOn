@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.provider.Settings
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -23,13 +22,15 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_NOTIF
 import fr.twentynine.keepon.utils.KeepOnUtils
+import java.lang.Exception
 
 
-class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
+class IntroFragmentNotification constructor(handler: Handler) : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
 
     private lateinit var mContext: Context
     private lateinit var mView: View
     private lateinit var mButton: Button
+    private val mHandler: Handler = handler
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mContext = requireContext()
@@ -37,16 +38,18 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
 
         setBackgroundColor(defaultBackgroundColor)
 
-        val looper: Looper = if (Looper.myLooper() != null) Looper.myLooper()!! else Looper.getMainLooper()
-        val handler = Handler(looper)
         val checkSettingOn: Runnable = object : Runnable {
             override fun run() {
                 if (!KeepOnUtils.isNotificationEnabled(mContext)) {
                     val intent = Intent(mContext.applicationContext, IntroActivity::class.java)
                     startActivity(intent)
                     return
+                } else {
+                    try {
+                        mHandler.postDelayed(this, 200)
+                    } catch (e: Exception) {
+                    }
                 }
-                handler.postDelayed(this, 200)
             }
         }
 
@@ -61,8 +64,10 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
                         .putExtra(Settings.EXTRA_CHANNEL_ID, KeepOnUtils.NOTIFICATION_CHANNEL_ID)
                         .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                         .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-
-                    handler.postDelayed(checkSettingOn, 1000)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    try {
+                        mHandler.post(checkSettingOn)
+                    } catch (e: Exception) {}
                     mContext.startActivity(intent)
                 }
             } else {
@@ -71,7 +76,9 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-                handler.postDelayed(checkSettingOn, 1000)
+                try {
+                    mHandler.post(checkSettingOn)
+                } catch (e: Exception) {}
                 mContext.startActivity(intent)
             }
         }

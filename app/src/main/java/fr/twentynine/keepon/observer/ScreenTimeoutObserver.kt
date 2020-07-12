@@ -12,38 +12,29 @@ import fr.twentynine.keepon.utils.KeepOnUtils
 
 class ScreenTimeoutObserver(handler: Handler?, val context: Context) : ContentObserver(handler) {
 
-    private var previousTimeout = KeepOnUtils.getCurrentTimeout(context)
-
-    override fun onChange(selfChange: Boolean, uri: Uri?) {
-        super.onChange(selfChange, uri)
-        processChange()
+    override fun onChange(selfChange: Boolean) {
+        onChange(selfChange, null)
     }
 
-    override fun onChange(selfChange: Boolean) {
-        super.onChange(selfChange)
+    override fun onChange(selfChange: Boolean, uri: Uri?) {
         processChange()
     }
 
     private fun processChange() {
-        val currentTimeout = KeepOnUtils.getCurrentTimeout(context)
-        val delta = previousTimeout - currentTimeout
+        if (!KeepOnUtils.getValueChange(context)) {
+            KeepOnUtils.updateOriginalTimeout(context)
 
-        if (delta != 0) {
-            if (!KeepOnUtils.getValueChange(context)) {
-                KeepOnUtils.setKeepOn(false, context)
-                KeepOnUtils.updateOriginalTimeout(context)
-
-                KeepOnUtils.stopScreenOffReceiverService(context)
-            } else {
-                KeepOnUtils.setValueChange(false, context)
-            }
-
-            val componentName = ComponentName(context.applicationContext, KeepOnTileService::class.java)
-            TileService.requestListeningState(context, componentName)
-
-            KeepOnUtils.sendBroadcastUpdateMainUI(context)
-
-            previousTimeout = currentTimeout
+            KeepOnUtils.setKeepOn(false, context)
+            KeepOnUtils.stopScreenOffReceiverService(context)
+        } else {
+            KeepOnUtils.setValueChange(false, context)
         }
+
+        TileService.requestListeningState(
+            context,
+            ComponentName(context.applicationContext, KeepOnTileService::class.java)
+        )
+
+        KeepOnUtils.sendBroadcastUpdateMainUI(context)
     }
 }
