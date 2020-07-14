@@ -94,7 +94,7 @@ class IntroFragmentPermission constructor(handler: Handler) : Fragment(), SlideB
 
     override fun onUserIllegallyRequestedNextPage() {
         return Snackbar.make(mView, getString(R.string.intro_toast_permission_needed), Snackbar.LENGTH_LONG)
-            .setAnchorView(R.id.bottomSheet)
+            .setAnchorView(R.id.button)
             .show()
     }
 
