@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/shape_circle_background">
         <shape android:shape="oval" >
-            <solid android:color="@color/colorPreviewBackground" />
+            <solid android:color="@color/colorTilePreviewBackground" />
             <padding
                 android:left="5dp"
                 android:top="5dp"

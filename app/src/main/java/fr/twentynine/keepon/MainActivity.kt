@@ -24,6 +24,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewAnimationUtils
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
@@ -47,6 +48,7 @@ import kotlinx.android.synthetic.main.bottom_sheet_tile_settings.*
 import kotlinx.android.synthetic.main.card_main_about.*
 import kotlinx.android.synthetic.main.card_main_settings.*
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.fragment_intro_button.view.*
 import java.util.Locale
 import kotlin.collections.ArrayList
 import kotlin.math.hypot
@@ -204,11 +206,31 @@ class MainActivity : AppCompatActivity() {
             else
                 bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
         }
+
+        // Set OnClick listener for Tile Preview to switch like from Quick Settings
         tilePreview.setOnClickListener {
-            if (bottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED)
-                bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-            else
-                bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+            if (KeepOnUtils.getSelectedTimeout(this).size < 1) {
+                KeepOnUtils.sendBroadcastMissingSettings(this)
+            }
+
+            val newTimeout = KeepOnUtils.getNextTimeoutValue(this)
+
+            KeepOnUtils.setNewTimeout(newTimeout, this)
+            TileService.requestListeningState(
+                this,
+                ComponentName(this, KeepOnTileService::class.java)
+            )
+
+            if (newTimeout == KeepOnUtils.getOriginalTimeout(this)) {
+                KeepOnUtils.setKeepOn(false, this)
+                KeepOnUtils.stopScreenOffReceiverService(this)
+            } else {
+                KeepOnUtils.setKeepOn(true, this)
+                if (KeepOnUtils.getResetOnScreenOff(this))
+                    KeepOnUtils.startScreenOffReceiverService(this)
+            }
+
+            KeepOnUtils.setTimeout(newTimeout, this)
         }
 
         // Define glide target to set bitmap to tile preview
@@ -216,7 +238,18 @@ class MainActivity : AppCompatActivity() {
             override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                 tilePreview.setImageBitmap(resource)
                 tilePreview.imageTintMode = PorterDuff.Mode.SRC_IN
-                tilePreview.imageTintList = getColorStateList(android.R.color.white)
+                val layerDrawableCircle: LayerDrawable = tilePreviewBackground.drawable as LayerDrawable
+                val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
+
+                if (KeepOnUtils.getCurrentTimeout(this@MainActivity) == KeepOnUtils.getOriginalTimeout(this@MainActivity)) {
+                    tilePreview.imageTintList = getColorStateList(R.color.colorTilePreviewDisabled)
+                    circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackgroundDisabled))
+                } else {
+                    tilePreview.imageTintList = getColorStateList(R.color.colorTilePreview)
+                    circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackground))
+                }
+
+
             }
             override fun onLoadCleared(placeholder: Drawable?) {
                 tilePreview.setImageDrawable(placeholder)
