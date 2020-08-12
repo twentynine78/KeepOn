@@ -121,15 +121,15 @@ class MainActivity : AppCompatActivity() {
 
         // Create an array of TimeoutSwitch
         timeoutSwitchs = arrayOf (
-            TimeoutSwitch(switch15s, 15000),
-            TimeoutSwitch(switch30s, 30000),
-            TimeoutSwitch(switch1m, 60000),
-            TimeoutSwitch(switch2m, 120000),
-            TimeoutSwitch(switch5m, 300000),
-            TimeoutSwitch(switch10m, 600000),
-            TimeoutSwitch(switch30m, 1800000),
-            TimeoutSwitch(switch1h, 3600000),
-            TimeoutSwitch(switchInfinite, Int.MAX_VALUE)
+            TimeoutSwitch(switch15s, KeepOnUtils.getTimeoutValueArray()[0]),
+            TimeoutSwitch(switch30s, KeepOnUtils.getTimeoutValueArray()[1]),
+            TimeoutSwitch(switch1m, KeepOnUtils.getTimeoutValueArray()[2]),
+            TimeoutSwitch(switch2m, KeepOnUtils.getTimeoutValueArray()[3]),
+            TimeoutSwitch(switch5m, KeepOnUtils.getTimeoutValueArray()[4]),
+            TimeoutSwitch(switch10m, KeepOnUtils.getTimeoutValueArray()[5]),
+            TimeoutSwitch(switch30m, KeepOnUtils.getTimeoutValueArray()[6]),
+            TimeoutSwitch(switch1h, KeepOnUtils.getTimeoutValueArray()[7]),
+            TimeoutSwitch(switchInfinite, KeepOnUtils.getTimeoutValueArray()[8])
         )
 
         // Set OnClickListener for each switch

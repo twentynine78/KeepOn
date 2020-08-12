@@ -55,6 +55,45 @@ class KeepOnUtils {
         private val Int.px: Int
             get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
+        fun getTimeoutValueArray() : ArrayList<Int> {
+            return arrayListOf (
+                15000,
+                30000,
+                60000,
+                120000,
+                300000,
+                600000,
+                1800000,
+                3600000,
+                Int.MAX_VALUE
+            )
+        }
+
+        fun getNextTimeoutValue(context: Context): Int {
+            val allTimeouts = getTimeoutValueArray()
+            allTimeouts.indexOf(getCurrentTimeout(context))
+
+            val availableTimeout: ArrayList<Int> = ArrayList()
+            availableTimeout.addAll(getSelectedTimeout(context))
+            availableTimeout.remove(getOriginalTimeout(context))
+            availableTimeout.add(getOriginalTimeout(context))
+            availableTimeout.sort()
+
+            val currentTimeout = getCurrentTimeout(context)
+            var allCurrentIndex = allTimeouts.indexOf(currentTimeout)
+            for (i in 0 until allTimeouts.size) {
+                if (allCurrentIndex == allTimeouts.size - 1 || allCurrentIndex == -1) {
+                    allCurrentIndex = 0
+                } else {
+                    allCurrentIndex++
+                }
+                if (availableTimeout.indexOf(allTimeouts[allCurrentIndex]) != -1) {
+                    return availableTimeout[availableTimeout.indexOf(allTimeouts[allCurrentIndex])]
+                }
+            }
+            return -1
+        }
+
         fun getBitmapFromText(timeout: Int, context: Context, bigSize: Boolean = false): Bitmap {
             // Set scale ratio to 3 for small size
             val scaleRatio = if (bigSize) 1 else 3

@@ -145,27 +145,13 @@ class KeepOnTileService: TileService() {
 
         KeepOnUtils.startScreenTimeoutObserverService(this)
 
-        val availableTimeout: ArrayList<Int> = ArrayList()
-        availableTimeout.addAll(KeepOnUtils.getSelectedTimeout(this))
-        availableTimeout.remove(KeepOnUtils.getOriginalTimeout(this))
-        availableTimeout.add(KeepOnUtils.getOriginalTimeout(this))
-        availableTimeout.sort()
-
-        val currentTimeout = KeepOnUtils.getCurrentTimeout(this)
-        val currentIndex = availableTimeout.indexOf(currentTimeout)
-        val newTimeout = if (currentIndex == availableTimeout.size - 1 || currentIndex == -1) {
-            availableTimeout[0]
-        } else {
-            availableTimeout[currentIndex + 1]
-        }
+        val newTimeout = KeepOnUtils.getNextTimeoutValue(this)
 
         KeepOnUtils.setNewTimeout(newTimeout, this)
         requestListeningState(this, ComponentName(this, KeepOnTileService::class.java))
-        applyNewTimeout(newTimeout)
-    }
 
-    private fun applyNewTimeout(timeout: Int) {
-        if (timeout == KeepOnUtils.getOriginalTimeout(this)) {
+        // Apply new timeout
+        if (newTimeout == KeepOnUtils.getOriginalTimeout(this)) {
             KeepOnUtils.setKeepOn(false, this)
             KeepOnUtils.stopScreenOffReceiverService(this)
         } else {
@@ -174,7 +160,7 @@ class KeepOnTileService: TileService() {
                 KeepOnUtils.startScreenOffReceiverService(this)
         }
 
-        KeepOnUtils.setTimeout(timeout, this)
+        KeepOnUtils.setTimeout(newTimeout, this)
     }
 
     private fun setGlideTarget() {
