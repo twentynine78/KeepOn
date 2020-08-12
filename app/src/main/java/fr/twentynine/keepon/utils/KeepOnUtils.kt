@@ -19,8 +19,6 @@ import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.provider.Settings
 import android.text.TextUtils
 import android.view.Window
@@ -34,6 +32,12 @@ import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.preferences.Preferences
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import java.util.Locale
 
 
@@ -131,7 +135,6 @@ class KeepOnUtils {
             // Set font underline from preference
             paint.isUnderlineText = Preferences.getQSStyleFontUnderline(context)
 
-            //paint.textAlign = Align.CENTER
             paint.textAlign = Align.LEFT
             paint.isAntiAlias = true
             paint.color = Color.WHITE
@@ -228,16 +231,27 @@ class KeepOnUtils {
         }
 
         fun getNotificationDialog(context: Context, returnClass: Class<*>): Dialog {
-            val looper: Looper = if (Looper.myLooper() != null) Looper.myLooper()!! else Looper.getMainLooper()
-            val handler = Handler(looper)
-            val checkSettingOn: Runnable = object : Runnable {
-                override fun run() {
+            fun checkSettings() {
+                runBlocking {
                     if (!isNotificationEnabled(context)) {
-                        val intent = Intent(context.applicationContext, returnClass)
-                        context.startActivity(intent)
-                        return
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val intent = Intent(context.applicationContext, returnClass)
+                            context.startActivity(intent)
+                        }
+                    } else {
+                        delay(200)
+                        CoroutineScope(Dispatchers.Default).launch {
+                            checkSettings()
+                        }
                     }
-                    handler.postDelayed(this, 200)
+                }
+            }
+
+            fun checkSettingOn() = CoroutineScope(Dispatchers.Default).launch {
+                delay(500)
+                withTimeout(60000
+                ) {
+                    checkSettings()
                 }
             }
 
@@ -264,7 +278,7 @@ class KeepOnUtils {
                             .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                             .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-                        handler.postDelayed(checkSettingOn, 1000)
+                        checkSettingOn()
                         context.startActivity(intent)
                     }
                 } else {
@@ -273,7 +287,7 @@ class KeepOnUtils {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                     intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-                    handler.postDelayed(checkSettingOn, 1000)
+                    checkSettingOn()
                     context.startActivity(intent)
                 }
             }
@@ -283,16 +297,27 @@ class KeepOnUtils {
         }
 
         fun getPermissionDialog(context: Context, returnClass: Class<*>): Dialog {
-            val looper: Looper = if (Looper.myLooper() != null) Looper.myLooper()!! else Looper.getMainLooper()
-            val handler = Handler(looper)
-            val checkSettingOn: Runnable = object : Runnable {
-                override fun run() {
+            fun checkSettings() {
+                runBlocking {
                     if (Settings.System.canWrite(context.applicationContext)) {
-                        val intent = Intent(context.applicationContext, returnClass)
-                        context.startActivity(intent)
-                        return
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val intent = Intent(context.applicationContext, returnClass)
+                            context.startActivity(intent)
+                        }
+                    } else {
+                        delay(200)
+                        CoroutineScope(Dispatchers.Default).launch {
+                            checkSettings()
+                        }
                     }
-                    handler.postDelayed(this, 200)
+                }
+            }
+
+            fun checkSettingOn() = CoroutineScope(Dispatchers.Default).launch {
+                delay(500)
+                withTimeout(60000
+                ) {
+                    checkSettings()
                 }
             }
 
@@ -316,7 +341,7 @@ class KeepOnUtils {
                     .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-                handler.postDelayed(checkSettingOn, 1000)
+                checkSettingOn()
                 context.startActivity(intent)
             }
             dialog.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))

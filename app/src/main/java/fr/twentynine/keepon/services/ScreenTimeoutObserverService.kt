@@ -23,7 +23,7 @@ class ScreenTimeoutObserverService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        screenTimeoutObserver = ScreenTimeoutObserver(null, this)
+        screenTimeoutObserver = ScreenTimeoutObserver(this)
         registerScreenTimeoutObserver(screenTimeoutObserver!!, this)
         startForegroundService()
     }

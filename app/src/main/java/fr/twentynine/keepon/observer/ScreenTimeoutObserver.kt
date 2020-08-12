@@ -4,13 +4,12 @@ import android.content.ComponentName
 import android.content.Context
 import android.database.ContentObserver
 import android.net.Uri
-import android.os.Handler
 import android.service.quicksettings.TileService
 import fr.twentynine.keepon.services.KeepOnTileService
 import fr.twentynine.keepon.utils.KeepOnUtils
 
 
-class ScreenTimeoutObserver(handler: Handler?, val context: Context) : ContentObserver(handler) {
+class ScreenTimeoutObserver(val context: Context) : ContentObserver(null) {
 
     override fun onChange(selfChange: Boolean) {
         onChange(selfChange, null)

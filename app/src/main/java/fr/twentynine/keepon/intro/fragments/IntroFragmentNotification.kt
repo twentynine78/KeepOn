@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.provider.Settings
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -22,15 +21,19 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_NOTIF
 import fr.twentynine.keepon.utils.KeepOnUtils
-import java.lang.Exception
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 
 
-class IntroFragmentNotification constructor(handler: Handler) : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
+class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
 
     private lateinit var mContext: Context
     private lateinit var mView: View
     private lateinit var mButton: Button
-    private val mHandler: Handler = handler
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mContext = requireContext()
@@ -38,18 +41,27 @@ class IntroFragmentNotification constructor(handler: Handler) : Fragment(), Slid
 
         setBackgroundColor(defaultBackgroundColor)
 
-        val checkSettingOn: Runnable = object : Runnable {
-            override fun run() {
+        fun checkSettings() {
+            runBlocking {
                 if (!KeepOnUtils.isNotificationEnabled(mContext)) {
-                    val intent = Intent(mContext.applicationContext, IntroActivity::class.java)
-                    startActivity(intent)
-                    return
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val intent = Intent(mContext, IntroActivity::class.java)
+                        startActivity(intent)
+                    }
                 } else {
-                    try {
-                        mHandler.postDelayed(this, 200)
-                    } catch (e: Exception) {
+                    delay(200)
+                    CoroutineScope(Dispatchers.Default).launch {
+                        checkSettings()
                     }
                 }
+            }
+        }
+
+        fun checkSettingOn() = CoroutineScope(Dispatchers.Default).launch {
+            delay(500)
+            withTimeout(60000
+            ) {
+                checkSettings()
             }
         }
 
@@ -65,9 +77,8 @@ class IntroFragmentNotification constructor(handler: Handler) : Fragment(), Slid
                         .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                         .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    try {
-                        mHandler.post(checkSettingOn)
-                    } catch (e: Exception) {}
+
+                    checkSettingOn()
                     mContext.startActivity(intent)
                 }
             } else {
@@ -76,9 +87,7 @@ class IntroFragmentNotification constructor(handler: Handler) : Fragment(), Slid
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-                try {
-                    mHandler.post(checkSettingOn)
-                } catch (e: Exception) {}
+                checkSettingOn()
                 mContext.startActivity(intent)
             }
         }

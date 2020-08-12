@@ -4,8 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -14,10 +12,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.utils.KeepOnUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SplashScreen : AppCompatActivity() {
-    private val looper: Looper = if (Looper.myLooper() != null) Looper.myLooper()!! else Looper.getMainLooper()
-    private val mHandler = Handler(looper)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,17 +49,19 @@ class SplashScreen : AppCompatActivity() {
 
         if (!KeepOnUtils.getSkipIntro(this)) {
             //Start Intro on first launch
-            mHandler.postDelayed({
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(SPLASH_TIME_OUT)
                 startActivity(IntroActivity.newIntent(applicationContext))
                 finish()
-            }, SPLASH_TIME_OUT)
+            }
         } else {
             // Launch MainActivity
-            mHandler.postDelayed({
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(SPLASH_TIME_OUT)
                 val mainIntent = MainActivity.newIntent(applicationContext)
                 startActivity(mainIntent)
                 finish()
-            }, SPLASH_TIME_OUT)
+            }
         }
     }
 

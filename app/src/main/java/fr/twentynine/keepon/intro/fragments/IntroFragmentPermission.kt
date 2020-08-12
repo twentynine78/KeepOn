@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
@@ -21,14 +20,18 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_PERM
 import fr.twentynine.keepon.utils.KeepOnUtils
-import java.lang.Exception
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 
 
-class IntroFragmentPermission constructor(handler: Handler) : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
+class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
     private lateinit var mContext: Context
     private lateinit var mView: View
     private lateinit var mButton: Button
-    private val mHandler: Handler = handler
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mContext = requireContext()
@@ -36,18 +39,27 @@ class IntroFragmentPermission constructor(handler: Handler) : Fragment(), SlideB
 
         setBackgroundColor(defaultBackgroundColor)
 
-        val checkSettingOn: Runnable = object : Runnable {
-            override fun run() {
-                if (Settings.System.canWrite(requireContext().applicationContext)) {
-                    val intent = Intent(mContext.applicationContext, IntroActivity::class.java)
-                    startActivity(intent)
-                    return
+        fun checkSettings() {
+            runBlocking {
+                if (Settings.System.canWrite(mContext)) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val intent = Intent(mContext, IntroActivity::class.java)
+                        startActivity(intent)
+                    }
                 } else {
-                    try {
-                        mHandler.postDelayed(this, 200)
-                    } catch (e: Exception) {
+                    delay(200)
+                    CoroutineScope(Dispatchers.Default).launch {
+                        checkSettings()
                     }
                 }
+            }
+        }
+
+        fun checkSettingOn() = CoroutineScope(Dispatchers.Default).launch {
+            delay(500)
+            withTimeout(60000
+            ) {
+                checkSettings()
             }
         }
 
@@ -60,9 +72,8 @@ class IntroFragmentPermission constructor(handler: Handler) : Fragment(), SlideB
                 .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            try {
-                mHandler.post(checkSettingOn)
-            } catch (e: Exception) {}
+
+            checkSettingOn()
             mContext.startActivity(intent)
         }
 
