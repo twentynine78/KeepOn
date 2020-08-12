@@ -236,6 +236,7 @@ class KeepOnUtils {
                     if (!isNotificationEnabled(context)) {
                         CoroutineScope(Dispatchers.Main).launch {
                             val intent = Intent(context.applicationContext, returnClass)
+                            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
                             context.startActivity(intent)
                         }
                     } else {
@@ -277,15 +278,18 @@ class KeepOnUtils {
                             .putExtra(Settings.EXTRA_CHANNEL_ID, NOTIFICATION_CHANNEL_ID)
                             .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                             .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                            .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
                         checkSettingOn()
                         context.startActivity(intent)
                     }
                 } else {
                     val uri = Uri.fromParts("package", context.packageName, null)
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(uri)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                        .setData(uri)
+                        .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                        .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
                     checkSettingOn()
                     context.startActivity(intent)
@@ -302,6 +306,7 @@ class KeepOnUtils {
                     if (Settings.System.canWrite(context.applicationContext)) {
                         CoroutineScope(Dispatchers.Main).launch {
                             val intent = Intent(context.applicationContext, returnClass)
+                            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
                             context.startActivity(intent)
                         }
                     } else {
@@ -340,6 +345,7 @@ class KeepOnUtils {
                     .setData(Uri.parse("package:" + context.packageName))
                     .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                    .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
                 checkSettingOn()
                 context.startActivity(intent)

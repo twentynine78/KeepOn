@@ -46,6 +46,7 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
                 if (!KeepOnUtils.isNotificationEnabled(mContext)) {
                     CoroutineScope(Dispatchers.Main).launch {
                         val intent = Intent(mContext, IntroActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
                         startActivity(intent)
                     }
                 } else {
@@ -76,16 +77,18 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
                         .putExtra(Settings.EXTRA_CHANNEL_ID, KeepOnUtils.NOTIFICATION_CHANNEL_ID)
                         .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                         .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
                     checkSettingOn()
                     mContext.startActivity(intent)
                 }
             } else {
                 val uri = Uri.fromParts("package", mContext.packageName, null)
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(uri)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-                intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    .setData(uri)
+                    .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                    .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                    .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
                 checkSettingOn()
                 mContext.startActivity(intent)

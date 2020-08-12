@@ -44,6 +44,7 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
                 if (Settings.System.canWrite(mContext)) {
                     CoroutineScope(Dispatchers.Main).launch {
                         val intent = Intent(mContext, IntroActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
                         startActivity(intent)
                     }
                 } else {
@@ -71,7 +72,7 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
                 .setData(Uri.parse("package:" + mContext.packageName))
                 .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
             checkSettingOn()
             mContext.startActivity(intent)
