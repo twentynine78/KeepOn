@@ -8,6 +8,7 @@
 
     <string name="notification_screen_off_service">Monitoring of the screen shutdown…</string>
     <string name="notification_timeout_service">Monitoring of the modification of the screen timeout…</string>
+    <string name="notification_hide">Press to hide this notification</string>
 
     <string name="timeout_settings">Settings</string>
     <string name="timeout_settings_label">Choose the values that will be available in the Android Quick Settings:</string>

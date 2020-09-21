@@ -4,6 +4,8 @@ import android.app.Dialog
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -476,9 +478,36 @@ class KeepOnUtils {
                 ""
             }
             val notification = NotificationCompat.Builder(context, channelId)
-            notification.setContentTitle(context.getString(R.string.app_name))
-            notification.setContentText(contentText)
+            notification.setContentTitle(String.format(Locale.getDefault(), "%s - %s", context.getString(R.string.app_name), contentText))
+            notification.setContentText(context.getString(R.string.notification_hide))
             notification.setSmallIcon(R.mipmap.ic_qs_keepon)
+
+            var hideIntent = Intent()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (!TextUtils.isEmpty(NOTIFICATION_CHANNEL_ID)) {
+                    hideIntent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+                        .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                        .putExtra(Settings.EXTRA_CHANNEL_ID, NOTIFICATION_CHANNEL_ID)
+                        .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                        .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                }
+            } else {
+                val uri = Uri.fromParts("package", context.packageName, null)
+                hideIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    .setData(uri)
+                    .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                    .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                    .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            }
+            val pendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
+                // Add the intent, which inflates the back stack
+                addNextIntentWithParentStack(hideIntent)
+                // Get the PendingIntent containing the entire back stack
+                getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+            }
+            notification.setContentIntent(pendingIntent)
+
             return notification.build()
         }
 
