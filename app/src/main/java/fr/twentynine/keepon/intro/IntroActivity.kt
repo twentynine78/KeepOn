@@ -94,11 +94,6 @@ class IntroActivity : AppIntro2() {
         }
     }
 
-    override fun onDestroy() {
-        KeepOnUtils.stopScreenTimeoutObserverService(this)
-        super.onDestroy()
-    }
-
     companion object {
         val COLOR_SLIDE_PERM = Color.parseColor("#ffd800")
         val COLOR_SLIDE_NOTIF = Color.parseColor("#00c3ff")

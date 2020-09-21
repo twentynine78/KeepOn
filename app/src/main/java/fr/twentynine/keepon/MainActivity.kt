@@ -31,6 +31,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
+import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
@@ -65,6 +66,7 @@ class MainActivity : AppCompatActivity() {
     private var receiverRegistered = false
     private var glideTarget: CustomTarget<Bitmap>? = null
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
+    private var glideRequestManager: RequestManager? = null
 
     private val Int.px: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
@@ -237,6 +239,10 @@ class MainActivity : AppCompatActivity() {
             KeepOnUtils.setTimeout(newTimeout, this)
         }
 
+        // Create glide request manager
+        if (glideRequestManager == null)
+            glideRequestManager = Glide.with(this)
+
         // Define glide target to set bitmap to tile preview
         glideTarget = object: CustomTarget<Bitmap>() {
             override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
@@ -275,6 +281,9 @@ class MainActivity : AppCompatActivity() {
 
         // Load QS Style preference
         loadQSStylePreferences()
+
+        // Start service to monitor screen timeout
+        KeepOnUtils.startScreenTimeoutObserverService(this)
     }
 
     override fun onResume() {
@@ -358,7 +367,7 @@ class MainActivity : AppCompatActivity() {
         if (receiverRegistered)
             unregisterReceiver(receiver)
 
-        Glide.with(this.applicationContext).clear(glideTarget)
+        glideRequestManager?.clear(glideTarget)
         Glide.get(this).clearMemory()
 
         super.onDestroy()
@@ -382,11 +391,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateTilePreview() {
         // Clear previous target
-        Glide.with(this).clear(glideTarget)
+        glideRequestManager?.clear(glideTarget)
 
         // Set Bitmap to Tile Preview
         val currentTimeout = KeepOnUtils.getCurrentTimeout(this)
-        Glide.with(this)
+        if (glideRequestManager == null) {
+            glideRequestManager = Glide.with(this)
+        }
+        glideRequestManager!!
             .asBitmap()
             .format(DecodeFormat.PREFER_ARGB_8888)
             .circleCrop()

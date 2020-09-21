@@ -54,8 +54,8 @@ class KeepOnTileService: TileService() {
 
     override fun onDestroy() {
         // Clear glide target and clear memory
-        glideRequestManager!!.clear(glideTarget)
-        glide!!.clearMemory()
+        glideRequestManager?.clear(glideTarget)
+        glide?.clearMemory()
 
         super.onDestroy()
     }
