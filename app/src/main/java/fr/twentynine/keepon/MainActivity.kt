@@ -24,13 +24,13 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewAnimationUtils
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
@@ -48,7 +48,6 @@ import kotlinx.android.synthetic.main.bottom_sheet_tile_settings.*
 import kotlinx.android.synthetic.main.card_main_about.*
 import kotlinx.android.synthetic.main.card_main_settings.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.fragment_intro_button.view.*
 import java.util.Locale
 import kotlin.collections.ArrayList
 import kotlin.math.hypot
@@ -122,7 +121,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         // Create an array of TimeoutSwitch
-        timeoutSwitchs = arrayOf (
+        timeoutSwitchs = arrayOf(
             TimeoutSwitch(switch15s, KeepOnUtils.getTimeoutValueArray()[0]),
             TimeoutSwitch(switch30s, KeepOnUtils.getTimeoutValueArray()[1]),
             TimeoutSwitch(switch1m, KeepOnUtils.getTimeoutValueArray()[2]),
@@ -140,7 +139,12 @@ class MainActivity : AppCompatActivity() {
                 saveSelectedSwitch(view)
             }
             timeoutSwitch.switch.setOnLongClickListener {
-                KeepOnUtils.getDefaultTimeoutDialog(timeoutSwitch.timeoutValue, timeoutSwitch.switch.text.toString(), this).show()
+                KeepOnUtils.getDefaultTimeoutDialog(
+                    timeoutSwitch.timeoutValue,
+                    timeoutSwitch.switch.text.toString(),
+                    this
+                ).show()
+
                 true
             }
         }
@@ -281,7 +285,10 @@ class MainActivity : AppCompatActivity() {
             // Show Dialog to disable notifications if enabled
             if (KeepOnUtils.isNotificationEnabled(this)) {
                 if (notificationDialog == null) {
-                    notificationDialog = KeepOnUtils.getNotificationDialog(this, MainActivity::class.java)
+                    notificationDialog = KeepOnUtils.getNotificationDialog(
+                        this,
+                        MainActivity::class.java
+                    )
                     notificationDialog!!.show()
                 } else {
                     if (!notificationDialog!!.isShowing) {
@@ -299,7 +306,10 @@ class MainActivity : AppCompatActivity() {
                 KeepOnUtils.startScreenTimeoutObserverService(this)
 
             // Request QSTile update
-            val componentName = ComponentName(this.applicationContext, KeepOnTileService::class.java)
+            val componentName = ComponentName(
+                this.applicationContext,
+                KeepOnTileService::class.java
+            )
             TileService.requestListeningState(this, componentName)
 
             // Update all switch from saved preference
@@ -348,7 +358,8 @@ class MainActivity : AppCompatActivity() {
         if (receiverRegistered)
             unregisterReceiver(receiver)
 
-        Glide.with(applicationContext).clear(glideTarget)
+        Glide.with(this.applicationContext).clear(glideTarget)
+        Glide.get(this).clearMemory()
 
         super.onDestroy()
     }
@@ -371,17 +382,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateTilePreview() {
         // Clear previous target
-        Glide.with(applicationContext).clear(glideTarget)
+        Glide.with(this).clear(glideTarget)
 
         // Set Bitmap to Tile Preview
         val currentTimeout = KeepOnUtils.getCurrentTimeout(this)
-        Glide.with(applicationContext)
+        Glide.with(this)
             .asBitmap()
             .format(DecodeFormat.PREFER_ARGB_8888)
             .circleCrop()
+            .priority(Priority.HIGH)
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             .signature(ObjectKey(KeepOnUtils.getBitmapSignature(this, currentTimeout)))
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .skipMemoryCache(true)
             .load(KeepOnUtils.getBitmapFromText(currentTimeout, this, true))
             .into(glideTarget!!)
 
@@ -413,7 +424,8 @@ class MainActivity : AppCompatActivity() {
                 // Set original timeout in checkBoxScreenOff text
                 checkBoxScreenOff.text = String.format(
                     Locale.getDefault(),
-                    getString(R.string.reset_checkbox), switch.text.toString().toLowerCase(Locale.getDefault())
+                    getString(R.string.reset_checkbox),
+                    switch.text.toString().toLowerCase(Locale.getDefault())
                 )
             } else {
                 switch.isClickable = true
@@ -502,8 +514,15 @@ class MainActivity : AppCompatActivity() {
         tilePreview.setPadding(newPadding, newPadding, newPadding, newPadding)
 
         // Adapt bottom sheet text view left margin
-        val params: ConstraintLayout.LayoutParams = ConstraintLayout.LayoutParams(bottomSheetPeekTextView.layoutParams)
-        params.setMargins((10.px + ((slideOffset * (maxPreviewSize - defaultPreviewSize).dp * coefficientStartMarginPeek))).roundToInt().px, 10.px, 10.px, 10.px)
+        val params: ConstraintLayout.LayoutParams = ConstraintLayout.LayoutParams(
+            bottomSheetPeekTextView.layoutParams
+        )
+        params.setMargins(
+            (10.px + ((slideOffset * (maxPreviewSize - defaultPreviewSize).dp * coefficientStartMarginPeek))).roundToInt().px,
+            10.px,
+            10.px,
+            10.px
+        )
         bottomSheetPeekTextView.layoutParams = params
 
         // Rotate peek arrow
@@ -528,11 +547,25 @@ class MainActivity : AppCompatActivity() {
 
         val layerDrawableBottomSheep: LayerDrawable = bottomSheetBackground.background as LayerDrawable
         val bottomSheetBackgroundShape = layerDrawableBottomSheep.findDrawableByLayerId(R.id.shape_bottom_sheet_background) as GradientDrawable
-        bottomSheetBackgroundShape.color = ColorStateList.valueOf(interpolateColor(slideOffset, colorFrom, colorTo))
+        bottomSheetBackgroundShape.color = ColorStateList.valueOf(
+            interpolateColor(
+                slideOffset,
+                colorFrom,
+                colorTo
+            )
+        )
 
         val layerDrawableCircle: LayerDrawable = tilePreviewBackground.drawable as LayerDrawable
         val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
-        circleBackgroundShape.setStroke(3.px, ColorStateList.valueOf(interpolateColor(slideOffset, colorFrom, colorTo)))
+        circleBackgroundShape.setStroke(
+            3.px, ColorStateList.valueOf(
+                interpolateColor(
+                    slideOffset,
+                    colorFrom,
+                    colorTo
+                )
+            )
+        )
     }
 
     private fun interpolateColor(fraction: Float, startValue: Int, endValue: Int): Int {
@@ -611,10 +644,10 @@ class MainActivity : AppCompatActivity() {
         // Save all values to Preferences
         Preferences.setQSStyleTextFill(radio_style_fill.isChecked, this)
         Preferences.setQSStyleTextFillStroke(radio_style_fill_stroke.isChecked, this)
-        Preferences.setQSStyleTextStroke(radio_style_stroke.isChecked,this)
+        Preferences.setQSStyleTextStroke(radio_style_stroke.isChecked, this)
 
-        Preferences.setQSStyleFontBold(switch_fake_bold.isChecked,this)
-        Preferences.setQSStyleFontUnderline(switch_underline.isChecked,this)
+        Preferences.setQSStyleFontBold(switch_fake_bold.isChecked, this)
+        Preferences.setQSStyleFontUnderline(switch_underline.isChecked, this)
         if (switch_smcp.isEnabled) {
             Preferences.setQSStyleFontSMCP(switch_smcp.isChecked, this)
         }

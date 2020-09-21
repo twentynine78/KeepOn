@@ -1,7 +1,6 @@
 package fr.twentynine.keepon.services
 
 import android.app.Service
-import android.content.ComponentCallbacks2
 import android.content.ComponentName
 import android.content.Intent
 import android.graphics.Bitmap
@@ -12,7 +11,7 @@ import android.provider.Settings
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import com.bumptech.glide.Glide
-import com.bumptech.glide.MemoryCategory
+import com.bumptech.glide.Priority
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DecodeFormat
@@ -54,9 +53,9 @@ class KeepOnTileService: TileService() {
     }
 
     override fun onDestroy() {
-        // Clear glide target and trim memory
+        // Clear glide target and clear memory
         glideRequestManager!!.clear(glideTarget)
-        glide!!.trimMemory(ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN)
+        glide!!.clearMemory()
 
         super.onDestroy()
     }
@@ -183,11 +182,11 @@ class KeepOnTileService: TileService() {
     }
 
     private fun setGlideRequestBuilder() {
-        glide!!.setMemoryCategory(MemoryCategory.LOW)
         glideRequestBuilder = glideRequestManager!!
             .asBitmap()
             .format(DecodeFormat.PREFER_ARGB_8888)
             .circleCrop()
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .priority(Priority.HIGH)
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
     }
 }
