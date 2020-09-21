@@ -48,30 +48,42 @@ class MultiProvider : ContentProvider() {
         private var mUriMatcher: UriMatcher? = null
         fun extractStringFromCursor(cursor: Cursor?, defaultVal: String): String {
             if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    return cursor.getString(cursor.getColumnIndex(VALUE))
+                try {
+                    if (cursor.moveToFirst()) {
+                        return cursor.getString(cursor.getColumnIndex(VALUE))
+                    }
                 }
-                cursor.close()
+                finally {
+                    cursor.close()
+                }
             }
             return defaultVal
         }
 
         fun extractIntFromCursor(cursor: Cursor?, defaultVal: Int): Int {
             if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    return cursor.getInt(cursor.getColumnIndex(VALUE))
+                try {
+                    if (cursor.moveToFirst()) {
+                        return cursor.getInt(cursor.getColumnIndex(VALUE))
+                    }
                 }
-                cursor.close()
+                finally {
+                    cursor.close()
+                }
             }
             return defaultVal
         }
 
         fun extractBooleanFromCursor(cursor: Cursor?, defaultVal: Boolean): Boolean {
             if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    return cursor.getInt(cursor.getColumnIndex(VALUE)) == 1
+                try {
+                    if (cursor.moveToFirst()) {
+                        return cursor.getInt(cursor.getColumnIndex(VALUE)) == 1
+                    }
                 }
-                cursor.close()
+                finally {
+                    cursor.close()
+                }
             }
             return defaultVal
         }
