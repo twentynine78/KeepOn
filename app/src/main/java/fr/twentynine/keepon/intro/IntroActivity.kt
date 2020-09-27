@@ -13,6 +13,7 @@ import com.github.appintro.AppIntroPageTransformerType
 import com.github.appintro.model.SliderPage
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.intro.fragments.IntroFragmentAddQSTile
 import fr.twentynine.keepon.intro.fragments.IntroFragmentNotification
 import fr.twentynine.keepon.intro.fragments.IntroFragmentPermission
 import fr.twentynine.keepon.utils.KeepOnUtils
@@ -41,18 +42,12 @@ class IntroActivity : AppIntro2() {
         sliderPageFive.imageDrawable = R.mipmap.img_intro_five
         sliderPageFive.backgroundColor = COLOR_SLIDE_FIVE
 
-        val sliderPageSix = SliderPage()
-        sliderPageSix.title = getString(R.string.intro_six_title)
-        sliderPageSix.description = getString(R.string.intro_six_desc)
-        sliderPageSix.imageDrawable = R.mipmap.img_intro_six
-        sliderPageSix.backgroundColor = COLOR_SLIDE_SIX
-
         addSlide(AppIntroFragment.newInstance(sliderPageHome))
         addSlide(IntroFragmentPermission())
         addSlide(IntroFragmentNotification())
         addSlide(AppIntroFragment.newInstance(sliderPageFour))
         addSlide(AppIntroFragment.newInstance(sliderPageFive))
-        addSlide(AppIntroFragment.newInstance(sliderPageSix))
+        addSlide(IntroFragmentAddQSTile())
 
         setTransformer(AppIntroPageTransformerType.Parallax(
             titleParallaxFactor = 1.0,
@@ -89,7 +84,7 @@ class IntroActivity : AppIntro2() {
                 getString(R.string.dialog_notification_title) -> setNavBarColor(COLOR_SLIDE_NOTIF)
                 getString(R.string.intro_four_title) -> setNavBarColor(COLOR_SLIDE_FOUR)
                 getString(R.string.intro_five_title) -> setNavBarColor(COLOR_SLIDE_FIVE)
-                getString(R.string.intro_six_title) -> setNavBarColor(COLOR_SLIDE_SIX)
+                getString(R.string.intro_qstile_title) -> setNavBarColor(COLOR_SLIDE_QSTILE)
             }
         }
     }
@@ -97,7 +92,7 @@ class IntroActivity : AppIntro2() {
     companion object {
         val COLOR_SLIDE_PERM = Color.parseColor("#ffd800")
         val COLOR_SLIDE_NOTIF = Color.parseColor("#00c3ff")
-        private val COLOR_SLIDE_SIX = Color.parseColor("#4caf50")
+        val COLOR_SLIDE_QSTILE = Color.parseColor("#4caf50")
         private val COLOR_SLIDE_FIVE = Color.parseColor("#bb8930")
         private val COLOR_SLIDE_FOUR = Color.parseColor("#00bcd4")
         private val COLOR_SLIDE_HOME = Color.parseColor("#222222")

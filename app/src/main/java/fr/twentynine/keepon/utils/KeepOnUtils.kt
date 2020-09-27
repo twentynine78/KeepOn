@@ -462,6 +462,21 @@ class KeepOnUtils {
             return dialog
         }
 
+        fun getAddQSTileDialog(context: Context): Dialog {
+            val dialog = Dialog(context, R.style.DialogStyle)
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setContentView(R.layout.dialog_add_qstile)
+            dialog.setCancelable(true)
+
+            val button = dialog.findViewById(R.id.btn_close) as Button
+            button.setOnClickListener {
+                dialog.dismiss()
+            }
+            dialog.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
+
+            return dialog
+        }
+
         fun buildNotification(context: Context, contentText: String): Notification {
             val channelId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

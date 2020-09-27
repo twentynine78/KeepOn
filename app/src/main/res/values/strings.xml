@@ -70,6 +70,14 @@
     </string>
     <string name="dialog_credits_button">Close</string>
 
+    <string name="dialog_add_qstile_warning">This help was performed on a Google Pixel phone with an unmodified Android version. Depending on your smartphone manufacturer, the operations may be slightly different.</string>
+    <string name="dialog_add_qstile_text1">Open the notification drawer</string>
+    <string name="dialog_add_qstile_text2">Open the quick settings drawer by pulling down from top of the screen</string>
+    <string name="dialog_add_qstile_text3">Tap the EDIT button</string>
+    <string name="dialog_add_qstile_text4">Tap and drag the tile named \"Keep screen on\" into the top area of the window</string>
+    <string name="dialog_add_qstile_text5">Tap back and return to this app</string>
+    <string name="dialog_add_qstile_button">Close</string>
+
     <string name="intro_home_title">Welcome!</string>
     <string name="intro_home_desc">Keep your screen on smartly!
         \n\nKeepOn allows you to keep your device\'s screen on for the desired duration and also allows you to return to the default settings when the screen turns off.
@@ -80,8 +88,9 @@
     <string name="intro_five_title">Don\'t forget</string>
     <string name="intro_five_desc">KeepOn detects by default when the screen turns off to reapply the initial value!
         \n\nThis setting can be disabled at any time in the settings.</string>
-    <string name="intro_six_title">Easy to use</string>
-    <string name="intro_six_desc">Once the configuration is complete, simply add the KeepOn tile to the Android Quick Settings to use it!</string>
+    <string name="intro_qstile_title">Easy to use</string>
+    <string name="intro_qstile_desc">Once the configuration is complete, simply add the KeepOn tile to the Android Quick Settings to use it!</string>
+    <string name="intro_qstile_button">Help</string>
     <string name="intro_toast_permission_needed">This permission is required for the application to work!</string>
 
     <string name="bottom_sheet_preview_desc">Quick settings preview</string>

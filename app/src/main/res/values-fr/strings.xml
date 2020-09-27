@@ -69,6 +69,14 @@
     </string>
     <string name="dialog_credits_button">Fermer</string>
 
+    <string name="dialog_add_qstile_warning">Cette aide a été réalisée sur un téléphone Google Pixel avec une version Android non modifiée. Selon le fabricant de votre smartphone, les opérations peuvent être légèrement différentes.</string>
+    <string name="dialog_add_qstile_text1">Ouvrez le tiroir de notification</string>
+    <string name="dialog_add_qstile_text2">Ouvrez le tiroir des réglages rapides en tirant vers le bas à partir du haut de l\'écran</string>
+    <string name="dialog_add_qstile_text3">Appuyez sur le bouton MODIFIER</string>
+    <string name="dialog_add_qstile_text4">Touchez et faites glisser la tuile nommée \"Maintenir l\'écran allumé\" dans la partie supérieure de la fenêtre</string>
+    <string name="dialog_add_qstile_text5">Cliquez sur le bouton retour et revenez à cette application</string>
+    <string name="dialog_add_qstile_button">Fermer</string>
+
     <string name="intro_home_title">Bienvenue !</string>
     <string name="intro_home_desc">Garde ton écran allumé intelligemment !
         \n\nKeepOn te permet de garder l\'écran de ton appareil allumé pendant la durée désirée et te permet également de revenir aux réglages par défaut lorsque l\'écran s\'éteint.
@@ -79,8 +87,9 @@
     <string name="intro_five_title">Pas d\'oublis</string>
     <string name="intro_five_desc">KeepOn détecte par défaut quand l\'écran s\'éteint pour ré appliqué la valeur initiale !
         \n\nCe réglage peut être désactivé à tout moment dans les paramètres.</string>
-    <string name="intro_six_title">Facile à utiliser</string>
-    <string name="intro_six_desc">Une fois la configuration terminée, il te suffit simplement d\'ajouter la tuile KeepOn aux réglages rapides d\'Android pour l\'utiliser !</string>
+    <string name="intro_qstile_title">Facile à utiliser</string>
+    <string name="intro_qstile_desc">Une fois la configuration terminée, il te suffit simplement d\'ajouter la tuile KeepOn aux réglages rapides d\'Android pour l\'utiliser !</string>
+    <string name="intro_qstile_button">Aide</string>
     <string name="intro_toast_permission_needed">Cette permission est obligatoire pour que l\'application fonctionne !</string>
 
     <string name="bottom_sheet_preview_desc">Aperçu des réglages rapide</string>
