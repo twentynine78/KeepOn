@@ -16,6 +16,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings.System.canWrite
 import android.service.quicksettings.TileService
@@ -44,6 +45,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.services.KeepOnTileService
 import fr.twentynine.keepon.utils.KeepOnUtils
+import fr.twentynine.keepon.utils.generate.Rate
 import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet_tile_settings.*
@@ -68,6 +70,7 @@ class MainActivity : AppCompatActivity() {
     private var glideTarget: CustomTarget<Bitmap>? = null
     private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
     private var glideRequestManager: RequestManager? = null
+    private var rate: Rate? = null
 
     private val Int.px: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
@@ -169,9 +172,7 @@ class MainActivity : AppCompatActivity() {
                 KeepOnUtils.stopScreenOffReceiverService(this)
             }
 
-            if (KeepOnUtils.getKeepOn(this)
-                && isChecked
-            ) {
+            if (KeepOnUtils.getKeepOn(this) && isChecked) {
                 KeepOnUtils.startScreenOffReceiverService(this)
             }
 
@@ -285,6 +286,14 @@ class MainActivity : AppCompatActivity() {
 
         // Start service to monitor screen timeout
         KeepOnUtils.startScreenTimeoutObserverService(this)
+
+        // Build Generate snackbar
+        rate = Rate.Builder(this)
+            .setFeedbackAction(Uri.parse(SUPPORT_URI))
+            .setSnackBarParent(findViewById(R.id.cardViewContainer))
+            .setSwipeToDismissVisible(true)
+            .build()
+            .count()
     }
 
     override fun onResume() {
@@ -327,6 +336,9 @@ class MainActivity : AppCompatActivity() {
 
             // Set tile preview Image View
             updateTilePreview()
+
+            // Show Genrate snackbar
+            rate?.showRequest()
         } else {
             // Show permission Dialog
             if (permissionDialog == null) {
@@ -679,6 +691,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val ACTION_UPDATE_UI = "fr.twentynine.keepon.action.UPDATE_UI"
         const val ACTION_MISSING_SETTINGS = "fr.twentynine.keepon.action.MISSING_SETTINGS"
+
+        const val SUPPORT_URI = "https://github.com/twentynine78/KeepOn/issues/new/choose"
 
         fun newIntent(context: Context): Intent {
             return Intent(context, MainActivity::class.java)

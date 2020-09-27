@@ -17,4 +17,6 @@
     <color name="colorTilePreviewDisabled">#FF121212</color>
     <color name="colorTilePreviewBackground">#FF000000</color>
     <color name="colorTilePreviewBackgroundDisabled">#FF424242</color>
+    <color name="colorGenerateText">#FF515151</color>
+    <color name="colorGenerateButton">#FFF7F7F7</color>
 </resources>

@@ -32,6 +32,9 @@ class Preferences {
         private const val QS_STYLE_FONT_UNDERLINE = "qsStyleFontUnderline"
         private const val QS_STYLE_FONT_SMCP = "qsStyleFontSMCP"
 
+        private const val GENERATE_BOOL_ASKED = "generateBoolAsked"
+        private const val GENERATE_LAUNCH_COUNT = "generateLaunchCount"
+
 
         fun getOriginalTimeout(context: Context): Int {
             return MultiPreferences(PREFS_FILENAME, context.contentResolver)
@@ -273,6 +276,26 @@ class Preferences {
         fun setQSStyleTextStroke(value: Boolean, context: Context) {
             MultiPreferences(PREFS_BACKUP_FILENAME, context.contentResolver)
                 .setBoolean(QS_STYLE_TEXT_STROKE, value)
+        }
+
+        fun getGenerateBoolAsked(context: Context): Boolean {
+            return MultiPreferences(PREFS_BACKUP_FILENAME, context.contentResolver)
+                .getBoolean(GENERATE_BOOL_ASKED, false)
+        }
+
+        fun setGenerateBoolAsked(value: Boolean, context: Context) {
+            MultiPreferences(PREFS_BACKUP_FILENAME, context.contentResolver)
+                .setBoolean(GENERATE_BOOL_ASKED, value)
+        }
+
+        fun getGenerateLaunchCount(context: Context): Long {
+            return MultiPreferences(PREFS_BACKUP_FILENAME, context.contentResolver)
+                .getLong(GENERATE_LAUNCH_COUNT, 0)
+        }
+
+        fun setGenerateLaunchCount(value: Long, context: Context) {
+            MultiPreferences(PREFS_BACKUP_FILENAME, context.contentResolver)
+                .setLong(GENERATE_LAUNCH_COUNT, value)
         }
     }
 }

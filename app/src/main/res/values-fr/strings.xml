@@ -30,7 +30,7 @@
     <string name="about_card_version">&lt;b>Version :&lt;/b></string>
     <string name="about_card_author"><b>Auteur :</b> TwentyNine78</string>
     <string name="about_card_credits_label"><b>Crédits :</b></string>
-    <string name="about_card_credits"><u>AppIntro, MultiProcessPreferences, Glide</u></string>
+    <string name="about_card_credits"><u>AppIntro, MultiProcessPreferences, Glide, Gene-rate</u></string>
     <string name="about_card_source"><b>Code source :</b> <a href="https://github.com/twentynine78/KeepOn">https://github.com/twentynine78/KeepOn</a></string>
 
     <string name="qs_service_name">Maintenir l\'écran allumé</string>
@@ -66,6 +66,10 @@
         &#160;&#160;&#160;<font size="14"><b>Glide</b></font>
         \n\nGitHub : https://github.com/bumptech/glide
         \nLicence : https://github.com/bumptech/glide/blob/master/LICENSE
+        \n\n\n
+        &#160;&#160;&#160;<font size="14"><b>Gene-rate</b></font>
+        \n\nGitHub: https://github.com/Pixplicity/gene-rate
+        \nLicence: https://github.com/Pixplicity/gene-rate/blob/master/LICENSE
         </font>
     </string>
     <string name="dialog_credits_button">Fermer</string>
@@ -116,4 +120,13 @@
     <string name="bottom_sheet_style_fill">Remplissage</string>
     <string name="bottom_sheet_style_fill_and_stroke">Remplissage et contours</string>
     <string name="bottom_sheet_style_stroke">Contours</string>
+
+    <string name="generate_please_rate">Salut ! Tu sembles aimer cette application, pourrais-tu te rendre sur le Play Store et donner une note ? Cela m\'aiderait beaucoup !
+    \n\nSi au contraire, tu détestes cette application, j\'aimerais avoir ton avis afin de pouvoir l\'améliorer. Merci !</string>
+    <string name="generate_please_rate_short">Tu as l\'air d\'aimer cette application. Tu m\'aiderais beaucoup avec une note de 5 étoiles !</string>
+    <string name="generate_button_yes">Noter !</string>
+    <string name="generate_button_no">Non merci</string>
+    <string name="generate_button_feedback">Donne ton avis</string>
+    <string name="generate_button_dont_ask">Ne plus demander</string>
+    <string name="generate_swipe_to_dismiss">Balaye pour supprimer</string>
 </resources>

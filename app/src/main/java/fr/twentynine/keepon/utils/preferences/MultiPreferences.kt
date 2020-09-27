@@ -4,11 +4,13 @@ import android.content.ContentResolver
 import androidx.annotation.Nullable
 import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.CODE_BOOLEAN
 import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.CODE_INTEGER
+import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.CODE_LONG
 import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.CODE_STRING
 import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.createContentValues
 import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.createQueryUri
 import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.extractBooleanFromCursor
 import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.extractIntFromCursor
+import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.extractLongFromCursor
 import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.extractStringFromCursor
 import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.performQuery
 
@@ -58,6 +60,24 @@ class MultiPreferences(private val mName: String, private val resolver: ContentR
         )
     }
 
+    fun setLong(key: String, value: Long) {
+        resolver.update(
+            createQueryUri(mName, key, CODE_LONG),
+            createContentValues(key, value),
+            null,
+            null
+        )
+    }
+
+    fun getLong(key: String, defaultValue: Long): Long {
+        return extractLongFromCursor(
+            performQuery(
+                createQueryUri(mName, key, CODE_LONG),
+                resolver
+            ), defaultValue
+        )
+    }
+
     fun setBoolean(key: String, value: Boolean) {
         resolver.update(
             createQueryUri(mName, key, CODE_BOOLEAN),
@@ -77,22 +97,6 @@ class MultiPreferences(private val mName: String, private val resolver: ContentR
     }
 
     /* Unused functions
-    fun setLong(key: String, value: Long) {
-        resolver.update(
-            createQueryUri(mName, key, CODE_LONG),
-            createContentValues(key, value),
-            null,
-            null
-        )
-    }
-
-    fun getLong(key: String, defaultValue: Long): Long {
-        return extractLongFromCursor(
-            performQuery(createQueryUri(mName, key, CODE_LONG), resolver),
-            defaultValue
-        )
-    }
-
     fun removePreference(key: String) {
         resolver.delete(createQueryUri(mName, key, CODE_REMOVE_KEY), null, null)
     }

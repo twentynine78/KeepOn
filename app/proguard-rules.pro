@@ -25,3 +25,5 @@
   **[] $VALUES;
   public *;
 }
+-dontwarn sun.misc.SignalHandler
+-dontwarn java.lang.instrument.ClassFileTransformer
