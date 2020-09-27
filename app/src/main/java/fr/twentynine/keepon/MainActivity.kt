@@ -41,6 +41,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.switchmaterial.SwitchMaterial
+import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.services.KeepOnTileService
 import fr.twentynine.keepon.utils.KeepOnUtils
 import fr.twentynine.keepon.utils.preferences.Preferences
@@ -357,6 +358,10 @@ class MainActivity : AppCompatActivity() {
 
                 val intent = Intent(this.applicationContext, MainActivity::class.java)
                 startActivity(intent)
+                return true
+            }
+            R.id.action_help -> {
+                startActivity(IntroActivity.newIntent(this))
                 return true
             }
         }

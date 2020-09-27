@@ -41,7 +41,7 @@ class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder, SlidePoli
         val mDescription = mView.findViewById<TextView>(R.id.description)
         mDescription.text = getString(R.string.intro_qstile_desc)
         val mImage = mView.findViewById<ImageView>(R.id.image)
-        mImage.setImageResource(R.mipmap.img_intro_six)
+        mImage.setImageResource(R.mipmap.img_intro_qstile)
 
         if (KeepOnUtils.getTileAdded(mContext))
             mButton.visibility = View.INVISIBLE

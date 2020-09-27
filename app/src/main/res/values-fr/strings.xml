@@ -3,6 +3,7 @@
     <string name="app_desc">Garde ton écran allumé intelligemment !</string>
 
     <string name="app_intro">KeepOn Intro</string>
+    <string name="menu_help_title">Aide</string>
     <string name="menu_theme_title">Theme</string>
     <string name="splashscreen_logo">Logo Splash screen</string>
 
@@ -81,12 +82,16 @@
     <string name="intro_home_desc">Garde ton écran allumé intelligemment !
         \n\nKeepOn te permet de garder l\'écran de ton appareil allumé pendant la durée désirée et te permet également de revenir aux réglages par défaut lorsque l\'écran s\'éteint.
         \nL\'application est gratuite et open-source, sans aucune publicité/analyse.</string>
-    <string name="intro_four_title">Adapté pour ton appareil</string>
-    <string name="intro_four_desc">KeepOn s\'adapte à la configuration de ton appareil pour une utilisation facile !
-        \n\nLa valeur par défaut est automatiquement sélectionnée et est conservée pour pourvoir être ré appliquée.</string>
-    <string name="intro_five_title">Pas d\'oublis</string>
-    <string name="intro_five_desc">KeepOn détecte par défaut quand l\'écran s\'éteint pour ré appliqué la valeur initiale !
+    <string name="intro_info1_title">Adapté pour ton appareil</string>
+    <string name="intro_info1_desc">KeepOn s\'adapte à la configuration de ton appareil pour une utilisation facile !
+        \n\nLa valeur par défaut est automatiquement sélectionnée et est conservée pour pourvoir être ré appliquée.
+        \n\nTu peux modifier la valeur par défaut sans quitter KeepOn, il te suffit de réaliser un appui prolongé sur la valeur souhaité.</string>
+    <string name="intro_info2_title">Pas d\'oublis</string>
+    <string name="intro_info2_desc">KeepOn détecte par défaut quand l\'écran s\'éteint pour ré appliqué la valeur initiale !
         \n\nCe réglage peut être désactivé à tout moment dans les paramètres.</string>
+    <string name="intro_info3_title">Personnalisable !</string>
+    <string name="intro_info3_desc">Tu peux modifier l\'apparence de la tuile de réglage rapide depuis le volet en bas de l\'écran.
+        \n\nTu peux également modifier le délai d\'expiration de l\'écran en cliquant sur l\'aperçu à gauche de ce volet.</string>
     <string name="intro_qstile_title">Facile à utiliser</string>
     <string name="intro_qstile_desc">Une fois la configuration terminée, il te suffit simplement d\'ajouter la tuile KeepOn aux réglages rapides d\'Android pour l\'utiliser !</string>
     <string name="intro_qstile_button">Aide</string>

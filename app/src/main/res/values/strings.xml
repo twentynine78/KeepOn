@@ -3,6 +3,7 @@
     <string name="app_desc">Keep your screen on smartly!</string>
 
     <string name="app_intro">KeepOn Intro</string>
+    <string name="menu_help_title">Help</string>
     <string name="menu_theme_title">Theme</string>
     <string name="splashscreen_logo">Logo Splash screen</string>
 
@@ -82,12 +83,16 @@
     <string name="intro_home_desc">Keep your screen on smartly!
         \n\nKeepOn allows you to keep your device\'s screen on for the desired duration and also allows you to return to the default settings when the screen turns off.
         \nThe application is free and open-source, without any ads/analytics.</string>
-    <string name="intro_four_title">Suitable for your device</string>
-    <string name="intro_four_desc">KeepOn adapts to your device\'s configuration for easy use!
-        \n\nThe default value is automatically selected and retained for reapplication.</string>
-    <string name="intro_five_title">Don\'t forget</string>
-    <string name="intro_five_desc">KeepOn detects by default when the screen turns off to reapply the initial value!
+    <string name="intro_info1_title">Suitable for your device</string>
+    <string name="intro_info1_desc">KeepOn adapts to your device\'s configuration for easy use!
+        \n\nThe default value is automatically selected and retained for reapplication.
+        \n\nYou can change the default value without leaving KeepOn, just press and hold the desired value.</string>
+    <string name="intro_info2_title">Don\'t forget</string>
+    <string name="intro_info2_desc">KeepOn detects by default when the screen turns off to reapply the initial value!
         \n\nThis setting can be disabled at any time in the settings.</string>
+    <string name="intro_info3_title">Customizable!</string>
+    <string name="intro_info3_desc">You can change the appearance of the Quick Settings tile from the pane at the bottom of the screen.
+        \n\nYou can also change the screen timeout by clicking on the preview on the left side of this pane.</string>
     <string name="intro_qstile_title">Easy to use</string>
     <string name="intro_qstile_desc">Once the configuration is complete, simply add the KeepOn tile to the Android Quick Settings to use it!</string>
     <string name="intro_qstile_button">Help</string>

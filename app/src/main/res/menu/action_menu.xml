@@ -3,8 +3,14 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_help"
+        android:icon="@mipmap/ic_help"
+        android:title="@string/menu_help_title"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_theme"
         android:icon="@mipmap/ic_theme"
         android:title="@string/menu_theme_title"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 </menu>
