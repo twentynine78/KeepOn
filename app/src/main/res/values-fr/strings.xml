@@ -97,7 +97,8 @@
     <string name="intro_info3_desc">Tu peux modifier l\'apparence de la tuile de réglage rapide depuis le volet en bas de l\'écran.
         \n\nTu peux également modifier le délai d\'expiration de l\'écran en cliquant sur l\'aperçu à gauche de ce volet.</string>
     <string name="intro_qstile_title">Facile à utiliser</string>
-    <string name="intro_qstile_desc">Une fois la configuration terminée, il te suffit simplement d\'ajouter la tuile KeepOn aux réglages rapides d\'Android pour l\'utiliser !</string>
+    <string name="intro_qstile_desc">Une fois la configuration terminée, il te suffit simplement d\'ajouter la tuile KeepOn aux réglages rapides d\'Android pour l\'utiliser !
+        \n\nUne extension Tasker/Locale est intégrée et permet d\'utiliser les fonctions de KeepOn depuis une autre application compatible !</string>
     <string name="intro_qstile_button">Aide</string>
     <string name="intro_toast_permission_needed">Cette permission est obligatoire pour que l\'application fonctionne !</string>
 
@@ -128,4 +129,10 @@
     <string name="generate_button_feedback">Donne ton avis</string>
     <string name="generate_button_dont_ask">Ne plus demander</string>
     <string name="generate_swipe_to_dismiss">Balaye pour supprimer</string>
+
+    <string name="tasker_menu_dontsave">Annuler</string>
+    <string name="tasker_menu_save">Sauvegarder</string>
+    <string name="tasker_activity_name">Changer la mise en veille de l\'écran</string>
+    <string name="tasker_activity_title">Choisissez la valeur souhaitée</string>
+    <string name="tasker_activity_restore">Rétablir la valeur par défaut</string>
 </resources>

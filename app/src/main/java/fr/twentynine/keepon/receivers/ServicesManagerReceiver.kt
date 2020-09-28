@@ -54,6 +54,25 @@ class ServicesManagerReceiver : BroadcastReceiver() {
                     stopIntent.action = action
                     ContextCompat.startForegroundService(context.applicationContext, stopIntent)
                 }
+                ACTION_SET_TIMEOUT -> {
+                    var newTimeout = intent.getIntExtra("timeout", 0)
+                    if (newTimeout != 0) {
+                        if (newTimeout == -1) newTimeout = KeepOnUtils.getOriginalTimeout(context)
+
+                        KeepOnUtils.setNewTimeout(newTimeout, context)
+
+                        if (newTimeout == KeepOnUtils.getOriginalTimeout(context)) {
+                            KeepOnUtils.setKeepOn(false, context)
+                            KeepOnUtils.stopScreenOffReceiverService(context)
+                        } else {
+                            KeepOnUtils.setKeepOn(true, context)
+                            if (KeepOnUtils.getResetOnScreenOff(context))
+                                KeepOnUtils.startScreenOffReceiverService(context)
+                        }
+
+                        KeepOnUtils.setTimeout(newTimeout, context)
+                    }
+                }
             }
         }
     }
@@ -63,5 +82,6 @@ class ServicesManagerReceiver : BroadcastReceiver() {
         const val ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE = "ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE"
         const val ACTION_START_FOREGROUND_TIMEOUT_SERVICE = "ACTION_START_FOREGROUND_TIMEOUT_SERVICE"
         const val ACTION_STOP_FOREGROUND_TIMEOUT_SERVICE = "ACTION_STOP_FOREGROUND_TIMEOUT_SERVICE"
+        const val ACTION_SET_TIMEOUT = "ACTION_SET_TIMEOUT"
     }
 }

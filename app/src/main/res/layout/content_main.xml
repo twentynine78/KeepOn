@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="?attr/actionBarSize"
-        android:background="@color/colorBackground"
         android:orientation="vertical">
 
         <include layout="@layout/card_main_settings" />

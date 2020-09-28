@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    tools:ignore="Overdraw">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_height="wrap_content"

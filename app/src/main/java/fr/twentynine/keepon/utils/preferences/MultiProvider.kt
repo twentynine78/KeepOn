@@ -1,3 +1,5 @@
+@file:Suppress("ConvertTryFinallyToUseCall")
+
 package fr.twentynine.keepon.utils.preferences
 
 import android.content.ContentProvider
