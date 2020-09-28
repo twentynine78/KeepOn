@@ -56,7 +56,7 @@ class IntroActivity : AppIntro2() {
             addSlide(AppIntroFragment.newInstance(sliderPageInfo1))
             addSlide(AppIntroFragment.newInstance(sliderPageInfo2))
             addSlide(AppIntroFragment.newInstance(sliderPageInfo3))
-            if (!KeepOnUtils.getTileAdded(this)) addSlide(IntroFragmentAddQSTile())
+            addSlide(IntroFragmentAddQSTile())
         } else {
             addSlide(AppIntroFragment.newInstance(sliderPageHome))
             addSlide(IntroFragmentPermission())

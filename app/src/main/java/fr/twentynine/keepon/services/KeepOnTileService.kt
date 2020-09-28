@@ -24,38 +24,25 @@ import fr.twentynine.keepon.utils.KeepOnUtils
 
 
 class KeepOnTileService: TileService() {
-    private var glideRequestBuilder: RequestBuilder<Bitmap>? = null
-    private var glideRequestManager: RequestManager? = null
-    private var glideTarget: CustomTarget<Bitmap>? = null
-
-    companion object {
-        private var glide: Glide? = null
-
-        private var newTimeout: Int = 0
-        private var originalTimeout: Int = 0
-    }
+    private lateinit var glideRequestBuilder: RequestBuilder<Bitmap>
+    private lateinit var glideRequestManager: RequestManager
+    private lateinit var glideTarget: CustomTarget<Bitmap>
+    private lateinit var glide: Glide
 
     override fun onCreate() {
         super.onCreate()
 
         // Set glide components
-        if (glide == null)
-            glide = Glide.get(this)
-
-        if (glideRequestManager == null)
-            glideRequestManager = Glide.with(this)
-
-        if (glideRequestBuilder == null)
-            setGlideRequestBuilder()
-
-        if (glideTarget == null)
-            setGlideTarget()
+        glide = Glide.get(this)
+        glideRequestManager = Glide.with(this)
+        setGlideRequestBuilder()
+        setGlideTarget()
     }
 
     override fun onDestroy() {
         // Clear glide target and clear memory
-        glideRequestManager?.clear(glideTarget)
-        glide?.clearMemory()
+        glideRequestManager.clear(glideTarget)
+        glide.clearMemory()
 
         super.onDestroy()
     }
@@ -113,13 +100,13 @@ class KeepOnTileService: TileService() {
         KeepOnUtils.setNewTimeout(-1, this)
 
         // Clear previous glide target
-        glideRequestManager!!.clear(glideTarget)
+        glideRequestManager.clear(glideTarget)
 
         // Create bitmap and load to tile icon
-        glideRequestBuilder!!
+        glideRequestBuilder
             .signature(ObjectKey(KeepOnUtils.getBitmapSignature(this, newTimeout)))
             .load(KeepOnUtils.getBitmapFromText(newTimeout, this))
-            .into(glideTarget!!)
+            .into(glideTarget)
     }
 
     override fun onClick() {
@@ -182,11 +169,16 @@ class KeepOnTileService: TileService() {
     }
 
     private fun setGlideRequestBuilder() {
-        glideRequestBuilder = glideRequestManager!!
+        glideRequestBuilder = glideRequestManager
             .asBitmap()
             .format(DecodeFormat.PREFER_ARGB_8888)
             .circleCrop()
             .priority(Priority.HIGH)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+    }
+
+    companion object {
+        private var newTimeout: Int = 0
+        private var originalTimeout: Int = 0
     }
 }

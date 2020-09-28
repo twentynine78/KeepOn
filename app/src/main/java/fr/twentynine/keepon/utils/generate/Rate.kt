@@ -43,7 +43,7 @@ import fr.twentynine.keepon.utils.preferences.Preferences
  *
  */
 class Rate private constructor(private val mContext: Context) {
-    private val mPackageName: String? = mContext.packageName
+    private val mPackageName: String = mContext.packageName
     private val mMessage = mContext.getString(R.string.generate_please_rate)
     private val mTextNever = mContext.getString(R.string.generate_button_dont_ask)
     private val mTextFeedback = mContext.getString(R.string.generate_button_feedback)

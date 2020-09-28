@@ -1,5 +1,6 @@
 package fr.twentynine.keepon.intro.fragments
 
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,10 +16,18 @@ import com.github.appintro.SlidePolicy
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_QSTILE
 import fr.twentynine.keepon.utils.KeepOnUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 
 
 class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
 
+    private var dismissDialog = false
+    private lateinit var dialog: Dialog
     private lateinit var mContext: Context
     private lateinit var mView: View
     private lateinit var mButton: Button
@@ -29,11 +38,41 @@ class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder, SlidePoli
 
         setBackgroundColor(defaultBackgroundColor)
 
+        fun checkSettings() {
+            runBlocking {
+                if (KeepOnUtils.getTileAdded(mContext) || dismissDialog) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        updateButtonVisibility()
+                        dialog.dismiss()
+                    }
+                } else {
+                    delay(200)
+                    CoroutineScope(Dispatchers.Default).launch {
+                        checkSettings()
+                    }
+                }
+            }
+        }
+
+        fun checkSettingOn() = CoroutineScope(Dispatchers.Default).launch {
+            delay(500)
+            withTimeout(60000
+            ) {
+                checkSettings()
+            }
+        }
+
+        dialog = KeepOnUtils.getAddQSTileDialog(mContext)
+
         mButton = mView.findViewById(R.id.button)
         mButton.setBackgroundColor(KeepOnUtils.darkerColor(COLOR_SLIDE_QSTILE, 0.4f))
         mButton.text = getString(R.string.intro_qstile_button)
         mButton.setOnClickListener {
-            KeepOnUtils.getAddQSTileDialog(mContext).show()
+            checkSettingOn()
+            dialog.setOnDismissListener {
+                dismissDialog = true
+            }
+            dialog.show()
         }
 
         val mTitle = mView.findViewById<TextView>(R.id.title)
@@ -53,10 +92,7 @@ class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder, SlidePoli
 
     override fun onResume() {
         super.onResume()
-        if (KeepOnUtils.getTileAdded(mContext))
-            mButton.visibility = View.INVISIBLE
-        else
-            mButton.visibility = View.VISIBLE
+        updateButtonVisibility()
     }
 
     override val isPolicyRespected: Boolean
@@ -72,5 +108,12 @@ class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder, SlidePoli
     override fun setBackgroundColor(backgroundColor: Int) {
         val constraintLayout = mView.findViewById<ConstraintLayout>(R.id.main)
         constraintLayout.setBackgroundColor(backgroundColor)
+    }
+
+    private fun updateButtonVisibility() {
+        if (KeepOnUtils.getTileAdded(mContext))
+            mButton.visibility = View.INVISIBLE
+        else
+            mButton.visibility = View.VISIBLE
     }
 }

@@ -126,7 +126,6 @@
     \n\nIf instead you hate this app, we would love to hear your feedback so we can improve. Thanks!</string>
     <string name="generate_please_rate_short">Hey, you seem to like this app. You would help me a great deal with a 5-star rating!</string>
     <string name="generate_button_yes">Rate!</string>
-    <string name="generate_button_no">No thanks</string>
     <string name="generate_button_feedback">Give feedback</string>
     <string name="generate_button_dont_ask">Don’t ask again</string>
     <string name="generate_swipe_to_dismiss">Swipe to dismiss</string>

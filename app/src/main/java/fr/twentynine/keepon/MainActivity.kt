@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.provider.Settings.System.canWrite
 import android.service.quicksettings.TileService
 import android.text.Html
+import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -61,16 +62,25 @@ import kotlin.math.roundToInt
 class MainActivity : AppCompatActivity() {
     data class TimeoutSwitch(val switch: SwitchMaterial, val timeoutValue: Int)
 
-    private val animDuration: Long = 300
-    private var timeoutSwitchs: Array<TimeoutSwitch> = arrayOf ()
-    private var missingSettingsDialog: Dialog? = null
-    private var permissionDialog: Dialog? = null
-    private var notificationDialog: Dialog? = null
+    private lateinit var missingSettingsDialog: Dialog
+    private lateinit var permissionDialog: Dialog
+    private lateinit var notificationDialog: Dialog
+    private lateinit var timeoutSwitchs: Array<TimeoutSwitch>
+    private lateinit var glideTarget: CustomTarget<Bitmap>
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
+    private lateinit var rate: Rate
+    private lateinit var glideRequestManager: RequestManager
+    private lateinit var snackbar: Snackbar
+
     private var receiverRegistered = false
-    private var glideTarget: CustomTarget<Bitmap>? = null
-    private var bottomSheetBehavior: BottomSheetBehavior<View>? = null
-    private var glideRequestManager: RequestManager? = null
-    private var rate: Rate? = null
+
+    // Define default and max size of views and coefficient for bottomsheet slide
+    private val defaultPreviewSize = 60.px
+    private val defaultPreviewPadding = 14.px
+    private val coefficientStartMarginPeek = 1.1
+    private var maxPreviewSize = 110.px
+    private var maxPreviewPadding = defaultPreviewPadding + ((maxPreviewSize - defaultPreviewSize) / 7)
+    private var defaultBottomMarginViewHeight = ((maxPreviewSize - defaultPreviewSize) / 2)
 
     private val Int.px: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
@@ -91,13 +101,9 @@ class MainActivity : AppCompatActivity() {
                 ACTION_MISSING_SETTINGS -> {
                     // Show missing settings dialog
                     if (KeepOnUtils.getSelectedTimeout(contxt!!).size <= 1) {
-                        if (missingSettingsDialog == null) {
-                            missingSettingsDialog = KeepOnUtils.getMissingSettingsDialog(contxt)
-                            missingSettingsDialog!!.show()
-                        } else {
-                            if (!missingSettingsDialog!!.isShowing) {
-                                missingSettingsDialog!!.show()
-                            }
+                        missingSettingsDialog = KeepOnUtils.getMissingSettingsDialog(contxt)
+                        if (!missingSettingsDialog.isShowing) {
+                            missingSettingsDialog.show()
                         }
                     }
                 }
@@ -139,11 +145,13 @@ class MainActivity : AppCompatActivity() {
             TimeoutSwitch(switchInfinite, KeepOnUtils.getTimeoutValueArray()[8])
         )
 
+        // Create Snackbar for saving settings
+        snackbar = Snackbar.make(findViewById(android.R.id.content), getString(R.string.settings_save), Snackbar.LENGTH_LONG)
+            .setAnchorView(R.id.bottomSheet)
+
         // Set OnClickListener for each switch
         for (timeoutSwitch: TimeoutSwitch in timeoutSwitchs) {
-            timeoutSwitch.switch.setOnClickListener { view ->
-                saveSelectedSwitch(view)
-            }
+            timeoutSwitch.switch.setOnClickListener { saveSelectedSwitch() }
             timeoutSwitch.switch.setOnLongClickListener {
                 KeepOnUtils.getDefaultTimeoutDialog(
                     timeoutSwitch.timeoutValue,
@@ -165,7 +173,7 @@ class MainActivity : AppCompatActivity() {
 
         // Manage checkbox for monitor screen off or not
         checkBoxScreenOff.isChecked = KeepOnUtils.getResetOnScreenOff(this)
-        checkBoxScreenOff.setOnCheckedChangeListener { view, isChecked ->
+        checkBoxScreenOff.setOnCheckedChangeListener { _, isChecked ->
             KeepOnUtils.setResetOnScreenOff(isChecked, this)
 
             if (!isChecked) {
@@ -175,10 +183,7 @@ class MainActivity : AppCompatActivity() {
             if (KeepOnUtils.getKeepOn(this) && isChecked) {
                 KeepOnUtils.startScreenOffReceiverService(this)
             }
-
-            Snackbar.make(view, getString(R.string.settings_save), Snackbar.LENGTH_LONG)
-                .setAnchorView(R.id.bottomSheet)
-                .show()
+            snackbar.show()
         }
 
         // Set application version on about card
@@ -188,18 +193,18 @@ class MainActivity : AppCompatActivity() {
 
         animateCardView()
 
+        // Create Dialogs
+        missingSettingsDialog = KeepOnUtils.getMissingSettingsDialog(this)
+        permissionDialog = KeepOnUtils.getPermissionDialog(this, MainActivity::class.java)
+        notificationDialog = KeepOnUtils.getNotificationDialog(this, MainActivity::class.java)
+
         // Show dialog if missing settings on tile click
         if (intent.extras != null) {
             if (intent.extras!!.getBoolean(KeepOnUtils.TAG_MISSING_SETTINGS, false)
                 && KeepOnUtils.getSelectedTimeout(this).size <= 1
             ) {
-                if (missingSettingsDialog == null) {
-                    missingSettingsDialog = KeepOnUtils.getMissingSettingsDialog(this)
-                    missingSettingsDialog!!.show()
-                } else {
-                    if (!missingSettingsDialog!!.isShowing) {
-                        missingSettingsDialog!!.show()
-                    }
+                if (!missingSettingsDialog.isShowing) {
+                    missingSettingsDialog.show()
                 }
             }
         }
@@ -209,10 +214,10 @@ class MainActivity : AppCompatActivity() {
 
         // Set OnClick listener for bottom sheet peek views
         bottomSheetPeekTextView.setOnClickListener {
-            if (bottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED)
-                bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED)
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             else
-                bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_EXPANDED
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
         // Set OnClick listener for Tile Preview to switch like from Quick Settings
@@ -242,8 +247,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Create glide request manager
-        if (glideRequestManager == null)
-            glideRequestManager = Glide.with(this)
+        glideRequestManager = Glide.with(this)
 
         // Define glide target to set bitmap to tile preview
         glideTarget = object: CustomTarget<Bitmap>() {
@@ -253,7 +257,9 @@ class MainActivity : AppCompatActivity() {
                 val layerDrawableCircle: LayerDrawable = tilePreviewBackground.drawable as LayerDrawable
                 val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
 
-                if (KeepOnUtils.getCurrentTimeout(this@MainActivity) == KeepOnUtils.getOriginalTimeout(this@MainActivity)) {
+                if (KeepOnUtils.getCurrentTimeout(this@MainActivity) == KeepOnUtils.getOriginalTimeout(
+                        this@MainActivity
+                    )) {
                     tilePreview.imageTintList = getColorStateList(R.color.colorTilePreviewDisabled)
                     circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackgroundDisabled))
                 } else {
@@ -268,18 +274,37 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Define tile preview max size and adjust bottomsheet margin view height
+        val displayMetrics: DisplayMetrics = resources.displayMetrics
+        val width = displayMetrics.widthPixels
+        val maxScreenSize = (width / 3)
+        if (maxPreviewSize > maxScreenSize) {
+            maxPreviewSize = if (maxScreenSize < defaultPreviewSize + 10.px) {
+                defaultPreviewSize + 10.px
+            } else {
+                maxScreenSize
+            }
+        }
+        maxPreviewPadding = defaultPreviewPadding + ((maxPreviewSize - defaultPreviewSize) / 10)
+        defaultBottomMarginViewHeight = ((maxPreviewSize - defaultPreviewSize) / 2) + 1.px
+        bottomMarginView.layoutParams.height = defaultBottomMarginViewHeight
+        bottomMarginView.requestLayout()
+
         // Set onSlide bottom sheet behavior
-        bottomSheetBehavior!!.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 setOnSlideBottomSheetAnim(slideOffset)
             }
+
             override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (snackbar.isShown) snackbar.dismiss()
             }
 
         })
 
         // Set initial bottom sheet state
-        bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         // Load QS Style preference
         loadQSStylePreferences()
@@ -303,16 +328,8 @@ class MainActivity : AppCompatActivity() {
         if (canWrite(this)) {
             // Show Dialog to disable notifications if enabled
             if (KeepOnUtils.isNotificationEnabled(this)) {
-                if (notificationDialog == null) {
-                    notificationDialog = KeepOnUtils.getNotificationDialog(
-                        this,
-                        MainActivity::class.java
-                    )
-                    notificationDialog!!.show()
-                } else {
-                    if (!notificationDialog!!.isShowing) {
-                        notificationDialog!!.show()
-                    }
+                if (!notificationDialog.isShowing) {
+                    notificationDialog.show()
                 }
             }
 
@@ -338,16 +355,11 @@ class MainActivity : AppCompatActivity() {
             updateTilePreview()
 
             // Show Genrate snackbar
-            rate?.showRequest()
+            rate.showRequest()
         } else {
             // Show permission Dialog
-            if (permissionDialog == null) {
-                permissionDialog = KeepOnUtils.getPermissionDialog(this, MainActivity::class.java)
-                permissionDialog!!.show()
-            } else {
-                if (!permissionDialog!!.isShowing) {
-                    permissionDialog!!.show()
-                }
+            if (!permissionDialog.isShowing) {
+                permissionDialog.show()
             }
         }
     }
@@ -384,15 +396,15 @@ class MainActivity : AppCompatActivity() {
         if (receiverRegistered)
             unregisterReceiver(receiver)
 
-        glideRequestManager?.clear(glideTarget)
+        glideRequestManager.clear(glideTarget)
         Glide.get(this).clearMemory()
 
         super.onDestroy()
     }
 
     override fun onBackPressed() {
-        if (bottomSheetBehavior!!.state == BottomSheetBehavior.STATE_EXPANDED) {
-            bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+        if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         } else {
             super.onBackPressed()
         }
@@ -408,14 +420,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateTilePreview() {
         // Clear previous target
-        glideRequestManager?.clear(glideTarget)
+        glideRequestManager.clear(glideTarget)
 
         // Set Bitmap to Tile Preview
         val currentTimeout = KeepOnUtils.getCurrentTimeout(this)
-        if (glideRequestManager == null) {
-            glideRequestManager = Glide.with(this)
-        }
-        glideRequestManager!!
+
+        glideRequestManager
             .asBitmap()
             .format(DecodeFormat.PREFER_ARGB_8888)
             .circleCrop()
@@ -423,7 +433,7 @@ class MainActivity : AppCompatActivity() {
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             .signature(ObjectKey(KeepOnUtils.getBitmapSignature(this, currentTimeout)))
             .load(KeepOnUtils.getBitmapFromText(currentTimeout, this, true))
-            .into(glideTarget!!)
+            .into(glideTarget)
 
         // Request QSTile update
         val componentName = ComponentName(this.applicationContext, KeepOnTileService::class.java)
@@ -480,24 +490,24 @@ class MainActivity : AppCompatActivity() {
         val resultList: ArrayList<Int> = ArrayList()
 
         for (timeoutSwitch in timeoutSwitchs) {
-            if (timeoutSwitch.switch.isChecked && timeoutSwitch.timeoutValue != KeepOnUtils.getOriginalTimeout(this))
+            if (timeoutSwitch.switch.isChecked && timeoutSwitch.timeoutValue != KeepOnUtils.getOriginalTimeout(
+                    this
+                ))
                 resultList.add(timeoutSwitch.timeoutValue)
         }
 
         return resultList
     }
 
-    private fun saveSelectedSwitch(view: View) {
+    private fun saveSelectedSwitch() {
         KeepOnUtils.setSelectedTimeout(getListIntFromSwitch(), this)
-        Snackbar.make(view, getString(R.string.settings_save), Snackbar.LENGTH_LONG)
-            .setAnchorView(R.id.bottomSheet)
-            .show()
+        snackbar.show()
     }
 
     private fun animateCardView() {
         cardViewContainer.post {
             processCardViewAnim(selectionCard!!, 0)
-            processCardViewAnim(aboutCard!!, animDuration)
+            processCardViewAnim(aboutCard!!, ANIMATION_DURATION)
         }
     }
 
@@ -509,7 +519,7 @@ class MainActivity : AppCompatActivity() {
         val anim = ViewAnimationUtils.createCircularReveal(cardView, cx, cy, 0f, finalRadius)
 
         anim.startDelay = startDelay
-        anim.duration = animDuration
+        anim.duration = ANIMATION_DURATION
         anim.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
                 cardView.visibility = View.VISIBLE
@@ -523,14 +533,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setOnSlideBottomSheetAnim(slideOffset: Float) {
-        // Define default and max size of views and coefficient
-        val defaultPreviewSize = 60.px
-        val defaultPreviewPadding = 14.px
-        val defaultBottomMarginViewHeight = 26.px
-        val maxPreviewSize = 110.px
-        val maxPreviewPadding = 19.px
-        val coefficientStartMarginPeek = 1.1
-
         // Change background color
         transitionBottomSheetBackgroundColor(slideOffset)
 
@@ -560,7 +562,7 @@ class MainActivity : AppCompatActivity() {
         bottomSheetPeekArrow.rotation = slideOffset * -180
 
         // Adapt bottom margin view
-        bottomMarginView.layoutParams.height = defaultBottomMarginViewHeight - ((slideOffset * (maxPreviewSize - defaultPreviewSize).dp).roundToInt().px / 2)
+        bottomMarginView.layoutParams.height = defaultBottomMarginViewHeight - ((slideOffset * (maxPreviewSize - defaultPreviewSize).dp) / 2).roundToInt().px
 
         // Apply modification
         tilePreview.requestLayout()
@@ -693,6 +695,8 @@ class MainActivity : AppCompatActivity() {
         const val ACTION_MISSING_SETTINGS = "fr.twentynine.keepon.action.MISSING_SETTINGS"
 
         const val SUPPORT_URI = "https://github.com/twentynine78/KeepOn/issues/new/choose"
+
+        const val ANIMATION_DURATION: Long = 300
 
         fun newIntent(context: Context): Intent {
             return Intent(context, MainActivity::class.java)

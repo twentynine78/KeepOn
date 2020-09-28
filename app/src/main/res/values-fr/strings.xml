@@ -125,7 +125,6 @@
     \n\nSi au contraire, tu détestes cette application, j\'aimerais avoir ton avis afin de pouvoir l\'améliorer. Merci !</string>
     <string name="generate_please_rate_short">Tu as l\'air d\'aimer cette application. Tu m\'aiderais beaucoup avec une note de 5 étoiles !</string>
     <string name="generate_button_yes">Noter !</string>
-    <string name="generate_button_no">Non merci</string>
     <string name="generate_button_feedback">Donne ton avis</string>
     <string name="generate_button_dont_ask">Ne plus demander</string>
     <string name="generate_swipe_to_dismiss">Balaye pour supprimer</string>
