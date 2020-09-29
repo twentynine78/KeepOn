@@ -10,7 +10,6 @@ import fr.twentynine.keepon.utils.KeepOnUtils
 
 
 class ScreenTimeoutObserver(val context: Context) : ContentObserver(null) {
-
     override fun onChange(selfChange: Boolean) {
         onChange(selfChange, null)
     }
@@ -20,20 +19,25 @@ class ScreenTimeoutObserver(val context: Context) : ContentObserver(null) {
     }
 
     private fun processChange() {
-        if (!KeepOnUtils.getValueChange(context)) {
+        if (!KeepOnUtils.getValueChange(context))
             KeepOnUtils.updateOriginalTimeout(context)
-
-            KeepOnUtils.setKeepOn(false, context)
-            KeepOnUtils.stopScreenOffReceiverService(context)
-        } else {
+        else
             KeepOnUtils.setValueChange(false, context)
-        }
 
+        // Update KeepOn state
+        if (KeepOnUtils.getCurrentTimeout(context) != KeepOnUtils.getOriginalTimeout(context))
+            if (KeepOnUtils.getResetOnScreenOff(context))
+                KeepOnUtils.startScreenOffReceiverService(context)
+        else
+            KeepOnUtils.stopScreenOffReceiverService(context)
+
+        // Update QS Tile
         TileService.requestListeningState(
             context,
             ComponentName(context.applicationContext, KeepOnTileService::class.java)
         )
 
+        // Update Main Activity
         KeepOnUtils.sendBroadcastUpdateMainUI(context)
     }
 }

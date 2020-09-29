@@ -66,7 +66,7 @@ class KeepOnTileService: TileService() {
 
         KeepOnUtils.setTileAdded(true, this)
 
-        if (!KeepOnUtils.getKeepOn(this))
+        if (!KeepOnUtils.getKeepOnState(this))
             KeepOnUtils.updateOriginalTimeout(this)
 
         requestListeningState(this, ComponentName(this, KeepOnTileService::class.java))
@@ -74,7 +74,6 @@ class KeepOnTileService: TileService() {
 
     override fun onTileRemoved() {
         KeepOnUtils.setTimeout(KeepOnUtils.getOriginalTimeout(this), this)
-        KeepOnUtils.setKeepOn(false, this)
 
         KeepOnUtils.stopScreenTimeoutObserverService(this)
         KeepOnUtils.stopScreenOffReceiverService(this)
@@ -91,13 +90,7 @@ class KeepOnTileService: TileService() {
 
         if (qsTile.state == Tile.STATE_UNAVAILABLE) this.stopSelf()
 
-        originalTimeout = KeepOnUtils.getOriginalTimeout(this)
-        newTimeout = if (KeepOnUtils.getNewTimeout(this) >= 0) {
-            KeepOnUtils.getNewTimeout(this)
-        } else {
-            KeepOnUtils.getCurrentTimeout(this)
-        }
-        KeepOnUtils.setNewTimeout(-1, this)
+        val newTimeout = KeepOnUtils.getCurrentTimeout(this)
 
         // Clear previous glide target
         glideRequestManager.clear(glideTarget)
@@ -131,22 +124,7 @@ class KeepOnTileService: TileService() {
 
         KeepOnUtils.startScreenTimeoutObserverService(this)
 
-        val newTimeout = KeepOnUtils.getNextTimeoutValue(this)
-
-        KeepOnUtils.setNewTimeout(newTimeout, this)
-        requestListeningState(this, ComponentName(this, KeepOnTileService::class.java))
-
-        // Apply new timeout
-        if (newTimeout == KeepOnUtils.getOriginalTimeout(this)) {
-            KeepOnUtils.setKeepOn(false, this)
-            KeepOnUtils.stopScreenOffReceiverService(this)
-        } else {
-            KeepOnUtils.setKeepOn(true, this)
-            if (KeepOnUtils.getResetOnScreenOff(this))
-                KeepOnUtils.startScreenOffReceiverService(this)
-        }
-
-        KeepOnUtils.setTimeout(newTimeout, this)
+        KeepOnUtils.setTimeout(KeepOnUtils.getNextTimeoutValue(this), this)
     }
 
     private fun setGlideTarget() {
@@ -157,7 +135,7 @@ class KeepOnTileService: TileService() {
                 val keeponTile = qsTile
                 val tileIcon = Icon.createWithBitmap(resource)
                 if (keeponTile != null && tileIcon != null) {
-                    keeponTile.state = if (newTimeout == originalTimeout) Tile.STATE_INACTIVE else Tile.STATE_ACTIVE
+                    keeponTile.state = if (KeepOnUtils.getKeepOnState(this@KeepOnTileService)) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
                     keeponTile.icon = tileIcon
 
                     keeponTile.updateTile()
@@ -175,10 +153,5 @@ class KeepOnTileService: TileService() {
             .circleCrop()
             .priority(Priority.HIGH)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-    }
-
-    companion object {
-        private var newTimeout: Int = 0
-        private var originalTimeout: Int = 0
     }
 }

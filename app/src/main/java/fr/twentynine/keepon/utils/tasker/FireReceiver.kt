@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
+import fr.twentynine.keepon.utils.KeepOnUtils
 import fr.twentynine.keepon.utils.tasker.PluginBundleManager.Companion.isBundleValid
 
 
@@ -30,10 +31,12 @@ class FireReceiver : BroadcastReceiver() {
 
         val timeoutValue = bundle.getInt(PluginBundleManager.BUNDLE_EXTRA_TIMEOUT_VALUE)
 
-        val broadcastIntent = Intent(context.applicationContext, ServicesManagerReceiver::class.java)
-        broadcastIntent.action = ServicesManagerReceiver.ACTION_SET_TIMEOUT
-        broadcastIntent.putExtra("timeout", timeoutValue)
+        if (timeoutValue == -1 || KeepOnUtils.getTimeoutValueArray().contains(timeoutValue)) {
+            val broadcastIntent = Intent(context.applicationContext, ServicesManagerReceiver::class.java)
+            broadcastIntent.action = ServicesManagerReceiver.ACTION_SET_TIMEOUT
+            broadcastIntent.putExtra("timeout", timeoutValue)
 
-        context.sendBroadcast(broadcastIntent)
+            context.sendBroadcast(broadcastIntent)
+        }
     }
 }

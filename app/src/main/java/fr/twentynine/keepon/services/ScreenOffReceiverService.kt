@@ -20,6 +20,7 @@ class ScreenOffReceiverService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+
         registerScreenOffReceiver()
         startForegroundService()
     }

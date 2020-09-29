@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.app.Dialog
 import android.app.admin.DevicePolicyManager
 import android.content.BroadcastReceiver
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -19,7 +18,6 @@ import android.graphics.drawable.LayerDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings.System.canWrite
-import android.service.quicksettings.TileService
 import android.text.Html
 import android.util.DisplayMetrics
 import android.view.Menu
@@ -44,7 +42,6 @@ import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 import fr.twentynine.keepon.intro.IntroActivity
-import fr.twentynine.keepon.services.KeepOnTileService
 import fr.twentynine.keepon.utils.KeepOnUtils
 import fr.twentynine.keepon.utils.generate.Rate
 import fr.twentynine.keepon.utils.preferences.Preferences
@@ -180,7 +177,7 @@ class MainActivity : AppCompatActivity() {
                 KeepOnUtils.stopScreenOffReceiverService(this)
             }
 
-            if (KeepOnUtils.getKeepOn(this) && isChecked) {
+            if (KeepOnUtils.getKeepOnState(this) && isChecked) {
                 KeepOnUtils.startScreenOffReceiverService(this)
             }
             snackbar.show()
@@ -226,24 +223,7 @@ class MainActivity : AppCompatActivity() {
                 KeepOnUtils.sendBroadcastMissingSettings(this)
             }
 
-            val newTimeout = KeepOnUtils.getNextTimeoutValue(this)
-
-            KeepOnUtils.setNewTimeout(newTimeout, this)
-            TileService.requestListeningState(
-                this,
-                ComponentName(this, KeepOnTileService::class.java)
-            )
-
-            if (newTimeout == KeepOnUtils.getOriginalTimeout(this)) {
-                KeepOnUtils.setKeepOn(false, this)
-                KeepOnUtils.stopScreenOffReceiverService(this)
-            } else {
-                KeepOnUtils.setKeepOn(true, this)
-                if (KeepOnUtils.getResetOnScreenOff(this))
-                    KeepOnUtils.startScreenOffReceiverService(this)
-            }
-
-            KeepOnUtils.setTimeout(newTimeout, this)
+            KeepOnUtils.setTimeout(KeepOnUtils.getNextTimeoutValue(this), this)
         }
 
         // Create glide request manager
@@ -266,8 +246,6 @@ class MainActivity : AppCompatActivity() {
                     tilePreview.imageTintList = getColorStateList(R.color.colorTilePreview)
                     circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackground))
                 }
-
-
             }
             override fun onLoadCleared(placeholder: Drawable?) {
                 tilePreview.setImageDrawable(placeholder)
@@ -309,9 +287,6 @@ class MainActivity : AppCompatActivity() {
         // Load QS Style preference
         loadQSStylePreferences()
 
-        // Start service to monitor screen timeout
-        KeepOnUtils.startScreenTimeoutObserverService(this)
-
         // Build Generate snackbar
         rate = Rate.Builder(this)
             .setFeedbackAction(Uri.parse(SUPPORT_URI))
@@ -334,19 +309,11 @@ class MainActivity : AppCompatActivity() {
             }
 
             // If no custom screen timeout set update OriginalTimeout in saved preference
-            if (!KeepOnUtils.getKeepOn(this))
+            if (!KeepOnUtils.getKeepOnState(this))
                 KeepOnUtils.updateOriginalTimeout(this)
 
-            // Start ScreenTimeoutObserverService if QSTile is added
-            if (KeepOnUtils.getTileAdded(this))
-                KeepOnUtils.startScreenTimeoutObserverService(this)
-
-            // Request QSTile update
-            val componentName = ComponentName(
-                this.applicationContext,
-                KeepOnTileService::class.java
-            )
-            TileService.requestListeningState(this, componentName)
+            // Start service to monitor screen timeout
+            KeepOnUtils.startScreenTimeoutObserverService(this)
 
             // Update all switch from saved preference
             updateSwitchs(timeoutSwitchs)
@@ -434,10 +401,6 @@ class MainActivity : AppCompatActivity() {
             .signature(ObjectKey(KeepOnUtils.getBitmapSignature(this, currentTimeout)))
             .load(KeepOnUtils.getBitmapFromText(currentTimeout, this, true))
             .into(glideTarget)
-
-        // Request QSTile update
-        val componentName = ComponentName(this.applicationContext, KeepOnTileService::class.java)
-        TileService.requestListeningState(this, componentName)
     }
 
     private fun updateSwitchs(switchsArray: Array<TimeoutSwitch>) {
@@ -668,7 +631,6 @@ class MainActivity : AppCompatActivity() {
         Preferences.setQSStyleFontSkew(seek_skew.value.toInt(), this)
         Preferences.setQSStyleFontSpacing(seek_space.value.toInt(), this)
 
-        updateTilePreview()
     }
 
     private fun saveQSStyleClickPreferences() {
@@ -687,7 +649,6 @@ class MainActivity : AppCompatActivity() {
         Preferences.setQSStyleTypefaceSerif(radio_typeface_serif.isChecked, this)
         Preferences.setQSStyleTypefaceMonospace(radio_typeface_monospace.isChecked, this)
 
-        updateTilePreview()
     }
 
     companion object {
