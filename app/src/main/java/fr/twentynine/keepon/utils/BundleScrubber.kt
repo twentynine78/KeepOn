@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.utils.tasker
+package fr.twentynine.keepon.utils
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,7 +12,7 @@ object BundleScrubber {
         } else scrub(intent.extras)
     }
 
-    fun scrub(bundle: Bundle?): Boolean {
+    private fun scrub(bundle: Bundle?): Boolean {
         if (null == bundle) {
             return false
         }

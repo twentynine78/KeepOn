@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.app.Dialog
 import android.app.admin.DevicePolicyManager
 import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -18,6 +19,7 @@ import android.graphics.drawable.LayerDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings.System.canWrite
+import android.service.quicksettings.TileService
 import android.text.Html
 import android.util.DisplayMetrics
 import android.view.Menu
@@ -29,27 +31,31 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
-import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.RequestManager
-import com.bumptech.glide.load.DecodeFormat
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 import fr.twentynine.keepon.intro.IntroActivity
+import fr.twentynine.keepon.services.KeepOnTileService
 import fr.twentynine.keepon.utils.KeepOnUtils
-import fr.twentynine.keepon.utils.generate.Rate
+import fr.twentynine.keepon.generate.Rate
 import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.BundleScrubber
+import fr.twentynine.keepon.utils.GlideApp
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet_tile_settings.*
 import kotlinx.android.synthetic.main.card_main_about.*
 import kotlinx.android.synthetic.main.card_main_settings.*
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import java.util.Locale
 import kotlin.collections.ArrayList
 import kotlin.math.hypot
@@ -62,7 +68,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var missingSettingsDialog: Dialog
     private lateinit var permissionDialog: Dialog
     private lateinit var notificationDialog: Dialog
-    private lateinit var timeoutSwitchs: Array<TimeoutSwitch>
+    private lateinit var timeoutSwitchs: ArrayList<TimeoutSwitch>
     private lateinit var glideTarget: CustomTarget<Bitmap>
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var rate: Rate
@@ -87,20 +93,28 @@ class MainActivity : AppCompatActivity() {
 
     private val receiver: BroadcastReceiver = object : BroadcastReceiver()  {
         override fun onReceive(contxt: Context?, intent: Intent?) {
-            when (intent?.action) {
-                ACTION_UPDATE_UI -> {
-                    // Update all switch from saved preference
-                    updateSwitchs(timeoutSwitchs)
-
-                    // Set tile preview Image View
-                    updateTilePreview()
+            if (intent != null) {
+                // A hack to prevent a private serializable classloader attack
+                if (BundleScrubber.scrub(intent)) {
+                    finish()
+                    return
                 }
-                ACTION_MISSING_SETTINGS -> {
-                    // Show missing settings dialog
-                    if (KeepOnUtils.getSelectedTimeout(contxt!!).size <= 1) {
-                        missingSettingsDialog = KeepOnUtils.getMissingSettingsDialog(contxt)
-                        if (!missingSettingsDialog.isShowing) {
-                            missingSettingsDialog.show()
+
+                when (intent.action) {
+                    ACTION_UPDATE_UI -> {
+                        // Update all switch from saved preference
+                        updateSwitchs(timeoutSwitchs)
+
+                        // Set tile preview Image View
+                        updateTilePreview()
+                    }
+                    ACTION_MISSING_SETTINGS -> {
+                        // Show missing settings dialog
+                        if (KeepOnUtils.getSelectedTimeout(contxt!!).size <= 1) {
+                            missingSettingsDialog = KeepOnUtils.getMissingSettingsDialog(contxt)
+                            if (!missingSettingsDialog.isShowing) {
+                                missingSettingsDialog.show()
+                            }
                         }
                     }
                 }
@@ -111,9 +125,21 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // A hack to prevent a private serializable classloader attack
+        if (BundleScrubber.scrub(intent)) {
+            finish()
+            return
+        }
+
+        // Ignore implicit intents, because they are not valid.
+        if (packageName != intent.getPackage() && ComponentName(this, this.javaClass.name) != intent.component) {
+            finish()
+            return
+        }
+
         if (!KeepOnUtils.getSkipIntro(this)) {
             //Start SplashScreen
-            val splashIntent = SplashScreen.newIntent(this.applicationContext)
+            val splashIntent = SplashScreen.newIntent(this)
             splashIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(splashIntent)
             finish()
@@ -130,7 +156,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         // Create an array of TimeoutSwitch
-        timeoutSwitchs = arrayOf(
+        timeoutSwitchs = arrayListOf(
             TimeoutSwitch(switch15s, KeepOnUtils.getTimeoutValueArray()[0]),
             TimeoutSwitch(switch30s, KeepOnUtils.getTimeoutValueArray()[1]),
             TimeoutSwitch(switch1m, KeepOnUtils.getTimeoutValueArray()[2]),
@@ -227,10 +253,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Create glide request manager
-        glideRequestManager = Glide.with(this)
+        glideRequestManager = GlideApp.with(this)
 
         // Define glide target to set bitmap to tile preview
-        glideTarget = object: CustomTarget<Bitmap>() {
+        glideTarget = object: CustomTarget<Bitmap>(150.px, 150.px) {
             override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                 tilePreview.setImageBitmap(resource)
                 tilePreview.imageTintMode = PorterDuff.Mode.SRC_IN
@@ -347,8 +373,9 @@ class MainActivity : AppCompatActivity() {
                 else
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
-                val intent = Intent(this.applicationContext, MainActivity::class.java)
-                startActivity(intent)
+                CoroutineScope(Dispatchers.Main).launch {
+                    startActivity(newIntent(this@MainActivity))
+                }
                 return true
             }
             R.id.action_help -> {
@@ -364,17 +391,16 @@ class MainActivity : AppCompatActivity() {
             unregisterReceiver(receiver)
 
         glideRequestManager.clear(glideTarget)
-        Glide.get(this).clearMemory()
 
         super.onDestroy()
     }
 
     override fun onBackPressed() {
-        if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+        if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED)
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-        } else {
-            super.onBackPressed()
-        }
+        else
+            finishAfterTransition()
+        //super.onBackPressed()
     }
 
     private fun registerBroadcastReceiver() {
@@ -393,17 +419,13 @@ class MainActivity : AppCompatActivity() {
         val currentTimeout = KeepOnUtils.getCurrentTimeout(this)
 
         glideRequestManager
-            .asBitmap()
-            .format(DecodeFormat.PREFER_ARGB_8888)
-            .circleCrop()
-            .priority(Priority.HIGH)
-            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-            .signature(ObjectKey(KeepOnUtils.getBitmapSignature(this, currentTimeout)))
-            .load(KeepOnUtils.getBitmapFromText(currentTimeout, this, true))
-            .into(glideTarget)
+                .asBitmap()
+                .priority(Priority.HIGH)
+                .load(KeepOnUtils.getBitmapFromText(currentTimeout, this, true))
+                .into(glideTarget)
     }
 
-    private fun updateSwitchs(switchsArray: Array<TimeoutSwitch>) {
+    private fun updateSwitchs(switchsArray: ArrayList<TimeoutSwitch>) {
         for (timeoutSwitch in switchsArray) {
             val switch = timeoutSwitch.switch
             val timeout = timeoutSwitch.timeoutValue
@@ -464,6 +486,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun saveSelectedSwitch() {
         KeepOnUtils.setSelectedTimeout(getListIntFromSwitch(), this)
+        KeepOnUtils.manageAppShortcut(this)
         snackbar.show()
     }
 
@@ -631,6 +654,32 @@ class MainActivity : AppCompatActivity() {
         Preferences.setQSStyleFontSkew(seek_skew.value.toInt(), this)
         Preferences.setQSStyleFontSpacing(seek_space.value.toInt(), this)
 
+        // Update Tile Preview
+        updateTilePreview()
+
+        // Update QS Tile
+        if (KeepOnUtils.getTileAdded(this)) {
+            CoroutineScope(Dispatchers.Default).launch {
+                delay(1000)
+                withTimeout(
+                    60000
+                ) {
+                    TileService.requestListeningState(
+                        this@MainActivity,
+                        ComponentName(applicationContext, KeepOnTileService::class.java)
+                    )
+                }
+            }
+        }
+
+        // Update App shortcuts
+        CoroutineScope(Dispatchers.Default).launch {
+            delay(3000)
+            withTimeout(60000
+            ) {
+                KeepOnUtils.manageAppShortcut(this@MainActivity)
+            }
+        }
     }
 
     private fun saveQSStyleClickPreferences() {
@@ -649,6 +698,32 @@ class MainActivity : AppCompatActivity() {
         Preferences.setQSStyleTypefaceSerif(radio_typeface_serif.isChecked, this)
         Preferences.setQSStyleTypefaceMonospace(radio_typeface_monospace.isChecked, this)
 
+        // Update Tile Preview
+        updateTilePreview()
+
+        // Update QS Tile
+        if (KeepOnUtils.getTileAdded(this)) {
+            CoroutineScope(Dispatchers.Default).launch {
+                delay(1000)
+                withTimeout(
+                    60000
+                ) {
+                    TileService.requestListeningState(
+                        this@MainActivity,
+                        ComponentName(applicationContext, KeepOnTileService::class.java)
+                    )
+                }
+            }
+        }
+
+        // Update App shortcuts
+        CoroutineScope(Dispatchers.Default).launch {
+            delay(3000)
+            withTimeout(60000
+            ) {
+                KeepOnUtils.manageAppShortcut(this@MainActivity)
+            }
+        }
     }
 
     companion object {

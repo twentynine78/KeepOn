@@ -13,7 +13,7 @@
 
     <string name="timeout_settings">Réglages</string>
     <string name="timeout_settings_label">Choisi les valeurs qui seront disponibles dans les réglages rapides d\'Android :</string>
-    <string name="reset_checkbox">Restaurer la valeur à %s après avoir verrouillé l\'appareil</string>
+    <string name="reset_checkbox">Rétablir automatiquement la valeur à %s après avoir verrouillé l\'appareil</string>
     <string name="settings_save">Configuration sauvegardée !</string>
 
     <string name="timeout_15_seconds">15 secondes</string>
@@ -134,5 +134,9 @@
     <string name="tasker_menu_save">Sauvegarder</string>
     <string name="tasker_activity_name">Changer la mise en veille de l\'écran</string>
     <string name="tasker_activity_title">Choisissez la valeur souhaitée</string>
-    <string name="tasker_activity_restore">Rétablir la valeur par défaut</string>
+
+    <string name="timeout_restore_short">Valeur par défaut</string>
+    <string name="timeout_restore">Rétablir la valeur par défaut</string>
+    <string name="timeout_previous_short">Valeur précédente</string>
+    <string name="timeout_previous">Rétablir la valeur précédente</string>
 </resources>

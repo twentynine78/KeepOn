@@ -1,5 +1,6 @@
 package fr.twentynine.keepon
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -11,6 +12,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import fr.twentynine.keepon.intro.IntroActivity
+import fr.twentynine.keepon.receivers.ServicesManagerReceiver
+import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.KeepOnUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +25,41 @@ class SplashScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Manage shortcut
+        if (intent.action == ServicesManagerReceiver.ACTION_SET_TIMEOUT) {
+            // Prevent Activity to bring to front
+            moveTaskToBack(true)
+
+            // A hack to prevent a private serializable classloader attack
+            if (BundleScrubber.scrub(intent)) {
+                finish()
+                return
+            }
+
+            // Ignore implicit intents, because they are not valid.
+            if (packageName != intent.getPackage() && ComponentName(this, this.javaClass.name) != intent.component) {
+                finish()
+                return
+            }
+
+            if (intent.extras != null) {
+                val extraKey = "timeout"
+                val timeout = intent.getIntExtra(extraKey, 0)
+                if (timeout != 0) {
+                    val broadcastIntent = Intent(
+                        this,
+                        ServicesManagerReceiver::class.java
+                    )
+                    broadcastIntent.action = intent.action
+                    broadcastIntent.putExtra(extraKey, timeout)
+
+                    sendBroadcast(broadcastIntent)
+                }
+            }
+            finish()
+            return
+        }
+
         // Close this Activity if application already running
         if (!isTaskRoot) {
             finish()
@@ -31,11 +69,17 @@ class SplashScreen : AppCompatActivity() {
         setContentView(R.layout.activity_splash_screen)
 
         // Set bounce animation on the logo and title
-        val bounceAnimLogo: Animation = AnimationUtils.loadAnimation(this, R.anim.splash_bounce_logo)
+        val bounceAnimLogo: Animation = AnimationUtils.loadAnimation(
+            this,
+            R.anim.splash_bounce_logo
+        )
         val logo: ImageView = findViewById(R.id.logo)
         logo.startAnimation(bounceAnimLogo)
 
-        val bounceAnimTitle: Animation = AnimationUtils.loadAnimation(this, R.anim.splash_bounce_title)
+        val bounceAnimTitle: Animation = AnimationUtils.loadAnimation(
+            this,
+            R.anim.splash_bounce_title
+        )
         val title: TextView = findViewById(R.id.title)
         title.startAnimation(bounceAnimTitle)
 
@@ -51,14 +95,14 @@ class SplashScreen : AppCompatActivity() {
             //Start Intro on first launch
             CoroutineScope(Dispatchers.Main).launch {
                 delay(SPLASH_TIME_OUT)
-                startActivity(IntroActivity.newIntent(applicationContext))
+                startActivity(IntroActivity.newIntent(this@SplashScreen))
                 finish()
             }
         } else {
             // Launch MainActivity
             CoroutineScope(Dispatchers.Main).launch {
                 delay(SPLASH_TIME_OUT)
-                val mainIntent = MainActivity.newIntent(applicationContext)
+                val mainIntent = MainActivity.newIntent(this@SplashScreen)
                 startActivity(mainIntent)
                 finish()
             }
@@ -66,10 +110,10 @@ class SplashScreen : AppCompatActivity() {
     }
 
     companion object {
-        const val SPLASH_TIME_OUT: Long = 1000
+        const val SPLASH_TIME_OUT: Long = 850
 
         fun newIntent(context: Context): Intent {
-            return Intent(context.applicationContext, SplashScreen::class.java)
+            return Intent(context, SplashScreen::class.java)
         }
     }
 }

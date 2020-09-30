@@ -24,20 +24,26 @@ class ScreenTimeoutObserver(val context: Context) : ContentObserver(null) {
         else
             KeepOnUtils.setValueChange(false, context)
 
-        // Update KeepOn state
-        if (KeepOnUtils.getCurrentTimeout(context) != KeepOnUtils.getOriginalTimeout(context))
-            if (KeepOnUtils.getResetOnScreenOff(context))
+        KeepOnUtils.setPreviousTimeout(KeepOnUtils.getNewTimeout(context), context)
+        KeepOnUtils.setNewTimeout(KeepOnUtils.getCurrentTimeout(context), context)
+
+        // Manage services
+        if (KeepOnUtils.getKeepOnState(context)) {
+            if (KeepOnUtils.getResetOnScreenOff(context)) {
                 KeepOnUtils.startScreenOffReceiverService(context)
-        else
+            }
+        } else {
             KeepOnUtils.stopScreenOffReceiverService(context)
+        }
 
         // Update QS Tile
-        TileService.requestListeningState(
-            context,
-            ComponentName(context.applicationContext, KeepOnTileService::class.java)
-        )
+        if (KeepOnUtils.getTileAdded(context))
+            TileService.requestListeningState(context, ComponentName(context.applicationContext, KeepOnTileService::class.java))
 
         // Update Main Activity
         KeepOnUtils.sendBroadcastUpdateMainUI(context)
+
+        // Manage dynamics shortcut
+        KeepOnUtils.manageAppShortcut(context)
     }
 }

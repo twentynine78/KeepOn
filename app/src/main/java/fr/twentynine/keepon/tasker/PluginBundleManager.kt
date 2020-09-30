@@ -1,11 +1,11 @@
-package fr.twentynine.keepon.utils.tasker
+package fr.twentynine.keepon.tasker
 
 import android.os.Bundle
 
 
 class PluginBundleManager private constructor() {
     companion object {
-        const val BUNDLE_EXTRA_TIMEOUT_VALUE = "fr.twentynine.keepon.utils.tasker.TIMEOUT_VALUE"
+        const val BUNDLE_EXTRA_TIMEOUT_VALUE = "fr.twentynine.keepon.tasker.TIMEOUT_VALUE"
 
         fun isBundleValid(bundle: Bundle?): Boolean {
             if (null == bundle) {

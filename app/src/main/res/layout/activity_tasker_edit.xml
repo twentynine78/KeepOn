@@ -7,7 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/colorBackground"
-    tools:context=".utils.tasker.EditActivity"
+    tools:context=".tasker.EditActivity"
     tools:ignore="Overdraw">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -68,65 +68,71 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp">
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp">
 
-                        <RadioButton
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/timeout_previous"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/timeout_previous"/>
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_default"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="15dp"
-                            android:text="@string/tasker_activity_restore"/>
+                            android:text="@string/timeout_restore"/>
 
-                        <RadioButton
+                        <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_15_seconds"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/timeout_15_seconds"/>
 
-                        <RadioButton
+                        <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_30_seconds"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/timeout_30_seconds"/>
 
-                        <RadioButton
+                        <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_1_minute"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/timeout_1_minute"/>
 
-                        <RadioButton
+                        <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_2_minutes"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/timeout_2_minutes"/>
 
-                        <RadioButton
+                        <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_5_minutes"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/timeout_5_minutes"/>
 
-                        <RadioButton
+                        <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_10_minutes"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/timeout_10_minutes"/>
 
-                        <RadioButton
+                        <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_30_minutes"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/timeout_30_minutes"/>
 
-                        <RadioButton
+                        <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_1_hour"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/timeout_1_hour"/>
 
-                        <RadioButton
+                        <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_infinite"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

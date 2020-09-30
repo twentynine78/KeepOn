@@ -12,8 +12,10 @@ object Preferences {
     private const val RESET_TIMEOUT_ON_SCREEN_OFF = "resetTimeoutOnScreenOff"
     private const val SKIP_INTRO = "skipIntro"
     private const val DARK_THEME = "darkTheme"
-    private const val VALUE_CHANGE = "valueChange"
+    private const val VALUE_CHANGE_INT = "valueChangeInt"
     private const val TILE_ADDED = "tileAdded"
+    private const val NEW_VALUE = "newValue"
+    private const val PREVIOUS_VALUE = "previousValue"
     private const val QS_STYLE_FONT_SIZE = "qsStyleFontSize"
     private const val QS_STYLE_FONT_SKEW = "qsStyleFontSkew"
     private const val QS_STYLE_FONT_SPACING = "qsStyleFontSpacing"
@@ -90,12 +92,25 @@ object Preferences {
 
     fun getValueChange(context: Context): Boolean {
         return MultiPreferences(PREFS_FILENAME, context.contentResolver)
-            .getBoolean(VALUE_CHANGE, false)
+            .getInt(VALUE_CHANGE_INT, 0) != 0
     }
 
     fun setValueChange(value: Boolean, context: Context) {
+        val result =
+            if (value) {
+                MultiPreferences(PREFS_FILENAME, context.contentResolver).getInt(VALUE_CHANGE_INT, 0) + 1
+            } else {
+                if (MultiPreferences(PREFS_FILENAME, context.contentResolver).getInt(
+                        VALUE_CHANGE_INT, 0) > 0) {
+                    MultiPreferences(PREFS_FILENAME, context.contentResolver).getInt(
+                        VALUE_CHANGE_INT, 0) - 1
+                } else {
+                    0
+                }
+            }
+
         MultiPreferences(PREFS_FILENAME, context.contentResolver)
-            .setBoolean(VALUE_CHANGE, value)
+            .setInt(VALUE_CHANGE_INT, result)
     }
 
 
@@ -107,6 +122,28 @@ object Preferences {
     fun setTileAdded(value: Boolean, context: Context) {
         MultiPreferences(PREFS_FILENAME, context.contentResolver)
             .setBoolean(TILE_ADDED, value)
+    }
+
+
+    fun getNewValue(context: Context): Int {
+        return MultiPreferences(PREFS_FILENAME, context.contentResolver)
+            .getInt(NEW_VALUE, 0)
+    }
+
+    fun setNewValue(value: Int, context: Context) {
+        MultiPreferences(PREFS_FILENAME, context.contentResolver)
+            .setInt(NEW_VALUE, value)
+    }
+
+
+    fun getPreviousValue(context: Context): Int {
+        return MultiPreferences(PREFS_FILENAME, context.contentResolver)
+            .getInt(PREVIOUS_VALUE, 0)
+    }
+
+    fun setPreviousValue(value: Int, context: Context) {
+        MultiPreferences(PREFS_FILENAME, context.contentResolver)
+            .setInt(PREVIOUS_VALUE, value)
     }
 
 

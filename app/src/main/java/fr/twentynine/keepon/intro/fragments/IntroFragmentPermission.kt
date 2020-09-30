@@ -1,6 +1,5 @@
 package fr.twentynine.keepon.intro.fragments
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -29,12 +28,11 @@ import kotlinx.coroutines.withTimeout
 
 
 class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
-    private lateinit var mContext: Context
-    private lateinit var mView: View
-    private lateinit var mButton: Button
+
+    private var mView: View? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mContext = requireContext()
+        val mContext = requireContext()
         mView = inflater.inflate(R.layout.fragment_intro_button, container, false)
 
         setBackgroundColor(defaultBackgroundColor)
@@ -44,7 +42,6 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
                 if (Settings.System.canWrite(mContext)) {
                     CoroutineScope(Dispatchers.Main).launch {
                         val intent = Intent(mContext, IntroActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
                         startActivity(intent)
                     }
                 } else {
@@ -64,7 +61,7 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
             }
         }
 
-        mButton = mView.findViewById(R.id.button)
+        val mButton = mView!!.findViewById<Button>(R.id.button)
         mButton.setBackgroundColor(KeepOnUtils.darkerColor(COLOR_SLIDE_PERM, 0.4f))
         mButton.text = getString(R.string.dialog_permission_button)
         mButton.setOnClickListener {
@@ -72,17 +69,16 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
                 .setData(Uri.parse("package:" + mContext.packageName))
                 .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
             checkSettingOn()
             mContext.startActivity(intent)
         }
 
-        val mTitle = mView.findViewById<TextView>(R.id.title)
+        val mTitle = mView!!.findViewById<TextView>(R.id.title)
         mTitle.text = getString(R.string.dialog_permission_title)
-        val mDescription = mView.findViewById<TextView>(R.id.description)
+        val mDescription = mView!!.findViewById<TextView>(R.id.description)
         mDescription.text = getString(R.string.dialog_permission_text)
-        val mImage = mView.findViewById<ImageView>(R.id.image)
+        val mImage = mView!!.findViewById<ImageView>(R.id.image)
         mImage.setImageResource(R.mipmap.img_intro_perm)
 
         if (Settings.System.canWrite(requireContext().applicationContext))
@@ -95,17 +91,26 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
 
     override fun onResume() {
         super.onResume()
-        if (Settings.System.canWrite(requireContext().applicationContext))
-            mButton.visibility = View.INVISIBLE
-        else
-            mButton.visibility = View.VISIBLE
+        val mButton = requireView().findViewById<Button>(R.id.button)
+        if (mButton != null) {
+            if (Settings.System.canWrite(requireContext().applicationContext)) {
+                mButton.visibility = View.INVISIBLE
+            } else {
+                mButton.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mView = null
     }
 
     override val isPolicyRespected: Boolean
         get() = Settings.System.canWrite(requireContext().applicationContext)
 
     override fun onUserIllegallyRequestedNextPage() {
-        return Snackbar.make(mView, getString(R.string.intro_toast_permission_needed), Snackbar.LENGTH_LONG)
+        return Snackbar.make(requireView(), getString(R.string.intro_toast_permission_needed), Snackbar.LENGTH_LONG)
             .setAnchorView(R.id.button)
             .show()
     }
@@ -114,7 +119,9 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
         get() = COLOR_SLIDE_PERM
 
     override fun setBackgroundColor(backgroundColor: Int) {
-        val constraintLayout = mView.findViewById<ConstraintLayout>(R.id.main)
-        constraintLayout.setBackgroundColor(backgroundColor)
+        if (mView != null) {
+            val constraintLayout = mView!!.findViewById<ConstraintLayout>(R.id.main)
+            constraintLayout.setBackgroundColor(backgroundColor)
+        }
     }
 }

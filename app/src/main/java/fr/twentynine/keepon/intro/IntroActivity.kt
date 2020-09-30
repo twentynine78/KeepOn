@@ -1,5 +1,6 @@
 package fr.twentynine.keepon.intro
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -17,12 +18,25 @@ import fr.twentynine.keepon.intro.fragments.IntroFragmentAddQSTile
 import fr.twentynine.keepon.intro.fragments.IntroFragmentNotification
 import fr.twentynine.keepon.intro.fragments.IntroFragmentPermission
 import fr.twentynine.keepon.utils.KeepOnUtils
+import fr.twentynine.keepon.utils.BundleScrubber
 
 
 class IntroActivity : AppIntro2() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // A hack to prevent a private serializable classloader attack
+        if (BundleScrubber.scrub(intent)) {
+            finish()
+            return
+        }
+
+        // Ignore implicit intents, because they are not valid.
+        if (packageName != intent.getPackage() && ComponentName(this, this.javaClass.name) != intent.component) {
+            finish()
+            return
+        }
 
         val sliderPageHome = SliderPage()
         sliderPageHome.title = getString(R.string.intro_home_title)

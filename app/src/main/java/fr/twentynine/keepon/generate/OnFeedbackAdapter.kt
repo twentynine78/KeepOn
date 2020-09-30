@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.utils.generate
+package fr.twentynine.keepon.generate
 
 /**
  * Copyright (c) Pixplicity, Gene-rate

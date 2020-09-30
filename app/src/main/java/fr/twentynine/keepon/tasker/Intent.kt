@@ -14,7 +14,7 @@
  */
 @file:Suppress("unused", "MemberVisibilityCanBePrivate")
 
-package fr.twentynine.keepon.utils.tasker
+package fr.twentynine.keepon.tasker
 
 /**
  * Contains Intent constants necessary for interacting with the plug-in API for Locale.

@@ -113,7 +113,7 @@
             android:process=":services"/>
 
         <activity
-            android:name=".utils.tasker.EditActivity"
+            android:name=".tasker.EditActivity"
             android:label="@string/tasker_activity_name"
             android:process=":tasker"
             android:exported="true">
@@ -122,7 +122,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".utils.tasker.FireReceiver"
+        <receiver android:name=".tasker.FireReceiver"
             android:exported="true"
             android:process=":tasker"
             tools:ignore="ExportedReceiver">

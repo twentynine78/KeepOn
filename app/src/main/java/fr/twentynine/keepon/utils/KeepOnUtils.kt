@@ -9,6 +9,8 @@ import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.ShortcutInfo
+import android.content.pm.ShortcutManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -16,9 +18,13 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Paint.Align
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -30,8 +36,12 @@ import android.widget.TextView
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.graphics.ColorUtils
+import com.bumptech.glide.Priority
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.SplashScreen
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.coroutines.CoroutineScope
@@ -41,6 +51,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import java.util.Locale
+import kotlin.collections.ArrayList
 
 
 object KeepOnUtils {
@@ -56,7 +67,7 @@ object KeepOnUtils {
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
     fun getTimeoutValueArray() : ArrayList<Int> {
-        return arrayListOf (
+        return arrayListOf(
             15000,
             30000,
             60000,
@@ -91,7 +102,7 @@ object KeepOnUtils {
                 return availableTimeout[availableTimeout.indexOf(allTimeouts[allCurrentIndex])]
             }
         }
-        return -1
+        return getCurrentTimeout(context)
     }
 
     fun getBitmapFromText(timeout: Int, context: Context, bigSize: Boolean = false): Bitmap {
@@ -200,53 +211,50 @@ object KeepOnUtils {
         return bitmap
     }
 
-    fun getBitmapSignature(context: Context, timeout: Int): String {
-        return String.format(Locale.getDefault(),
-            "%d,%d,%d,%d,%b,%b,%b,%b,%b,%b,%b,%b,%b",
-            timeout,
-            Preferences.getQSStyleFontSize(context),
-            Preferences.getQSStyleFontSkew(context),
-            Preferences.getQSStyleFontSpacing(context),
-            Preferences.getQSStyleTypefaceSansSerif(context),
-            Preferences.getQSStyleTypefaceSerif(context),
-            Preferences.getQSStyleTypefaceMonospace(context),
-            Preferences.getQSStyleFontBold(context),
-            Preferences.getQSStyleFontUnderline(context),
-            Preferences.getQSStyleFontSMCP(context),
-            Preferences.getQSStyleTextFill(context),
-            Preferences.getQSStyleTextFillStroke(context),
-            Preferences.getQSStyleTextStroke(context)
-            )
-    }
-
     fun updateOriginalTimeout(context: Context) {
         Preferences.setOriginalTimeout(getCurrentTimeout(context), context)
     }
 
     fun getOriginalTimeout(context: Context): Int {
-        return Preferences.getOriginalTimeout(context)
+        val origTimeout = Preferences.getOriginalTimeout(context)
+        return if (origTimeout == 0)
+            getCurrentTimeout(context)
+        else
+            origTimeout
     }
 
     fun startScreenOffReceiverService(context: Context) {
-        val broadcastIntent = Intent(context.applicationContext, ServicesManagerReceiver::class.java)
+        val broadcastIntent = Intent(
+            context.applicationContext,
+            ServicesManagerReceiver::class.java
+        )
         broadcastIntent.action = ServicesManagerReceiver.ACTION_START_FOREGROUND_SCREEN_OFF_SERVICE
         context.sendBroadcast(broadcastIntent)
     }
 
     fun stopScreenOffReceiverService(context: Context) {
-        val broadcastIntent = Intent(context.applicationContext, ServicesManagerReceiver::class.java)
+        val broadcastIntent = Intent(
+            context.applicationContext,
+            ServicesManagerReceiver::class.java
+        )
         broadcastIntent.action = ServicesManagerReceiver.ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE
         context.sendBroadcast(broadcastIntent)
     }
 
     fun startScreenTimeoutObserverService(context: Context) {
-        val broadcastIntent = Intent(context.applicationContext, ServicesManagerReceiver::class.java)
+        val broadcastIntent = Intent(
+            context.applicationContext,
+            ServicesManagerReceiver::class.java
+        )
         broadcastIntent.action = ServicesManagerReceiver.ACTION_START_FOREGROUND_TIMEOUT_SERVICE
         context.sendBroadcast(broadcastIntent)
     }
 
     fun stopScreenTimeoutObserverService(context: Context) {
-        val broadcastIntent = Intent(context.applicationContext, ServicesManagerReceiver::class.java)
+        val broadcastIntent = Intent(
+            context.applicationContext,
+            ServicesManagerReceiver::class.java
+        )
         broadcastIntent.action = ServicesManagerReceiver.ACTION_STOP_FOREGROUND_TIMEOUT_SERVICE
         context.sendBroadcast(broadcastIntent)
     }
@@ -269,7 +277,7 @@ object KeepOnUtils {
                 if (!isNotificationEnabled(context)) {
                     CoroutineScope(Dispatchers.Main).launch {
                         val intent = Intent(context.applicationContext, returnClass)
-                        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        //intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
                         context.startActivity(intent)
                     }
                 } else {
@@ -283,7 +291,8 @@ object KeepOnUtils {
 
         fun checkSettingOn() = CoroutineScope(Dispatchers.Default).launch {
             delay(500)
-            withTimeout(60000
+            withTimeout(
+                60000
             ) {
                 checkSettings()
             }
@@ -295,7 +304,12 @@ object KeepOnUtils {
         dialog.setCancelable(true)
 
         val image = dialog.findViewById(R.id.image_dialog) as ImageView
-        image.setImageBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.dialog_logo_notification))
+        image.setImageBitmap(
+            BitmapFactory.decodeResource(
+                context.resources,
+                R.mipmap.dialog_logo_notification
+            )
+        )
 
         val text = dialog.findViewById(R.id.text_dialog) as TextView
         text.text = context.getString(R.string.dialog_notification_text)
@@ -311,7 +325,7 @@ object KeepOnUtils {
                         .putExtra(Settings.EXTRA_CHANNEL_ID, NOTIFICATION_CHANNEL_ID)
                         .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                         .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        //.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
                     checkSettingOn()
                     context.startActivity(intent)
@@ -322,7 +336,7 @@ object KeepOnUtils {
                     .setData(uri)
                     .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-                    .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    //.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
                 checkSettingOn()
                 context.startActivity(intent)
@@ -339,7 +353,7 @@ object KeepOnUtils {
                 if (Settings.System.canWrite(context.applicationContext)) {
                     CoroutineScope(Dispatchers.Main).launch {
                         val intent = Intent(context.applicationContext, returnClass)
-                        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        //intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
                         context.startActivity(intent)
                     }
                 } else {
@@ -353,7 +367,8 @@ object KeepOnUtils {
 
         fun checkSettingOn() = CoroutineScope(Dispatchers.Default).launch {
             delay(500)
-            withTimeout(60000
+            withTimeout(
+                60000
             ) {
                 checkSettings()
             }
@@ -365,7 +380,12 @@ object KeepOnUtils {
         dialog.setCancelable(false)
 
         val image = dialog.findViewById(R.id.image_dialog) as ImageView
-        image.setImageBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.dialog_logo_permission))
+        image.setImageBitmap(
+            BitmapFactory.decodeResource(
+                context.resources,
+                R.mipmap.dialog_logo_permission
+            )
+        )
 
         val text = dialog.findViewById(R.id.text_dialog) as TextView
         text.text = context.getString(R.string.dialog_permission_text)
@@ -378,7 +398,7 @@ object KeepOnUtils {
                 .setData(Uri.parse("package:" + context.packageName))
                 .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                //.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
             checkSettingOn()
             context.startActivity(intent)
@@ -395,7 +415,12 @@ object KeepOnUtils {
         dialog.setCancelable(true)
 
         val image = dialog.findViewById(R.id.image_dialog) as ImageView
-        image.setImageBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.dialog_logo_missing))
+        image.setImageBitmap(
+            BitmapFactory.decodeResource(
+                context.resources,
+                R.mipmap.dialog_logo_missing
+            )
+        )
 
         val text = dialog.findViewById(R.id.text_dialog) as TextView
         text.text = context.getString(R.string.dialog_missing_settings_text)
@@ -417,11 +442,21 @@ object KeepOnUtils {
         dialog.setCancelable(true)
 
         val image = dialog.findViewById(R.id.image_dialog) as ImageView
-        image.setImageBitmap(BitmapFactory.decodeResource(context.resources, R.mipmap.dialog_logo_default))
+        image.setImageBitmap(
+            BitmapFactory.decodeResource(
+                context.resources,
+                R.mipmap.dialog_logo_default
+            )
+        )
 
         val text = dialog.findViewById(R.id.text_dialog) as TextView
-        text.text = String.format(Locale.getDefault(), context.getString(R.string.dialog_default_timeout_text), timeoutText.toLowerCase(
-            Locale.getDefault()))
+        text.text = String.format(
+            Locale.getDefault(),
+            context.getString(R.string.dialog_default_timeout_text),
+            timeoutText.toLowerCase(
+                Locale.getDefault()
+            )
+        )
 
         val button = dialog.findViewById(R.id.btn_dialog) as Button
         button.text = context.getString(R.string.dialog_default_timeout_button)
@@ -485,7 +520,13 @@ object KeepOnUtils {
             ""
         }
         val notification = NotificationCompat.Builder(context, channelId)
-        notification.setContentTitle(String.format(Locale.getDefault(), "%s - %s", context.getString(R.string.app_name), contentText))
+        notification.setContentTitle(
+            String.format(
+                Locale.getDefault(), "%s - %s", context.getString(
+                    R.string.app_name
+                ), contentText
+            )
+        )
         notification.setContentText(context.getString(R.string.notification_hide))
         notification.setSmallIcon(R.mipmap.ic_qs_keepon)
 
@@ -497,7 +538,7 @@ object KeepOnUtils {
                     .putExtra(Settings.EXTRA_CHANNEL_ID, NOTIFICATION_CHANNEL_ID)
                     .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-                    .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    //.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             }
         } else {
             val uri = Uri.fromParts("package", context.packageName, null)
@@ -505,7 +546,7 @@ object KeepOnUtils {
                 .setData(uri)
                 .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                //.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
         val pendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
             // Add the intent, which inflates the back stack
@@ -569,6 +610,22 @@ object KeepOnUtils {
         )
     }
 
+    fun setNewTimeout(value: Int, context: Context) {
+        Preferences.setNewValue(value, context)
+    }
+
+    fun getNewTimeout(context: Context): Int {
+        return Preferences.getNewValue(context)
+    }
+
+    fun setPreviousTimeout(value: Int, context: Context) {
+        Preferences.setPreviousValue(value, context)
+    }
+
+    fun getPreviousTimeout(context: Context): Int {
+        return Preferences.getPreviousValue(context)
+    }
+
     fun setSelectedTimeout(selectedList: ArrayList<Int>, context: Context) {
         Preferences.setSelectedTimeout(selectedList, context)
     }
@@ -617,6 +674,82 @@ object KeepOnUtils {
         Preferences.setTileAdded(value, context)
     }
 
+    fun manageAppShortcut(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            // Define map with long text
+            val timeoutMap: HashMap<Int, Int> = hashMapOf(
+                -43 to R.string.timeout_previous,
+                -42 to R.string.timeout_restore,
+                getTimeoutValueArray()[0] to R.string.timeout_15_seconds,
+                getTimeoutValueArray()[1] to R.string.timeout_30_seconds,
+                getTimeoutValueArray()[2] to R.string.timeout_1_minute,
+                getTimeoutValueArray()[3] to R.string.timeout_2_minutes,
+                getTimeoutValueArray()[4] to R.string.timeout_5_minutes,
+                getTimeoutValueArray()[5] to R.string.timeout_10_minutes,
+                getTimeoutValueArray()[6] to R.string.timeout_30_minutes,
+                getTimeoutValueArray()[7] to R.string.timeout_1_hour,
+                getTimeoutValueArray()[8] to R.string.timeout_infinite
+            )
+
+            // Create dynamic list of timeout values
+            val availableTimeout: ArrayList<Int> = ArrayList()
+            availableTimeout.addAll(getSelectedTimeout(context))
+            availableTimeout.remove(getOriginalTimeout(context))
+            availableTimeout.remove(getCurrentTimeout(context))
+            availableTimeout.add(-42)
+            if (getPreviousTimeout(context) != 0) availableTimeout.add(-43)
+            availableTimeout.sort()
+
+            // Build list of shortcuts
+            val shortcutManager = context.getSystemService(ShortcutManager::class.java)
+
+            if (shortcutManager != null) {
+                // Remove all previous shortcuts
+                shortcutManager.removeAllDynamicShortcuts()
+
+                // Filter to get only the 5 first shortcuts
+                for (timeout in availableTimeout.take(5)) {
+                    // Create Intent
+                    val intent = Intent(context.applicationContext, SplashScreen::class.java)
+                    intent.action = ServicesManagerReceiver.ACTION_SET_TIMEOUT
+                    intent.putExtra("timeout", timeout)
+
+                    // Create shortcut
+                    val shortcut = ShortcutInfo.Builder(context, String.format(Locale.getDefault(), "%d", timeout))
+                        .setShortLabel(getDisplayTimeout(timeout, context))
+                        .setLongLabel(context.getString(timeoutMap[timeout]!!))
+                        .setIntent(intent)
+
+                    // Call Glider to set icon and build shortcut
+                    setShortcutsIconWithGlide(timeout, shortcut, context)
+                }
+            }
+        }
+    }
+
+    private fun setShortcutsIconWithGlide(timeout: Int, shortcutInfo: ShortcutInfo.Builder, context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            GlideApp.with(context)
+                .asBitmap()
+                .priority(Priority.LOW)
+                .load(getShortcutBitmapFromText(timeout, context))
+                .into(object : CustomTarget<Bitmap>(25.px, 25.px) {
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        // Set bitmap to shortcut icon
+                        shortcutInfo.setIcon(Icon.createWithBitmap(resource))
+                        // Build and assign shortcut
+                        val shortcutManager = context.getSystemService(ShortcutManager::class.java)
+                        if (shortcutManager != null && !shortcutManager.isRateLimitingActive) {
+                            shortcutManager.addDynamicShortcuts(listOf(shortcutInfo.build()))
+                        }
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                    }
+                })
+        }
+    }
+
     private fun getDisplayTimeout(screenOffTimeout: Int, context: Context): String {
         return when {
             screenOffTimeout == Int.MAX_VALUE -> String.format(
@@ -635,6 +768,16 @@ object KeepOnUtils {
                 screenOffTimeout / 60000,
                 context.getString(R.string.qs_short_minute)
             )
+            screenOffTimeout == -42 -> String.format(
+                Locale.getDefault(),
+                "%s",
+                context.getString(R.string.timeout_restore_short)
+            )
+            screenOffTimeout == -43 -> String.format(
+                Locale.getDefault(),
+                "%s",
+                context.getString(R.string.timeout_previous_short)
+            )
             else -> String.format(
                 Locale.getDefault(),
                 "%d%s",
@@ -646,5 +789,166 @@ object KeepOnUtils {
 
     private fun updateOriginalTimeout(newTimeout: Int, context: Context) {
         Preferences.setOriginalTimeout(newTimeout, context)
+    }
+
+    private fun getShortcutBitmapFromText(timeout: Int, context: Context): Bitmap {
+        val imageWidth = 25.px
+        val imageHeight = 25.px
+
+        val textColor = Color.parseColor("#FF3B3B3B")
+        val shadowColor = Color.parseColor("#82222222")
+
+        val displayTimeout = when (timeout) {
+            -42 -> { getDisplayTimeout(getOriginalTimeout(context), context) }
+            -43 -> { getDisplayTimeout(getPreviousTimeout(context), context) }
+            else -> { getDisplayTimeout(timeout, context) }
+        }
+
+        val bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val paint = Paint()
+        paint.isAntiAlias = true
+        paint.style = Paint.Style.FILL
+        paint.color = Color.WHITE
+        paint.setShadowLayer(2f, 1f, 1f, shadowColor)
+
+        canvas.drawCircle(
+            (imageWidth / 2).toFloat(),
+            (imageHeight / 2).toFloat(),
+            11.px.toFloat(),
+            paint
+        )
+
+        paint.style = Paint.Style.STROKE
+        paint.color = textColor
+        paint.strokeWidth = 2f
+        paint.strokeCap = Paint.Cap.ROUND
+
+        canvas.drawCircle(
+            (imageWidth / 2).toFloat(),
+            (imageHeight / 2).toFloat(),
+            11.px.toFloat(),
+            paint
+        )
+
+        var textSize = when (displayTimeout.length) {
+            1 -> 13f.px
+            2 -> 9f.px
+            3 -> 7f.px
+            else -> 5f.px
+        }
+        // Set text size from saved preference
+        textSize += (Preferences.getQSStyleFontSize(context) / 2).px
+        paint.textSize = textSize
+
+        // Set typeface from saved preference
+        val bold = Preferences.getQSStyleFontBold(context)
+        val typeface: Typeface =  when {
+            Preferences.getQSStyleTypefaceSansSerif(context) -> {
+                if (bold) {
+                    Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+                } else {
+                    Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
+                }
+            }
+            Preferences.getQSStyleTypefaceSerif(context) -> {
+                if (bold) {
+                    Typeface.create(Typeface.SERIF, Typeface.BOLD)
+                } else {
+                    Typeface.create(Typeface.SERIF, Typeface.NORMAL)
+                }
+            }
+            Preferences.getQSStyleTypefaceMonospace(context) -> {
+                if (bold) {
+                    Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+                } else {
+                    Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
+                }
+            }
+            else -> Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+        }
+        paint.typeface = typeface
+
+        // Set text style from saved preference
+        val paintStyle: Paint.Style = when {
+            Preferences.getQSStyleTextFill(context) -> {
+                Paint.Style.FILL
+            }
+            Preferences.getQSStyleTextFillStroke(context) -> {
+                paint.strokeWidth = 1f.px
+                Paint.Style.FILL_AND_STROKE
+            }
+            Preferences.getQSStyleTextStroke(context) -> {
+                paint.strokeWidth = 1f.px
+                Paint.Style.STROKE
+            }
+            else -> Paint.Style.FILL
+        }
+        paint.style = paintStyle
+        paint.strokeCap = Paint.Cap.ROUND
+
+        // Set text skew from preference
+        paint.textSkewX = (-(Preferences.getQSStyleFontSkew(context) / 1.7).toFloat())
+
+        // Set font SMCP from preference
+        if (Preferences.getQSStyleFontSMCP(context)) {
+            paint.fontFeatureSettings = "smcp"
+        }
+
+        // Set font underline from preference
+        paint.isUnderlineText = Preferences.getQSStyleFontUnderline(context)
+
+        paint.textAlign = Align.LEFT
+        paint.isAntiAlias = true
+        paint.color = textColor
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+
+        // Calculate coordinates
+        val rect = Rect(0, 0, imageWidth, imageHeight)
+        val canvasHeight = rect.height()
+        val canvasWidth = rect.width()
+
+        paint.setShadowLayer(1f, 1f, 1f, shadowColor)
+
+        canvas.save()
+
+        // Check if is for 'previous timeout' (-43)
+        //if (timeout != -43) {
+            // If it is not restore timeout, draw text
+            paint.getTextBounds(displayTimeout, 0, displayTimeout.length, rect)
+            val x = canvasWidth / 2f - rect.width() / 2f - rect.left
+            val y = canvasHeight / 2f + rect.height() / 2f - rect.bottom
+
+            // Draw text
+            canvas.drawText(
+                displayTimeout,
+                x + (Preferences.getQSStyleFontSpacing(context) / 2).px,
+                y,
+                paint
+            )
+        /* } else {
+            // If it is 'previous timeout' draw icon
+            val keeponIcon = Bitmap.createScaledBitmap(
+                BitmapFactory.decodeResource(context.resources, R.mipmap.ic_shortcut_keepon),
+                (imageWidth - 7.px),
+                (imageHeight - 7.px),
+                true
+            )
+            val drawable = BitmapDrawable(context.resources, keeponIcon)
+            // Center the icon
+            val bitMapLeft = (imageWidth / 2) - (drawable.intrinsicWidth / 2)
+            val bitMapTop = (imageHeight / 2) - (drawable.intrinsicHeight / 2)
+            drawable.setBounds(
+                bitMapLeft, bitMapTop, bitMapLeft + drawable.intrinsicWidth,
+                bitMapTop + drawable.intrinsicHeight
+            )
+
+            // Draw icon
+            drawable.draw(canvas)
+        } */
+        canvas.save()
+        canvas.restore()
+
+        return bitmap
     }
 }

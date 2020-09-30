@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.utils.generate
+package fr.twentynine.keepon.generate
 
 import android.app.Activity
 import android.content.Context
