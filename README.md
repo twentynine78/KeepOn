@@ -12,6 +12,8 @@ KeepOn allows you to keep your device's screen on for the desired duration and a
 
 KeepOn adapts to your device's configuration to easy use and allow you to customize the Quick Settings view!
 
+A Tasker/Locale plugin is integrated and allows you to use KeepOn functions from another compatible application!
+
 ## Permissions
 
 - android.permission.WRITE_SETTINGS: Needed by Android to modify screen timeout settings
@@ -29,6 +31,7 @@ You can read / audit code and compile your own apk if you want!
 - AppIntro: *https://github.com/AppIntro/AppIntro*
 - MultiProcessPreferences: *https://github.com/TreeFrogApps/MultiProcessPreferences*
 - Glide: *https://github.com/bumptech/glide*
+- Gene-rate: *https://github.com/Pixplicity/gene-rate*
 
 ## Screenshots
 
