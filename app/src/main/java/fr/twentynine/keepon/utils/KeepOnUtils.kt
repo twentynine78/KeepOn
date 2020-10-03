@@ -220,11 +220,7 @@ object KeepOnUtils {
         val textColor = Color.parseColor("#FF3B3B3B")
         val shadowColor = Color.parseColor("#82222222")
 
-        val displayTimeout = when (timeout) {
-            -42 -> { getDisplayTimeout(getOriginalTimeout(context), context) }
-            -43 -> { getDisplayTimeout(getPreviousTimeout(context), context) }
-            else -> { getDisplayTimeout(timeout, context) }
-        }
+        val displayTimeout = getDisplayTimeout(timeout, context)
 
         val bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
