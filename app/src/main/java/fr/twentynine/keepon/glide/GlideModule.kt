@@ -20,7 +20,7 @@ class GlideModule : AppGlideModule() {
                 RequestOptions()
                     .format(DecodeFormat.PREFER_RGB_565)
                     .circleCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             )
     }
 
