@@ -8,10 +8,4 @@
         android:icon="@drawable/ic_close"
         android:title="@string/tasker_menu_dontsave"
         app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/menu_save"
-        android:icon="@drawable/ic_save"
-        android:title="@string/tasker_menu_save"
-        app:showAsAction="ifRoom" />
 </menu>

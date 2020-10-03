@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.radiobutton.MaterialRadioButton
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.utils.BundleScrubber
@@ -58,6 +59,10 @@ class EditActivity : AppCompatActivity() {
 
         isCancelled = false
 
+        // Set FAB action
+        val fab = findViewById<FloatingActionButton>(R.id.fab_save)
+        fab.setOnClickListener { finish() }
+
         // Disable option 'previous value' if no previous value found
         if (KeepOnUtils.getPreviousTimeout(this) == 0)
             findViewById<MaterialRadioButton>(R.id.timeout_previous).isEnabled = false
@@ -85,16 +90,11 @@ class EditActivity : AppCompatActivity() {
                 finish()
                 true
             }
-            R.id.menu_save -> {
-                finish()
-                true
-            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
         isCancelled = true
         finish()
     }
