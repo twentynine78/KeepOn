@@ -32,7 +32,6 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Priority
-import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -69,11 +68,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var missingSettingsDialog: Dialog
     private lateinit var permissionDialog: Dialog
     private lateinit var notificationDialog: Dialog
-    private lateinit var timeoutSwitchs: ArrayList<TimeoutSwitch>
-    private lateinit var glideTarget: CustomTarget<Bitmap>
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var rate: Rate
-    private lateinit var glideRequestManager: RequestManager
     private lateinit var snackbar: Snackbar
 
     private var receiverRegistered = false
@@ -104,7 +99,7 @@ class MainActivity : AppCompatActivity() {
                 when (intent.action) {
                     ACTION_UPDATE_UI -> {
                         // Update all switch from saved preference
-                        updateSwitchs(timeoutSwitchs)
+                        updateSwitchs(getTimeoutSwitchsArray())
 
                         // Set tile preview Image View
                         updateTilePreview()
@@ -112,7 +107,6 @@ class MainActivity : AppCompatActivity() {
                     ACTION_MISSING_SETTINGS -> {
                         // Show missing settings dialog
                         if (KeepOnUtils.getSelectedTimeout(contxt!!).size <= 1) {
-                            missingSettingsDialog = KeepOnUtils.getMissingSettingsDialog(contxt)
                             if (!missingSettingsDialog.isShowing) {
                                 missingSettingsDialog.show()
                             }
@@ -147,8 +141,6 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        registerBroadcastReceiver()
-
         // Set DarkTheme
         if (KeepOnUtils.getDarkTheme(this))
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -156,25 +148,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        // Create an array of TimeoutSwitch
-        timeoutSwitchs = arrayListOf(
-            TimeoutSwitch(switch15s, KeepOnUtils.getTimeoutValueArray()[0]),
-            TimeoutSwitch(switch30s, KeepOnUtils.getTimeoutValueArray()[1]),
-            TimeoutSwitch(switch1m, KeepOnUtils.getTimeoutValueArray()[2]),
-            TimeoutSwitch(switch2m, KeepOnUtils.getTimeoutValueArray()[3]),
-            TimeoutSwitch(switch5m, KeepOnUtils.getTimeoutValueArray()[4]),
-            TimeoutSwitch(switch10m, KeepOnUtils.getTimeoutValueArray()[5]),
-            TimeoutSwitch(switch30m, KeepOnUtils.getTimeoutValueArray()[6]),
-            TimeoutSwitch(switch1h, KeepOnUtils.getTimeoutValueArray()[7]),
-            TimeoutSwitch(switchInfinite, KeepOnUtils.getTimeoutValueArray()[8])
-        )
-
         // Create Snackbar for saving settings
         snackbar = Snackbar.make(findViewById(android.R.id.content), getString(R.string.settings_save), Snackbar.LENGTH_LONG)
             .setAnchorView(R.id.bottomSheet)
 
         // Set OnClickListener for each switch
-        for (timeoutSwitch: TimeoutSwitch in timeoutSwitchs) {
+        for (timeoutSwitch: TimeoutSwitch in getTimeoutSwitchsArray()) {
             timeoutSwitch.switch.setOnClickListener { saveSelectedSwitch() }
             timeoutSwitch.switch.setOnLongClickListener {
                 KeepOnUtils.getDefaultTimeoutDialog(
@@ -233,15 +212,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Set bottom sheet behavior
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-
         // Set OnClick listener for bottom sheet peek views
         bottomSheetPeekTextView.setOnClickListener {
-            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED)
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            if (BottomSheetBehavior.from(bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED)
+                BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
             else
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
         }
 
         // Set OnClick listener for Tile Preview to switch like from Quick Settings
@@ -251,32 +227,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             KeepOnUtils.setTimeout(KeepOnUtils.getNextTimeoutValue(this), this)
-        }
-
-        // Create glide request manager
-        glideRequestManager = GlideApp.with(this)
-
-        // Define glide target to set bitmap to tile preview
-        glideTarget = object: CustomTarget<Bitmap>(150.px, 150.px) {
-            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                tilePreview.setImageBitmap(resource)
-                tilePreview.imageTintMode = PorterDuff.Mode.SRC_IN
-                val layerDrawableCircle: LayerDrawable = tilePreviewBackground.drawable as LayerDrawable
-                val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
-
-                if (KeepOnUtils.getCurrentTimeout(this@MainActivity) == KeepOnUtils.getOriginalTimeout(
-                        this@MainActivity
-                    )) {
-                    tilePreview.imageTintList = getColorStateList(R.color.colorTilePreviewDisabled)
-                    circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackgroundDisabled))
-                } else {
-                    tilePreview.imageTintList = getColorStateList(R.color.colorTilePreview)
-                    circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackground))
-                }
-            }
-            override fun onLoadCleared(placeholder: Drawable?) {
-                tilePreview.setImageDrawable(placeholder)
-            }
         }
 
         // Define tile preview max size and adjust bottomsheet margin view height
@@ -296,7 +246,7 @@ class MainActivity : AppCompatActivity() {
         bottomMarginView.requestLayout()
 
         // Set onSlide bottom sheet behavior
-        bottomSheetBehavior.addBottomSheetCallback(object :
+        BottomSheetBehavior.from(bottomSheet).addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 setOnSlideBottomSheetAnim(slideOffset)
@@ -309,7 +259,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         // Set initial bottom sheet state
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
 
         // Load QS Style preference
         loadQSStylePreferences()
@@ -335,15 +285,13 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            // If no custom screen timeout set update OriginalTimeout in saved preference
-            if (!KeepOnUtils.getKeepOnState(this))
-                KeepOnUtils.updateOriginalTimeout(this)
+            registerBroadcastReceiver()
 
             // Start service to monitor screen timeout
             KeepOnUtils.startScreenTimeoutObserverService(this)
 
             // Update all switch from saved preference
-            updateSwitchs(timeoutSwitchs)
+            updateSwitchs(getTimeoutSwitchsArray())
 
             // Set tile preview Image View
             updateTilePreview()
@@ -387,21 +335,35 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onDestroy() {
-        if (receiverRegistered)
+    override fun onPause() {
+        if (receiverRegistered) {
             unregisterReceiver(receiver)
+            receiverRegistered = false
+        }
 
-        glideRequestManager.clear(glideTarget)
-
-        super.onDestroy()
+        super.onPause()
     }
 
     override fun onBackPressed() {
-        if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED)
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        if (BottomSheetBehavior.from(bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED)
+            BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
         else
             finishAfterTransition()
-        //super.onBackPressed()
+            //super.onBackPressed()
+    }
+
+    private fun getTimeoutSwitchsArray(): ArrayList<TimeoutSwitch> {
+        return arrayListOf(
+            TimeoutSwitch(switch15s, KeepOnUtils.getTimeoutValueArray()[0]),
+            TimeoutSwitch(switch30s, KeepOnUtils.getTimeoutValueArray()[1]),
+            TimeoutSwitch(switch1m, KeepOnUtils.getTimeoutValueArray()[2]),
+            TimeoutSwitch(switch2m, KeepOnUtils.getTimeoutValueArray()[3]),
+            TimeoutSwitch(switch5m, KeepOnUtils.getTimeoutValueArray()[4]),
+            TimeoutSwitch(switch10m, KeepOnUtils.getTimeoutValueArray()[5]),
+            TimeoutSwitch(switch30m, KeepOnUtils.getTimeoutValueArray()[6]),
+            TimeoutSwitch(switch1h, KeepOnUtils.getTimeoutValueArray()[7]),
+            TimeoutSwitch(switchInfinite, KeepOnUtils.getTimeoutValueArray()[8])
+        )
     }
 
     private fun registerBroadcastReceiver() {
@@ -413,17 +375,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateTilePreview() {
-        // Clear previous target
-        glideRequestManager.clear(glideTarget)
-
         // Set Bitmap to Tile Preview
         val currentTimeout = KeepOnUtils.getCurrentTimeout(this)
 
-        glideRequestManager
+        GlideApp.with(this)
                 .asBitmap()
                 .priority(Priority.HIGH)
                 .load(TimeoutIconData(currentTimeout, 1, KeepOnUtils.getIconStyleSignature(this)))
-                .into(glideTarget)
+                .into(object: CustomTarget<Bitmap>(150.px, 150.px) {
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        tilePreview.setImageBitmap(resource)
+                        tilePreview.imageTintMode = PorterDuff.Mode.SRC_IN
+                        val layerDrawableCircle: LayerDrawable = tilePreviewBackground.drawable as LayerDrawable
+                        val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
+
+                        if (KeepOnUtils.getCurrentTimeout(this@MainActivity) == KeepOnUtils.getOriginalTimeout(
+                                this@MainActivity
+                            )) {
+                            tilePreview.imageTintList = getColorStateList(R.color.colorTilePreviewDisabled)
+                            circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackgroundDisabled))
+                        } else {
+                            tilePreview.imageTintList = getColorStateList(R.color.colorTilePreview)
+                            circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackground))
+                        }
+                    }
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                    }
+                })
     }
 
     private fun updateSwitchs(switchsArray: ArrayList<TimeoutSwitch>) {
@@ -475,7 +453,7 @@ class MainActivity : AppCompatActivity() {
     private fun getListIntFromSwitch(): ArrayList<Int> {
         val resultList: ArrayList<Int> = ArrayList()
 
-        for (timeoutSwitch in timeoutSwitchs) {
+        for (timeoutSwitch in getTimeoutSwitchsArray()) {
             if (timeoutSwitch.switch.isChecked && timeoutSwitch.timeoutValue != KeepOnUtils.getOriginalTimeout(
                     this
                 ))

@@ -66,6 +66,8 @@
     @androidx.annotation.Keep <init>(...);
 }
 
+-keep class androidx.core.app.CoreComponentFactory { *; }
+
 ## Keep rules
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application

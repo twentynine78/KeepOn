@@ -92,6 +92,9 @@ class IntroActivity : AppIntro2() {
         isColorTransitionsEnabled = true
 
         KeepOnUtils.startScreenTimeoutObserverService(this)
+
+        // Set original timeout for first launch
+        KeepOnUtils.getOriginalTimeout(this)
     }
 
     override fun onDonePressed(currentFragment: Fragment?) {

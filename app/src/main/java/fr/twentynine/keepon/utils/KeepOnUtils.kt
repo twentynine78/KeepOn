@@ -387,15 +387,6 @@ object KeepOnUtils {
         context.sendBroadcast(broadcastIntent)
     }
 
-    fun stopScreenTimeoutObserverService(context: Context) {
-        val broadcastIntent = Intent(
-            context.applicationContext,
-            ServicesManagerReceiver::class.java
-        )
-        broadcastIntent.action = ServicesManagerReceiver.ACTION_STOP_FOREGROUND_TIMEOUT_SERVICE
-        context.sendBroadcast(broadcastIntent)
-    }
-
     fun isNotificationEnabled(context: Context): Boolean {
         var enabled = false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -414,7 +405,6 @@ object KeepOnUtils {
                 if (!isNotificationEnabled(context)) {
                     CoroutineScope(Dispatchers.Main).launch {
                         val intent = Intent(context.applicationContext, returnClass)
-                        //intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
                         context.startActivity(intent)
                     }
                 } else {
@@ -462,7 +452,6 @@ object KeepOnUtils {
                         .putExtra(Settings.EXTRA_CHANNEL_ID, NOTIFICATION_CHANNEL_ID)
                         .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                         .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-                        //.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
                     checkSettingOn()
                     context.startActivity(intent)
@@ -473,7 +462,6 @@ object KeepOnUtils {
                     .setData(uri)
                     .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-                    //.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
                 checkSettingOn()
                 context.startActivity(intent)
@@ -490,7 +478,6 @@ object KeepOnUtils {
                 if (Settings.System.canWrite(context.applicationContext)) {
                     CoroutineScope(Dispatchers.Main).launch {
                         val intent = Intent(context.applicationContext, returnClass)
-                        //intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
                         context.startActivity(intent)
                     }
                 } else {
@@ -535,7 +522,6 @@ object KeepOnUtils {
                 .setData(Uri.parse("package:" + context.packageName))
                 .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-                //.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
             checkSettingOn()
             context.startActivity(intent)
@@ -675,7 +661,6 @@ object KeepOnUtils {
                     .putExtra(Settings.EXTRA_CHANNEL_ID, NOTIFICATION_CHANNEL_ID)
                     .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-                    //.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             }
         } else {
             val uri = Uri.fromParts("package", context.packageName, null)
@@ -683,7 +668,6 @@ object KeepOnUtils {
                 .setData(uri)
                 .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-                //.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
         val pendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
             // Add the intent, which inflates the back stack
@@ -894,6 +878,7 @@ object KeepOnUtils {
                 }
                 else -> timeout
             }
+
             GlideApp.with(context)
                 .asBitmap()
                 .priority(Priority.LOW)
@@ -908,7 +893,6 @@ object KeepOnUtils {
                             shortcutManager.addDynamicShortcuts(listOf(shortcutInfo.build()))
                         }
                     }
-
                     override fun onLoadCleared(placeholder: Drawable?) {
                     }
                 })

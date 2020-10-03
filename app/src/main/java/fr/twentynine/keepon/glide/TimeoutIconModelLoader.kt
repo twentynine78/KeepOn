@@ -18,7 +18,6 @@ class TimeoutIconModelLoader(private val context: Context): ModelLoader<TimeoutI
     }
 
     override fun handles(model: TimeoutIconData): Boolean {
-        val timeoutArray = KeepOnUtils.getTimeoutValueArray()
-        return timeoutArray.contains(model.timeout)
+        return KeepOnUtils.getTimeoutValueArray().contains(model.timeout)
     }
 }
