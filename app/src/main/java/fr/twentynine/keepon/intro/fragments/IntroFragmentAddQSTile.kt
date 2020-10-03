@@ -15,7 +15,6 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_QSTILE
 import fr.twentynine.keepon.utils.KeepOnUtils
 
-
 class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
 
     private var mView: View? = null

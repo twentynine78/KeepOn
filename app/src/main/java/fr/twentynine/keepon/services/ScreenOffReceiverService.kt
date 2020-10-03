@@ -9,7 +9,6 @@ import fr.twentynine.keepon.receivers.ScreenOffReceiver
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.KeepOnUtils
 
-
 class ScreenOffReceiverService : Service() {
     private val screenOffReceiver: ScreenOffReceiver = ScreenOffReceiver()
     private var restart = true
@@ -78,6 +77,5 @@ class ScreenOffReceiverService : Service() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
     }
 }

@@ -5,12 +5,11 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
-import fr.twentynine.keepon.utils.BundleScrubber
-import fr.twentynine.keepon.utils.KeepOnUtils
 import fr.twentynine.keepon.tasker.Intent.Companion.ACTION_FIRE_SETTING
 import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_BUNDLE
 import fr.twentynine.keepon.tasker.PluginBundleManager.Companion.isBundleValid
-
+import fr.twentynine.keepon.utils.BundleScrubber
+import fr.twentynine.keepon.utils.KeepOnUtils
 
 class FireReceiver : BroadcastReceiver() {
 

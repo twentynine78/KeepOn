@@ -19,8 +19,7 @@ import fr.twentynine.keepon.glide.GlideApp
 import fr.twentynine.keepon.glide.TimeoutIconData
 import fr.twentynine.keepon.utils.KeepOnUtils
 
-
-class KeepOnTileService: TileService() {
+class KeepOnTileService : TileService() {
 
     private val Int.px: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
@@ -67,7 +66,7 @@ class KeepOnTileService: TileService() {
             .asBitmap()
             .priority(Priority.HIGH)
             .load(TimeoutIconData(newTimeout, 2, KeepOnUtils.getIconStyleSignature(this)))
-            .into(object: CustomTarget<Bitmap>(50.px, 50.px) {
+            .into(object : CustomTarget<Bitmap>(50.px, 50.px) {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     val keeponTile = qsTile
                     if (keeponTile != null) {
@@ -87,8 +86,8 @@ class KeepOnTileService: TileService() {
         KeepOnUtils.setTileAdded(true, this)
 
         if (KeepOnUtils.getSkipIntro(this)) {
-            if (KeepOnUtils.getSelectedTimeout(this).size < 1
-                || !Settings.System.canWrite(this)
+            if (KeepOnUtils.getSelectedTimeout(this).size < 1 ||
+                !Settings.System.canWrite(this)
             ) {
                 val mainIntent = MainActivity.newIntent(this.applicationContext)
                 mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

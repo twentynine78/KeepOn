@@ -92,7 +92,7 @@ class SplashScreen : AppCompatActivity() {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
         if (!KeepOnUtils.getSkipIntro(this)) {
-            //Start Intro on first launch
+            // Start Intro on first launch
             CoroutineScope(Dispatchers.Main).launch {
                 delay(SPLASH_TIME_OUT)
                 startActivity(IntroActivity.newIntent(this@SplashScreen))

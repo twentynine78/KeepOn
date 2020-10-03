@@ -12,14 +12,13 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.radiobutton.MaterialRadioButton
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.utils.BundleScrubber
-import fr.twentynine.keepon.utils.KeepOnUtils
 import fr.twentynine.keepon.tasker.Intent.Companion.ACTION_EDIT_SETTING
 import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_BUNDLE
 import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_STRING_BLURB
+import fr.twentynine.keepon.utils.BundleScrubber
+import fr.twentynine.keepon.utils.KeepOnUtils
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.collections.HashMap
-
 
 class EditActivity : AppCompatActivity() {
     private var isCancelled = false

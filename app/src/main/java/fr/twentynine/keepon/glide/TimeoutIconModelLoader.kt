@@ -9,12 +9,11 @@ import com.bumptech.glide.load.model.ModelLoader.LoadData
 import com.bumptech.glide.signature.ObjectKey
 import fr.twentynine.keepon.utils.KeepOnUtils
 
-
-class TimeoutIconModelLoader(private val context: Context): ModelLoader<TimeoutIconData, Bitmap> {
+class TimeoutIconModelLoader(private val context: Context) : ModelLoader<TimeoutIconData, Bitmap> {
 
     @Nullable
     override fun buildLoadData(model: TimeoutIconData, width: Int, height: Int, options: Options): LoadData<Bitmap>? {
-        return LoadData(ObjectKey(model),  TimeoutIconDataFetcher(model, context))
+        return LoadData(ObjectKey(model), TimeoutIconDataFetcher(model, context))
     }
 
     override fun handles(model: TimeoutIconData): Boolean {

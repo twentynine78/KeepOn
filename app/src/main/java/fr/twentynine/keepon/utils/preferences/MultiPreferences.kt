@@ -14,7 +14,6 @@ import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.extractLon
 import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.extractStringFromCursor
 import fr.twentynine.keepon.utils.preferences.MultiProvider.Companion.performQuery
 
-
 /**
  * Multi Preference class
  *
@@ -38,7 +37,8 @@ class MultiPreferences(private val mName: String, private val resolver: ContentR
             performQuery(
                 createQueryUri(mName, key, CODE_STRING),
                 resolver
-            ), defaultValue
+            ),
+            defaultValue
         )
     }
 
@@ -56,7 +56,8 @@ class MultiPreferences(private val mName: String, private val resolver: ContentR
             performQuery(
                 createQueryUri(mName, key, CODE_INTEGER),
                 resolver
-            ), defaultValue
+            ),
+            defaultValue
         )
     }
 
@@ -74,7 +75,8 @@ class MultiPreferences(private val mName: String, private val resolver: ContentR
             performQuery(
                 createQueryUri(mName, key, CODE_LONG),
                 resolver
-            ), defaultValue
+            ),
+            defaultValue
         )
     }
 
@@ -92,7 +94,8 @@ class MultiPreferences(private val mName: String, private val resolver: ContentR
             performQuery(
                 createQueryUri(mName, key, CODE_BOOLEAN),
                 resolver
-            ), defaultValue
+            ),
+            defaultValue
         )
     }
 

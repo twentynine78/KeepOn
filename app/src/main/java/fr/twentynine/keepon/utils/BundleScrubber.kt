@@ -3,7 +3,6 @@ package fr.twentynine.keepon.utils
 import android.content.Intent
 import android.os.Bundle
 
-
 object BundleScrubber {
 
     fun scrub(intent: Intent?): Boolean {

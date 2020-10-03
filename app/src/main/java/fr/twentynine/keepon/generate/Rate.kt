@@ -16,7 +16,6 @@ import com.google.android.material.snackbar.Snackbar.SnackbarLayout
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.utils.preferences.Preferences
 
-
 /**
  * Copyright (c) Pixplicity, Gene-rate
  * https://github.com/Pixplicity/gene-rate
@@ -276,7 +275,6 @@ class Rate private constructor(private val mContext: Context) {
     private fun saveAsked() {
         Preferences.setGenerateBoolAsked(true, mContext)
     }
-
 
     class Builder(context: Context) {
         private val mRate: Rate = Rate(context)
@@ -566,5 +564,4 @@ class Rate private constructor(private val mContext: Context) {
         private const val DEFAULT_INSTALL_TIME = (5 * (1000 * 60 * 60 * 24)).toLong() // 5 days (1000 -> to seconds * 60 -> to minutes * 60 -> to hours * 24 -> to days)
         private const val DEFAULT_CHECKED = true
     }
-
 }

@@ -38,14 +38,14 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.switchmaterial.SwitchMaterial
-import fr.twentynine.keepon.intro.IntroActivity
-import fr.twentynine.keepon.services.KeepOnTileService
-import fr.twentynine.keepon.utils.KeepOnUtils
 import fr.twentynine.keepon.generate.Rate
 import fr.twentynine.keepon.glide.GlideApp
 import fr.twentynine.keepon.glide.TimeoutIconData
-import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.intro.IntroActivity
+import fr.twentynine.keepon.services.KeepOnTileService
 import fr.twentynine.keepon.utils.BundleScrubber
+import fr.twentynine.keepon.utils.KeepOnUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet_tile_settings.*
 import kotlinx.android.synthetic.main.card_main_about.*
@@ -60,7 +60,6 @@ import java.util.Locale
 import kotlin.collections.ArrayList
 import kotlin.math.hypot
 import kotlin.math.roundToInt
-
 
 class MainActivity : AppCompatActivity() {
     data class TimeoutSwitch(val switch: SwitchMaterial, val timeoutValue: Int)
@@ -87,7 +86,7 @@ class MainActivity : AppCompatActivity() {
     private val Int.dp: Int
         get() = (this / Resources.getSystem().displayMetrics.density).toInt()
 
-    private val receiver: BroadcastReceiver = object : BroadcastReceiver()  {
+    private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(contxt: Context?, intent: Intent?) {
             if (intent != null) {
                 // A hack to prevent a private serializable classloader attack
@@ -203,8 +202,8 @@ class MainActivity : AppCompatActivity() {
 
         // Show dialog if missing settings on tile click
         if (intent.extras != null) {
-            if (intent.extras!!.getBoolean(KeepOnUtils.TAG_MISSING_SETTINGS, false)
-                && KeepOnUtils.getSelectedTimeout(this).size <= 1
+            if (intent.extras!!.getBoolean(KeepOnUtils.TAG_MISSING_SETTINGS, false) &&
+                KeepOnUtils.getSelectedTimeout(this).size <= 1
             ) {
                 if (!missingSettingsDialog.isShowing) {
                     missingSettingsDialog.show()
@@ -247,16 +246,15 @@ class MainActivity : AppCompatActivity() {
 
         // Set onSlide bottom sheet behavior
         BottomSheetBehavior.from(bottomSheet).addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                setOnSlideBottomSheetAnim(slideOffset)
-            }
+                BottomSheetBehavior.BottomSheetCallback() {
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    setOnSlideBottomSheetAnim(slideOffset)
+                }
 
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (snackbar.isShown) snackbar.dismiss()
-            }
-
-        })
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if (snackbar.isShown) snackbar.dismiss()
+                }
+            })
 
         // Set initial bottom sheet state
         BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
@@ -349,7 +347,6 @@ class MainActivity : AppCompatActivity() {
             BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
         else
             finishAfterTransition()
-            //super.onBackPressed()
     }
 
     private fun getTimeoutSwitchsArray(): ArrayList<TimeoutSwitch> {
@@ -379,29 +376,30 @@ class MainActivity : AppCompatActivity() {
         val currentTimeout = KeepOnUtils.getCurrentTimeout(this)
 
         GlideApp.with(this)
-                .asBitmap()
-                .priority(Priority.HIGH)
-                .load(TimeoutIconData(currentTimeout, 1, KeepOnUtils.getIconStyleSignature(this)))
-                .into(object: CustomTarget<Bitmap>(150.px, 150.px) {
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        tilePreview.setImageBitmap(resource)
-                        tilePreview.imageTintMode = PorterDuff.Mode.SRC_IN
-                        val layerDrawableCircle: LayerDrawable = tilePreviewBackground.drawable as LayerDrawable
-                        val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
+            .asBitmap()
+            .priority(Priority.HIGH)
+            .load(TimeoutIconData(currentTimeout, 1, KeepOnUtils.getIconStyleSignature(this)))
+            .into(object : CustomTarget<Bitmap>(150.px, 150.px) {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    tilePreview.setImageBitmap(resource)
+                    tilePreview.imageTintMode = PorterDuff.Mode.SRC_IN
+                    val layerDrawableCircle: LayerDrawable = tilePreviewBackground.drawable as LayerDrawable
+                    val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
 
-                        if (KeepOnUtils.getCurrentTimeout(this@MainActivity) == KeepOnUtils.getOriginalTimeout(
-                                this@MainActivity
-                            )) {
-                            tilePreview.imageTintList = getColorStateList(R.color.colorTilePreviewDisabled)
-                            circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackgroundDisabled))
-                        } else {
-                            tilePreview.imageTintList = getColorStateList(R.color.colorTilePreview)
-                            circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackground))
-                        }
+                    if (KeepOnUtils.getCurrentTimeout(this@MainActivity) == KeepOnUtils.getOriginalTimeout(
+                            this@MainActivity
+                        )
+                    ) {
+                        tilePreview.imageTintList = getColorStateList(R.color.colorTilePreviewDisabled)
+                        circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackgroundDisabled))
+                    } else {
+                        tilePreview.imageTintList = getColorStateList(R.color.colorTilePreview)
+                        circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackground))
                     }
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                    }
-                })
+                }
+                override fun onLoadCleared(placeholder: Drawable?) {
+                }
+            })
     }
 
     private fun updateSwitchs(switchsArray: ArrayList<TimeoutSwitch>) {
@@ -456,7 +454,8 @@ class MainActivity : AppCompatActivity() {
         for (timeoutSwitch in getTimeoutSwitchsArray()) {
             if (timeoutSwitch.switch.isChecked && timeoutSwitch.timeoutValue != KeepOnUtils.getOriginalTimeout(
                     this
-                ))
+                )
+            )
                 resultList.add(timeoutSwitch.timeoutValue)
         }
 
@@ -554,7 +553,8 @@ class MainActivity : AppCompatActivity() {
         val layerDrawableCircle: LayerDrawable = tilePreviewBackground.drawable as LayerDrawable
         val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
         circleBackgroundShape.setStroke(
-            3.px, ColorStateList.valueOf(
+            3.px,
+            ColorStateList.valueOf(
                 interpolateColor(
                     slideOffset,
                     colorFrom,
@@ -574,9 +574,9 @@ class MainActivity : AppCompatActivity() {
         val endG = endValue shr 8 and 0xff
         val endB = endValue and 0xff
         return startA + (fraction * (endA - startA)).toInt() shl 24 or
-                (startR + (fraction * (endR - startR)).toInt() shl 16) or
-                (startG + (fraction * (endG - startG)).toInt() shl 8) or
-                startB + (fraction * (endB - startB)).toInt()
+            (startR + (fraction * (endR - startR)).toInt() shl 16) or
+            (startG + (fraction * (endG - startG)).toInt() shl 8) or
+            startB + (fraction * (endB - startB)).toInt()
     }
 
     private fun loadQSStylePreferences() {
@@ -654,7 +654,8 @@ class MainActivity : AppCompatActivity() {
         // Update App shortcuts
         CoroutineScope(Dispatchers.Default).launch {
             delay(3000)
-            withTimeout(60000
+            withTimeout(
+                60000
             ) {
                 KeepOnUtils.manageAppShortcut(this@MainActivity)
             }
@@ -698,7 +699,8 @@ class MainActivity : AppCompatActivity() {
         // Update App shortcuts
         CoroutineScope(Dispatchers.Default).launch {
             delay(3000)
-            withTimeout(60000
+            withTimeout(
+                60000
             ) {
                 KeepOnUtils.manageAppShortcut(this@MainActivity)
             }

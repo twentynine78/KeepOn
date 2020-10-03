@@ -4,9 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import fr.twentynine.keepon.services.ScreenOffReceiverService
-import fr.twentynine.keepon.utils.KeepOnUtils
 import fr.twentynine.keepon.utils.BundleScrubber
-
+import fr.twentynine.keepon.utils.KeepOnUtils
 
 class ScreenOffReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {

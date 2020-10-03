@@ -202,7 +202,7 @@ class Intent private constructor() {
          *
          */
         const val EXTRA_STRING_BLURB = "com.twofortyfouram.locale.intent.extra.BLURB"
-       
+
         /**
          *
          *
@@ -241,7 +241,7 @@ class Intent private constructor() {
          * that the plug-in uses as a lookup key in its own internal storage mechanism.
          */
         const val EXTRA_BUNDLE = "com.twofortyfouram.locale.intent.extra.BUNDLE"
-       
+
         /**
          *
          *
@@ -257,7 +257,7 @@ class Intent private constructor() {
          */
         const val EXTRA_STRING_ACTIVITY_CLASS_NAME =
             "com.twofortyfouram.locale.intent.extra.ACTIVITY"
-       
+
         /**
          *
          * Ordered broadcast result code indicating that a plug-in condition's state

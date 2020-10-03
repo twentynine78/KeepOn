@@ -12,7 +12,6 @@ import android.net.Uri
 import androidx.annotation.Nullable
 import androidx.collection.ArrayMap
 
-
 /**
  * Multi Preference provider class
  */
@@ -54,8 +53,7 @@ class MultiProvider : ContentProvider() {
                     if (cursor.moveToFirst()) {
                         return cursor.getString(cursor.getColumnIndex(VALUE))
                     }
-                }
-                finally {
+                } finally {
                     cursor.close()
                 }
             }
@@ -68,8 +66,7 @@ class MultiProvider : ContentProvider() {
                     if (cursor.moveToFirst()) {
                         return cursor.getInt(cursor.getColumnIndex(VALUE))
                     }
-                }
-                finally {
+                } finally {
                     cursor.close()
                 }
             }
@@ -82,8 +79,7 @@ class MultiProvider : ContentProvider() {
                     if (cursor.moveToFirst()) {
                         return cursor.getInt(cursor.getColumnIndex(VALUE)).toLong()
                     }
-                }
-                finally {
+                } finally {
                     cursor.close()
                 }
             }
@@ -96,8 +92,7 @@ class MultiProvider : ContentProvider() {
                     if (cursor.moveToFirst()) {
                         return cursor.getInt(cursor.getColumnIndex(VALUE)) == 1
                     }
-                }
-                finally {
+                } finally {
                     cursor.close()
                 }
             }
@@ -297,8 +292,8 @@ class MultiProvider : ContentProvider() {
      *
      * @param value the value to be converted
      * @param <Any> generic object type
-     * @return a Cursor object
-    </T> */
+     * @return a Cursor object </T>
+     */
     private fun <Any> preferenceToCursor(value: Any): MatrixCursor {
         val matrixCursor =
             MatrixCursor(arrayOf(VALUE), 1)

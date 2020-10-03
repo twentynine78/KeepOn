@@ -13,7 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
 class ScreenTimeoutObserver(val context: Context) : ContentObserver(null) {
     override fun onChange(selfChange: Boolean) {
         onChange(selfChange, null)

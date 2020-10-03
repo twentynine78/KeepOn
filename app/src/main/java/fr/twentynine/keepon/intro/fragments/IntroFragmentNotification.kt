@@ -27,7 +27,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 
-
 class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
 
     private var mView: View? = null
@@ -77,7 +76,6 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
 
                     checkSettingOn()
                     mContext.startActivity(intent)
-
                 }
             } else {
                 val uri = Uri.fromParts("package", mContext.packageName, null)
@@ -139,5 +137,4 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
             constraintLayout.setBackgroundColor(backgroundColor)
         }
     }
-
 }

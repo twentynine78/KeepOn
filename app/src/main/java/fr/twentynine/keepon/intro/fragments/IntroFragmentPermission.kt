@@ -26,7 +26,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 
-
 class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
 
     private var mView: View? = null
@@ -55,7 +54,8 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
 
         fun checkSettingOn() = CoroutineScope(Dispatchers.Default).launch {
             delay(500)
-            withTimeout(60000
+            withTimeout(
+                60000
             ) {
                 checkSettings()
             }

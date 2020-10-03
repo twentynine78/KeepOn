@@ -2,7 +2,6 @@ package fr.twentynine.keepon.utils.preferences
 
 import android.content.Context
 
-
 object Preferences {
     private const val PREFS_FILENAME = "keepon_prefs"
     private const val PREFS_BACKUP_FILENAME = "keepon_prefs_backup"
@@ -41,7 +40,6 @@ object Preferences {
             .setInt(ORIGINAL_TIMEOUT, value)
     }
 
-
     fun getSelectedTimeout(context: Context): ArrayList<Int> {
         return getListIntFromString(
             MultiPreferences(PREFS_BACKUP_FILENAME, context.contentResolver)
@@ -53,7 +51,6 @@ object Preferences {
         MultiPreferences(PREFS_BACKUP_FILENAME, context.contentResolver)
             .setString(SELECTED_TIMEOUT, getStringFromListInt(value))
     }
-
 
     fun getResetTimeoutOnScreenOff(context: Context): Boolean {
         // Reverse boolean to prevent mistake on default value on true
@@ -67,7 +64,6 @@ object Preferences {
             .setBoolean(RESET_TIMEOUT_ON_SCREEN_OFF, !value)
     }
 
-
     fun getSkipIntro(context: Context): Boolean {
         return MultiPreferences(PREFS_BACKUP_FILENAME, context.contentResolver)
             .getBoolean(SKIP_INTRO, false)
@@ -77,7 +73,6 @@ object Preferences {
         MultiPreferences(PREFS_BACKUP_FILENAME, context.contentResolver)
             .setBoolean(SKIP_INTRO, value)
     }
-
 
     fun getDarkTheme(context: Context): Boolean {
         return MultiPreferences(PREFS_FILENAME, context.contentResolver)
@@ -89,7 +84,6 @@ object Preferences {
             .setBoolean(DARK_THEME, value)
     }
 
-
     fun getValueChange(context: Context): Boolean {
         return MultiPreferences(PREFS_FILENAME, context.contentResolver)
             .getInt(VALUE_CHANGE_INT, 0) != 0
@@ -100,10 +94,8 @@ object Preferences {
             if (value) {
                 MultiPreferences(PREFS_FILENAME, context.contentResolver).getInt(VALUE_CHANGE_INT, 0) + 1
             } else {
-                if (MultiPreferences(PREFS_FILENAME, context.contentResolver).getInt(
-                        VALUE_CHANGE_INT, 0) > 0) {
-                    MultiPreferences(PREFS_FILENAME, context.contentResolver).getInt(
-                        VALUE_CHANGE_INT, 0) - 1
+                if (MultiPreferences(PREFS_FILENAME, context.contentResolver).getInt(VALUE_CHANGE_INT, 0) > 0) {
+                    MultiPreferences(PREFS_FILENAME, context.contentResolver).getInt(VALUE_CHANGE_INT, 0) - 1
                 } else {
                     0
                 }
@@ -112,7 +104,6 @@ object Preferences {
         MultiPreferences(PREFS_FILENAME, context.contentResolver)
             .setInt(VALUE_CHANGE_INT, result)
     }
-
 
     fun getTileAdded(context: Context): Boolean {
         return MultiPreferences(PREFS_FILENAME, context.contentResolver)
@@ -124,7 +115,6 @@ object Preferences {
             .setBoolean(TILE_ADDED, value)
     }
 
-
     fun getNewValue(context: Context): Int {
         return MultiPreferences(PREFS_FILENAME, context.contentResolver)
             .getInt(NEW_VALUE, 0)
@@ -135,7 +125,6 @@ object Preferences {
             .setInt(NEW_VALUE, value)
     }
 
-
     fun getPreviousValue(context: Context): Int {
         return MultiPreferences(PREFS_FILENAME, context.contentResolver)
             .getInt(PREVIOUS_VALUE, 0)
@@ -145,7 +134,6 @@ object Preferences {
         MultiPreferences(PREFS_FILENAME, context.contentResolver)
             .setInt(PREVIOUS_VALUE, value)
     }
-
 
     private fun getStringFromListInt(listInt: ArrayList<Int>): String {
         var resultString = ""

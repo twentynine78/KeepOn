@@ -10,11 +10,9 @@ import fr.twentynine.keepon.observer.ScreenTimeoutObserver
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.KeepOnUtils
 
-
 class ScreenTimeoutObserverService : Service() {
     private val screenTimeoutObserver: ScreenTimeoutObserver = ScreenTimeoutObserver(this)
     private var restart = true
-
 
     override fun onBind(intent: Intent): IBinder? {
         return null

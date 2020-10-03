@@ -7,7 +7,6 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.data.DataFetcher
 import fr.twentynine.keepon.utils.KeepOnUtils
 
-
 class TimeoutIconDataFetcher(private val model: TimeoutIconData, private val context: Context) : DataFetcher<Bitmap> {
 
     override fun loadData(priority: Priority, callback: DataFetcher.DataCallback<in Bitmap>) {

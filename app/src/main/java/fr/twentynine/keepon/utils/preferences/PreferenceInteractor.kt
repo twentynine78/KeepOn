@@ -3,7 +3,6 @@ package fr.twentynine.keepon.utils.preferences
 import android.content.Context
 import android.content.SharedPreferences
 
-
 /**
  * Preference Interactor class
  *
@@ -27,10 +26,12 @@ class PreferenceInteractor(context: Context, preferenceName: String?) {
     }
 
     fun getInt(key: String?): Int {
-        return (if (sharedPreferences.contains(key)) sharedPreferences.getInt(
-            key,
-            DEFAULT_INT
-        ) else null)!!
+        return (
+            if (sharedPreferences.contains(key)) sharedPreferences.getInt(
+                key,
+                DEFAULT_INT
+            ) else DEFAULT_INT
+            )
     }
 
     fun setInt(key: String?, value: Int) {
@@ -67,5 +68,4 @@ class PreferenceInteractor(context: Context, preferenceName: String?) {
         private const val DEFAULT_LONG = -1L
         private const val DEFAULT_BOOLEAN = false
     }
-
 }

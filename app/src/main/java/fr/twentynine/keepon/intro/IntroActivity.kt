@@ -17,9 +17,8 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.intro.fragments.IntroFragmentAddQSTile
 import fr.twentynine.keepon.intro.fragments.IntroFragmentNotification
 import fr.twentynine.keepon.intro.fragments.IntroFragmentPermission
-import fr.twentynine.keepon.utils.KeepOnUtils
 import fr.twentynine.keepon.utils.BundleScrubber
-
+import fr.twentynine.keepon.utils.KeepOnUtils
 
 class IntroActivity : AppIntro2() {
 
@@ -81,11 +80,13 @@ class IntroActivity : AppIntro2() {
             addSlide(IntroFragmentAddQSTile())
         }
 
-        setTransformer(AppIntroPageTransformerType.Parallax(
-            titleParallaxFactor = 1.0,
-            imageParallaxFactor = -1.0,
-            descriptionParallaxFactor = 2.0
-        ))
+        setTransformer(
+            AppIntroPageTransformerType.Parallax(
+                titleParallaxFactor = 1.0,
+                imageParallaxFactor = -1.0,
+                descriptionParallaxFactor = 2.0
+            )
+        )
         isSkipButtonEnabled = KeepOnUtils.getSkipIntro(this)
         isButtonsEnabled = false
         showStatusBar(true)

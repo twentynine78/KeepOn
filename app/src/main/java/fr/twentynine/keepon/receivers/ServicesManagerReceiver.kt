@@ -9,9 +9,8 @@ import androidx.core.content.ContextCompat
 import fr.twentynine.keepon.services.KeepOnTileService
 import fr.twentynine.keepon.services.ScreenOffReceiverService
 import fr.twentynine.keepon.services.ScreenTimeoutObserverService
-import fr.twentynine.keepon.utils.KeepOnUtils
 import fr.twentynine.keepon.utils.BundleScrubber
-
+import fr.twentynine.keepon.utils.KeepOnUtils
 
 class ServicesManagerReceiver : BroadcastReceiver() {
 
@@ -38,7 +37,7 @@ class ServicesManagerReceiver : BroadcastReceiver() {
                     ContextCompat.startForegroundService(context.applicationContext, startIntentScreenTimeout)
 
                     if (KeepOnUtils.getKeepOnState(context) && KeepOnUtils.getResetOnScreenOff(context)) {
-                        //Start ScreenOffReceiverService
+                        // Start ScreenOffReceiverService
                         val startIntentScreenOff = Intent(context.applicationContext, ScreenOffReceiverService::class.java)
                         startIntentScreenOff.action = ACTION_START_FOREGROUND_SCREEN_OFF_SERVICE
                         ContextCompat.startForegroundService(context.applicationContext, startIntentScreenOff)

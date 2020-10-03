@@ -55,7 +55,6 @@ import kotlinx.coroutines.withTimeout
 import java.util.Locale
 import kotlin.collections.ArrayList
 
-
 object KeepOnUtils {
     internal const val TAG_MISSING_SETTINGS = "missing_settings"
     internal const val NOTIFICATION_CHANNEL_ID = "keepon_services"
@@ -68,7 +67,7 @@ object KeepOnUtils {
     private val Int.px: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
-    fun getTimeoutValueArray() : ArrayList<Int> {
+    fun getTimeoutValueArray(): ArrayList<Int> {
         return arrayListOf(
             15000,
             30000,
@@ -133,7 +132,7 @@ object KeepOnUtils {
 
         // Set typeface from saved preference
         val bold = Preferences.getQSStyleFontBold(context)
-        val typeface: Typeface =  when {
+        val typeface: Typeface = when {
             Preferences.getQSStyleTypefaceSansSerif(context) -> {
                 if (bold) {
                     Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
@@ -261,7 +260,7 @@ object KeepOnUtils {
 
         // Set typeface from saved preference
         val bold = Preferences.getQSStyleFontBold(context)
-        val typeface: Typeface =  when {
+        val typeface: Typeface = when {
             Preferences.getQSStyleTypefaceSansSerif(context) -> {
                 if (bold) {
                     Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
@@ -645,9 +644,11 @@ object KeepOnUtils {
         val notification = NotificationCompat.Builder(context, channelId)
         notification.setContentTitle(
             String.format(
-                Locale.getDefault(), "%s - %s", context.getString(
+                Locale.getDefault(), "%s - %s",
+                context.getString(
                     R.string.app_name
-                ), contentText
+                ),
+                contentText
             )
         )
         notification.setContentText(context.getString(R.string.notification_hide))
