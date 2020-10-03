@@ -18,7 +18,8 @@ import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import fr.twentynine.keepon.MainActivity
-import fr.twentynine.keepon.utils.GlideApp
+import fr.twentynine.keepon.glide.GlideApp
+import fr.twentynine.keepon.glide.TimeoutIconData
 import fr.twentynine.keepon.utils.KeepOnUtils
 
 
@@ -98,7 +99,7 @@ class KeepOnTileService: TileService() {
 
         // Create bitmap and load to tile icon
         glideRequestBuilder
-            .load(KeepOnUtils.getBitmapFromText(newTimeout, this))
+            .load(TimeoutIconData(newTimeout, 2, KeepOnUtils.getIconStyleSignature(this)))
             .into(glideTarget)
     }
 

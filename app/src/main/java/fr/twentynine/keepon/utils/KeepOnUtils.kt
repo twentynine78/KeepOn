@@ -42,6 +42,8 @@ import com.bumptech.glide.request.transition.Transition
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.SplashScreen
+import fr.twentynine.keepon.glide.GlideApp
+import fr.twentynine.keepon.glide.TimeoutIconData
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.coroutines.CoroutineScope
@@ -202,6 +204,145 @@ object KeepOnUtils {
         canvas.drawText(
             displayTimeout,
             x + ((Preferences.getQSStyleFontSpacing(context) * 7).px / scaleRatio),
+            y,
+            paint
+        )
+        canvas.save()
+        canvas.restore()
+
+        return bitmap
+    }
+
+    fun getShortcutBitmapFromText(timeout: Int, context: Context): Bitmap {
+        val imageWidth = 25.px
+        val imageHeight = 25.px
+
+        val textColor = Color.parseColor("#FF3B3B3B")
+        val shadowColor = Color.parseColor("#82222222")
+
+        val displayTimeout = when (timeout) {
+            -42 -> { getDisplayTimeout(getOriginalTimeout(context), context) }
+            -43 -> { getDisplayTimeout(getPreviousTimeout(context), context) }
+            else -> { getDisplayTimeout(timeout, context) }
+        }
+
+        val bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val paint = Paint()
+        paint.isAntiAlias = true
+        paint.style = Paint.Style.FILL
+        paint.color = Color.WHITE
+        paint.setShadowLayer(2f, 1f, 1f, shadowColor)
+
+        canvas.drawCircle(
+            (imageWidth / 2).toFloat(),
+            (imageHeight / 2).toFloat(),
+            11.px.toFloat(),
+            paint
+        )
+
+        paint.style = Paint.Style.STROKE
+        paint.color = textColor
+        paint.strokeWidth = 2f
+        paint.strokeCap = Paint.Cap.ROUND
+
+        canvas.drawCircle(
+            (imageWidth / 2).toFloat(),
+            (imageHeight / 2).toFloat(),
+            11.px.toFloat(),
+            paint
+        )
+
+        var textSize = when (displayTimeout.length) {
+            1 -> 13f.px
+            2 -> 9f.px
+            3 -> 7f.px
+            else -> 5f.px
+        }
+        // Set text size from saved preference
+        textSize += (Preferences.getQSStyleFontSize(context) / 2).px
+        paint.textSize = textSize
+
+        // Set typeface from saved preference
+        val bold = Preferences.getQSStyleFontBold(context)
+        val typeface: Typeface =  when {
+            Preferences.getQSStyleTypefaceSansSerif(context) -> {
+                if (bold) {
+                    Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+                } else {
+                    Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
+                }
+            }
+            Preferences.getQSStyleTypefaceSerif(context) -> {
+                if (bold) {
+                    Typeface.create(Typeface.SERIF, Typeface.BOLD)
+                } else {
+                    Typeface.create(Typeface.SERIF, Typeface.NORMAL)
+                }
+            }
+            Preferences.getQSStyleTypefaceMonospace(context) -> {
+                if (bold) {
+                    Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+                } else {
+                    Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
+                }
+            }
+            else -> Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+        }
+        paint.typeface = typeface
+
+        // Set text style from saved preference
+        val paintStyle: Paint.Style = when {
+            Preferences.getQSStyleTextFill(context) -> {
+                Paint.Style.FILL
+            }
+            Preferences.getQSStyleTextFillStroke(context) -> {
+                paint.strokeWidth = 1f.px
+                Paint.Style.FILL_AND_STROKE
+            }
+            Preferences.getQSStyleTextStroke(context) -> {
+                paint.strokeWidth = 1f.px
+                Paint.Style.STROKE
+            }
+            else -> Paint.Style.FILL
+        }
+        paint.style = paintStyle
+        paint.strokeCap = Paint.Cap.ROUND
+
+        // Set text skew from preference
+        paint.textSkewX = (-(Preferences.getQSStyleFontSkew(context) / 1.7).toFloat())
+
+        // Set font SMCP from preference
+        if (Preferences.getQSStyleFontSMCP(context)) {
+            paint.fontFeatureSettings = "smcp"
+        }
+
+        // Set font underline from preference
+        paint.isUnderlineText = Preferences.getQSStyleFontUnderline(context)
+
+        paint.textAlign = Align.LEFT
+        paint.isAntiAlias = true
+        paint.color = textColor
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+
+        // Calculate coordinates
+        val rect = Rect(0, 0, imageWidth, imageHeight)
+        val canvasHeight = rect.height()
+        val canvasWidth = rect.width()
+
+        paint.setShadowLayer(1f, 1f, 1f, shadowColor)
+
+        canvas.save()
+
+        // If it is not restore timeout, draw text
+        paint.getTextBounds(displayTimeout, 0, displayTimeout.length, rect)
+        val x = canvasWidth / 2f - rect.width() / 2f - rect.left
+        val y = canvasHeight / 2f + rect.height() / 2f - rect.bottom
+
+        // Draw text
+        canvas.drawText(
+            displayTimeout,
+            x + (Preferences.getQSStyleFontSpacing(context) / 2).px,
             y,
             paint
         )
@@ -727,12 +868,40 @@ object KeepOnUtils {
         }
     }
 
+    fun getIconStyleSignature(context: Context): String {
+        return String.format(
+            Locale.getDefault(),
+            "%d,%d,%d,%b,%b,%b,%b,%b,%b,%b,%b,%b",
+            Preferences.getQSStyleFontSize(context),
+            Preferences.getQSStyleFontSkew(context),
+            Preferences.getQSStyleFontSpacing(context),
+            Preferences.getQSStyleTypefaceSansSerif(context),
+            Preferences.getQSStyleTypefaceSerif(context),
+            Preferences.getQSStyleTypefaceMonospace(context),
+            Preferences.getQSStyleFontBold(context),
+            Preferences.getQSStyleFontUnderline(context),
+            Preferences.getQSStyleFontSMCP(context),
+            Preferences.getQSStyleTextFill(context),
+            Preferences.getQSStyleTextFillStroke(context),
+            Preferences.getQSStyleTextStroke(context)
+        )
+    }
+
     private fun setShortcutsIconWithGlide(timeout: Int, shortcutInfo: ShortcutInfo.Builder, context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            val newTimeout = when (timeout) {
+                -42 -> {
+                    getOriginalTimeout(context)
+                }
+                -43 -> {
+                    getPreviousTimeout(context)
+                }
+                else -> timeout
+            }
             GlideApp.with(context)
                 .asBitmap()
                 .priority(Priority.LOW)
-                .load(getShortcutBitmapFromText(timeout, context))
+                .load(TimeoutIconData(newTimeout, 3, getIconStyleSignature(context)))
                 .into(object : CustomTarget<Bitmap>(25.px, 25.px) {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                         // Set bitmap to shortcut icon
@@ -789,166 +958,5 @@ object KeepOnUtils {
 
     private fun updateOriginalTimeout(newTimeout: Int, context: Context) {
         Preferences.setOriginalTimeout(newTimeout, context)
-    }
-
-    private fun getShortcutBitmapFromText(timeout: Int, context: Context): Bitmap {
-        val imageWidth = 25.px
-        val imageHeight = 25.px
-
-        val textColor = Color.parseColor("#FF3B3B3B")
-        val shadowColor = Color.parseColor("#82222222")
-
-        val displayTimeout = when (timeout) {
-            -42 -> { getDisplayTimeout(getOriginalTimeout(context), context) }
-            -43 -> { getDisplayTimeout(getPreviousTimeout(context), context) }
-            else -> { getDisplayTimeout(timeout, context) }
-        }
-
-        val bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        val paint = Paint()
-        paint.isAntiAlias = true
-        paint.style = Paint.Style.FILL
-        paint.color = Color.WHITE
-        paint.setShadowLayer(2f, 1f, 1f, shadowColor)
-
-        canvas.drawCircle(
-            (imageWidth / 2).toFloat(),
-            (imageHeight / 2).toFloat(),
-            11.px.toFloat(),
-            paint
-        )
-
-        paint.style = Paint.Style.STROKE
-        paint.color = textColor
-        paint.strokeWidth = 2f
-        paint.strokeCap = Paint.Cap.ROUND
-
-        canvas.drawCircle(
-            (imageWidth / 2).toFloat(),
-            (imageHeight / 2).toFloat(),
-            11.px.toFloat(),
-            paint
-        )
-
-        var textSize = when (displayTimeout.length) {
-            1 -> 13f.px
-            2 -> 9f.px
-            3 -> 7f.px
-            else -> 5f.px
-        }
-        // Set text size from saved preference
-        textSize += (Preferences.getQSStyleFontSize(context) / 2).px
-        paint.textSize = textSize
-
-        // Set typeface from saved preference
-        val bold = Preferences.getQSStyleFontBold(context)
-        val typeface: Typeface =  when {
-            Preferences.getQSStyleTypefaceSansSerif(context) -> {
-                if (bold) {
-                    Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
-                } else {
-                    Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
-                }
-            }
-            Preferences.getQSStyleTypefaceSerif(context) -> {
-                if (bold) {
-                    Typeface.create(Typeface.SERIF, Typeface.BOLD)
-                } else {
-                    Typeface.create(Typeface.SERIF, Typeface.NORMAL)
-                }
-            }
-            Preferences.getQSStyleTypefaceMonospace(context) -> {
-                if (bold) {
-                    Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
-                } else {
-                    Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
-                }
-            }
-            else -> Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
-        }
-        paint.typeface = typeface
-
-        // Set text style from saved preference
-        val paintStyle: Paint.Style = when {
-            Preferences.getQSStyleTextFill(context) -> {
-                Paint.Style.FILL
-            }
-            Preferences.getQSStyleTextFillStroke(context) -> {
-                paint.strokeWidth = 1f.px
-                Paint.Style.FILL_AND_STROKE
-            }
-            Preferences.getQSStyleTextStroke(context) -> {
-                paint.strokeWidth = 1f.px
-                Paint.Style.STROKE
-            }
-            else -> Paint.Style.FILL
-        }
-        paint.style = paintStyle
-        paint.strokeCap = Paint.Cap.ROUND
-
-        // Set text skew from preference
-        paint.textSkewX = (-(Preferences.getQSStyleFontSkew(context) / 1.7).toFloat())
-
-        // Set font SMCP from preference
-        if (Preferences.getQSStyleFontSMCP(context)) {
-            paint.fontFeatureSettings = "smcp"
-        }
-
-        // Set font underline from preference
-        paint.isUnderlineText = Preferences.getQSStyleFontUnderline(context)
-
-        paint.textAlign = Align.LEFT
-        paint.isAntiAlias = true
-        paint.color = textColor
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-
-        // Calculate coordinates
-        val rect = Rect(0, 0, imageWidth, imageHeight)
-        val canvasHeight = rect.height()
-        val canvasWidth = rect.width()
-
-        paint.setShadowLayer(1f, 1f, 1f, shadowColor)
-
-        canvas.save()
-
-        // Check if is for 'previous timeout' (-43)
-        //if (timeout != -43) {
-            // If it is not restore timeout, draw text
-            paint.getTextBounds(displayTimeout, 0, displayTimeout.length, rect)
-            val x = canvasWidth / 2f - rect.width() / 2f - rect.left
-            val y = canvasHeight / 2f + rect.height() / 2f - rect.bottom
-
-            // Draw text
-            canvas.drawText(
-                displayTimeout,
-                x + (Preferences.getQSStyleFontSpacing(context) / 2).px,
-                y,
-                paint
-            )
-        /* } else {
-            // If it is 'previous timeout' draw icon
-            val keeponIcon = Bitmap.createScaledBitmap(
-                BitmapFactory.decodeResource(context.resources, R.mipmap.ic_shortcut_keepon),
-                (imageWidth - 7.px),
-                (imageHeight - 7.px),
-                true
-            )
-            val drawable = BitmapDrawable(context.resources, keeponIcon)
-            // Center the icon
-            val bitMapLeft = (imageWidth / 2) - (drawable.intrinsicWidth / 2)
-            val bitMapTop = (imageHeight / 2) - (drawable.intrinsicHeight / 2)
-            drawable.setBounds(
-                bitMapLeft, bitMapTop, bitMapLeft + drawable.intrinsicWidth,
-                bitMapTop + drawable.intrinsicHeight
-            )
-
-            // Draw icon
-            drawable.draw(canvas)
-        } */
-        canvas.save()
-        canvas.restore()
-
-        return bitmap
     }
 }

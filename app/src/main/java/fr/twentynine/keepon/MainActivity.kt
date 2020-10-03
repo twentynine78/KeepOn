@@ -43,9 +43,10 @@ import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.services.KeepOnTileService
 import fr.twentynine.keepon.utils.KeepOnUtils
 import fr.twentynine.keepon.generate.Rate
+import fr.twentynine.keepon.glide.GlideApp
+import fr.twentynine.keepon.glide.TimeoutIconData
 import fr.twentynine.keepon.utils.preferences.Preferences
 import fr.twentynine.keepon.utils.BundleScrubber
-import fr.twentynine.keepon.utils.GlideApp
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet_tile_settings.*
 import kotlinx.android.synthetic.main.card_main_about.*
@@ -138,7 +139,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (!KeepOnUtils.getSkipIntro(this)) {
-            //Start SplashScreen
+            // Start SplashScreen
             val splashIntent = SplashScreen.newIntent(this)
             splashIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(splashIntent)
@@ -421,7 +422,7 @@ class MainActivity : AppCompatActivity() {
         glideRequestManager
                 .asBitmap()
                 .priority(Priority.HIGH)
-                .load(KeepOnUtils.getBitmapFromText(currentTimeout, this, true))
+                .load(TimeoutIconData(currentTimeout, 1, KeepOnUtils.getIconStyleSignature(this)))
                 .into(glideTarget)
     }
 
