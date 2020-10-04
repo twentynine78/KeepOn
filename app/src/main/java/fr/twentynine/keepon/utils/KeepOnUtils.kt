@@ -33,6 +33,8 @@ import android.view.Window
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.collection.ArrayMap
+import androidx.collection.arrayMapOf
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.graphics.ColorUtils
@@ -799,7 +801,7 @@ object KeepOnUtils {
     fun manageAppShortcut(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             // Define map with long text
-            val timeoutMap: HashMap<Int, Int> = hashMapOf(
+            val timeoutMap: ArrayMap<Int, Int> = arrayMapOf(
                 -43 to R.string.timeout_previous,
                 -42 to R.string.timeout_restore,
                 getTimeoutValueArray()[0] to R.string.timeout_15_seconds,
@@ -846,6 +848,7 @@ object KeepOnUtils {
                     setShortcutsIconWithGlide(timeout, shortcut, context)
                 }
             }
+            timeoutMap.clear()
         }
     }
 
