@@ -9,10 +9,6 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import com.github.appintro.SlideBackgroundColorHolder
 import com.github.appintro.SlidePolicy
@@ -20,6 +16,7 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_NOTIF
 import fr.twentynine.keepon.utils.KeepOnUtils
+import kotlinx.android.synthetic.main.fragment_intro_button.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -62,7 +59,7 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
             }
         }
 
-        val mButton = mView!!.findViewById<Button>(R.id.button)
+        val mButton = mView!!.button
         mButton.setBackgroundColor(KeepOnUtils.darkerColor(COLOR_SLIDE_NOTIF, 0.4f))
         mButton.text = getString(R.string.dialog_notification_button)
         mButton.setOnClickListener {
@@ -89,11 +86,11 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
             }
         }
 
-        val mTitle = mView!!.findViewById<TextView>(R.id.title)
+        val mTitle = mView!!.title
         mTitle.text = getString(R.string.dialog_notification_title)
-        val mDescription = mView!!.findViewById<TextView>(R.id.description)
+        val mDescription = mView!!.description
         mDescription.text = getString(R.string.dialog_notification_text)
-        val mImage = mView!!.findViewById<ImageView>(R.id.image)
+        val mImage = mView!!.image
         mImage.setImageResource(R.mipmap.img_intro_notif)
 
         if (KeepOnUtils.isNotificationEnabled(mContext))
@@ -106,7 +103,7 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
 
     override fun onResume() {
         super.onResume()
-        val mButton = requireView().findViewById<Button>(R.id.button)
+        val mButton = requireView().button
         if (mButton != null) {
             if (KeepOnUtils.isNotificationEnabled(requireContext())) {
                 mButton.visibility = View.VISIBLE
@@ -133,7 +130,7 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
 
     override fun setBackgroundColor(backgroundColor: Int) {
         if (mView != null) {
-            val constraintLayout = mView!!.findViewById<ConstraintLayout>(R.id.main)
+            val constraintLayout = mView!!.main
             constraintLayout.setBackgroundColor(backgroundColor)
         }
     }

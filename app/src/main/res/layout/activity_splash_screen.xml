@@ -9,7 +9,7 @@
     tools:ignore="Overdraw">
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/title_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
@@ -23,7 +23,7 @@
         android:layout_marginBottom="150dp"/>
 
     <ImageView
-        android:id="@+id/logo"
+        android:id="@+id/logo_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@mipmap/img_intro_home"

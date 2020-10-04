@@ -7,10 +7,6 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import com.github.appintro.SlideBackgroundColorHolder
 import com.github.appintro.SlidePolicy
@@ -19,6 +15,7 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_PERM
 import fr.twentynine.keepon.utils.KeepOnUtils
+import kotlinx.android.synthetic.main.fragment_intro_button.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -61,7 +58,7 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
             }
         }
 
-        val mButton = mView!!.findViewById<Button>(R.id.button)
+        val mButton = mView!!.button
         mButton.setBackgroundColor(KeepOnUtils.darkerColor(COLOR_SLIDE_PERM, 0.4f))
         mButton.text = getString(R.string.dialog_permission_button)
         mButton.setOnClickListener {
@@ -74,11 +71,11 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
             mContext.startActivity(intent)
         }
 
-        val mTitle = mView!!.findViewById<TextView>(R.id.title)
+        val mTitle = mView!!.title
         mTitle.text = getString(R.string.dialog_permission_title)
-        val mDescription = mView!!.findViewById<TextView>(R.id.description)
+        val mDescription = mView!!.description
         mDescription.text = getString(R.string.dialog_permission_text)
-        val mImage = mView!!.findViewById<ImageView>(R.id.image)
+        val mImage = mView!!.image
         mImage.setImageResource(R.mipmap.img_intro_perm)
 
         if (Settings.System.canWrite(requireContext().applicationContext))
@@ -91,7 +88,7 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
 
     override fun onResume() {
         super.onResume()
-        val mButton = requireView().findViewById<Button>(R.id.button)
+        val mButton = requireView().button
         if (mButton != null) {
             if (Settings.System.canWrite(requireContext().applicationContext)) {
                 mButton.visibility = View.INVISIBLE
@@ -120,7 +117,7 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
 
     override fun setBackgroundColor(backgroundColor: Int) {
         if (mView != null) {
-            val constraintLayout = mView!!.findViewById<ConstraintLayout>(R.id.main)
+            val constraintLayout = mView!!.main
             constraintLayout.setBackgroundColor(backgroundColor)
         }
     }

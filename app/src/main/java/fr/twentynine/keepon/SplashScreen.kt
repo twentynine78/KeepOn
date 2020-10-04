@@ -7,14 +7,13 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.KeepOnUtils
+import kotlinx.android.synthetic.main.activity_splash_screen.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -73,15 +72,13 @@ class SplashScreen : AppCompatActivity() {
             this,
             R.anim.splash_bounce_logo
         )
-        val logo: ImageView = findViewById(R.id.logo)
-        logo.startAnimation(bounceAnimLogo)
+        logo_iv.startAnimation(bounceAnimLogo)
 
         val bounceAnimTitle: Animation = AnimationUtils.loadAnimation(
             this,
             R.anim.splash_bounce_title
         )
-        val title: TextView = findViewById(R.id.title)
-        title.startAnimation(bounceAnimTitle)
+        title_tv.startAnimation(bounceAnimTitle)
 
         // Set DarkTheme
         val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK

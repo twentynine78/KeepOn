@@ -265,7 +265,7 @@ class MainActivity : AppCompatActivity() {
         // Build Generate snackbar
         rate = Rate.Builder(this)
             .setFeedbackAction(Uri.parse(SUPPORT_URI))
-            .setSnackBarParent(findViewById(R.id.cardViewContainer))
+            .setSnackBarParent(cardViewContainer)
             .setSwipeToDismissVisible(true)
             .build()
             .count()

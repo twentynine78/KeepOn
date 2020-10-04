@@ -431,7 +431,7 @@ object KeepOnUtils {
         dialog.setContentView(R.layout.dialog_custom)
         dialog.setCancelable(true)
 
-        val image = dialog.findViewById(R.id.image_dialog) as ImageView
+        val image = dialog.findViewById<ImageView>(R.id.image_dialog)
         image.setImageBitmap(
             BitmapFactory.decodeResource(
                 context.resources,
@@ -439,10 +439,10 @@ object KeepOnUtils {
             )
         )
 
-        val text = dialog.findViewById(R.id.text_dialog) as TextView
+        val text = dialog.findViewById<TextView>(R.id.text_dialog)
         text.text = context.getString(R.string.dialog_notification_text)
 
-        val button = dialog.findViewById(R.id.btn_dialog) as Button
+        val button = dialog.findViewById<Button>(R.id.btn_dialog)
         button.text = context.getString(R.string.dialog_notification_button)
         button.setOnClickListener {
             dialog.dismiss()
@@ -504,7 +504,7 @@ object KeepOnUtils {
         dialog.setContentView(R.layout.dialog_custom)
         dialog.setCancelable(false)
 
-        val image = dialog.findViewById(R.id.image_dialog) as ImageView
+        val image = dialog.findViewById<ImageView>(R.id.image_dialog)
         image.setImageBitmap(
             BitmapFactory.decodeResource(
                 context.resources,
@@ -512,10 +512,10 @@ object KeepOnUtils {
             )
         )
 
-        val text = dialog.findViewById(R.id.text_dialog) as TextView
+        val text = dialog.findViewById<TextView>(R.id.text_dialog)
         text.text = context.getString(R.string.dialog_permission_text)
 
-        val button = dialog.findViewById(R.id.btn_dialog) as Button
+        val button = dialog.findViewById<Button>(R.id.btn_dialog)
         button.text = context.getString(R.string.dialog_permission_button)
         button.setOnClickListener {
             dialog.dismiss()
@@ -538,7 +538,7 @@ object KeepOnUtils {
         dialog.setContentView(R.layout.dialog_custom)
         dialog.setCancelable(true)
 
-        val image = dialog.findViewById(R.id.image_dialog) as ImageView
+        val image = dialog.findViewById<ImageView>(R.id.image_dialog)
         image.setImageBitmap(
             BitmapFactory.decodeResource(
                 context.resources,
@@ -546,10 +546,10 @@ object KeepOnUtils {
             )
         )
 
-        val text = dialog.findViewById(R.id.text_dialog) as TextView
+        val text = dialog.findViewById<TextView>(R.id.text_dialog)
         text.text = context.getString(R.string.dialog_missing_settings_text)
 
-        val button = dialog.findViewById(R.id.btn_dialog) as Button
+        val button = dialog.findViewById<Button>(R.id.btn_dialog)
         button.text = context.getString(R.string.dialog_missing_settings_button)
         button.setOnClickListener {
             dialog.dismiss()
@@ -565,7 +565,7 @@ object KeepOnUtils {
         dialog.setContentView(R.layout.dialog_custom)
         dialog.setCancelable(true)
 
-        val image = dialog.findViewById(R.id.image_dialog) as ImageView
+        val image = dialog.findViewById<ImageView>(R.id.image_dialog)
         image.setImageBitmap(
             BitmapFactory.decodeResource(
                 context.resources,
@@ -573,7 +573,7 @@ object KeepOnUtils {
             )
         )
 
-        val text = dialog.findViewById(R.id.text_dialog) as TextView
+        val text = dialog.findViewById<TextView>(R.id.text_dialog)
         text.text = String.format(
             Locale.getDefault(),
             context.getString(R.string.dialog_default_timeout_text),
@@ -582,7 +582,7 @@ object KeepOnUtils {
             )
         )
 
-        val button = dialog.findViewById(R.id.btn_dialog) as Button
+        val button = dialog.findViewById<Button>(R.id.btn_dialog)
         button.text = context.getString(R.string.dialog_default_timeout_button)
         button.setOnClickListener {
             val previousOriginalTimeout = getOriginalTimeout(context)
@@ -604,7 +604,7 @@ object KeepOnUtils {
         dialog.setContentView(R.layout.dialog_credits)
         dialog.setCancelable(true)
 
-        val button = dialog.findViewById(R.id.btn_close) as Button
+        val button = dialog.findViewById<Button>(R.id.btn_close)
         button.setOnClickListener {
             dialog.dismiss()
         }
@@ -619,7 +619,7 @@ object KeepOnUtils {
         dialog.setContentView(R.layout.dialog_add_qstile)
         dialog.setCancelable(true)
 
-        val button = dialog.findViewById(R.id.btn_close) as Button
+        val button = dialog.findViewById<Button>(R.id.btn_close)
         button.setOnClickListener {
             dialog.dismiss()
         }
