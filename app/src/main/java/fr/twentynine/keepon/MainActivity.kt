@@ -464,8 +464,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun saveSelectedSwitch() {
         KeepOnUtils.setSelectedTimeout(getListIntFromSwitch(), this)
-        KeepOnUtils.manageAppShortcut(this)
+
         snackbar.show()
+
+        // Update App shortcuts
+        CoroutineScope(Dispatchers.Default).launch {
+            delay(1000)
+            withTimeout(60000) {
+                KeepOnUtils.manageAppShortcut(this@MainActivity)
+            }
+        }
     }
 
     private fun animateCardView() {
@@ -639,7 +647,7 @@ class MainActivity : AppCompatActivity() {
         // Update QS Tile
         if (KeepOnUtils.getTileAdded(this)) {
             CoroutineScope(Dispatchers.Default).launch {
-                delay(1000)
+                delay(500)
                 withTimeout(
                     60000
                 ) {
@@ -653,10 +661,8 @@ class MainActivity : AppCompatActivity() {
 
         // Update App shortcuts
         CoroutineScope(Dispatchers.Default).launch {
-            delay(3000)
-            withTimeout(
-                60000
-            ) {
+            delay(1000)
+            withTimeout(60000) {
                 KeepOnUtils.manageAppShortcut(this@MainActivity)
             }
         }
@@ -684,7 +690,7 @@ class MainActivity : AppCompatActivity() {
         // Update QS Tile
         if (KeepOnUtils.getTileAdded(this)) {
             CoroutineScope(Dispatchers.Default).launch {
-                delay(1000)
+                delay(500)
                 withTimeout(
                     60000
                 ) {
@@ -698,10 +704,8 @@ class MainActivity : AppCompatActivity() {
 
         // Update App shortcuts
         CoroutineScope(Dispatchers.Default).launch {
-            delay(3000)
-            withTimeout(
-                60000
-            ) {
+            delay(1000)
+            withTimeout(60000) {
                 KeepOnUtils.manageAppShortcut(this@MainActivity)
             }
         }

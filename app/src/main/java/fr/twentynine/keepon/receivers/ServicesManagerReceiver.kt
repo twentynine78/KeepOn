@@ -11,6 +11,10 @@ import fr.twentynine.keepon.services.ScreenOffReceiverService
 import fr.twentynine.keepon.services.ScreenTimeoutObserverService
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.KeepOnUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 
 class ServicesManagerReceiver : BroadcastReceiver() {
 
@@ -43,7 +47,12 @@ class ServicesManagerReceiver : BroadcastReceiver() {
                         ContextCompat.startForegroundService(context.applicationContext, startIntentScreenOff)
                     }
 
-                    KeepOnUtils.manageAppShortcut(context)
+                    // Manage dynamics shortcut
+                    CoroutineScope(Dispatchers.Default).launch {
+                        withTimeout(60000) {
+                            KeepOnUtils.manageAppShortcut(context)
+                        }
+                    }
                 }
                 ACTION_START_FOREGROUND_TIMEOUT_SERVICE -> {
                     val startIntent = Intent(context.applicationContext, ScreenTimeoutObserverService::class.java)

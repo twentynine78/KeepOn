@@ -105,6 +105,11 @@ object Preferences {
             .setInt(VALUE_CHANGE_INT, result)
     }
 
+    fun resetValueChange(context: Context) {
+        MultiPreferences(PREFS_FILENAME, context.contentResolver)
+            .setInt(VALUE_CHANGE_INT, 0)
+    }
+
     fun getTileAdded(context: Context): Boolean {
         return MultiPreferences(PREFS_FILENAME, context.contentResolver)
             .getBoolean(TILE_ADDED, false)

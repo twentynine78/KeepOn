@@ -50,6 +50,7 @@ import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -68,6 +69,8 @@ object KeepOnUtils {
 
     private val Int.px: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
+
+    private var resetValueChangeJob : Job? = null
 
     fun getTimeoutValueArray(): ArrayList<Int> {
         return arrayListOf(
@@ -585,12 +588,9 @@ object KeepOnUtils {
         val button = dialog.findViewById<Button>(R.id.btn_dialog)
         button.text = context.getString(R.string.dialog_default_timeout_button)
         button.setOnClickListener {
-            val previousOriginalTimeout = getOriginalTimeout(context)
             updateOriginalTimeout(timeout, context)
-            if (getCurrentTimeout(context) == previousOriginalTimeout) {
-                setTimeout(timeout, context)
-            }
-            sendBroadcastUpdateMainUI(context)
+            setTimeout(timeout, context)
+
             dialog.dismiss()
         }
         dialog.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
@@ -788,6 +788,19 @@ object KeepOnUtils {
 
     fun setValueChange(value: Boolean, context: Context) {
         Preferences.setValueChange(value, context)
+
+        if (value) {
+            // Cancel previous reset job
+            resetValueChangeJob?.cancel()
+
+            // start job for reset value
+            resetValueChangeJob = CoroutineScope(Dispatchers.Default).launch {
+                delay(5000)
+                withTimeout(10000) {
+                    Preferences.resetValueChange(context)
+                }
+            }
+        }
     }
 
     fun getTileAdded(context: Context): Boolean {

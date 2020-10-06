@@ -11,7 +11,7 @@ import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.KeepOnUtils
 
 class ScreenTimeoutObserverService : Service() {
-    private val screenTimeoutObserver: ScreenTimeoutObserver = ScreenTimeoutObserver(this)
+    private var screenTimeoutObserver: ScreenTimeoutObserver? = ScreenTimeoutObserver(this)
     private var restart = true
 
     override fun onBind(intent: Intent): IBinder? {
@@ -21,12 +21,13 @@ class ScreenTimeoutObserverService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        registerScreenTimeoutObserver(screenTimeoutObserver, this)
+        registerScreenTimeoutObserver(screenTimeoutObserver!!, this)
         startForegroundService()
     }
 
     override fun onDestroy() {
-        unregisterScreenTimeoutObserver(screenTimeoutObserver, this)
+        unregisterScreenTimeoutObserver(screenTimeoutObserver!!, this)
+        screenTimeoutObserver = null
 
         if (restart) {
             KeepOnUtils.startScreenTimeoutObserverService(this)
@@ -63,15 +64,25 @@ class ScreenTimeoutObserverService : Service() {
     }
 
     private fun registerScreenTimeoutObserver(screenTimeoutObserver: ScreenTimeoutObserver, context: Context) {
-        val contentResolver = context.contentResolver
-        val setting = Settings.System.getUriFor(Settings.System.SCREEN_OFF_TIMEOUT)
+        if (!observerRegistered) {
+            val contentResolver = context.contentResolver
+            val setting = Settings.System.getUriFor(Settings.System.SCREEN_OFF_TIMEOUT)
 
-        contentResolver.registerContentObserver(setting, false, screenTimeoutObserver)
+            contentResolver.registerContentObserver(setting, false, screenTimeoutObserver)
+
+            observerRegistered = true
+        }
     }
 
     private fun unregisterScreenTimeoutObserver(screenTimeoutObserver: ScreenTimeoutObserver, context: Context) {
         val contentResolver = context.contentResolver
 
         contentResolver.unregisterContentObserver(screenTimeoutObserver)
+
+        observerRegistered = false
+    }
+
+    companion object {
+        private var observerRegistered = false
     }
 }

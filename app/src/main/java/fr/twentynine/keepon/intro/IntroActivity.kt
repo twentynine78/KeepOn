@@ -94,8 +94,11 @@ class IntroActivity : AppIntro2() {
 
         KeepOnUtils.startScreenTimeoutObserverService(this)
 
-        // Set original timeout for first launch
-        KeepOnUtils.getOriginalTimeout(this)
+        // Set initial timeout for first launch
+        if (!KeepOnUtils.getSkipIntro(this)) {
+            KeepOnUtils.updateOriginalTimeout(this)
+            KeepOnUtils.setPreviousTimeout(KeepOnUtils.getCurrentTimeout(this), this)
+        }
     }
 
     override fun onDonePressed(currentFragment: Fragment?) {
