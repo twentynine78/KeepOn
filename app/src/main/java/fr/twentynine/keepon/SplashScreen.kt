@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.BundleScrubber
-import fr.twentynine.keepon.utils.KeepOnUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,14 +29,10 @@ class SplashScreen : AppCompatActivity() {
             // Prevent Activity to bring to front
             moveTaskToBack(true)
 
-            // A hack to prevent a private serializable classloader attack
-            if (BundleScrubber.scrub(intent)) {
-                finish()
-                return
-            }
-
-            // Ignore implicit intents, because they are not valid.
-            if (packageName != intent.getPackage() && ComponentName(this, this.javaClass.name) != intent.component) {
+            // A hack to prevent a private serializable classloader attack and ignore implicit intents, because they are not valid
+            if (BundleScrubber.scrub(intent) ||
+                (packageName != intent.getPackage() && ComponentName(this, this.javaClass.name) != intent.component)
+            ) {
                 finish()
                 return
             }
@@ -82,13 +78,15 @@ class SplashScreen : AppCompatActivity() {
 
         // Set DarkTheme
         val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES)
-            KeepOnUtils.setDarkTheme(true, this)
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+            Preferences.setDarkTheme(true, this)
+        }
 
-        if (KeepOnUtils.getDarkTheme(this))
+        if (Preferences.getDarkTheme(this)) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }
 
-        if (!KeepOnUtils.getSkipIntro(this)) {
+        if (!Preferences.getSkipIntro(this)) {
             // Start Intro on first launch
             CoroutineScope(Dispatchers.Main).launch {
                 delay(SPLASH_TIME_OUT)

@@ -78,10 +78,11 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
         val mImage = mView!!.image
         mImage.setImageResource(R.mipmap.img_intro_perm)
 
-        if (Settings.System.canWrite(requireContext().applicationContext))
+        if (Settings.System.canWrite(requireContext().applicationContext)) {
             mButton.visibility = View.INVISIBLE
-        else
+        } else {
             mButton.visibility = View.VISIBLE
+        }
 
         return mView
     }

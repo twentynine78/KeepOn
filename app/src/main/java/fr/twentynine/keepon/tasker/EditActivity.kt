@@ -15,7 +15,7 @@ import fr.twentynine.keepon.tasker.Intent.Companion.ACTION_EDIT_SETTING
 import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_BUNDLE
 import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_STRING_BLURB
 import fr.twentynine.keepon.utils.BundleScrubber
-import fr.twentynine.keepon.utils.KeepOnUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.android.synthetic.main.activity_tasker_edit.*
 
 class EditActivity : AppCompatActivity() {
@@ -24,15 +24,15 @@ class EditActivity : AppCompatActivity() {
     private val timeoutMap: ArrayMap<Int, Int> = arrayMapOf(
         R.id.timeout_previous to -43,
         R.id.timeout_default to -42,
-        R.id.timeout_15_seconds to KeepOnUtils.getTimeoutValueArray()[0],
-        R.id.timeout_30_seconds to KeepOnUtils.getTimeoutValueArray()[1],
-        R.id.timeout_1_minute to KeepOnUtils.getTimeoutValueArray()[2],
-        R.id.timeout_2_minutes to KeepOnUtils.getTimeoutValueArray()[3],
-        R.id.timeout_5_minutes to KeepOnUtils.getTimeoutValueArray()[4],
-        R.id.timeout_10_minutes to KeepOnUtils.getTimeoutValueArray()[5],
-        R.id.timeout_30_minutes to KeepOnUtils.getTimeoutValueArray()[6],
-        R.id.timeout_1_hour to KeepOnUtils.getTimeoutValueArray()[7],
-        R.id.timeout_infinite to KeepOnUtils.getTimeoutValueArray()[8]
+        R.id.timeout_15_seconds to Preferences.getTimeoutValueArray()[0],
+        R.id.timeout_30_seconds to Preferences.getTimeoutValueArray()[1],
+        R.id.timeout_1_minute to Preferences.getTimeoutValueArray()[2],
+        R.id.timeout_2_minutes to Preferences.getTimeoutValueArray()[3],
+        R.id.timeout_5_minutes to Preferences.getTimeoutValueArray()[4],
+        R.id.timeout_10_minutes to Preferences.getTimeoutValueArray()[5],
+        R.id.timeout_30_minutes to Preferences.getTimeoutValueArray()[6],
+        R.id.timeout_1_hour to Preferences.getTimeoutValueArray()[7],
+        R.id.timeout_infinite to Preferences.getTimeoutValueArray()[8]
     )
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,8 +60,9 @@ class EditActivity : AppCompatActivity() {
         }
 
         // Set DarkTheme
-        if (KeepOnUtils.getDarkTheme(this))
+        if (Preferences.getDarkTheme(this)) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }
 
         setContentView(R.layout.activity_tasker_edit)
         setSupportActionBar(toolbar)
@@ -75,8 +76,9 @@ class EditActivity : AppCompatActivity() {
         fab_save.setOnClickListener { finish() }
 
         // Disable option 'previous value' if no previous value found
-        if (KeepOnUtils.getPreviousTimeout(this) == 0)
+        if (Preferences.getPreviousValue(this) == 0) {
             timeout_previous.isEnabled = false
+        }
 
         val forwardedBundle = intent.getBundleExtra(EXTRA_BUNDLE)
 

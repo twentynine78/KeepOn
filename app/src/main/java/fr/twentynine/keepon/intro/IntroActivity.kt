@@ -19,6 +19,7 @@ import fr.twentynine.keepon.intro.fragments.IntroFragmentNotification
 import fr.twentynine.keepon.intro.fragments.IntroFragmentPermission
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.KeepOnUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
 
 class IntroActivity : AppIntro2() {
 
@@ -62,7 +63,7 @@ class IntroActivity : AppIntro2() {
         sliderPageInfo3.backgroundColor = COLOR_SLIDE_INFO3
 
         // Check if it's first launch or help launch
-        if (KeepOnUtils.getSkipIntro(this)) {
+        if (Preferences.getSkipIntro(this)) {
             addSlide(AppIntroFragment.newInstance(sliderPageHome))
             if (!Settings.System.canWrite(this.applicationContext)) addSlide(IntroFragmentPermission())
             if (KeepOnUtils.isNotificationEnabled(this)) addSlide(IntroFragmentNotification())
@@ -87,7 +88,7 @@ class IntroActivity : AppIntro2() {
                 descriptionParallaxFactor = 2.0
             )
         )
-        isSkipButtonEnabled = KeepOnUtils.getSkipIntro(this)
+        isSkipButtonEnabled = Preferences.getSkipIntro(this)
         isButtonsEnabled = false
         showStatusBar(true)
         isColorTransitionsEnabled = true
@@ -95,9 +96,9 @@ class IntroActivity : AppIntro2() {
         KeepOnUtils.startScreenTimeoutObserverService(this)
 
         // Set initial timeout for first launch
-        if (!KeepOnUtils.getSkipIntro(this)) {
-            KeepOnUtils.updateOriginalTimeout(this)
-            KeepOnUtils.setPreviousTimeout(KeepOnUtils.getCurrentTimeout(this), this)
+        if (!Preferences.getSkipIntro(this)) {
+            Preferences.setOriginalTimeout(Preferences.getCurrentTimeout(this), this)
+            Preferences.setPreviousValue(Preferences.getCurrentTimeout(this), this)
         }
     }
 
@@ -105,7 +106,7 @@ class IntroActivity : AppIntro2() {
         if (Settings.System.canWrite(this)) {
             super.onDonePressed(currentFragment)
 
-            KeepOnUtils.setSkipIntro(true, this)
+            Preferences.setSkipIntro(true, this)
             startActivity(Intent(applicationContext, MainActivity::class.java))
             finish()
         }

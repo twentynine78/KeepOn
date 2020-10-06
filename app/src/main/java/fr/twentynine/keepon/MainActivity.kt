@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
         get() = (this / Resources.getSystem().displayMetrics.density).toInt()
 
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(contxt: Context?, intent: Intent?) {
+        override fun onReceive(context: Context?, intent: Intent?) {
             if (intent != null) {
                 // A hack to prevent a private serializable classloader attack
                 if (BundleScrubber.scrub(intent)) {
@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     ACTION_MISSING_SETTINGS -> {
                         // Show missing settings dialog
-                        if (KeepOnUtils.getSelectedTimeout(contxt!!).size <= 1) {
+                        if (Preferences.getSelectedTimeout(context!!).size <= 1) {
                             if (!missingSettingsDialog.isShowing) {
                                 missingSettingsDialog.show()
                             }
@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        if (!KeepOnUtils.getSkipIntro(this)) {
+        if (!Preferences.getSkipIntro(this)) {
             // Start SplashScreen
             val splashIntent = SplashScreen.newIntent(this)
             splashIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -141,8 +141,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Set DarkTheme
-        if (KeepOnUtils.getDarkTheme(this))
+        if (Preferences.getDarkTheme(this)) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
@@ -174,15 +175,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Manage checkbox for monitor screen off or not
-        checkBoxScreenOff.isChecked = KeepOnUtils.getResetOnScreenOff(this)
+        checkBoxScreenOff.isChecked = Preferences.getResetTimeoutOnScreenOff(this)
         checkBoxScreenOff.setOnCheckedChangeListener { _, isChecked ->
-            KeepOnUtils.setResetOnScreenOff(isChecked, this)
+            Preferences.setResetTimeoutOnScreenOff(isChecked, this)
 
             if (!isChecked) {
                 KeepOnUtils.stopScreenOffReceiverService(this)
             }
 
-            if (KeepOnUtils.getKeepOnState(this) && isChecked) {
+            if (Preferences.getKeepOnState(this) && isChecked) {
                 KeepOnUtils.startScreenOffReceiverService(this)
             }
             snackbar.show()
@@ -203,7 +204,7 @@ class MainActivity : AppCompatActivity() {
         // Show dialog if missing settings on tile click
         if (intent.extras != null) {
             if (intent.extras!!.getBoolean(KeepOnUtils.TAG_MISSING_SETTINGS, false) &&
-                KeepOnUtils.getSelectedTimeout(this).size <= 1
+                Preferences.getSelectedTimeout(this).size <= 1
             ) {
                 if (!missingSettingsDialog.isShowing) {
                     missingSettingsDialog.show()
@@ -213,19 +214,20 @@ class MainActivity : AppCompatActivity() {
 
         // Set OnClick listener for bottom sheet peek views
         bottomSheetPeekTextView.setOnClickListener {
-            if (BottomSheetBehavior.from(bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED)
+            if (BottomSheetBehavior.from(bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED) {
                 BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
-            else
+            } else {
                 BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
+            }
         }
 
         // Set OnClick listener for Tile Preview to switch like from Quick Settings
         tilePreview.setOnClickListener {
-            if (KeepOnUtils.getSelectedTimeout(this).size < 1) {
+            if (Preferences.getSelectedTimeout(this).size < 1) {
                 KeepOnUtils.sendBroadcastMissingSettings(this)
             }
 
-            KeepOnUtils.setTimeout(KeepOnUtils.getNextTimeoutValue(this), this)
+            Preferences.setTimeout(Preferences.getNextTimeoutValue(this), this)
         }
 
         // Define tile preview max size and adjust bottomsheet margin view height
@@ -312,13 +314,14 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_theme -> {
-                val isDarkTheme = KeepOnUtils.getDarkTheme(this)
+                val isDarkTheme = Preferences.getDarkTheme(this)
 
-                KeepOnUtils.setDarkTheme(!isDarkTheme, this)
-                if (isDarkTheme)
+                Preferences.setDarkTheme(!isDarkTheme, this)
+                if (isDarkTheme) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                else
+                } else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                }
 
                 CoroutineScope(Dispatchers.Main).launch {
                     startActivity(newIntent(this@MainActivity))
@@ -343,23 +346,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (BottomSheetBehavior.from(bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED)
+        if (BottomSheetBehavior.from(bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED) {
             BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
-        else
+        } else {
             finishAfterTransition()
+        }
     }
 
     private fun getTimeoutSwitchsArray(): ArrayList<TimeoutSwitch> {
         return arrayListOf(
-            TimeoutSwitch(switch15s, KeepOnUtils.getTimeoutValueArray()[0]),
-            TimeoutSwitch(switch30s, KeepOnUtils.getTimeoutValueArray()[1]),
-            TimeoutSwitch(switch1m, KeepOnUtils.getTimeoutValueArray()[2]),
-            TimeoutSwitch(switch2m, KeepOnUtils.getTimeoutValueArray()[3]),
-            TimeoutSwitch(switch5m, KeepOnUtils.getTimeoutValueArray()[4]),
-            TimeoutSwitch(switch10m, KeepOnUtils.getTimeoutValueArray()[5]),
-            TimeoutSwitch(switch30m, KeepOnUtils.getTimeoutValueArray()[6]),
-            TimeoutSwitch(switch1h, KeepOnUtils.getTimeoutValueArray()[7]),
-            TimeoutSwitch(switchInfinite, KeepOnUtils.getTimeoutValueArray()[8])
+            TimeoutSwitch(switch15s, Preferences.getTimeoutValueArray()[0]),
+            TimeoutSwitch(switch30s, Preferences.getTimeoutValueArray()[1]),
+            TimeoutSwitch(switch1m, Preferences.getTimeoutValueArray()[2]),
+            TimeoutSwitch(switch2m, Preferences.getTimeoutValueArray()[3]),
+            TimeoutSwitch(switch5m, Preferences.getTimeoutValueArray()[4]),
+            TimeoutSwitch(switch10m, Preferences.getTimeoutValueArray()[5]),
+            TimeoutSwitch(switch30m, Preferences.getTimeoutValueArray()[6]),
+            TimeoutSwitch(switch1h, Preferences.getTimeoutValueArray()[7]),
+            TimeoutSwitch(switchInfinite, Preferences.getTimeoutValueArray()[8])
         )
     }
 
@@ -373,7 +377,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateTilePreview() {
         // Set Bitmap to Tile Preview
-        val currentTimeout = KeepOnUtils.getCurrentTimeout(this)
+        val currentTimeout = Preferences.getCurrentTimeout(this)
 
         GlideApp.with(this)
             .asBitmap()
@@ -386,7 +390,7 @@ class MainActivity : AppCompatActivity() {
                     val layerDrawableCircle: LayerDrawable = tilePreviewBackground.drawable as LayerDrawable
                     val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
 
-                    if (KeepOnUtils.getCurrentTimeout(this@MainActivity) == KeepOnUtils.getOriginalTimeout(
+                    if (Preferences.getCurrentTimeout(this@MainActivity) == Preferences.getOriginalTimeout(
                             this@MainActivity
                         )
                     ) {
@@ -406,9 +410,9 @@ class MainActivity : AppCompatActivity() {
         for (timeoutSwitch in switchsArray) {
             val switch = timeoutSwitch.switch
             val timeout = timeoutSwitch.timeoutValue
-            val selectedSwitch = KeepOnUtils.getSelectedTimeout(this)
-            val originalTimeout = KeepOnUtils.getOriginalTimeout(this)
-            val currentTimeout = KeepOnUtils.getCurrentTimeout(this)
+            val selectedSwitch = Preferences.getSelectedTimeout(this)
+            val originalTimeout = Preferences.getOriginalTimeout(this)
+            val currentTimeout = Preferences.getCurrentTimeout(this)
 
             // Check for DevicePolicy restriction
             val mDPM = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
@@ -452,18 +456,16 @@ class MainActivity : AppCompatActivity() {
         val resultList: ArrayList<Int> = ArrayList()
 
         for (timeoutSwitch in getTimeoutSwitchsArray()) {
-            if (timeoutSwitch.switch.isChecked && timeoutSwitch.timeoutValue != KeepOnUtils.getOriginalTimeout(
-                    this
-                )
-            )
+            if (timeoutSwitch.switch.isChecked && timeoutSwitch.timeoutValue != Preferences.getOriginalTimeout(this)) {
                 resultList.add(timeoutSwitch.timeoutValue)
+            }
         }
 
         return resultList
     }
 
     private fun saveSelectedSwitch() {
-        KeepOnUtils.setSelectedTimeout(getListIntFromSwitch(), this)
+        Preferences.setSelectedTimeout(getListIntFromSwitch(), this)
 
         snackbar.show()
 
@@ -645,7 +647,7 @@ class MainActivity : AppCompatActivity() {
         updateTilePreview()
 
         // Update QS Tile
-        if (KeepOnUtils.getTileAdded(this)) {
+        if (Preferences.getTileAdded(this)) {
             CoroutineScope(Dispatchers.Default).launch {
                 delay(500)
                 withTimeout(
@@ -688,7 +690,7 @@ class MainActivity : AppCompatActivity() {
         updateTilePreview()
 
         // Update QS Tile
-        if (KeepOnUtils.getTileAdded(this)) {
+        if (Preferences.getTileAdded(this)) {
             CoroutineScope(Dispatchers.Default).launch {
                 delay(500)
                 withTimeout(

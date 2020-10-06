@@ -93,10 +93,11 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
         val mImage = mView!!.image
         mImage.setImageResource(R.mipmap.img_intro_notif)
 
-        if (KeepOnUtils.isNotificationEnabled(mContext))
+        if (KeepOnUtils.isNotificationEnabled(mContext)) {
             mButton.visibility = View.VISIBLE
-        else
+        } else {
             mButton.visibility = View.INVISIBLE
+        }
 
         return mView
     }

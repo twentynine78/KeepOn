@@ -11,6 +11,7 @@ import fr.twentynine.keepon.services.ScreenOffReceiverService
 import fr.twentynine.keepon.services.ScreenTimeoutObserverService
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.KeepOnUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,27 +21,30 @@ class ServicesManagerReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         // A hack to prevent a private serializable classloader attack
-        if (BundleScrubber.scrub(intent))
+        if (BundleScrubber.scrub(intent)) {
             return
+        }
 
         // Ignore implicit intents, because they are not valid.
-        if (context.packageName != intent.getPackage() && ComponentName(context, this.javaClass.name) != intent.component)
+        if (context.packageName != intent.getPackage() && ComponentName(context, this.javaClass.name) != intent.component) {
             return
+        }
 
         val action = intent.action
 
         if (action != null) {
             when (action) {
                 Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED -> {
-                    if (KeepOnUtils.getTileAdded(context))
+                    if (Preferences.getTileAdded(context)) {
                         TileService.requestListeningState(context, ComponentName(context, KeepOnTileService::class.java))
+                    }
 
                     // Start ScreenTimeoutObserverService
                     val startIntentScreenTimeout = Intent(context.applicationContext, ScreenTimeoutObserverService::class.java)
                     startIntentScreenTimeout.action = ACTION_START_FOREGROUND_TIMEOUT_SERVICE
                     ContextCompat.startForegroundService(context.applicationContext, startIntentScreenTimeout)
 
-                    if (KeepOnUtils.getKeepOnState(context) && KeepOnUtils.getResetOnScreenOff(context)) {
+                    if (Preferences.getKeepOnState(context) && Preferences.getResetTimeoutOnScreenOff(context)) {
                         // Start ScreenOffReceiverService
                         val startIntentScreenOff = Intent(context.applicationContext, ScreenOffReceiverService::class.java)
                         startIntentScreenOff.action = ACTION_START_FOREGROUND_SCREEN_OFF_SERVICE
@@ -78,10 +82,10 @@ class ServicesManagerReceiver : BroadcastReceiver() {
                     if (intent.extras != null) {
                         var newTimeout = intent.getIntExtra("timeout", 0)
                         if (newTimeout != 0) {
-                            if (newTimeout == -42) newTimeout = KeepOnUtils.getOriginalTimeout(context)
-                            if (newTimeout == -43) newTimeout = KeepOnUtils.getPreviousTimeout(context)
+                            if (newTimeout == -42) newTimeout = Preferences.getOriginalTimeout(context)
+                            if (newTimeout == -43) newTimeout = Preferences.getPreviousValue(context)
 
-                            KeepOnUtils.setTimeout(newTimeout, context)
+                            Preferences.setTimeout(newTimeout, context)
                         }
                     }
                 }

@@ -7,6 +7,7 @@ import android.net.Uri
 import android.service.quicksettings.TileService
 import fr.twentynine.keepon.services.KeepOnTileService
 import fr.twentynine.keepon.utils.KeepOnUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,17 +23,18 @@ class ScreenTimeoutObserver(val context: Context) : ContentObserver(null) {
     }
 
     private fun processChange() {
-        if (!KeepOnUtils.getValueChange(context))
-            KeepOnUtils.updateOriginalTimeout(context)
-        else
-            KeepOnUtils.setValueChange(false, context)
+        if (!Preferences.getValueChange(context)) {
+            Preferences.setOriginalTimeout(Preferences.getCurrentTimeout(context), context)
+        } else {
+            Preferences.setValueChange(false, context)
+        }
 
-        KeepOnUtils.setPreviousTimeout(KeepOnUtils.getNewTimeout(context), context)
-        KeepOnUtils.setNewTimeout(KeepOnUtils.getCurrentTimeout(context), context)
+        Preferences.setPreviousValue(Preferences.getNewValue(context), context)
+        Preferences.setNewValue(Preferences.getCurrentTimeout(context), context)
 
         // Manage services
-        if (KeepOnUtils.getKeepOnState(context)) {
-            if (KeepOnUtils.getResetOnScreenOff(context)) {
+        if (Preferences.getKeepOnState(context)) {
+            if (Preferences.getResetTimeoutOnScreenOff(context)) {
                 KeepOnUtils.startScreenOffReceiverService(context)
             }
         } else {
@@ -40,8 +42,9 @@ class ScreenTimeoutObserver(val context: Context) : ContentObserver(null) {
         }
 
         // Update QS Tile
-        if (KeepOnUtils.getTileAdded(context))
+        if (Preferences.getTileAdded(context)) {
             TileService.requestListeningState(context, ComponentName(context.applicationContext, KeepOnTileService::class.java))
+        }
 
         // Update Main Activity
         KeepOnUtils.sendBroadcastUpdateMainUI(context)

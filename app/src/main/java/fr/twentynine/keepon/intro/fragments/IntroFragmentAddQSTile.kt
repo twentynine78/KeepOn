@@ -10,6 +10,7 @@ import com.github.appintro.SlidePolicy
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_QSTILE
 import fr.twentynine.keepon.utils.KeepOnUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.android.synthetic.main.fragment_intro_button.view.*
 
 class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
@@ -36,10 +37,11 @@ class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder, SlidePoli
         val mImage = mView!!.image
         mImage.setImageResource(R.mipmap.img_intro_qstile)
 
-        if (KeepOnUtils.getTileAdded(mContext))
+        if (Preferences.getTileAdded(mContext)) {
             mButton.visibility = View.INVISIBLE
-        else
+        } else {
             mButton.visibility = View.VISIBLE
+        }
 
         return mView
     }
@@ -74,7 +76,7 @@ class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder, SlidePoli
     private fun updateButtonVisibility() {
         val mButton = requireView().button
         if (mButton != null) {
-            if (KeepOnUtils.getTileAdded(requireContext())) {
+            if (Preferences.getTileAdded(requireContext())) {
                 mButton.visibility = View.INVISIBLE
             } else {
                 mButton.visibility = View.VISIBLE

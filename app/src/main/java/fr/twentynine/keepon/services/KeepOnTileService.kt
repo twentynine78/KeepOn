@@ -18,6 +18,7 @@ import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.glide.GlideApp
 import fr.twentynine.keepon.glide.TimeoutIconData
 import fr.twentynine.keepon.utils.KeepOnUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
 
 class KeepOnTileService : TileService() {
 
@@ -30,7 +31,7 @@ class KeepOnTileService : TileService() {
     }
 
     override fun onBind(intent: Intent?): IBinder? {
-        KeepOnUtils.setTileAdded(true, this)
+        Preferences.setTileAdded(true, this)
 
         KeepOnUtils.startScreenTimeoutObserverService(this)
 
@@ -41,13 +42,13 @@ class KeepOnTileService : TileService() {
     override fun onTileAdded() {
         super.onTileAdded()
 
-        KeepOnUtils.setTileAdded(true, this)
+        Preferences.setTileAdded(true, this)
 
         requestListeningState(this, ComponentName(this, KeepOnTileService::class.java))
     }
 
     override fun onTileRemoved() {
-        KeepOnUtils.setTileAdded(false, this)
+        Preferences.setTileAdded(false, this)
 
         super.onTileRemoved()
 
@@ -59,7 +60,7 @@ class KeepOnTileService : TileService() {
 
         if (qsTile.state == Tile.STATE_UNAVAILABLE) this.stopSelf()
 
-        val newTimeout = KeepOnUtils.getCurrentTimeout(this)
+        val newTimeout = Preferences.getCurrentTimeout(this)
 
         // Create bitmap and load to tile icon
         GlideApp.with(this)
@@ -70,7 +71,11 @@ class KeepOnTileService : TileService() {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     val keeponTile = qsTile
                     if (keeponTile != null) {
-                        keeponTile.state = if (KeepOnUtils.getKeepOnState(this@KeepOnTileService)) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
+                        keeponTile.state = if (Preferences.getKeepOnState(this@KeepOnTileService)) {
+                            Tile.STATE_ACTIVE
+                        } else {
+                            Tile.STATE_INACTIVE
+                        }
                         keeponTile.icon = Icon.createWithBitmap(resource)
 
                         keeponTile.updateTile()
@@ -83,16 +88,16 @@ class KeepOnTileService : TileService() {
 
     override fun onClick() {
         super.onClick()
-        KeepOnUtils.setTileAdded(true, this)
+        Preferences.setTileAdded(true, this)
 
-        if (KeepOnUtils.getSkipIntro(this)) {
-            if (KeepOnUtils.getSelectedTimeout(this).size < 1 ||
+        if (Preferences.getSkipIntro(this)) {
+            if (Preferences.getSelectedTimeout(this).size < 1 ||
                 !Settings.System.canWrite(this)
             ) {
                 val mainIntent = MainActivity.newIntent(this.applicationContext)
                 mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
-                if (KeepOnUtils.getSelectedTimeout(this).size < 1 && Settings.System.canWrite(this)) {
+                if (Preferences.getSelectedTimeout(this).size < 1 && Settings.System.canWrite(this)) {
                     mainIntent.putExtra(KeepOnUtils.TAG_MISSING_SETTINGS, true)
                     KeepOnUtils.sendBroadcastMissingSettings(this)
                 }
@@ -103,7 +108,7 @@ class KeepOnTileService : TileService() {
 
             KeepOnUtils.startScreenTimeoutObserverService(this)
 
-            KeepOnUtils.setTimeout(KeepOnUtils.getNextTimeoutValue(this), this)
+            Preferences.setTimeout(Preferences.getNextTimeoutValue(this), this)
         }
     }
 }

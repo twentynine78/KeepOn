@@ -7,7 +7,7 @@ import com.bumptech.glide.load.Options
 import com.bumptech.glide.load.model.ModelLoader
 import com.bumptech.glide.load.model.ModelLoader.LoadData
 import com.bumptech.glide.signature.ObjectKey
-import fr.twentynine.keepon.utils.KeepOnUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
 
 class TimeoutIconModelLoader(private val context: Context) : ModelLoader<TimeoutIconData, Bitmap> {
 
@@ -17,6 +17,6 @@ class TimeoutIconModelLoader(private val context: Context) : ModelLoader<Timeout
     }
 
     override fun handles(model: TimeoutIconData): Boolean {
-        return KeepOnUtils.getTimeoutValueArray().contains(model.timeout)
+        return Preferences.getTimeoutValueArray().contains(model.timeout)
     }
 }

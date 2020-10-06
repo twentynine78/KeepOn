@@ -138,10 +138,11 @@ class Rate private constructor(private val mContext: Context) {
     private val storeIntent: Intent
         get() {
             val uri = Uri.parse(
-                if (mStoreLink != null)
+                if (mStoreLink != null) {
                     mStoreLink
-                else
+                } else {
                     "market://details?id=$mPackageName"
+                }
             )
             return Intent(Intent.ACTION_VIEW, uri)
         }
@@ -155,10 +156,11 @@ class Rate private constructor(private val mContext: Context) {
         // Wie is hier nou de snackbar?
         val snackbar = Snackbar.make(
             mParentView!!, mMessage,
-            if (mSnackBarSwipeToDismiss)
+            if (mSnackBarSwipeToDismiss) {
                 Snackbar.LENGTH_INDEFINITE
-            else
+            } else {
                 Snackbar.LENGTH_LONG
+            }
         )
         val layout = snackbar.view as SnackbarLayout
 
@@ -185,10 +187,11 @@ class Rate private constructor(private val mContext: Context) {
 
         val btRate = snackView.findViewById<Button>(R.id.bt_positive)
         snackView.findViewById<View>(R.id.tv_swipe).visibility =
-            if (mSnackBarSwipeToDismiss)
+            if (mSnackBarSwipeToDismiss) {
                 View.VISIBLE
-            else
+            } else {
                 View.GONE
+            }
 
         // Remember to not ask again if user swiped it
         snackbar.addCallback(object : Snackbar.Callback() {

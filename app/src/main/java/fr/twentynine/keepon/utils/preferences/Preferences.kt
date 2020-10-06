@@ -1,6 +1,13 @@
 package fr.twentynine.keepon.utils.preferences
 
 import android.content.Context
+import android.provider.Settings
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 
 object Preferences {
     private const val PREFS_FILENAME = "keepon_prefs"
@@ -29,15 +36,91 @@ object Preferences {
     private const val QS_STYLE_FONT_SMCP = "qsStyleFontSMCP"
     private const val GENERATE_BOOL_ASKED = "generateBoolAsked"
     private const val GENERATE_LAUNCH_COUNT = "generateLaunchCount"
+    private const val DEFAULT_TIMEOUT = 60000
+
+    private var resetValueChangeJob: Job? = null
+
+    private fun resetValueChange(context: Context) {
+        MultiPreferences(PREFS_FILENAME, context.contentResolver)
+            .setInt(VALUE_CHANGE_INT, 0)
+    }
+
+    fun getKeepOnState(context: Context): Boolean {
+        return getCurrentTimeout(context) != getOriginalTimeout(context)
+    }
+
+    fun getTimeoutValueArray(): ArrayList<Int> {
+        return arrayListOf(
+            15000,
+            30000,
+            60000,
+            120000,
+            300000,
+            600000,
+            1800000,
+            3600000,
+            Int.MAX_VALUE
+        )
+    }
+
+    fun getNextTimeoutValue(context: Context): Int {
+        val allTimeouts = getTimeoutValueArray()
+        allTimeouts.indexOf(getCurrentTimeout(context))
+
+        val availableTimeout: ArrayList<Int> = ArrayList()
+        availableTimeout.addAll(getSelectedTimeout(context))
+        availableTimeout.remove(getOriginalTimeout(context))
+        availableTimeout.add(getOriginalTimeout(context))
+        availableTimeout.sort()
+
+        val currentTimeout = getCurrentTimeout(context)
+        var allCurrentIndex = allTimeouts.indexOf(currentTimeout)
+        for (i in 0 until allTimeouts.size) {
+            if (allCurrentIndex == allTimeouts.size - 1 || allCurrentIndex == -1) {
+                allCurrentIndex = 0
+            } else {
+                allCurrentIndex++
+            }
+            if (availableTimeout.indexOf(allTimeouts[allCurrentIndex]) != -1) {
+                return availableTimeout[availableTimeout.indexOf(allTimeouts[allCurrentIndex])]
+            }
+        }
+        return getCurrentTimeout(context)
+    }
 
     fun getOriginalTimeout(context: Context): Int {
-        return MultiPreferences(PREFS_FILENAME, context.contentResolver)
+        val origTimeout = MultiPreferences(PREFS_FILENAME, context.contentResolver)
             .getInt(ORIGINAL_TIMEOUT, 0)
+        return if (origTimeout == 0) {
+            getCurrentTimeout(context)
+        } else {
+            origTimeout
+        }
     }
 
     fun setOriginalTimeout(value: Int, context: Context) {
         MultiPreferences(PREFS_FILENAME, context.contentResolver)
             .setInt(ORIGINAL_TIMEOUT, value)
+    }
+
+    fun getCurrentTimeout(context: Context): Int {
+        return Settings.System.getInt(
+            context.contentResolver,
+            Settings.System.SCREEN_OFF_TIMEOUT, DEFAULT_TIMEOUT
+        )
+    }
+
+    fun setTimeout(timeout: Int, context: Context) {
+        try {
+            setValueChange(true, context)
+            Settings.System.putInt(
+                context.contentResolver,
+                Settings.System.SCREEN_OFF_TIMEOUT, timeout
+            )
+        } catch (e: Exception) {
+            setValueChange(false, context)
+            e.printStackTrace()
+        }
     }
 
     fun getSelectedTimeout(context: Context): ArrayList<Int> {
@@ -103,11 +186,19 @@ object Preferences {
 
         MultiPreferences(PREFS_FILENAME, context.contentResolver)
             .setInt(VALUE_CHANGE_INT, result)
-    }
 
-    fun resetValueChange(context: Context) {
-        MultiPreferences(PREFS_FILENAME, context.contentResolver)
-            .setInt(VALUE_CHANGE_INT, 0)
+        // Cancel previous reset job if value is true
+        if (value) {
+            resetValueChangeJob?.cancel()
+
+            // start job for reset value
+            resetValueChangeJob = CoroutineScope(Dispatchers.Default).launch {
+                delay(5000)
+                withTimeout(10000) {
+                    resetValueChange(context)
+                }
+            }
+        }
     }
 
     fun getTileAdded(context: Context): Boolean {
@@ -153,8 +244,9 @@ object Preferences {
         val tempList = stringList?.split("|")
         if (tempList != null) {
             for (string: String in tempList) {
-                if (string.isNotEmpty())
+                if (string.isNotEmpty()) {
                     resultList.add(string.toInt())
+                }
             }
         }
         return resultList
