@@ -1,7 +1,8 @@
-package fr.twentynine.keepon.utils.preferences
+package fr.twentynine.keepon.utils
 
 import android.content.Context
 import android.provider.Settings
+import fr.twentynine.keepon.utils.preferences.MultiPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

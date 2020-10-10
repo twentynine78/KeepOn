@@ -10,7 +10,7 @@ import com.github.appintro.SlidePolicy
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_QSTILE
 import fr.twentynine.keepon.utils.KeepOnUtils
-import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.Preferences
 import kotlinx.android.synthetic.main.fragment_intro_button.view.*
 
 class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder, SlidePolicy {

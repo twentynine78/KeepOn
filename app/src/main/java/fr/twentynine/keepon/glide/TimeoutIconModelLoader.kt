@@ -7,7 +7,7 @@ import com.bumptech.glide.load.Options
 import com.bumptech.glide.load.model.ModelLoader
 import com.bumptech.glide.load.model.ModelLoader.LoadData
 import com.bumptech.glide.signature.ObjectKey
-import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.Preferences
 
 class TimeoutIconModelLoader(private val context: Context) : ModelLoader<TimeoutIconData, Bitmap> {
 

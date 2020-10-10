@@ -14,7 +14,7 @@ import com.bumptech.glide.Priority
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.data.DataFetcher
 import fr.twentynine.keepon.utils.KeepOnUtils
-import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.Preferences
 
 class TimeoutIconDataFetcher(private val model: TimeoutIconData, private val context: Context) : DataFetcher<Bitmap> {
     private val Float.px: Float

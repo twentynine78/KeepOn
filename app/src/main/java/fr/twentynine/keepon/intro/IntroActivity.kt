@@ -19,7 +19,7 @@ import fr.twentynine.keepon.intro.fragments.IntroFragmentNotification
 import fr.twentynine.keepon.intro.fragments.IntroFragmentPermission
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.KeepOnUtils
-import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.Preferences
 
 class IntroActivity : AppIntro2() {
 

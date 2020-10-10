@@ -46,7 +46,7 @@ import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.services.KeepOnTileService
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.KeepOnUtils
-import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.Preferences
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet_tile_settings.*
 import kotlinx.android.synthetic.main.card_main_about.*

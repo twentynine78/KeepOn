@@ -18,7 +18,7 @@ import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.glide.GlideApp
 import fr.twentynine.keepon.glide.TimeoutIconData
 import fr.twentynine.keepon.utils.KeepOnUtils
-import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.Preferences
 
 class KeepOnTileService : TileService() {
 

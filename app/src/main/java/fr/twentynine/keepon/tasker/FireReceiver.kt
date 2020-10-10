@@ -9,7 +9,7 @@ import fr.twentynine.keepon.tasker.Intent.Companion.ACTION_FIRE_SETTING
 import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_BUNDLE
 import fr.twentynine.keepon.tasker.PluginBundleManager.Companion.isBundleValid
 import fr.twentynine.keepon.utils.BundleScrubber
-import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.Preferences
 
 class FireReceiver : BroadcastReceiver() {
 

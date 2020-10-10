@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.BundleScrubber
-import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.Preferences
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

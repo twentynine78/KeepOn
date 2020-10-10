@@ -14,7 +14,7 @@ import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.Snackbar.SnackbarLayout
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.Preferences
 
 /**
  * Copyright (c) Pixplicity, Gene-rate

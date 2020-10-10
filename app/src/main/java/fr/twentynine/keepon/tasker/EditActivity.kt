@@ -15,7 +15,7 @@ import fr.twentynine.keepon.tasker.Intent.Companion.ACTION_EDIT_SETTING
 import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_BUNDLE
 import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_STRING_BLURB
 import fr.twentynine.keepon.utils.BundleScrubber
-import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.Preferences
 import kotlinx.android.synthetic.main.activity_tasker_edit.*
 
 class EditActivity : AppCompatActivity() {

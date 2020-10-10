@@ -11,7 +11,7 @@ import fr.twentynine.keepon.services.ScreenOffReceiverService
 import fr.twentynine.keepon.services.ScreenTimeoutObserverService
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.KeepOnUtils
-import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.Preferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

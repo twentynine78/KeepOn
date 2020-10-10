@@ -40,7 +40,6 @@ import fr.twentynine.keepon.SplashScreen
 import fr.twentynine.keepon.glide.GlideApp
 import fr.twentynine.keepon.glide.TimeoutIconData
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
-import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
