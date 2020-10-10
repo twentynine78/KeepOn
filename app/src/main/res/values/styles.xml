@@ -69,7 +69,7 @@
 
     <style name="SnackbarStyle" parent="Widget.MaterialComponents.Snackbar">
         <item name="android:layout_margin">20dp</item>
-        <item name="elevation">10dp</item>
+        <item name="elevation">11dp</item>
         <item name="animationMode">fade</item>
     </style>
 
