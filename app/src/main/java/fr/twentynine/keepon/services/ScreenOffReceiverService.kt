@@ -10,7 +10,7 @@ import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.KeepOnUtils
 
 class ScreenOffReceiverService : Service() {
-    private val screenOffReceiver: ScreenOffReceiver = ScreenOffReceiver()
+    private var screenOffReceiver: ScreenOffReceiver? = ScreenOffReceiver()
     private var restart = true
 
     override fun onBind(intent: Intent): IBinder? {
@@ -26,6 +26,7 @@ class ScreenOffReceiverService : Service() {
 
     override fun onDestroy() {
         unregisterScreenOffReceiver()
+        screenOffReceiver = null
 
         if (restart) {
             KeepOnUtils.startScreenOffReceiverService(this)

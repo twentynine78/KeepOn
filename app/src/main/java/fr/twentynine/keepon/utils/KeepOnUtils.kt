@@ -45,7 +45,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withContext
 import java.util.Locale
 import kotlin.collections.ArrayList
 
@@ -99,15 +99,15 @@ object KeepOnUtils {
 
     fun getNotificationDialog(context: Context, returnClass: Class<*>): Dialog {
         fun checkNotification() = CoroutineScope(Dispatchers.Default).launch {
-            delay(500)
-            withTimeout(60000) {
+            withContext(coroutineContext) {
+                delay(500)
                 repeat(300) {
                     if (!isNotificationEnabled(context)) {
                         try {
                             val intent = Intent(context.applicationContext, returnClass)
                             context.startActivity(intent)
                         } finally {
-                            return@withTimeout
+                            return@withContext
                         }
                     } else {
                         delay(200)
@@ -165,15 +165,15 @@ object KeepOnUtils {
 
     fun getPermissionDialog(context: Context, returnClass: Class<*>): Dialog {
         fun checkPermission() = CoroutineScope(Dispatchers.Default).launch {
-            delay(500)
-            withTimeout(60000) {
+            withContext(coroutineContext) {
+                delay(500)
                 repeat(300) {
                     if (Settings.System.canWrite(context)) {
                         try {
                             val intent = Intent(context.applicationContext, returnClass)
                             context.startActivity(intent)
                         } finally {
-                            return@withTimeout
+                            return@withContext
                         }
                     } else {
                         delay(200)

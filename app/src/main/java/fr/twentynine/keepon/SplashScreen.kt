@@ -42,7 +42,7 @@ class SplashScreen : AppCompatActivity() {
                 val timeout = intent.getIntExtra(extraKey, 0)
                 if (timeout != 0) {
                     val broadcastIntent = Intent(
-                        this,
+                        this.applicationContext,
                         ServicesManagerReceiver::class.java
                     )
                     broadcastIntent.action = intent.action
@@ -90,14 +90,14 @@ class SplashScreen : AppCompatActivity() {
             // Start Intro on first launch
             lifecycleScope.launch(Dispatchers.Main) {
                 delay(SPLASH_TIME_OUT)
-                startActivity(IntroActivity.newIntent(this@SplashScreen))
+                startActivity(IntroActivity.newIntent(this@SplashScreen.applicationContext))
                 finish()
             }
         } else {
             // Launch MainActivity
             lifecycleScope.launch(Dispatchers.Main) {
                 delay(SPLASH_TIME_OUT)
-                val mainIntent = MainActivity.newIntent(this@SplashScreen)
+                val mainIntent = MainActivity.newIntent(this@SplashScreen.applicationContext)
                 startActivity(mainIntent)
                 finish()
             }

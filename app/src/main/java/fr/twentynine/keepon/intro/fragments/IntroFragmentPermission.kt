@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.fragment_intro_button.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withContext
 
 class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
 
@@ -33,15 +33,15 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
         setBackgroundColor(defaultBackgroundColor)
 
         fun checkPermission() = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-            delay(500)
-            withTimeout(60000) {
+            withContext(coroutineContext) {
+                delay(500)
                 repeat(300) {
                     if (Settings.System.canWrite(mContext)) {
                         try {
                             val intent = Intent(mContext.applicationContext, IntroActivity::class.java)
                             startActivity(intent)
                         } finally {
-                            return@withTimeout
+                            return@withContext
                         }
                     } else {
                         delay(200)

@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.fragment_intro_button.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withContext
 
 class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
 
@@ -34,15 +34,15 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
         setBackgroundColor(defaultBackgroundColor)
 
         fun checkNotification() = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-            delay(500)
-            withTimeout(60000) {
+            withContext(coroutineContext) {
+                delay(500)
                 repeat(300) {
                     if (!KeepOnUtils.isNotificationEnabled(mContext)) {
                         try {
                             val intent = Intent(mContext.applicationContext, IntroActivity::class.java)
                             startActivity(intent)
                         } finally {
-                            return@withTimeout
+                            return@withContext
                         }
                     } else {
                         delay(200)

@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity() {
 
         if (!Preferences.getSkipIntro(this)) {
             // Start SplashScreen
-            val splashIntent = SplashScreen.newIntent(this)
+            val splashIntent = SplashScreen.newIntent(this.applicationContext)
             splashIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(splashIntent)
             finish()
@@ -268,7 +268,6 @@ class MainActivity : AppCompatActivity() {
         rate = Rate.Builder(this)
             .setFeedbackAction(Uri.parse(SUPPORT_URI))
             .setSnackBarParent(cardViewContainer)
-            .setSwipeToDismissVisible(true)
             .build()
             .count()
     }
@@ -479,8 +478,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun animateCardView() {
         cardViewContainer.post {
-            processCardViewAnim(selectionCard!!, 0)
-            processCardViewAnim(aboutCard!!, ANIMATION_DURATION)
+            if (cardViewContainer.isAttachedToWindow) {
+                processCardViewAnim(selectionCard!!, 0)
+                processCardViewAnim(aboutCard!!, ANIMATION_DURATION)
+            }
         }
     }
 
@@ -716,7 +717,7 @@ class MainActivity : AppCompatActivity() {
         const val ACTION_UPDATE_UI = "fr.twentynine.keepon.action.UPDATE_UI"
         const val ACTION_MISSING_SETTINGS = "fr.twentynine.keepon.action.MISSING_SETTINGS"
 
-        const val SUPPORT_URI = "https://github.com/twentynine78/KeepOn/issues/new/choose"
+        const val SUPPORT_URI = "mailto:twentynine78@protonmail.com"
 
         const val ANIMATION_DURATION: Long = 300
 
