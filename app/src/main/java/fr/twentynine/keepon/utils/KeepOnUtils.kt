@@ -45,7 +45,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import java.util.Locale
 import kotlin.collections.ArrayList
@@ -99,28 +98,21 @@ object KeepOnUtils {
     }
 
     fun getNotificationDialog(context: Context, returnClass: Class<*>): Dialog {
-        fun checkSettings() {
-            runBlocking {
-                if (!isNotificationEnabled(context)) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        val intent = Intent(context.applicationContext, returnClass)
-                        context.startActivity(intent)
-                    }
-                } else {
-                    delay(200)
-                    CoroutineScope(Dispatchers.Default).launch {
-                        checkSettings()
+        fun checkNotification() = CoroutineScope(Dispatchers.Default).launch {
+            delay(500)
+            withTimeout(60000) {
+                repeat(300) {
+                    if (!isNotificationEnabled(context)) {
+                        try {
+                            val intent = Intent(context.applicationContext, returnClass)
+                            context.startActivity(intent)
+                        } finally {
+                            return@withTimeout
+                        }
+                    } else {
+                        delay(200)
                     }
                 }
-            }
-        }
-
-        fun checkSettingOn() = CoroutineScope(Dispatchers.Default).launch {
-            delay(500)
-            withTimeout(
-                60000
-            ) {
-                checkSettings()
             }
         }
 
@@ -152,7 +144,7 @@ object KeepOnUtils {
                         .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                         .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-                    checkSettingOn()
+                    checkNotification()
                     context.startActivity(intent)
                 }
             } else {
@@ -162,7 +154,7 @@ object KeepOnUtils {
                     .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-                checkSettingOn()
+                checkNotification()
                 context.startActivity(intent)
             }
         }
@@ -172,28 +164,21 @@ object KeepOnUtils {
     }
 
     fun getPermissionDialog(context: Context, returnClass: Class<*>): Dialog {
-        fun checkSettings() {
-            runBlocking {
-                if (Settings.System.canWrite(context.applicationContext)) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        val intent = Intent(context.applicationContext, returnClass)
-                        context.startActivity(intent)
-                    }
-                } else {
-                    delay(200)
-                    CoroutineScope(Dispatchers.Default).launch {
-                        checkSettings()
+        fun checkPermission() = CoroutineScope(Dispatchers.Default).launch {
+            delay(500)
+            withTimeout(60000) {
+                repeat(300) {
+                    if (Settings.System.canWrite(context)) {
+                        try {
+                            val intent = Intent(context.applicationContext, returnClass)
+                            context.startActivity(intent)
+                        } finally {
+                            return@withTimeout
+                        }
+                    } else {
+                        delay(200)
                     }
                 }
-            }
-        }
-
-        fun checkSettingOn() = CoroutineScope(Dispatchers.Default).launch {
-            delay(500)
-            withTimeout(
-                60000
-            ) {
-                checkSettings()
             }
         }
 
@@ -222,7 +207,7 @@ object KeepOnUtils {
                 .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-            checkSettingOn()
+            checkPermission()
             context.startActivity(intent)
         }
         dialog.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))

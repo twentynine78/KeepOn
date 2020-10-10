@@ -31,6 +31,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Priority
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -51,7 +52,6 @@ import kotlinx.android.synthetic.main.bottom_sheet_tile_settings.*
 import kotlinx.android.synthetic.main.card_main_about.*
 import kotlinx.android.synthetic.main.card_main_settings.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -322,8 +322,7 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                 }
-
-                CoroutineScope(Dispatchers.Main).launch {
+                lifecycleScope.launch(Dispatchers.Main) {
                     startActivity(newIntent(this@MainActivity))
                 }
                 return true
@@ -470,7 +469,7 @@ class MainActivity : AppCompatActivity() {
         snackbar.show()
 
         // Update App shortcuts
-        CoroutineScope(Dispatchers.Default).launch {
+        lifecycleScope.launch(Dispatchers.Default) {
             delay(1000)
             withTimeout(60000) {
                 KeepOnUtils.manageAppShortcut(this@MainActivity)
@@ -648,7 +647,7 @@ class MainActivity : AppCompatActivity() {
 
         // Update QS Tile
         if (Preferences.getTileAdded(this)) {
-            CoroutineScope(Dispatchers.Default).launch {
+            lifecycleScope.launch(Dispatchers.Default) {
                 delay(500)
                 withTimeout(
                     60000
@@ -662,7 +661,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Update App shortcuts
-        CoroutineScope(Dispatchers.Default).launch {
+        lifecycleScope.launch(Dispatchers.Default) {
             delay(1000)
             withTimeout(60000) {
                 KeepOnUtils.manageAppShortcut(this@MainActivity)
@@ -691,7 +690,7 @@ class MainActivity : AppCompatActivity() {
 
         // Update QS Tile
         if (Preferences.getTileAdded(this)) {
-            CoroutineScope(Dispatchers.Default).launch {
+            lifecycleScope.launch(Dispatchers.Default) {
                 delay(500)
                 withTimeout(
                     60000
@@ -705,7 +704,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Update App shortcuts
-        CoroutineScope(Dispatchers.Default).launch {
+        lifecycleScope.launch(Dispatchers.Default) {
             delay(1000)
             withTimeout(60000) {
                 KeepOnUtils.manageAppShortcut(this@MainActivity)

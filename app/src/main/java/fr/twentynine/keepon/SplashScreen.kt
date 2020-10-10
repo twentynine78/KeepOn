@@ -9,12 +9,12 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.lifecycleScope
 import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.android.synthetic.main.activity_splash_screen.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -88,14 +88,14 @@ class SplashScreen : AppCompatActivity() {
 
         if (!Preferences.getSkipIntro(this)) {
             // Start Intro on first launch
-            CoroutineScope(Dispatchers.Main).launch {
+            lifecycleScope.launch(Dispatchers.Main) {
                 delay(SPLASH_TIME_OUT)
                 startActivity(IntroActivity.newIntent(this@SplashScreen))
                 finish()
             }
         } else {
             // Launch MainActivity
-            CoroutineScope(Dispatchers.Main).launch {
+            lifecycleScope.launch(Dispatchers.Main) {
                 delay(SPLASH_TIME_OUT)
                 val mainIntent = MainActivity.newIntent(this@SplashScreen)
                 startActivity(mainIntent)

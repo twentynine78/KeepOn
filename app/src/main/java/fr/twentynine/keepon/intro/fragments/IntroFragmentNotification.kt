@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.github.appintro.SlideBackgroundColorHolder
 import com.github.appintro.SlidePolicy
 import fr.twentynine.keepon.R
@@ -17,11 +18,9 @@ import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_NOTIF
 import fr.twentynine.keepon.utils.KeepOnUtils
 import kotlinx.android.synthetic.main.fragment_intro_button.view.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 
 class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
@@ -34,28 +33,21 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
 
         setBackgroundColor(defaultBackgroundColor)
 
-        fun checkSettings() {
-            runBlocking {
-                if (!KeepOnUtils.isNotificationEnabled(mContext)) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        val intent = Intent(mContext, IntroActivity::class.java)
-                        startActivity(intent)
-                    }
-                } else {
-                    delay(200)
-                    CoroutineScope(Dispatchers.Default).launch {
-                        checkSettings()
+        fun checkNotification() = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+            delay(500)
+            withTimeout(60000) {
+                repeat(300) {
+                    if (!KeepOnUtils.isNotificationEnabled(mContext)) {
+                        try {
+                            val intent = Intent(mContext.applicationContext, IntroActivity::class.java)
+                            startActivity(intent)
+                        } finally {
+                            return@withTimeout
+                        }
+                    } else {
+                        delay(200)
                     }
                 }
-            }
-        }
-
-        fun checkSettingOn() = CoroutineScope(Dispatchers.Default).launch {
-            delay(500)
-            withTimeout(
-                60000
-            ) {
-                checkSettings()
             }
         }
 
@@ -71,7 +63,7 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
                         .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                         .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-                    checkSettingOn()
+                    checkNotification()
                     mContext.startActivity(intent)
                 }
             } else {
@@ -81,7 +73,7 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
                     .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-                checkSettingOn()
+                checkNotification()
                 mContext.startActivity(intent)
             }
         }

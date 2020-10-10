@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.github.appintro.SlideBackgroundColorHolder
 import com.github.appintro.SlidePolicy
 import com.google.android.material.snackbar.Snackbar
@@ -16,11 +17,9 @@ import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_PERM
 import fr.twentynine.keepon.utils.KeepOnUtils
 import kotlinx.android.synthetic.main.fragment_intro_button.view.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 
 class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
@@ -33,28 +32,21 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
 
         setBackgroundColor(defaultBackgroundColor)
 
-        fun checkSettings() {
-            runBlocking {
-                if (Settings.System.canWrite(mContext)) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        val intent = Intent(mContext, IntroActivity::class.java)
-                        startActivity(intent)
-                    }
-                } else {
-                    delay(200)
-                    CoroutineScope(Dispatchers.Default).launch {
-                        checkSettings()
+        fun checkPermission() = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+            delay(500)
+            withTimeout(60000) {
+                repeat(300) {
+                    if (Settings.System.canWrite(mContext)) {
+                        try {
+                            val intent = Intent(mContext.applicationContext, IntroActivity::class.java)
+                            startActivity(intent)
+                        } finally {
+                            return@withTimeout
+                        }
+                    } else {
+                        delay(200)
                     }
                 }
-            }
-        }
-
-        fun checkSettingOn() = CoroutineScope(Dispatchers.Default).launch {
-            delay(500)
-            withTimeout(
-                60000
-            ) {
-                checkSettings()
             }
         }
 
@@ -67,7 +59,7 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
                 .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-            checkSettingOn()
+            checkPermission()
             mContext.startActivity(intent)
         }
 
