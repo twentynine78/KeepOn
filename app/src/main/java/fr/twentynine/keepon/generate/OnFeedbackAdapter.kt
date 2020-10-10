@@ -6,6 +6,8 @@ package fr.twentynine.keepon.generate
  */
 open class OnFeedbackAdapter : OnFeedbackListener {
     override fun onFeedbackTapped() {}
+    /* Unused functions
     override fun onRateTapped() {}
     override fun onRequestDismissed(dontAskAgain: Boolean) {}
+    */
 }

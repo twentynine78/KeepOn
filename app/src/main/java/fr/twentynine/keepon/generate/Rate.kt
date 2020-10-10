@@ -42,16 +42,8 @@ import fr.twentynine.keepon.utils.preferences.Preferences
  *
  */
 class Rate private constructor(private val mContext: Context) {
-    private val mPackageName: String = mContext.packageName
-    private val mMessage = mContext.getString(R.string.generate_please_rate)
-    private val mTextNever = mContext.getString(R.string.generate_button_dont_ask)
-    private val mTextFeedback = mContext.getString(R.string.generate_button_feedback)
-    private val mTriggerCount = DEFAULT_COUNT
-    private val mMinInstallTime = DEFAULT_INSTALL_TIME
-    private val mRepeatCount = DEFAULT_REPEAT_COUNT
     private var mParentView: ViewGroup? = null
     private var mFeedbackAction: OnFeedbackListener? = null
-    private var mSnackBarSwipeToDismiss = true
     private var mStoreLink: String? = null
 
     /**
@@ -103,10 +95,10 @@ class Rate private constructor(private val mContext: Context) {
      */
     private val remainingCount: Long
         get() {
-            return if (count < mTriggerCount) {
-                mTriggerCount - count
+            return if (count < DEFAULT_COUNT) {
+                DEFAULT_COUNT - count
             } else {
-                (mRepeatCount - (count - mTriggerCount) % mRepeatCount) % mRepeatCount
+                (DEFAULT_REPEAT_COUNT - (count - DEFAULT_COUNT) % DEFAULT_REPEAT_COUNT) % DEFAULT_REPEAT_COUNT
             }
         }
 
@@ -121,7 +113,7 @@ class Rate private constructor(private val mContext: Context) {
         val asked = Preferences.getGenerateBoolAsked(mContext)
         val firstLaunch = mContext.packageManager.getPackageInfo(mContext.packageName, 0).firstInstallTime
 
-        val shouldShowRequest = (remainingCount == 0L && !asked && System.currentTimeMillis() > (firstLaunch + mMinInstallTime))
+        val shouldShowRequest = (remainingCount == 0L && !asked && System.currentTimeMillis() > (firstLaunch + DEFAULT_INSTALL_TIME))
 
         if (shouldShowRequest && canRateApp()) {
             showRatingRequest()
@@ -141,7 +133,8 @@ class Rate private constructor(private val mContext: Context) {
                 if (mStoreLink != null) {
                     mStoreLink
                 } else {
-                    "market://details?id=$mPackageName"
+                    val packageName = mContext.packageName
+                    "market://details?id=$packageName"
                 }
             )
             return Intent(Intent.ACTION_VIEW, uri)
@@ -154,14 +147,7 @@ class Rate private constructor(private val mContext: Context) {
 
     private fun showRatingSnackbar() {
         // Wie is hier nou de snackbar?
-        val snackbar = Snackbar.make(
-            mParentView!!, mMessage,
-            if (mSnackBarSwipeToDismiss) {
-                Snackbar.LENGTH_INDEFINITE
-            } else {
-                Snackbar.LENGTH_LONG
-            }
-        )
+        val snackbar = Snackbar.make(mParentView!!, "", Snackbar.LENGTH_INDEFINITE)
         val layout = snackbar.view as SnackbarLayout
 
         // Hide default text
@@ -175,33 +161,25 @@ class Rate private constructor(private val mContext: Context) {
 
         // Configure the view
         val tvMessage = snackView.findViewById<TextView>(R.id.text)
-        tvMessage.text = mMessage
+        tvMessage.text = mContext.getString(R.string.generate_please_rate)
 
         val cbNever = snackView.findViewById<CheckBox>(R.id.cb_never)
-        cbNever.text = mTextNever
+        cbNever.text = mContext.getString(R.string.generate_button_dont_ask)
         cbNever.isChecked = DEFAULT_CHECKED
 
         val btFeedback = snackView.findViewById<Button>(R.id.bt_negative)
-        btFeedback.text = mTextFeedback
+        btFeedback.visibility = View.VISIBLE
+        btFeedback.text = mContext.getString(R.string.generate_button_feedback)
         btFeedback.paintFlags = btFeedback.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
         val btRate = snackView.findViewById<Button>(R.id.bt_positive)
-        snackView.findViewById<View>(R.id.tv_swipe).visibility =
-            if (mSnackBarSwipeToDismiss) {
-                View.VISIBLE
-            } else {
-                View.GONE
-            }
+        snackView.findViewById<View>(R.id.tv_swipe).visibility = View.VISIBLE
 
-        // Remember to not ask again if user swiped it
         snackbar.addCallback(object : Snackbar.Callback() {
             override fun onDismissed(transientBottomBar: Snackbar, @DismissEvent event: Int) {
                 super.onDismissed(transientBottomBar, event)
-                if (event == DISMISS_EVENT_SWIPE && cbNever.isChecked) {
+                if (cbNever.isChecked) {
                     saveAsked()
-                }
-                if (mFeedbackAction != null) {
-                    mFeedbackAction!!.onRequestDismissed(cbNever.isChecked)
                 }
             }
         })
@@ -211,23 +189,14 @@ class Rate private constructor(private val mContext: Context) {
             snackbar.dismiss()
             openPlayStore()
             saveAsked()
-            if (mFeedbackAction != null) {
-                mFeedbackAction!!.onRateTapped()
-            }
         }
 
         // Feedback listener
         if (mFeedbackAction != null) {
-            btFeedback.text = mTextFeedback
-            btFeedback.visibility = View.VISIBLE
             btFeedback.setOnClickListener {
-                if (cbNever.isChecked) {
-                    saveAsked()
-                }
                 snackbar.dismiss()
-                if (mFeedbackAction != null) {
-                    mFeedbackAction!!.onFeedbackTapped()
-                }
+                mFeedbackAction!!.onFeedbackTapped()
+                saveAsked()
             }
         }
 
@@ -317,23 +286,6 @@ class Rate private constructor(private val mContext: Context) {
          */
         fun setSnackBarParent(parent: ViewGroup?): Builder {
             mRate.mParentView = parent
-            return this
-        }
-
-        /**
-         * Shows or hides the 'swipe to dismiss' notion in the Snackbar. When disabled, the
-         * Snackbar will automatically hide after a view seconds. When enabled, the Snackbar will
-         * show indefinitely until dismissed by the user. **Note that the
-         * Snackbar can only be swiped when one of the parent views is a
-         * `CoordinatorLayout`!** Also, **toggling this does not change
-         * if the Snackbar can actually be swiped to dismiss!**
-         *
-         * @param visible Show/hide the 'swipe to dismiss' text, and disable/enable auto-hide.
-         * Default is {code true}.
-         * @return The current [Builder]
-         */
-        fun setSwipeToDismissVisible(visible: Boolean): Builder {
-            mRate.mSnackBarSwipeToDismiss = visible
             return this
         }
 
@@ -555,6 +507,23 @@ class Rate private constructor(private val mContext: Context) {
             if (!TextUtils.isEmpty(rateDestinationStore)) {
                 mRate.mStoreLink = rateDestinationStore
             }
+            return this
+        }
+
+        /**
+         * Shows or hides the 'swipe to dismiss' notion in the Snackbar. When disabled, the
+         * Snackbar will automatically hide after a view seconds. When enabled, the Snackbar will
+         * show indefinitely until dismissed by the user. **Note that the
+         * Snackbar can only be swiped when one of the parent views is a
+         * `CoordinatorLayout`!** Also, **toggling this does not change
+         * if the Snackbar can actually be swiped to dismiss!**
+         *
+         * @param visible Show/hide the 'swipe to dismiss' text, and disable/enable auto-hide.
+         * Default is {code true}.
+         * @return The current [Builder]
+         */
+        fun setSwipeToDismissVisible(visible: Boolean): Builder {
+            mRate.mSnackBarSwipeToDismiss = visible
             return this
         }
         */

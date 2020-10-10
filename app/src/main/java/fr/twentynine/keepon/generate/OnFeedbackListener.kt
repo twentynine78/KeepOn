@@ -6,6 +6,8 @@ package fr.twentynine.keepon.generate
  */
 interface OnFeedbackListener {
     fun onFeedbackTapped()
+    /* Unused functions
     fun onRateTapped()
     fun onRequestDismissed(dontAskAgain: Boolean)
+    */
 }
