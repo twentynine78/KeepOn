@@ -83,4 +83,10 @@ class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder, SlidePoli
             }
         }
     }
+
+    companion object {
+        fun newInstance(): IntroFragmentAddQSTile {
+            return IntroFragmentAddQSTile()
+        }
+    }
 }

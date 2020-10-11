@@ -417,7 +417,7 @@ object KeepOnUtils {
             // Build list of shortcuts
             val shortcutManager = context.getSystemService(ShortcutManager::class.java)
 
-            if (shortcutManager != null) {
+            if (shortcutManager != null && availableTimeout.size > 2) {
                 // Remove all previous shortcuts
                 shortcutManager.removeAllDynamicShortcuts()
 

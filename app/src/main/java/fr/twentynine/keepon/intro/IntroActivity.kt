@@ -65,20 +65,20 @@ class IntroActivity : AppIntro2() {
         // Check if it's first launch or help launch
         if (Preferences.getSkipIntro(this)) {
             addSlide(AppIntroFragment.newInstance(sliderPageHome))
-            if (!Settings.System.canWrite(this.applicationContext)) addSlide(IntroFragmentPermission())
-            if (KeepOnUtils.isNotificationEnabled(this)) addSlide(IntroFragmentNotification())
+            if (!Settings.System.canWrite(this.applicationContext)) addSlide(IntroFragmentPermission.newInstance())
+            if (KeepOnUtils.isNotificationEnabled(this)) addSlide(IntroFragmentNotification.newInstance())
             addSlide(AppIntroFragment.newInstance(sliderPageInfo1))
             addSlide(AppIntroFragment.newInstance(sliderPageInfo2))
             addSlide(AppIntroFragment.newInstance(sliderPageInfo3))
-            addSlide(IntroFragmentAddQSTile())
+            addSlide(IntroFragmentAddQSTile.newInstance())
         } else {
             addSlide(AppIntroFragment.newInstance(sliderPageHome))
-            addSlide(IntroFragmentPermission())
-            addSlide(IntroFragmentNotification())
+            addSlide(IntroFragmentPermission.newInstance())
+            addSlide(IntroFragmentNotification.newInstance())
             addSlide(AppIntroFragment.newInstance(sliderPageInfo1))
             addSlide(AppIntroFragment.newInstance(sliderPageInfo2))
             addSlide(AppIntroFragment.newInstance(sliderPageInfo3))
-            addSlide(IntroFragmentAddQSTile())
+            addSlide(IntroFragmentAddQSTile.newInstance())
         }
 
         setTransformer(
@@ -88,7 +88,8 @@ class IntroActivity : AppIntro2() {
                 descriptionParallaxFactor = 2.0
             )
         )
-        isSkipButtonEnabled = Preferences.getSkipIntro(this)
+
+        isWizardMode = !Preferences.getSkipIntro(this)
         isButtonsEnabled = false
         showStatusBar(true)
         isColorTransitionsEnabled = true
@@ -107,7 +108,7 @@ class IntroActivity : AppIntro2() {
             super.onDonePressed(currentFragment)
 
             Preferences.setSkipIntro(true, this)
-            startActivity(Intent(applicationContext, MainActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
     }
@@ -145,7 +146,7 @@ class IntroActivity : AppIntro2() {
         private val COLOR_SLIDE_HOME = Color.parseColor("#222222")
 
         fun newIntent(context: Context): Intent {
-            return Intent(context.applicationContext, IntroActivity::class.java)
+            return Intent(context, IntroActivity::class.java)
         }
     }
 }

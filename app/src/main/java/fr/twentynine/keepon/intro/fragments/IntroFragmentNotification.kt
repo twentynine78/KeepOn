@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.github.appintro.SlideBackgroundColorHolder
-import com.github.appintro.SlidePolicy
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.intro.IntroActivity
 import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_NOTIF
@@ -23,13 +22,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
+class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder {
 
-    private var mView: View? = null
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+        inflater.inflate(R.layout.fragment_intro_button, container, false)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val mContext = requireContext()
-        mView = inflater.inflate(R.layout.fragment_intro_button, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         setBackgroundColor(defaultBackgroundColor)
 
@@ -37,9 +36,9 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
             withContext(coroutineContext) {
                 delay(500)
                 repeat(300) {
-                    if (!KeepOnUtils.isNotificationEnabled(mContext)) {
+                    if (!KeepOnUtils.isNotificationEnabled(requireContext())) {
                         try {
-                            val intent = Intent(mContext.applicationContext, IntroActivity::class.java)
+                            val intent = Intent(requireContext(), IntroActivity::class.java)
                             startActivity(intent)
                         } finally {
                             return@withContext
@@ -51,47 +50,45 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
             }
         }
 
-        val mButton = mView!!.button
+        val mButton = view.button
         mButton.setBackgroundColor(KeepOnUtils.darkerColor(COLOR_SLIDE_NOTIF, 0.4f))
         mButton.text = getString(R.string.dialog_notification_button)
         mButton.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 if (!TextUtils.isEmpty(KeepOnUtils.NOTIFICATION_CHANNEL_ID)) {
                     val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
-                        .putExtra(Settings.EXTRA_APP_PACKAGE, mContext.packageName)
+                        .putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().packageName)
                         .putExtra(Settings.EXTRA_CHANNEL_ID, KeepOnUtils.NOTIFICATION_CHANNEL_ID)
                         .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                         .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
                     checkNotification()
-                    mContext.startActivity(intent)
+                    requireContext().startActivity(intent)
                 }
             } else {
-                val uri = Uri.fromParts("package", mContext.packageName, null)
+                val uri = Uri.fromParts("package", requireContext().packageName, null)
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                     .setData(uri)
                     .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
                 checkNotification()
-                mContext.startActivity(intent)
+                requireContext().startActivity(intent)
             }
         }
 
-        val mTitle = mView!!.title
+        val mTitle = view.title
         mTitle.text = getString(R.string.dialog_notification_title)
-        val mDescription = mView!!.description
+        val mDescription = view.description
         mDescription.text = getString(R.string.dialog_notification_text)
-        val mImage = mView!!.image
+        val mImage = view.image
         mImage.setImageResource(R.mipmap.img_intro_notif)
 
-        if (KeepOnUtils.isNotificationEnabled(mContext)) {
+        if (KeepOnUtils.isNotificationEnabled(requireContext())) {
             mButton.visibility = View.VISIBLE
         } else {
             mButton.visibility = View.INVISIBLE
         }
-
-        return mView
     }
 
     override fun onResume() {
@@ -106,25 +103,16 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder, SlideP
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mView = null
-    }
-
-    override val isPolicyRespected: Boolean
-        get() = true
-
-    override fun onUserIllegallyRequestedNextPage() {
-        return
-    }
-
     override val defaultBackgroundColor: Int
         get() = COLOR_SLIDE_NOTIF
 
     override fun setBackgroundColor(backgroundColor: Int) {
-        if (mView != null) {
-            val constraintLayout = mView!!.main
-            constraintLayout.setBackgroundColor(backgroundColor)
+        requireView().main?.setBackgroundColor(backgroundColor)
+    }
+
+    companion object {
+        fun newInstance(): IntroFragmentNotification {
+            return IntroFragmentNotification()
         }
     }
 }
