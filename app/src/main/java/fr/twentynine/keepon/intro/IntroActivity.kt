@@ -90,7 +90,7 @@ class IntroActivity : AppIntro2() {
         )
 
         isWizardMode = !Preferences.getSkipIntro(this)
-        isButtonsEnabled = false
+        isButtonsEnabled = true
         showStatusBar(true)
         isColorTransitionsEnabled = true
 
