@@ -58,32 +58,33 @@ class KeepOnTileService : TileService() {
     override fun onStartListening() {
         super.onStartListening()
 
-        if (qsTile.state == Tile.STATE_UNAVAILABLE) this.stopSelf()
+        if (qsTile != null) {
+            val newTimeout = Preferences.getCurrentTimeout(this)
 
-        val newTimeout = Preferences.getCurrentTimeout(this)
+            // Create bitmap and load to tile icon
+            GlideApp.with(this)
+                .asBitmap()
+                .priority(Priority.HIGH)
+                .load(TimeoutIconData(newTimeout, 2, KeepOnUtils.getIconStyleSignature(this)))
+                .into(object : CustomTarget<Bitmap>(50.px, 50.px) {
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        if (qsTile != null) {
+                            qsTile.state =
+                                if (Preferences.getKeepOnState(this@KeepOnTileService)) {
+                                    Tile.STATE_ACTIVE
+                                } else {
+                                    Tile.STATE_INACTIVE
+                                }
+                            qsTile.icon = Icon.createWithBitmap(resource)
 
-        // Create bitmap and load to tile icon
-        GlideApp.with(this)
-            .asBitmap()
-            .priority(Priority.HIGH)
-            .load(TimeoutIconData(newTimeout, 2, KeepOnUtils.getIconStyleSignature(this)))
-            .into(object : CustomTarget<Bitmap>(50.px, 50.px) {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    val keeponTile = qsTile
-                    if (keeponTile != null) {
-                        keeponTile.state = if (Preferences.getKeepOnState(this@KeepOnTileService)) {
-                            Tile.STATE_ACTIVE
-                        } else {
-                            Tile.STATE_INACTIVE
+                            qsTile.updateTile()
                         }
-                        keeponTile.icon = Icon.createWithBitmap(resource)
-
-                        keeponTile.updateTile()
                     }
-                }
-                override fun onLoadCleared(placeholder: Drawable?) {
-                }
-            })
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                    }
+                })
+        }
     }
 
     override fun onClick() {
