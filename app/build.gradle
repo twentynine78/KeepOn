@@ -48,7 +48,6 @@ dependencies {
     implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0"
     kapt 'androidx.annotation:annotation:1.2.0-alpha01'
 
-    //implementation 'com.github.AppIntro:AppIntro:6.0.0'
     implementation project(path: ':appintro')
 
     implementation 'com.github.bumptech.glide:glide:4.11.0'

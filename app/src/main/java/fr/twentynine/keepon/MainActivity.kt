@@ -415,7 +415,7 @@ class MainActivity : AppCompatActivity() {
             // Check for DevicePolicy restriction
             val mDPM = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
             var adminTimeout = mDPM.getMaximumTimeToLock(null)
-            if (adminTimeout == 0.toLong()) adminTimeout = Long.MAX_VALUE
+            if (adminTimeout == 0L) adminTimeout = Long.MAX_VALUE
 
             switch.isChecked = (selectedSwitch.contains(timeout) || originalTimeout == timeout)
 
@@ -444,6 +444,10 @@ class MainActivity : AppCompatActivity() {
 
             if (adminTimeout < timeout) {
                 switch.visibility = View.GONE
+                if (switch.isChecked) {
+                    switch.isChecked = false
+                    saveSelectedSwitch()
+                }
             } else {
                 switch.visibility = View.VISIBLE
             }

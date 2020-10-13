@@ -1,5 +1,6 @@
 package fr.twentynine.keepon.utils
 
+import android.app.admin.DevicePolicyManager
 import android.content.Context
 import android.provider.Settings
 import fr.twentynine.keepon.utils.preferences.MultiPreferences
@@ -66,7 +67,6 @@ object Preferences {
 
     fun getNextTimeoutValue(context: Context): Int {
         val allTimeouts = getTimeoutValueArray()
-        allTimeouts.indexOf(getCurrentTimeout(context))
 
         val availableTimeout: ArrayList<Int> = ArrayList()
         availableTimeout.addAll(getSelectedTimeout(context))
@@ -76,14 +76,20 @@ object Preferences {
 
         val currentTimeout = getCurrentTimeout(context)
         var allCurrentIndex = allTimeouts.indexOf(currentTimeout)
+
+        // Check for DevicePolicy restriction
+        val mDPM = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+        var adminTimeout = mDPM.getMaximumTimeToLock(null)
+        if (adminTimeout == 0L) adminTimeout = Long.MAX_VALUE
+
         for (i in 0 until allTimeouts.size) {
             if (allCurrentIndex == allTimeouts.size - 1 || allCurrentIndex == -1) {
                 allCurrentIndex = 0
             } else {
                 allCurrentIndex++
             }
-            if (availableTimeout.indexOf(allTimeouts[allCurrentIndex]) != -1) {
-                return availableTimeout[availableTimeout.indexOf(allTimeouts[allCurrentIndex])]
+            if (availableTimeout.indexOf(allTimeouts[allCurrentIndex]) != -1 && allTimeouts[allCurrentIndex] <= adminTimeout) {
+                return allTimeouts[allCurrentIndex]
             }
         }
         return getCurrentTimeout(context)

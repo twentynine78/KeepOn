@@ -1,10 +1,13 @@
 package fr.twentynine.keepon.tasker
 
+import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.collection.ArrayMap
@@ -80,6 +83,19 @@ class EditActivity : AppCompatActivity() {
             timeout_previous.isEnabled = false
         }
 
+        // Check for DevicePolicy restriction
+        val mDPM = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+        var adminTimeout = mDPM.getMaximumTimeToLock(null)
+        if (adminTimeout == 0L) adminTimeout = Long.MAX_VALUE
+
+        for (timeout in timeoutMap) {
+            if (adminTimeout < timeout.value) {
+                findViewById<MaterialRadioButton>(timeout.key).visibility = View.GONE
+            } else {
+                findViewById<MaterialRadioButton>(timeout.key).visibility = View.VISIBLE
+            }
+        }
+
         val forwardedBundle = intent.getBundleExtra(EXTRA_BUNDLE)
 
         if (PluginBundleManager.isBundleValid(forwardedBundle) && forwardedBundle != null) {
@@ -87,7 +103,7 @@ class EditActivity : AppCompatActivity() {
             if (timeoutMap.containsValue(forwardedTimeout)) {
                 var timeoutCheckedId = -1
                 for (timeout in timeoutMap) {
-                    if (timeout.value == forwardedTimeout) {
+                    if (timeout.value == forwardedTimeout && timeout.value <= adminTimeout) {
                         timeoutCheckedId = timeout.key
                         break
                     }
