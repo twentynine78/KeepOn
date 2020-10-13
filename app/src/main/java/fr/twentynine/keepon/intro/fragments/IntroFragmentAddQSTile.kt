@@ -15,45 +15,40 @@ import kotlinx.android.synthetic.main.fragment_intro_button.view.*
 
 class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
 
-    private var mView: View? = null
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+        inflater.inflate(R.layout.fragment_intro_button, container, false)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val mContext = requireContext()
-        mView = inflater.inflate(R.layout.fragment_intro_button, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         setBackgroundColor(defaultBackgroundColor)
 
-        val mButton = mView!!.button
+        val mButton = view.button
         mButton.setBackgroundColor(KeepOnUtils.darkerColor(COLOR_SLIDE_QSTILE, 0.4f))
         mButton.text = getString(R.string.intro_qstile_button)
         mButton.setOnClickListener {
-            KeepOnUtils.getAddQSTileDialog(mContext).show()
+            KeepOnUtils.getAddQSTileDialog(requireContext()).show()
         }
 
-        val mTitle = mView!!.title
+        val mTitle = view.title
         mTitle.text = getString(R.string.intro_qstile_title)
-        val mDescription = mView!!.description
+        val mDescription = view.description
         mDescription.text = getString(R.string.intro_qstile_desc)
-        val mImage = mView!!.image
+        val mImage = view.image
         mImage.setImageResource(R.mipmap.img_intro_qstile)
+        val mImage2 = view.image2
+        mImage2.setImageResource(R.mipmap.img_intro_qstile_2)
 
-        if (Preferences.getTileAdded(mContext)) {
+        if (Preferences.getTileAdded(requireContext())) {
             mButton.visibility = View.INVISIBLE
         } else {
             mButton.visibility = View.VISIBLE
         }
-
-        return mView
     }
 
     override fun onResume() {
         super.onResume()
         updateButtonVisibility()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mView = null
     }
 
     override val isPolicyRespected: Boolean
@@ -67,10 +62,7 @@ class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder, SlidePoli
         get() = COLOR_SLIDE_QSTILE
 
     override fun setBackgroundColor(backgroundColor: Int) {
-        if (mView != null) {
-            val constraintLayout = mView!!.main
-            constraintLayout.setBackgroundColor(backgroundColor)
-        }
+        requireView().main.setBackgroundColor(backgroundColor)
     }
 
     private fun updateButtonVisibility() {

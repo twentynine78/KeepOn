@@ -6,11 +6,15 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.provider.Settings
+import android.view.Window
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.github.appintro.AppIntro2
 import com.github.appintro.AppIntroFragment
 import com.github.appintro.AppIntroPageTransformerType
+import com.github.appintro.indicator.PageIndicatorAnimationType
+import com.github.appintro.indicator.PageIndicatorViewIndicatorController
 import com.github.appintro.model.SliderPage
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
@@ -42,24 +46,28 @@ class IntroActivity : AppIntro2() {
         sliderPageHome.title = getString(R.string.intro_home_title)
         sliderPageHome.description = getString(R.string.intro_home_desc)
         sliderPageHome.imageDrawable = R.mipmap.img_intro_home
+        sliderPageHome.image2Drawable = R.mipmap.img_intro_home_2
         sliderPageHome.backgroundColor = COLOR_SLIDE_HOME
 
         val sliderPageInfo1 = SliderPage()
         sliderPageInfo1.title = getString(R.string.intro_info1_title)
         sliderPageInfo1.description = getString(R.string.intro_info1_desc)
         sliderPageInfo1.imageDrawable = R.mipmap.img_intro_info1
+        sliderPageInfo1.image2Drawable = R.mipmap.img_intro_info1_2
         sliderPageInfo1.backgroundColor = COLOR_SLIDE_INFO1
 
         val sliderPageInfo2 = SliderPage()
         sliderPageInfo2.title = getString(R.string.intro_info2_title)
         sliderPageInfo2.description = getString(R.string.intro_info2_desc)
         sliderPageInfo2.imageDrawable = R.mipmap.img_intro_info2
+        sliderPageInfo2.image2Drawable = R.mipmap.img_intro_info2_2
         sliderPageInfo2.backgroundColor = COLOR_SLIDE_INFO2
 
         val sliderPageInfo3 = SliderPage()
         sliderPageInfo3.title = getString(R.string.intro_info3_title)
         sliderPageInfo3.description = getString(R.string.intro_info3_desc)
         sliderPageInfo3.imageDrawable = R.mipmap.img_intro_info3
+        sliderPageInfo3.image2Drawable = R.mipmap.img_intro_info3_2
         sliderPageInfo3.backgroundColor = COLOR_SLIDE_INFO3
 
         // Check if it's first launch or help launch
@@ -83,11 +91,14 @@ class IntroActivity : AppIntro2() {
 
         setTransformer(
             AppIntroPageTransformerType.Parallax(
-                titleParallaxFactor = 1.0,
-                imageParallaxFactor = -1.0,
-                descriptionParallaxFactor = 2.0
+                titleParallaxFactor = -1.0,
+                imageParallaxFactor = -1.6,
+                image2ParallaxFactor = -0.8,
+                descriptionParallaxFactor = -1.7
             )
         )
+
+        indicatorController = PageIndicatorViewIndicatorController(this, null, PageIndicatorAnimationType.DROP)
 
         isWizardMode = !Preferences.getSkipIntro(this)
         isButtonsEnabled = true
@@ -120,13 +131,34 @@ class IntroActivity : AppIntro2() {
             val title: TextView = newFragment.requireView().findViewById(R.id.title)
 
             when (title.text) {
-                getString(R.string.intro_home_title) -> setNavBarColor(COLOR_SLIDE_HOME)
-                getString(R.string.dialog_permission_title) -> setNavBarColor(COLOR_SLIDE_PERM)
-                getString(R.string.dialog_notification_title) -> setNavBarColor(COLOR_SLIDE_NOTIF)
-                getString(R.string.intro_info1_title) -> setNavBarColor(COLOR_SLIDE_INFO1)
-                getString(R.string.intro_info2_title) -> setNavBarColor(COLOR_SLIDE_INFO2)
-                getString(R.string.intro_info3_title) -> setNavBarColor(COLOR_SLIDE_INFO3)
-                getString(R.string.intro_qstile_title) -> setNavBarColor(COLOR_SLIDE_QSTILE)
+                getString(R.string.intro_home_title) -> {
+                    setNavBarColor(COLOR_SLIDE_HOME)
+                    changeStatusBarColor(COLOR_SLIDE_HOME)
+                }
+                getString(R.string.dialog_permission_title) -> {
+                    setNavBarColor(COLOR_SLIDE_PERM)
+                    changeStatusBarColor(COLOR_SLIDE_PERM)
+                }
+                getString(R.string.dialog_notification_title) -> {
+                    setNavBarColor(COLOR_SLIDE_NOTIF)
+                    changeStatusBarColor(COLOR_SLIDE_NOTIF)
+                }
+                getString(R.string.intro_info1_title) -> {
+                    setNavBarColor(COLOR_SLIDE_INFO1)
+                    changeStatusBarColor(COLOR_SLIDE_INFO1)
+                }
+                getString(R.string.intro_info2_title) -> {
+                    setNavBarColor(COLOR_SLIDE_INFO2)
+                    changeStatusBarColor(COLOR_SLIDE_INFO2)
+                }
+                getString(R.string.intro_info3_title) -> {
+                    setNavBarColor(COLOR_SLIDE_INFO3)
+                    changeStatusBarColor(COLOR_SLIDE_INFO3)
+                }
+                getString(R.string.intro_qstile_title) -> {
+                    setNavBarColor(COLOR_SLIDE_QSTILE)
+                    changeStatusBarColor(COLOR_SLIDE_QSTILE)
+                }
             }
         }
     }
@@ -134,6 +166,12 @@ class IntroActivity : AppIntro2() {
     public override fun onSkipPressed(currentFragment: Fragment?) {
         super.onSkipPressed(currentFragment)
         finish()
+    }
+
+    private fun changeStatusBarColor(color: Int) {
+        val window: Window = window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = color
     }
 
     companion object {

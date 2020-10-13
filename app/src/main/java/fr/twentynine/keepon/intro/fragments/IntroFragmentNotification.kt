@@ -83,6 +83,8 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder {
         mDescription.text = getString(R.string.dialog_notification_text)
         val mImage = view.image
         mImage.setImageResource(R.mipmap.img_intro_notif)
+        val mImage2 = view.image2
+        mImage2.setImageResource(R.mipmap.img_intro_notif_2)
 
         if (KeepOnUtils.isNotificationEnabled(requireContext())) {
             mButton.visibility = View.VISIBLE

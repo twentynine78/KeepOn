@@ -35,6 +35,19 @@
         app:layout_constraintTop_toBottomOf="@+id/title"
         tools:src="@mipmap/img_intro_perm"/>
 
+    <ImageView
+        android:id="@+id/image2"
+        style="@style/AppIntroDefaultImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintVertical_weight="5"
+        android:contentDescription="@string/app_intro_image_content_description"
+        app:layout_constraintBottom_toTopOf="@id/description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        tools:src="@mipmap/img_intro_perm"/>
+
     <TextView
         android:id="@+id/description"
         style="@style/AppIntroDefaultText"

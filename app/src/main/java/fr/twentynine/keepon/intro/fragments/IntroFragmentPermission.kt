@@ -69,6 +69,8 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
         mDescription.text = getString(R.string.dialog_permission_text)
         val mImage = view.image
         mImage.setImageResource(R.mipmap.img_intro_perm)
+        val mImage2 = view.image2
+        mImage2.setImageResource(R.mipmap.img_intro_perm_2)
 
         if (Settings.System.canWrite(requireContext().applicationContext)) {
             mButton.visibility = View.INVISIBLE

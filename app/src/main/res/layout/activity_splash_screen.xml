@@ -26,7 +26,7 @@
         android:id="@+id/logo_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/img_intro_home"
+        app:srcCompat="@mipmap/img_keepon"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="150dp"
         android:layout_marginStart="80dp"

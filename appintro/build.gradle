@@ -1,0 +1,35 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+group = 'com.github.AppIntro'
+
+android {
+    compileSdkVersion 30
+
+    buildToolsVersion "29.0.2"
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 30
+        versionCode 20
+        versionName "6.0.0"
+
+        consumerProguardFiles 'consumer-proguard-rules.pro'
+        vectorDrawables.useSupportLibrary = true
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'org.mockito:mockito-core:2.28.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+
+    implementation "com.romandanylyk:pageindicatorview:1.0.3"
+}
+
+repositories {
+    mavenCentral()
+}
