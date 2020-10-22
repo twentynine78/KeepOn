@@ -6,14 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.github.appintro.SlideBackgroundColorHolder
-import com.github.appintro.SlidePolicy
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_QSTILE
 import fr.twentynine.keepon.utils.KeepOnUtils
 import fr.twentynine.keepon.utils.Preferences
 import kotlinx.android.synthetic.main.fragment_intro_button.view.*
 
-class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
+class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_intro_button, container, false)
@@ -49,13 +48,6 @@ class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder, SlidePoli
     override fun onResume() {
         super.onResume()
         updateButtonVisibility()
-    }
-
-    override val isPolicyRespected: Boolean
-        get() = true
-
-    override fun onUserIllegallyRequestedNextPage() {
-        return
     }
 
     override val defaultBackgroundColor: Int
