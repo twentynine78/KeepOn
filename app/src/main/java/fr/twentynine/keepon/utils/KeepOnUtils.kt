@@ -44,6 +44,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.StringBuilder
 import java.util.Formatter
 import java.util.Locale
 import kotlin.collections.ArrayList
@@ -409,7 +410,7 @@ object KeepOnUtils {
                     intent.putExtra("timeout", timeout)
 
                     // Create shortcut
-                    val shortcut = ShortcutInfo.Builder(context, String.format(Locale.getDefault(), "%d", timeout))
+                    val shortcut = ShortcutInfo.Builder(context, timeout.toString())
                         .setShortLabel(getDisplayTimeout(timeout, context))
                         .setLongLabel(context.getString(timeoutMap[timeout]!!))
                         .setIntent(intent)
@@ -423,58 +424,41 @@ object KeepOnUtils {
     }
 
     fun getIconStyleSignature(context: Context): String {
-        return String.format(
-            Locale.getDefault(),
-            "%d,%d,%d,%b,%b,%b,%b,%b,%b,%b,%b,%b",
-            Preferences.getQSStyleFontSize(context),
-            Preferences.getQSStyleFontSkew(context),
-            Preferences.getQSStyleFontSpacing(context),
-            Preferences.getQSStyleTypefaceSansSerif(context),
-            Preferences.getQSStyleTypefaceSerif(context),
-            Preferences.getQSStyleTypefaceMonospace(context),
-            Preferences.getQSStyleFontBold(context),
-            Preferences.getQSStyleFontUnderline(context),
-            Preferences.getQSStyleFontSMCP(context),
-            Preferences.getQSStyleTextFill(context),
-            Preferences.getQSStyleTextFillStroke(context),
-            Preferences.getQSStyleTextStroke(context)
-        )
+        return StringBuilder(Preferences.getQSStyleFontSize(context))
+            .append(Preferences.getQSStyleFontSkew(context))
+            .append(Preferences.getQSStyleFontSpacing(context))
+            .append(Preferences.getQSStyleTypefaceSansSerif(context))
+            .append(Preferences.getQSStyleTypefaceSerif(context))
+            .append(Preferences.getQSStyleTypefaceMonospace(context))
+            .append(Preferences.getQSStyleFontBold(context))
+            .append(Preferences.getQSStyleFontUnderline(context))
+            .append(Preferences.getQSStyleFontSMCP(context))
+            .append(Preferences.getQSStyleTextFill(context))
+            .append(Preferences.getQSStyleTextFillStroke(context))
+            .append(Preferences.getQSStyleTextStroke(context))
+            .toString()
     }
 
     fun getDisplayTimeout(screenOffTimeout: Int, context: Context): String {
         return when {
-            screenOffTimeout == Int.MAX_VALUE -> String.format(
-                Locale.getDefault(),
+            screenOffTimeout == Int.MAX_VALUE ->
                 context.getString(R.string.qs_short_infinite)
-            )
-            screenOffTimeout >= 3600000 -> String.format(
-                Locale.getDefault(),
-                "%d%s",
-                screenOffTimeout / 3600000,
-                context.getString(R.string.qs_short_hour)
-            )
-            screenOffTimeout >= 60000 -> String.format(
-                Locale.getDefault(),
-                "%d%s",
-                screenOffTimeout / 60000,
-                context.getString(R.string.qs_short_minute)
-            )
-            screenOffTimeout == -42 -> String.format(
-                Locale.getDefault(),
-                "%s",
+            screenOffTimeout >= 3600000 ->
+                StringBuilder((screenOffTimeout / 3600000).toString())
+                    .append(context.getString(R.string.qs_short_hour))
+                    .toString()
+            screenOffTimeout >= 60000 ->
+                StringBuilder((screenOffTimeout / 60000).toString())
+                    .append(context.getString(R.string.qs_short_minute))
+                    .toString()
+            screenOffTimeout == -42 ->
                 context.getString(R.string.timeout_restore_short)
-            )
-            screenOffTimeout == -43 -> String.format(
-                Locale.getDefault(),
-                "%s",
+            screenOffTimeout == -43 ->
                 context.getString(R.string.timeout_previous_short)
-            )
-            else -> String.format(
-                Locale.getDefault(),
-                "%d%s",
-                screenOffTimeout / 1000,
-                context.getString(R.string.qs_short_second)
-            )
+            else ->
+                StringBuilder((screenOffTimeout / 1000).toString())
+                    .append(context.getString(R.string.qs_short_second))
+                    .toString()
         }
     }
 

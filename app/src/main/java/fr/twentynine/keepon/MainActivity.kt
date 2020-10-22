@@ -191,9 +191,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Set application version on about card
-        var sVersion = getString(R.string.about_card_version)
-        sVersion += String.format(Locale.getDefault(), " %s", KeepOnUtils.getAppVersion(this))
-        card_about_version.text = Html.fromHtml(sVersion, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        val sVersion = StringBuilder(getString(R.string.about_card_version))
+            .append(" ")
+            .append(KeepOnUtils.getAppVersion(this))
+        card_about_version.text = Html.fromHtml(sVersion.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
 
         animateCardView()
 
