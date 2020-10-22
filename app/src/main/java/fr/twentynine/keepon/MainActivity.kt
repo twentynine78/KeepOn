@@ -56,6 +56,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import java.util.Formatter
 import java.util.Locale
 import kotlin.collections.ArrayList
 import kotlin.math.hypot
@@ -425,11 +426,10 @@ class MainActivity : AppCompatActivity() {
                 switch.setTextColor(getColor(R.color.colorTextDisabled))
 
                 // Set original timeout in checkBoxScreenOff text
-                checkBoxScreenOff.text = String.format(
-                    Locale.getDefault(),
-                    getString(R.string.reset_checkbox),
-                    switch.text.toString().toLowerCase(Locale.getDefault())
-                )
+                checkBoxScreenOff.text = Formatter().format(
+                        getString(R.string.reset_checkbox),
+                        switch.text.toString().toLowerCase(Locale.getDefault())
+                ).toString()
             } else {
                 switch.isClickable = true
                 switch.isEnabled = true

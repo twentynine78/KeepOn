@@ -44,6 +44,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Formatter
 import java.util.Locale
 import kotlin.collections.ArrayList
 
@@ -253,13 +254,11 @@ object KeepOnUtils {
         )
 
         val text = dialog.findViewById<TextView>(R.id.text_dialog)
-        text.text = String.format(
-            Locale.getDefault(),
+        val formatter = Formatter()
+        text.text = formatter.format(
             context.getString(R.string.dialog_default_timeout_text),
-            timeoutText.toLowerCase(
-                Locale.getDefault()
-            )
-        )
+            timeoutText.toLowerCase(Locale.getDefault())
+        ).toString()
 
         val button = dialog.findViewById<Button>(R.id.btn_dialog)
         button.text = context.getString(R.string.dialog_default_timeout_button)
