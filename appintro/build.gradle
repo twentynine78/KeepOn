@@ -6,7 +6,7 @@ group = 'com.github.AppIntro'
 android {
     compileSdkVersion 30
 
-    buildToolsVersion "29.0.2"
+    buildToolsVersion "30.0.2"
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 30
@@ -25,7 +25,7 @@ dependencies {
 
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.mockito:mockito-core:2.28.2'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
 
     implementation "com.romandanylyk:pageindicatorview:1.0.3"
 }
