@@ -36,15 +36,18 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder {
             withContext(coroutineContext) {
                 delay(500)
                 repeat(300) {
-                    if (!KeepOnUtils.isNotificationEnabled(requireContext())) {
-                        try {
-                            val intent = Intent(requireContext(), IntroActivity::class.java)
-                            startActivity(intent)
-                        } finally {
-                            return@withContext
+                    val mContext = context
+                    if (mContext != null) {
+                        if (!KeepOnUtils.isNotificationEnabled(mContext)) {
+                            try {
+                                val intent = Intent(mContext, IntroActivity::class.java)
+                                startActivity(intent)
+                            } finally {
+                                return@withContext
+                            }
+                        } else {
+                            delay(200)
                         }
-                    } else {
-                        delay(200)
                     }
                 }
             }

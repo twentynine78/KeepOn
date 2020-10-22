@@ -36,15 +36,18 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
             withContext(coroutineContext) {
                 delay(500)
                 repeat(300) {
-                    if (Settings.System.canWrite(requireContext())) {
-                        try {
-                            val intent = Intent(requireContext(), IntroActivity::class.java)
-                            startActivity(intent)
-                        } finally {
-                            return@withContext
+                    val mContext = context
+                    if (mContext != null) {
+                        if (Settings.System.canWrite(mContext)) {
+                            try {
+                                val intent = Intent(mContext, IntroActivity::class.java)
+                                startActivity(intent)
+                            } finally {
+                                return@withContext
+                            }
+                        } else {
+                            delay(200)
                         }
-                    } else {
-                        delay(200)
                     }
                 }
             }
@@ -92,7 +95,14 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
     }
 
     override val isPolicyRespected: Boolean
-        get() = Settings.System.canWrite(requireContext())
+        get() {
+            val mContext = context
+            return if (mContext != null) {
+                Settings.System.canWrite(requireContext())
+            } else {
+                false
+            }
+        }
 
     override fun onUserIllegallyRequestedNextPage() {
         return Snackbar.make(requireView(), getString(R.string.intro_toast_permission_needed), Snackbar.LENGTH_LONG)
