@@ -59,7 +59,7 @@ class IntroActivity : AppIntro2() {
         val sliderPageInfo2 = SliderPage()
         sliderPageInfo2.title = getString(R.string.intro_info2_title)
         sliderPageInfo2.description = getString(R.string.intro_info2_desc)
-        sliderPageInfo2.imageDrawable = R.mipmap.img_intro_info2
+        sliderPageInfo2.imageDrawable = R.mipmap.img_intro_info1
         sliderPageInfo2.image2Drawable = R.mipmap.img_intro_info2_2
         sliderPageInfo2.backgroundColor = COLOR_SLIDE_INFO2
 
