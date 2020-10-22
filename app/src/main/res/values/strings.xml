@@ -145,4 +145,6 @@
     <string name="timeout_restore">Restore the default value</string>
     <string name="timeout_previous_short">Previous value</string>
     <string name="timeout_previous">Restore the previous value</string>
+
+    <string name="notification_channel_name">KeepOn Services</string>
 </resources>

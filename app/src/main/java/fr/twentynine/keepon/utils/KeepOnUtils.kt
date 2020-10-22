@@ -5,7 +5,6 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -51,8 +50,6 @@ import kotlin.collections.ArrayList
 object KeepOnUtils {
     internal const val TAG_MISSING_SETTINGS = "missing_settings"
     internal const val NOTIFICATION_CHANNEL_ID = "keepon_services"
-    private const val NOTIFICATION_CHANNEL_DESC = "KeepOn Services"
-    private const val NOTIFICATION_CHANNEL_IMPORTANCE = NotificationManager.IMPORTANCE_MIN
 
     private val Int.px: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
@@ -308,58 +305,42 @@ object KeepOnUtils {
     }
 
     fun buildNotification(context: Context, contentText: String): Notification {
-        val channelId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val chanID = NOTIFICATION_CHANNEL_ID
-            val channel = manager.getNotificationChannel(chanID)
-            if (channel == null) {
-                val chanDesc = NOTIFICATION_CHANNEL_DESC
-                val chan = NotificationChannel(chanID, chanDesc, NOTIFICATION_CHANNEL_IMPORTANCE)
-                val service = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                service.createNotificationChannel(chan)
-            }
-            chanID
-        } else {
-            ""
-        }
-        val notification = NotificationCompat.Builder(context, channelId)
-        notification.setContentTitle(
-            String.format(
-                Locale.getDefault(), "%s - %s",
-                context.getString(
-                    R.string.app_name
-                ),
-                contentText
-            )
-        )
-        notification.setContentText(context.getString(R.string.notification_hide))
-        notification.setSmallIcon(R.mipmap.ic_qs_keepon)
-
-        var hideIntent = Intent()
+        // Create the NotificationChannel if needed
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (!TextUtils.isEmpty(NOTIFICATION_CHANNEL_ID)) {
-                hideIntent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
-                    .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                    .putExtra(Settings.EXTRA_CHANNEL_ID, NOTIFICATION_CHANNEL_ID)
-                    .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-                    .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+            val name = context.getString(R.string.notification_channel_name)
+            val importance = NotificationManager.IMPORTANCE_MIN
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val channel = notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_ID)
+            if (channel == null) {
+                val chan = NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance)
+                notificationManager.createNotificationChannel(chan)
             }
+        }
+
+        // Create Intent to launch notification settings
+        val hideIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+                .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                .putExtra(Settings.EXTRA_CHANNEL_ID, NOTIFICATION_CHANNEL_ID)
+                .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
         } else {
             val uri = Uri.fromParts("package", context.packageName, null)
-            hideIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 .setData(uri)
                 .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
         }
-        val pendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
-            // Add the intent, which inflates the back stack
-            addNextIntentWithParentStack(hideIntent)
-            // Get the PendingIntent containing the entire back stack
-            getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
-        }
-        notification.setContentIntent(pendingIntent)
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, hideIntent, 0)
 
-        return notification.build()
+        // Return notification
+        return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+            .setContentTitle(contentText)
+            .setContentText(context.getString(R.string.notification_hide))
+            .setSmallIcon(R.mipmap.ic_qs_keepon)
+            .setVisibility(NotificationCompat.VISIBILITY_SECRET)
+            .setContentIntent(pendingIntent)
+            .build()
     }
 
     fun sendBroadcastUpdateMainUI(context: Context) {
