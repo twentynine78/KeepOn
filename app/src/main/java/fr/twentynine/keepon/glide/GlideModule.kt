@@ -9,6 +9,7 @@ import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.bitmap_recycle.LruBitmapPool
+import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory
 import com.bumptech.glide.load.engine.cache.LruResourceCache
 import com.bumptech.glide.load.engine.cache.MemorySizeCalculator
 import com.bumptech.glide.module.AppGlideModule
@@ -17,6 +18,7 @@ import com.bumptech.glide.request.RequestOptions
 @GlideModule
 class GlideModule : AppGlideModule() {
     override fun applyOptions(context: Context, builder: GlideBuilder) {
+        val diskCacheSizeBytes = 1024 * 1024 * 5 // 5 MB
         val calculator = MemorySizeCalculator.Builder(context)
             .setMemoryCacheScreens(1f)
             .setBitmapPoolScreens(1f)
@@ -25,6 +27,7 @@ class GlideModule : AppGlideModule() {
             .build()
 
         builder
+            .setDiskCache(InternalCacheDiskCacheFactory(context, diskCacheSizeBytes.toLong()))
             .setMemoryCache(LruResourceCache(calculator.memoryCacheSize.toLong()))
             .setBitmapPool(LruBitmapPool(calculator.bitmapPoolSize.toLong()))
             .setDefaultRequestOptions(
