@@ -70,6 +70,13 @@ class IntroActivity : AppIntro2() {
         sliderPageInfo3.image2Drawable = R.mipmap.img_intro_info3_2
         sliderPageInfo3.backgroundColor = COLOR_SLIDE_INFO3
 
+        val sliderPageInfo4 = SliderPage()
+        sliderPageInfo4.title = getString(R.string.intro_info4_title)
+        sliderPageInfo4.description = getString(R.string.intro_info4_desc)
+        sliderPageInfo4.imageDrawable = R.mipmap.img_intro_info4
+        sliderPageInfo4.image2Drawable = R.mipmap.img_intro_info4_2
+        sliderPageInfo4.backgroundColor = COLOR_SLIDE_INFO4
+
         // Check if it's first launch or help launch
         if (Preferences.getSkipIntro(this)) {
             addSlide(AppIntroFragment.newInstance(sliderPageHome))
@@ -78,6 +85,7 @@ class IntroActivity : AppIntro2() {
             addSlide(AppIntroFragment.newInstance(sliderPageInfo1))
             addSlide(AppIntroFragment.newInstance(sliderPageInfo2))
             addSlide(AppIntroFragment.newInstance(sliderPageInfo3))
+            addSlide(AppIntroFragment.newInstance(sliderPageInfo4))
             addSlide(IntroFragmentAddQSTile.newInstance())
         } else {
             addSlide(AppIntroFragment.newInstance(sliderPageHome))
@@ -86,6 +94,7 @@ class IntroActivity : AppIntro2() {
             addSlide(AppIntroFragment.newInstance(sliderPageInfo1))
             addSlide(AppIntroFragment.newInstance(sliderPageInfo2))
             addSlide(AppIntroFragment.newInstance(sliderPageInfo3))
+            addSlide(AppIntroFragment.newInstance(sliderPageInfo4))
             addSlide(IntroFragmentAddQSTile.newInstance())
         }
 
@@ -155,6 +164,10 @@ class IntroActivity : AppIntro2() {
                     setNavBarColor(COLOR_SLIDE_INFO3)
                     changeStatusBarColor(COLOR_SLIDE_INFO3)
                 }
+                getString(R.string.intro_info4_title) -> {
+                    setNavBarColor(COLOR_SLIDE_INFO4)
+                    changeStatusBarColor(COLOR_SLIDE_INFO4)
+                }
                 getString(R.string.intro_qstile_title) -> {
                     setNavBarColor(COLOR_SLIDE_QSTILE)
                     changeStatusBarColor(COLOR_SLIDE_QSTILE)
@@ -178,9 +191,10 @@ class IntroActivity : AppIntro2() {
         val COLOR_SLIDE_PERM = Color.parseColor("#ffd800")
         val COLOR_SLIDE_NOTIF = Color.parseColor("#00c3ff")
         val COLOR_SLIDE_QSTILE = Color.parseColor("#4caf50")
-        private val COLOR_SLIDE_INFO2 = Color.parseColor("#bb8930")
         private val COLOR_SLIDE_INFO1 = Color.parseColor("#00bcd4")
+        private val COLOR_SLIDE_INFO2 = Color.parseColor("#cc3914")
         private val COLOR_SLIDE_INFO3 = Color.parseColor("#6f3aa1")
+        private val COLOR_SLIDE_INFO4 = Color.parseColor("#d68f0b")
         private val COLOR_SLIDE_HOME = Color.parseColor("#222222")
 
         fun newIntent(context: Context): Intent {

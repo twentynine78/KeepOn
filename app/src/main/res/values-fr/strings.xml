@@ -99,6 +99,9 @@
     <string name="intro_info3_title">Personnalisable !</string>
     <string name="intro_info3_desc">Tu peux modifier l\'apparence de la tuile de réglage rapide depuis le volet en bas de l\'écran.
         \n\nTu peux également modifier le délai d\'expiration de l\'écran en cliquant sur l\'aperçu à gauche de ce volet.</string>
+    <string name="intro_info4_title">Puissant</string>
+    <string name="intro_info4_desc">KeepOn est intégré en natif avec les applications d\'automatisation qui prennent en charge le plugin Tasker.
+        \n\nGrâce à ce plugin, vous pouvez étendre les possibilités de KeepOn à l\'infini.</string>
     <string name="intro_qstile_title">Facile à utiliser</string>
     <string name="intro_qstile_desc">Une fois la configuration terminée, il te suffit simplement d\'ajouter la tuile KeepOn aux réglages rapides d\'Android pour l\'utiliser !
         \n\nUne extension Tasker/Locale est intégrée et permet d\'utiliser les fonctions de KeepOn depuis une autre application compatible !</string>

@@ -100,6 +100,9 @@
     <string name="intro_info3_title">Customizable!</string>
     <string name="intro_info3_desc">You can change the appearance of the Quick Settings tile from the pane at the bottom of the screen.
         \n\nYou can also change the screen timeout by clicking on the preview on the left side of this pane.</string>
+    <string name="intro_info4_title">Powerful</string>
+    <string name="intro_info4_desc">KeepOn is natively integrated with automation apps that support Tasker plugin.
+        \n\nThanks to the plugin you can extend the possibilities of KeepOn to infinity.</string>
     <string name="intro_qstile_title">Easy to use</string>
     <string name="intro_qstile_desc">Once the configuration is complete, simply add the KeepOn tile to the Android Quick Settings to use it!
         \n\nA Tasker/Locale plugin is integrated and allows you to use KeepOn functions from another compatible application!</string>
