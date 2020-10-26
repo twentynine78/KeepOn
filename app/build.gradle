@@ -9,8 +9,8 @@ android {
         applicationId "fr.twentynine.keepon"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 14
-        versionName "1.2.3"
+        versionCode 15
+        versionName "1.2.4"
     }
     buildTypes {
         debug {
