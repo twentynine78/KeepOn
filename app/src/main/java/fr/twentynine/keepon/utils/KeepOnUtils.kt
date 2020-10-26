@@ -426,7 +426,8 @@ object KeepOnUtils {
     }
 
     fun getIconStyleSignature(context: Context): String {
-        return StringBuilder(Preferences.getQSStyleFontSize(context))
+        return StringBuilder()
+            .append(Preferences.getQSStyleFontSize(context))
             .append(Preferences.getQSStyleFontSkew(context))
             .append(Preferences.getQSStyleFontSpacing(context))
             .append(Preferences.getQSStyleTypefaceSansSerif(context))
