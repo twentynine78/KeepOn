@@ -10,6 +10,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import java.lang.ref.WeakReference
 
 object Preferences {
     private const val PREFS_FILENAME = "keepon_prefs"
@@ -42,9 +43,10 @@ object Preferences {
 
     private var resetValueChangeJob: Job? = null
 
-    private fun resetValueChange(context: Context) {
-        MultiPreferences(PREFS_FILENAME, context.contentResolver)
-            .setInt(VALUE_CHANGE_INT, 0)
+    private fun resetValueChange(context: Context?) {
+        if (context != null) {
+            MultiPreferences(PREFS_FILENAME, context.contentResolver).setInt(VALUE_CHANGE_INT, 0)
+        }
     }
 
     fun getKeepOnState(context: Context): Boolean {
@@ -196,13 +198,15 @@ object Preferences {
 
         // Cancel previous reset job if value is true
         if (value) {
+            val contextReference = WeakReference(context)
             resetValueChangeJob?.cancel()
-
             // start job for reset value
-            resetValueChangeJob = CoroutineScope(Dispatchers.Default).launch {
+            resetValueChangeJob = CoroutineScope(Dispatchers.IO).launch {
                 delay(5000)
                 withTimeout(10000) {
-                    resetValueChange(context)
+                    if (contextReference.get() != null) {
+                        resetValueChange(contextReference.get())
+                    }
                 }
             }
         }

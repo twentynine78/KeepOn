@@ -16,6 +16,7 @@ import com.bumptech.glide.request.transition.Transition
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.glide.GlideApp
 import fr.twentynine.keepon.glide.TimeoutIconData
+import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.KeepOnUtils
 import fr.twentynine.keepon.utils.Preferences
 
@@ -25,6 +26,15 @@ class KeepOnTileService : TileService() {
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
     override fun onBind(intent: Intent?): IBinder? {
+        if (intent != null) {
+            // A hack to prevent a private serializable classloader attack and ignore implicit intents, because they are not valid
+            if (BundleScrubber.scrub(intent) ||
+                (packageName != intent.getPackage() && ComponentName(this, this.javaClass.name) != intent.component)
+            ) {
+                return super.onBind(intent)
+            }
+        }
+
         Preferences.setTileAdded(true, this)
 
         KeepOnUtils.startScreenTimeoutObserverService(this)

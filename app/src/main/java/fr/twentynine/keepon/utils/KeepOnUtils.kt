@@ -313,6 +313,7 @@ object KeepOnUtils {
             val channel = notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_ID)
             if (channel == null) {
                 val chan = NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance)
+                chan.lockscreenVisibility = NotificationCompat.VISIBILITY_SECRET
                 notificationManager.createNotificationChannel(chan)
             }
         }
@@ -335,6 +336,7 @@ object KeepOnUtils {
 
         // Return notification
         return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+            .setOngoing(true)
             .setContentTitle(contentText)
             .setContentText(context.getString(R.string.notification_hide))
             .setSmallIcon(R.mipmap.ic_qs_keepon)
