@@ -32,9 +32,11 @@ You can read / audit code and compile your own apk if you want!
 - MultiProcessPreferences: *https://github.com/TreeFrogApps/MultiProcessPreferences*
 - Glide: *https://github.com/bumptech/glide*
 - Gene-rate: *https://github.com/Pixplicity/gene-rate*
+- PageIndicatorView: *https://github.com/romandanylyk/PageIndicatorView*
 
 ## Screenshots
 
 ![screenshot1](.github/screenshot1.jpg?raw=true "Screenshot1")
 ![screenshot2](.github/screenshot2.jpg?raw=true "Screenshot2")
 ![screenshot3](.github/screenshot3.jpg?raw=true "Screenshot3")
+![screenshot4](.github/screenshot4.jpg?raw=true "Screenshot4")
