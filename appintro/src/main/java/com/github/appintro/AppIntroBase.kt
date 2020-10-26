@@ -721,6 +721,9 @@ abstract class AppIntroBase : AppCompatActivity(), AppIntroViewPagerListener {
                 ) as Int
                 currentSlide.setBackgroundColor(newColor)
                 nextSlide.setBackgroundColor(newColor)
+                // Set color to StatusBar and NavigationBar
+                setStatusBarColor(newColor)
+                setNavBarColor(newColor)
             }
         } else {
             error("Color transitions are only available if all slides implement SlideBackgroundColorHolder.")
