@@ -65,11 +65,11 @@ import kotlin.math.roundToInt
 class MainActivity : AppCompatActivity() {
     data class TimeoutSwitch(val switch: SwitchMaterial, val timeoutValue: Int)
 
-    private lateinit var missingSettingsDialog: Dialog
-    private lateinit var permissionDialog: Dialog
-    private lateinit var notificationDialog: Dialog
-    private lateinit var rate: Rate
-    private lateinit var snackbar: Snackbar
+    private var missingSettingsDialog: Dialog? = null
+    private var permissionDialog: Dialog? = null
+    private var notificationDialog: Dialog? = null
+    private var rate: Rate? = null
+    private var snackbar: Snackbar? = null
 
     private var receiverRegistered = false
 
@@ -107,8 +107,8 @@ class MainActivity : AppCompatActivity() {
                     ACTION_MISSING_SETTINGS -> {
                         // Show missing settings dialog
                         if (Preferences.getSelectedTimeout(context!!).size <= 1) {
-                            if (!missingSettingsDialog.isShowing) {
-                                missingSettingsDialog.show()
+                            if (!missingSettingsDialog!!.isShowing) {
+                                missingSettingsDialog?.show()
                             }
                         }
                     }
@@ -187,7 +187,7 @@ class MainActivity : AppCompatActivity() {
             if (Preferences.getKeepOnState(this) && isChecked) {
                 KeepOnUtils.startScreenOffReceiverService(this)
             }
-            snackbar.show()
+            snackbar?.show()
         }
 
         // Set application version on about card
@@ -208,8 +208,8 @@ class MainActivity : AppCompatActivity() {
             if (intent.extras!!.getBoolean(KeepOnUtils.TAG_MISSING_SETTINGS, false) &&
                 Preferences.getSelectedTimeout(this).size <= 1
             ) {
-                if (!missingSettingsDialog.isShowing) {
-                    missingSettingsDialog.show()
+                if (!missingSettingsDialog!!.isShowing) {
+                    missingSettingsDialog?.show()
                 }
             }
         }
@@ -249,16 +249,15 @@ class MainActivity : AppCompatActivity() {
         bottomMarginView.requestLayout()
 
         // Set onSlide bottom sheet behavior
-        BottomSheetBehavior.from(bottomSheet).addBottomSheetCallback(object :
-                BottomSheetBehavior.BottomSheetCallback() {
-                override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    setOnSlideBottomSheetAnim(slideOffset)
-                }
+        BottomSheetBehavior.from(bottomSheet).addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                setOnSlideBottomSheetAnim(slideOffset)
+            }
 
-                override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    if (snackbar.isShown) snackbar.dismiss()
-                }
-            })
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (snackbar!!.isShown) snackbar?.dismiss()
+            }
+        })
 
         // Set initial bottom sheet state
         BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
@@ -281,8 +280,8 @@ class MainActivity : AppCompatActivity() {
         if (canWrite(this)) {
             // Show Dialog to disable notifications if enabled
             if (KeepOnUtils.isNotificationEnabled(this)) {
-                if (!notificationDialog.isShowing) {
-                    notificationDialog.show()
+                if (!notificationDialog!!.isShowing) {
+                    notificationDialog?.show()
                 }
             }
 
@@ -298,11 +297,11 @@ class MainActivity : AppCompatActivity() {
             updateTilePreview()
 
             // Show Genrate snackbar
-            rate.showRequest()
+            rate?.showRequest()
         } else {
             // Show permission Dialog
-            if (!permissionDialog.isShowing) {
-                permissionDialog.show()
+            if (!permissionDialog!!.isShowing) {
+                permissionDialog?.show()
             }
         }
     }
@@ -343,6 +342,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         super.onPause()
+    }
+
+    override fun onDestroy() {
+        if (snackbar!!.isShown) snackbar?.dismiss()
+        missingSettingsDialog = null
+        permissionDialog = null
+        notificationDialog = null
+        rate = null
+        snackbar = null
+
+        super.onDestroy()
     }
 
     override fun onBackPressed() {
@@ -455,22 +465,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getListIntFromSwitch(): ArrayList<Int> {
+    private fun saveSelectedSwitch() {
         val resultList: ArrayList<Int> = ArrayList()
-
         for (timeoutSwitch in getTimeoutSwitchsArray()) {
             if (timeoutSwitch.switch.isChecked && timeoutSwitch.timeoutValue != Preferences.getOriginalTimeout(this)) {
                 resultList.add(timeoutSwitch.timeoutValue)
             }
         }
 
-        return resultList
-    }
+        Preferences.setSelectedTimeout(resultList, this)
 
-    private fun saveSelectedSwitch() {
-        Preferences.setSelectedTimeout(getListIntFromSwitch(), this)
-
-        snackbar.show()
+        snackbar?.show()
 
         // Update App shortcuts
         lifecycleScope.launch(Dispatchers.Default) {
