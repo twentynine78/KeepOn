@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 30
-        versionCode 20
-        versionName "6.0.0"
+        versionCode 21
+        versionName "6.0.1"
 
         consumerProguardFiles 'consumer-proguard-rules.pro'
         vectorDrawables.useSupportLibrary = true
@@ -23,8 +23,8 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    testImplementation 'junit:junit:4.13'
-    testImplementation 'org.mockito:mockito-core:2.28.2'
+    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'org.mockito:mockito-core:3.5.15'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
 
     implementation "com.romandanylyk:pageindicatorview:1.0.3"
