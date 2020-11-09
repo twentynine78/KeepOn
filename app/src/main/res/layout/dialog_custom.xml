@@ -24,7 +24,7 @@
         android:layout_marginTop="-20dp"
         android:background="@drawable/dialog_background">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/text_dialog"
@@ -38,7 +38,7 @@
             android:gravity="center_horizontal"
             tool:text="TEXT" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_dialog"
             android:layout_width="match_parent"
             android:layout_height="40dp"

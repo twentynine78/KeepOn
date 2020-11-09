@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:id="@+id/image_dialog"
@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/add_qstile_warning"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
                     android:textStyle="bold"
                     android:text="@string/dialog_add_qstile_warning"/>
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_below="@id/add_qstile_warning"
@@ -63,7 +63,7 @@
                     android:layout_marginStart="2dp"
                     android:layout_marginTop="6dp" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginStart="2dp"
@@ -75,7 +75,7 @@
                     android:gravity="center"
                     android:text="1"/>
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/add_qstile_text1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
                     android:textAlignment="textStart"
                     android:text="@string/dialog_add_qstile_text1"/>
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_below="@id/add_qstile_text1"
@@ -98,7 +98,7 @@
                     android:layout_marginStart="2dp"
                     android:layout_marginTop="6dp" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginStart="2dp"
@@ -110,7 +110,7 @@
                     android:gravity="center"
                     android:text="2"/>
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/add_qstile_text2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -124,7 +124,7 @@
                     android:textAlignment="textStart"
                     android:text="@string/dialog_add_qstile_text2"/>
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/add_qstile_image1"
                     android:layout_width="match_parent"
                     android:layout_height="90dp"
@@ -133,7 +133,7 @@
                     android:scaleType="center"
                     android:src="@mipmap/img_help1" />
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_below="@id/add_qstile_image1"
@@ -141,7 +141,7 @@
                     android:layout_marginStart="2dp"
                     android:layout_marginTop="6dp" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginStart="2dp"
@@ -153,7 +153,7 @@
                     android:gravity="center"
                     android:text="3"/>
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/add_qstile_text3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -167,7 +167,7 @@
                     android:textAlignment="textStart"
                     android:text="@string/dialog_add_qstile_text3"/>
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/add_qstile_image2"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
@@ -176,7 +176,7 @@
                     android:scaleType="center"
                     android:src="@mipmap/img_help2" />
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_below="@id/add_qstile_image2"
@@ -184,7 +184,7 @@
                     android:layout_marginStart="2dp"
                     android:layout_marginTop="6dp" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginStart="2dp"
@@ -196,7 +196,7 @@
                     android:gravity="center"
                     android:text="4"/>
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/add_qstile_text4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -210,7 +210,7 @@
                     android:textAlignment="textStart"
                     android:text="@string/dialog_add_qstile_text4"/>
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/add_qstile_image3"
                     android:layout_width="match_parent"
                     android:layout_height="130dp"
@@ -219,7 +219,7 @@
                     android:scaleType="center"
                     android:src="@mipmap/img_help3" />
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_below="@id/add_qstile_image3"
@@ -227,7 +227,7 @@
                     android:layout_marginStart="2dp"
                     android:layout_marginTop="6dp" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginStart="2dp"
@@ -239,7 +239,7 @@
                     android:gravity="center"
                     android:text="5"/>
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -256,7 +256,7 @@
             </RelativeLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_close"
             android:layout_width="match_parent"
             android:layout_height="40dp"

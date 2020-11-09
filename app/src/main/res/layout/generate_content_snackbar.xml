@@ -23,10 +23,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:gravity="center_vertical"
-    android:padding="12dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_swipe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,7 +39,7 @@
         android:alpha="0.5"
         android:textSize="12sp"/>
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -56,7 +59,7 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/bt_negative"
                 style="?android:checkboxStyle"
                 android:layout_width="wrap_content"
@@ -73,7 +76,7 @@
                 android:visibility="gone"
                 tools:visibility="visible"/>
 
-            <CheckBox
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/cb_never"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -84,7 +87,7 @@
 
         </LinearLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/bt_positive"
             style="@style/Base.Widget.AppCompat.Button"
             android:layout_width="0dp"

@@ -8,7 +8,7 @@
     android:paddingTop="24dp"
     android:paddingBottom="90dp">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/title"
         style="@style/AppIntroDefaultHeading"
         android:layout_width="0dp"
@@ -22,9 +22,11 @@
         app:layout_constraintVertical_chainStyle="spread"
         tools:text="Welcome" />
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image"
-        style="@style/AppIntroDefaultImage"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:scaleType="centerInside"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintVertical_weight="5"
@@ -35,9 +37,11 @@
         app:layout_constraintTop_toBottomOf="@+id/title"
         tools:src="@mipmap/img_intro_perm"/>
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image2"
-        style="@style/AppIntroDefaultImage"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:scaleType="centerInside"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintVertical_weight="5"
@@ -48,7 +52,7 @@
         app:layout_constraintTop_toBottomOf="@+id/title"
         tools:src="@mipmap/img_intro_perm"/>
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/description"
         style="@style/AppIntroDefaultText"
         android:layout_width="0dp"
@@ -61,7 +65,7 @@
         app:layout_constraintTop_toBottomOf="@id/image"
         tools:text="This is a demo of the AppIntro Library" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/button"
         android:layout_height="50dp"
         android:layout_width="150dp"
