@@ -23,6 +23,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewAnimationUtils
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
@@ -555,6 +557,23 @@ class MainActivity : AppCompatActivity() {
                 processCardViewAnim(aboutCard, ANIMATION_DURATION)
             }
         }
+
+        val animBottomSheet: Animation = AnimationUtils.loadAnimation(this, R.anim.bottomsheet_translate)
+        animBottomSheet.startOffset = 50L
+
+        val animBottomSheetPreview: Animation = AnimationUtils.loadAnimation(this, R.anim.bottomsheet_preview_scale)
+        animBottomSheetPreview.startOffset = 400L
+
+        val animBottomSheetPreviewBackground: Animation = AnimationUtils.loadAnimation(this, R.anim.bottomsheet_preview_scale)
+        animBottomSheetPreviewBackground.startOffset = 400L
+
+        val animBottomSheetPreviewBorder: Animation = AnimationUtils.loadAnimation(this, R.anim.bottomsheet_preview_scale)
+        animBottomSheetPreviewBorder.startOffset = 400L
+
+        bottomSheet.startAnimation(animBottomSheet)
+        tilePreview.startAnimation(animBottomSheetPreview)
+        tilePreviewBackground.startAnimation(animBottomSheetPreviewBackground)
+        tilePreviewBorder.startAnimation(animBottomSheetPreviewBorder)
     }
 
     private fun processCardViewAnim(cardView: CardView, startDelay: Long) {
