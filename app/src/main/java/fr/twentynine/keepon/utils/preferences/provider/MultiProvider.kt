@@ -1,6 +1,6 @@
 @file:Suppress("ConvertTryFinallyToUseCall")
 
-package fr.twentynine.keepon.utils.preferences
+package fr.twentynine.keepon.utils.preferences.provider
 
 import android.content.ContentProvider
 import android.content.ContentResolver
@@ -17,23 +17,18 @@ import androidx.collection.ArrayMap
  */
 class MultiProvider : ContentProvider() {
     companion object {
-        private const val PROVIDER_NAME = "fr.twentynine.keepon.utils.preferences.MultiProvider"
+        private const val PROVIDER_NAME = "fr.twentynine.keepon.utils.preferences.provider.MultiProvider"
 
         /**
          * Define all Content Urls for each type, String, int, long & boolean
          */
-        private const val URL_STRING =
-            "content://$PROVIDER_NAME/string/"
-        private const val URL_INT =
-            "content://$PROVIDER_NAME/integer/"
-        private const val URL_LONG =
-            "content://$PROVIDER_NAME/long/"
-        private const val URL_BOOLEAN =
-            "content://$PROVIDER_NAME/boolean/"
+        private const val URL_STRING = "content://$PROVIDER_NAME/string/"
+        private const val URL_INT = "content://$PROVIDER_NAME/integer/"
+        private const val URL_LONG = "content://$PROVIDER_NAME/long/"
+        private const val URL_BOOLEAN = "content://$PROVIDER_NAME/boolean/"
 
         // Special URL just for clearing preferences
-        private const val URL_PREFERENCES =
-            "content://$PROVIDER_NAME/prefs/"
+        private const val URL_PREFERENCES = "content://$PROVIDER_NAME/prefs/"
         const val CODE_STRING = 1
         const val CODE_INTEGER = 2
         const val CODE_LONG = 3
@@ -46,15 +41,21 @@ class MultiProvider : ContentProvider() {
         /**
          * Create UriMatcher to match all requests
          */
-        private var mUriMatcher: UriMatcher? = null
+        private val mUriMatcher: UriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
+            // */* = wildcard  (name or file name / key)
+            this.addURI(PROVIDER_NAME, "string/*/*", CODE_STRING)
+            this.addURI(PROVIDER_NAME, "integer/*/*", CODE_INTEGER)
+            this.addURI(PROVIDER_NAME, "long/*/*", CODE_LONG)
+            this.addURI(PROVIDER_NAME, "boolean/*/*", CODE_BOOLEAN)
+            this.addURI(PROVIDER_NAME, "prefs/*/", CODE_PREFS)
+        }
+
         fun extractStringFromCursor(cursor: Cursor?, defaultVal: String): String {
             if (cursor != null) {
-                try {
-                    if (cursor.moveToFirst()) {
-                        return cursor.getString(cursor.getColumnIndex(VALUE))
-                    }
-                } finally {
+                if (cursor.moveToFirst()) {
+                    val result = cursor.getString(cursor.getColumnIndex(VALUE))
                     cursor.close()
+                    return result
                 }
             }
             return defaultVal
@@ -62,12 +63,10 @@ class MultiProvider : ContentProvider() {
 
         fun extractIntFromCursor(cursor: Cursor?, defaultVal: Int): Int {
             if (cursor != null) {
-                try {
-                    if (cursor.moveToFirst()) {
-                        return cursor.getInt(cursor.getColumnIndex(VALUE))
-                    }
-                } finally {
+                if (cursor.moveToFirst()) {
+                    val result = cursor.getInt(cursor.getColumnIndex(VALUE))
                     cursor.close()
+                    return result
                 }
             }
             return defaultVal
@@ -75,12 +74,10 @@ class MultiProvider : ContentProvider() {
 
         fun extractLongFromCursor(cursor: Cursor?, defaultVal: Long): Long {
             if (cursor != null) {
-                try {
-                    if (cursor.moveToFirst()) {
-                        return cursor.getInt(cursor.getColumnIndex(VALUE)).toLong()
-                    }
-                } finally {
+                if (cursor.moveToFirst()) {
+                    val result = cursor.getLong(cursor.getColumnIndex(VALUE))
                     cursor.close()
+                    return result
                 }
             }
             return defaultVal
@@ -88,12 +85,10 @@ class MultiProvider : ContentProvider() {
 
         fun extractBooleanFromCursor(cursor: Cursor?, defaultVal: Boolean): Boolean {
             if (cursor != null) {
-                try {
-                    if (cursor.moveToFirst()) {
-                        return cursor.getInt(cursor.getColumnIndex(VALUE)) == 1
-                    }
-                } finally {
+                if (cursor.moveToFirst()) {
+                    val result = cursor.getInt(cursor.getColumnIndex(VALUE)) == 1
                     cursor.close()
+                    return result
                 }
             }
             return defaultVal
@@ -137,36 +132,6 @@ class MultiProvider : ContentProvider() {
         fun performQuery(uri: Uri, resolver: ContentResolver): Cursor? {
             return resolver.query(uri, null, null, null, null, null)
         }
-
-        init {
-            mUriMatcher = UriMatcher(UriMatcher.NO_MATCH)
-            // */* = wildcard  (name or file name / key)
-            mUriMatcher!!.addURI(
-                PROVIDER_NAME,
-                "string/*/*",
-                CODE_STRING
-            )
-            mUriMatcher!!.addURI(
-                PROVIDER_NAME,
-                "integer/*/*",
-                CODE_INTEGER
-            )
-            mUriMatcher!!.addURI(
-                PROVIDER_NAME,
-                "long/*/*",
-                CODE_LONG
-            )
-            mUriMatcher!!.addURI(
-                PROVIDER_NAME,
-                "boolean/*/*",
-                CODE_BOOLEAN
-            )
-            mUriMatcher!!.addURI(
-                PROVIDER_NAME,
-                "prefs/*/",
-                CODE_PREFS
-            )
-        }
     }
 
     /**
@@ -188,24 +153,16 @@ class MultiProvider : ContentProvider() {
         return if (mPreferenceMap.containsKey(preferenceName)) {
             mPreferenceMap[preferenceName]
         } else {
-            val interactor =
-                PreferenceInteractor(context!!, preferenceName)
+            val interactor = PreferenceInteractor(context!!, preferenceName)
             mPreferenceMap[preferenceName] = interactor
             interactor
         }
     }
 
     @Nullable
-    override fun query(
-        uri: Uri,
-        projection: Array<String?>?,
-        selection: String?,
-        selectionArgs: Array<String?>?,
-        sortOrder: String?
-    ): Cursor? {
-        val interactor: PreferenceInteractor? =
-            getPreferenceInteractor(uri.pathSegments[1])
-        when (mUriMatcher!!.match(uri)) {
+    override fun query(uri: Uri, projection: Array<String?>?, selection: String?, selectionArgs: Array<String?>?, sortOrder: String?): Cursor? {
+        val interactor: PreferenceInteractor? = getPreferenceInteractor(uri.pathSegments[1])
+        when (mUriMatcher.match(uri)) {
             CODE_STRING -> {
                 val s: String = uri.pathSegments[2]
                 return if (interactor!!.hasKey(s)) preferenceToCursor(interactor.getString(s)) else null
@@ -226,17 +183,11 @@ class MultiProvider : ContentProvider() {
         return null
     }
 
-    override fun update(
-        uri: Uri,
-        values: ContentValues?,
-        selection: String?,
-        selectionArgs: Array<String?>?
-    ): Int {
+    override fun update(uri: Uri, values: ContentValues?, selection: String?, selectionArgs: Array<String?>?): Int {
         if (values != null) {
-            val interactor: PreferenceInteractor? =
-                getPreferenceInteractor(uri.pathSegments[1])
+            val interactor: PreferenceInteractor? = getPreferenceInteractor(uri.pathSegments[1])
             val key = values.getAsString(KEY)
-            when (mUriMatcher!!.match(uri)) {
+            when (mUriMatcher.match(uri)) {
                 CODE_STRING -> {
                     val s = values.getAsString(VALUE)
                     interactor!!.setString(key, s)
@@ -254,8 +205,6 @@ class MultiProvider : ContentProvider() {
                     interactor!!.setBoolean(key, b)
                 }
             }
-        } else {
-            throw IllegalArgumentException("Content Values are null!")
         }
         return 0
     }
@@ -267,12 +216,12 @@ class MultiProvider : ContentProvider() {
     ): Int {
         val interactor: PreferenceInteractor? =
             getPreferenceInteractor(uri.pathSegments[1])
-        when (mUriMatcher!!.match(uri)) {
+        when (mUriMatcher.match(uri)) {
             CODE_REMOVE_KEY -> interactor!!.removePref(
                 uri.pathSegments[2]
             )
             CODE_PREFS -> interactor!!.clearPreference()
-            else -> throw IllegalStateException(" unsupported uri : $uri")
+            else -> return 0
         }
         return 0
     }
@@ -295,8 +244,7 @@ class MultiProvider : ContentProvider() {
      * @return a Cursor object </T>
      */
     private fun <Any> preferenceToCursor(value: Any): MatrixCursor {
-        val matrixCursor =
-            MatrixCursor(arrayOf(VALUE), 1)
+        val matrixCursor = MatrixCursor(arrayOf(VALUE), 1)
         val builder = matrixCursor.newRow()
         builder.add(value)
         return matrixCursor

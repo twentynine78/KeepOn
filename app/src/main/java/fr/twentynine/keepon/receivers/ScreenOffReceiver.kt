@@ -3,22 +3,30 @@ package fr.twentynine.keepon.receivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import fr.twentynine.keepon.services.ScreenOffReceiverService
-import fr.twentynine.keepon.utils.BundleScrubber
-import fr.twentynine.keepon.utils.Preferences
+import fr.twentynine.keepon.di.ToothpickHelper
+import fr.twentynine.keepon.di.annotation.ApplicationScope
+import fr.twentynine.keepon.utils.CommonUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
+import toothpick.ktp.delegate.lazy
+import javax.inject.Singleton
 
+@ApplicationScope
+@Singleton
 class ScreenOffReceiver : BroadcastReceiver() {
+
+    private val preferences: Preferences by lazy()
+    private val commonUtils: CommonUtils by lazy()
+
+    init {
+        // Inject dependencies with Toothpick
+        ToothpickHelper.scopedInjection(this)
+    }
+
     override fun onReceive(context: Context, intent: Intent) {
-        // A hack to prevent a private serializable classloader attack
-        if (BundleScrubber.scrub(intent)) {
-            return
-        }
-
         if (intent.action == Intent.ACTION_SCREEN_OFF) {
-            Preferences.setTimeout(Preferences.getOriginalTimeout(context), context)
+            preferences.setTimeout(preferences.getOriginalTimeout())
 
-            val screenOffService = context as ScreenOffReceiverService
-            screenOffService.stopForegroundService()
+            commonUtils.stopScreenOffReceiverService()
         }
     }
 }

@@ -4,27 +4,25 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.service.quicksettings.TileService
 import androidx.core.content.ContextCompat
-import fr.twentynine.keepon.services.KeepOnTileService
+import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.services.ScreenOffReceiverService
 import fr.twentynine.keepon.services.ScreenTimeoutObserverService
-import fr.twentynine.keepon.utils.BundleScrubber
-import fr.twentynine.keepon.utils.KeepOnUtils
-import fr.twentynine.keepon.utils.Preferences
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
+import fr.twentynine.keepon.utils.CommonUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
+import toothpick.ktp.delegate.lazy
 
 class ServicesManagerReceiver : BroadcastReceiver() {
 
-    override fun onReceive(context: Context, intent: Intent) {
-        // A hack to prevent a private serializable classloader attack
-        if (BundleScrubber.scrub(intent)) {
-            return
-        }
+    private val commonUtils: CommonUtils by lazy()
+    private val preferences: Preferences by lazy()
 
+    init {
+        // Inject dependencies with Toothpick
+        ToothpickHelper.scopedInjection(this)
+    }
+
+    override fun onReceive(context: Context, intent: Intent) {
         // Ignore implicit intents, because they are not valid.
         if (context.packageName != intent.getPackage() && ComponentName(context, this.javaClass.name) != intent.component) {
             return
@@ -35,16 +33,14 @@ class ServicesManagerReceiver : BroadcastReceiver() {
         if (action != null) {
             when (action) {
                 Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED -> {
-                    if (Preferences.getTileAdded(context)) {
-                        TileService.requestListeningState(context, ComponentName(context, KeepOnTileService::class.java))
-                    }
+                    commonUtils.updateQSTile(0)
 
                     // Start ScreenTimeoutObserverService
                     val startIntentScreenTimeout = Intent(context.applicationContext, ScreenTimeoutObserverService::class.java)
                     startIntentScreenTimeout.action = ACTION_START_FOREGROUND_TIMEOUT_SERVICE
                     ContextCompat.startForegroundService(context.applicationContext, startIntentScreenTimeout)
 
-                    if (Preferences.getKeepOnState(context) && Preferences.getResetTimeoutOnScreenOff(context)) {
+                    if (preferences.getKeepOnState() && preferences.getResetTimeoutOnScreenOff()) {
                         // Start ScreenOffReceiverService
                         val startIntentScreenOff = Intent(context.applicationContext, ScreenOffReceiverService::class.java)
                         startIntentScreenOff.action = ACTION_START_FOREGROUND_SCREEN_OFF_SERVICE
@@ -52,11 +48,7 @@ class ServicesManagerReceiver : BroadcastReceiver() {
                     }
 
                     // Manage dynamics shortcut
-                    CoroutineScope(Dispatchers.Default).launch {
-                        withTimeout(60000) {
-                            KeepOnUtils.manageAppShortcut(context)
-                        }
-                    }
+                    commonUtils.createShortcut()
                 }
                 ACTION_START_FOREGROUND_TIMEOUT_SERVICE -> {
                     val startIntent = Intent(context.applicationContext, ScreenTimeoutObserverService::class.java)
@@ -82,12 +74,16 @@ class ServicesManagerReceiver : BroadcastReceiver() {
                     if (intent.extras != null) {
                         var newTimeout = intent.getIntExtra("timeout", 0)
                         if (newTimeout != 0) {
-                            if (newTimeout == -42) newTimeout = Preferences.getOriginalTimeout(context)
-                            if (newTimeout == -43) newTimeout = Preferences.getPreviousValue(context)
+                            if (newTimeout == -42) newTimeout = preferences.getOriginalTimeout()
+                            if (newTimeout == -43) newTimeout = preferences.getPreviousValue()
 
-                            Preferences.setTimeout(newTimeout, context)
+                            preferences.setTimeout(newTimeout)
                         }
                     }
+                }
+                MANAGE_SHORTCUTS -> {
+                    // Manage dynamics shortcut
+                    commonUtils.createShortcut()
                 }
             }
         }
@@ -99,5 +95,6 @@ class ServicesManagerReceiver : BroadcastReceiver() {
         const val ACTION_START_FOREGROUND_TIMEOUT_SERVICE = "ACTION_START_FOREGROUND_TIMEOUT_SERVICE"
         const val ACTION_STOP_FOREGROUND_TIMEOUT_SERVICE = "ACTION_STOP_FOREGROUND_TIMEOUT_SERVICE"
         const val ACTION_SET_TIMEOUT = "ACTION_SET_TIMEOUT"
+        const val MANAGE_SHORTCUTS = "MANAGE_SHORTCUTS"
     }
 }

@@ -12,7 +12,7 @@
     app:behavior_hideable="false"
     app:behavior_peekHeight="75dp"
     app:gestureInsetBottomIgnored="true"
-    tools:context=".MainActivity">
+    tools:context=".ui.MainActivity">
 
     <View
         android:id="@+id/guideline"

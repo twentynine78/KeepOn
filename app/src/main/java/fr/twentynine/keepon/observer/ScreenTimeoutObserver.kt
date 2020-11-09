@@ -1,19 +1,31 @@
 package fr.twentynine.keepon.observer
 
-import android.content.ComponentName
-import android.content.Context
+import android.app.Application
 import android.database.ContentObserver
 import android.net.Uri
-import android.service.quicksettings.TileService
-import fr.twentynine.keepon.services.KeepOnTileService
-import fr.twentynine.keepon.utils.KeepOnUtils
-import fr.twentynine.keepon.utils.Preferences
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
+import fr.twentynine.keepon.di.ToothpickHelper
+import fr.twentynine.keepon.di.annotation.ApplicationScope
+import fr.twentynine.keepon.utils.CommonUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
+import toothpick.InjectConstructor
+import toothpick.ktp.delegate.lazy
+import java.util.Calendar
+import java.util.TimeZone
+import javax.inject.Singleton
 
-class ScreenTimeoutObserver(val context: Context) : ContentObserver(null) {
+@ApplicationScope
+@Singleton
+@InjectConstructor
+class ScreenTimeoutObserver(val application: Application) : ContentObserver(null) {
+
+    private val commonUtils: CommonUtils by lazy()
+    private val preferences: Preferences by lazy()
+
+    init {
+        // Inject dependencies with Toothpick
+        ToothpickHelper.scopedInjection(this)
+    }
+
     override fun onChange(selfChange: Boolean) {
         onChange(selfChange, null)
     }
@@ -23,37 +35,31 @@ class ScreenTimeoutObserver(val context: Context) : ContentObserver(null) {
     }
 
     private fun processChange() {
-        if (!Preferences.getValueChange(context)) {
-            Preferences.setOriginalTimeout(Preferences.getCurrentTimeout(context), context)
-        } else {
-            Preferences.setValueChange(false, context)
+        if (!preferences.getValueChange() || (Calendar.getInstance(TimeZone.getTimeZone("utc")).timeInMillis >= preferences.getValueChangeTime() + 3000L)) {
+            preferences.setOriginalTimeout(preferences.getCurrentTimeout())
         }
+        preferences.setValueChange(false)
 
-        Preferences.setPreviousValue(Preferences.getNewValue(context), context)
-        Preferences.setNewValue(Preferences.getCurrentTimeout(context), context)
+        // Store previous timeout value
+        preferences.setPreviousValue(preferences.getNewValue())
+        preferences.setNewValue(preferences.getCurrentTimeout())
 
         // Manage services
-        if (Preferences.getKeepOnState(context)) {
-            if (Preferences.getResetTimeoutOnScreenOff(context)) {
-                KeepOnUtils.startScreenOffReceiverService(context)
+        if (preferences.getKeepOnState()) {
+            if (preferences.getResetTimeoutOnScreenOff()) {
+                commonUtils.startScreenOffReceiverService()
             }
         } else {
-            KeepOnUtils.stopScreenOffReceiverService(context)
+            commonUtils.stopScreenOffReceiverService()
         }
 
         // Update QS Tile
-        if (Preferences.getTileAdded(context)) {
-            TileService.requestListeningState(context, ComponentName(context.applicationContext, KeepOnTileService::class.java))
-        }
+        commonUtils.updateQSTile(0)
 
         // Update Main Activity
-        KeepOnUtils.sendBroadcastUpdateMainUI(context)
+        commonUtils.sendBroadcastUpdateMainUI()
 
         // Manage dynamics shortcut
-        CoroutineScope(Dispatchers.Default).launch {
-            withTimeout(60000) {
-                KeepOnUtils.manageAppShortcut(context)
-            }
-        }
+        commonUtils.manageAppShortcut()
     }
 }

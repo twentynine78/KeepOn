@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.intro.fragments
+package fr.twentynine.keepon.ui.intro.fragments
 
 import android.content.Intent
 import android.net.Uri
@@ -8,53 +8,37 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.github.appintro.SlideBackgroundColorHolder
 import com.github.appintro.SlidePolicy
 import com.google.android.material.snackbar.Snackbar
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.intro.IntroActivity
-import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_PERM
-import fr.twentynine.keepon.utils.KeepOnUtils
+import fr.twentynine.keepon.di.ToothpickHelper
+import fr.twentynine.keepon.ui.intro.IntroActivity.Companion.COLOR_SLIDE_PERM
+import fr.twentynine.keepon.utils.ActivityUtils
 import kotlinx.android.synthetic.main.fragment_intro_button.view.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import toothpick.ktp.delegate.lazy
 
 class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
 
+    private val activityUtils: ActivityUtils by lazy()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_intro_button, container, false)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Inject dependencies with Toothpick
+        ToothpickHelper.scopedInjection(this)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setBackgroundColor(defaultBackgroundColor)
 
-        fun checkPermission() = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-            withContext(coroutineContext) {
-                delay(500)
-                repeat(300) {
-                    val mContext = context
-                    if (mContext != null) {
-                        if (Settings.System.canWrite(mContext)) {
-                            try {
-                                val intent = Intent(mContext, IntroActivity::class.java)
-                                startActivity(intent)
-                            } finally {
-                                return@withContext
-                            }
-                        } else {
-                            delay(200)
-                        }
-                    }
-                }
-            }
-        }
-
         val mButton = view.button
-        mButton.setBackgroundColor(KeepOnUtils.darkerColor(COLOR_SLIDE_PERM, 0.4f))
+        mButton.setBackgroundColor(activityUtils.darkerColor(COLOR_SLIDE_PERM, 0.4f))
         mButton.text = getString(R.string.dialog_permission_button)
         mButton.setOnClickListener {
             val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
@@ -62,7 +46,7 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
                 .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-            checkPermission()
+            activityUtils.mCheckPermission.start()
             requireContext().startActivity(intent)
         }
 
@@ -84,12 +68,13 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
 
     override fun onResume() {
         super.onResume()
-        val mButton = requireView().button
-        if (mButton != null) {
-            if (Settings.System.canWrite(requireContext())) {
-                mButton.visibility = View.INVISIBLE
-            } else {
-                mButton.visibility = View.VISIBLE
+        view?.let {
+            if (it.button != null) {
+                if (Settings.System.canWrite(requireContext())) {
+                    it.button.visibility = View.INVISIBLE
+                } else {
+                    it.button.visibility = View.VISIBLE
+                }
             }
         }
     }
@@ -105,16 +90,18 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
         }
 
     override fun onUserIllegallyRequestedNextPage() {
-        return Snackbar.make(requireView(), getString(R.string.intro_toast_permission_needed), Snackbar.LENGTH_LONG)
-            .setAnchorView(R.id.button)
-            .show()
+        view?.let {
+            return Snackbar.make(it, getString(R.string.intro_toast_permission_needed), Snackbar.LENGTH_LONG)
+                .setAnchorView(R.id.button)
+                .show()
+        }
     }
 
     override val defaultBackgroundColor: Int
         get() = COLOR_SLIDE_PERM
 
     override fun setBackgroundColor(backgroundColor: Int) {
-        requireView().main?.setBackgroundColor(backgroundColor)
+        view?.main?.setBackgroundColor(backgroundColor)
     }
 
     companion object {

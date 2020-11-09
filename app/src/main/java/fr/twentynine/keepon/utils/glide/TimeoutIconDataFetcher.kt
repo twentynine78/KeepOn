@@ -1,6 +1,5 @@
-package fr.twentynine.keepon.glide
+package fr.twentynine.keepon.utils.glide
 
-import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -13,10 +12,21 @@ import android.graphics.Typeface
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.data.DataFetcher
-import fr.twentynine.keepon.utils.KeepOnUtils
-import fr.twentynine.keepon.utils.Preferences
+import fr.twentynine.keepon.di.ToothpickHelper
+import fr.twentynine.keepon.utils.CommonUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
+import toothpick.ktp.delegate.lazy
 
-class TimeoutIconDataFetcher(private val model: TimeoutIconData, private val context: Context) : DataFetcher<Bitmap> {
+class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<Bitmap> {
+
+    private val commonUtils: CommonUtils by lazy()
+    private val preferences: Preferences by lazy()
+
+    init {
+        // Inject dependencies with Toothpick
+        ToothpickHelper.scopedInjection(this)
+    }
+
     private val Float.px: Float
         get() = (this * Resources.getSystem().displayMetrics.density)
 
@@ -25,9 +35,9 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData, private val con
 
     override fun loadData(priority: Priority, callback: DataFetcher.DataCallback<in Bitmap>) {
         if (model.size != 3) {
-            callback.onDataReady(getBitmapFromText(model.timeout, context, model.size == 1))
+            callback.onDataReady(getBitmapFromText(model.timeout, model.size == 1))
         } else {
-            callback.onDataReady(getShortcutBitmapFromText(model.timeout, context))
+            callback.onDataReady(getShortcutBitmapFromText(model.timeout))
         }
     }
 
@@ -42,19 +52,19 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData, private val con
     override fun cleanup() {}
     override fun cancel() {}
 
-    private fun getBitmapFromText(timeout: Int, context: Context, bigSize: Boolean = false): Bitmap {
+    private fun getBitmapFromText(timeout: Int, bigSize: Boolean = false): Bitmap {
         // Set scale ratio to 3 for small size
         val scaleRatio = if (bigSize) 1 else 3
 
         val imageWidth = 150.px / scaleRatio
         val imageHeight = 150.px / scaleRatio
 
-        val displayTimeout = KeepOnUtils.getDisplayTimeout(timeout, context)
+        val displayTimeout = commonUtils.getDisplayTimeout(timeout)
         val bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val paint = Paint()
 
-        canvas.drawColor(Color.TRANSPARENT)
+        canvas.drawColor(colorTransparent)
 
         var textSize = when (displayTimeout.length) {
             1 -> 115f.px / scaleRatio
@@ -63,68 +73,67 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData, private val con
             else -> 60f.px / scaleRatio
         }
         // Set text size from saved preference
-        textSize += (Preferences.getQSStyleFontSize(context) * 2).px / scaleRatio
+        textSize += (preferences.getQSStyleFontSize() * 2).px / scaleRatio
         paint.textSize = textSize
 
         // Set typeface from saved preference
-        val bold = Preferences.getQSStyleFontBold(context)
-        val typeface: Typeface = when {
-            Preferences.getQSStyleTypefaceSansSerif(context) -> {
+        val bold = preferences.getQSStyleFontBold()
+        paint.typeface = when {
+            preferences.getQSStyleTypefaceSansSerif() -> {
                 if (bold) {
-                    Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+                    sansSerifBold
                 } else {
-                    Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
+                    sansSerifNormal
                 }
             }
-            Preferences.getQSStyleTypefaceSerif(context) -> {
+            preferences.getQSStyleTypefaceSerif() -> {
                 if (bold) {
-                    Typeface.create(Typeface.SERIF, Typeface.BOLD)
+                    serifBold
                 } else {
-                    Typeface.create(Typeface.SERIF, Typeface.NORMAL)
+                    serifNormal
                 }
             }
-            Preferences.getQSStyleTypefaceMonospace(context) -> {
+            preferences.getQSStyleTypefaceMonospace() -> {
                 if (bold) {
-                    Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+                    monospaceBold
                 } else {
-                    Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
+                    monospaceNormal
                 }
             }
-            else -> Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+            else -> sansSerifBold
         }
-        paint.typeface = typeface
 
         // Set text style from saved preference
-        val paintStyle: Paint.Style = when {
-            Preferences.getQSStyleTextFill(context) -> {
-                Paint.Style.FILL
+        val paintStyle = when {
+            preferences.getQSStyleTextFill() -> {
+                paintStyleFill
             }
-            Preferences.getQSStyleTextFillStroke(context) -> {
+            preferences.getQSStyleTextFillStroke() -> {
                 paint.strokeWidth = 3f.px / scaleRatio
-                Paint.Style.FILL_AND_STROKE
+                paintStyleFillAndStroke
             }
-            Preferences.getQSStyleTextStroke(context) -> {
+            preferences.getQSStyleTextStroke() -> {
                 paint.strokeWidth = 3f.px / scaleRatio
-                Paint.Style.STROKE
+                paintStyleStroke
             }
-            else -> Paint.Style.FILL
+            else -> paintStyleFill
         }
         paint.style = paintStyle
 
         // Set text skew from preference
-        paint.textSkewX = (-(Preferences.getQSStyleFontSkew(context) / 1.7).toFloat())
+        paint.textSkewX = (-(preferences.getQSStyleFontSkew() / 1.7).toFloat())
 
         // Set font SMCP from preference
-        if (Preferences.getQSStyleFontSMCP(context)) {
+        if (preferences.getQSStyleFontSMCP()) {
             paint.fontFeatureSettings = "smcp"
         }
 
         // Set font underline from preference
-        paint.isUnderlineText = Preferences.getQSStyleFontUnderline(context)
+        paint.isUnderlineText = preferences.getQSStyleFontUnderline()
 
-        paint.textAlign = Paint.Align.LEFT
+        paint.textAlign = paintAlignLeft
         paint.isAntiAlias = true
-        paint.color = Color.WHITE
+        paint.color = colorWhite
 
         // Calculate coordinates
         val rect = Rect()
@@ -138,7 +147,7 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData, private val con
         // Draw text
         canvas.drawText(
             displayTimeout,
-            x + ((Preferences.getQSStyleFontSpacing(context) * 7).px / scaleRatio),
+            x + ((preferences.getQSStyleFontSpacing() * 7).px / scaleRatio),
             y,
             paint
         )
@@ -148,21 +157,18 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData, private val con
         return bitmap
     }
 
-    private fun getShortcutBitmapFromText(timeout: Int, context: Context): Bitmap {
+    private fun getShortcutBitmapFromText(timeout: Int): Bitmap {
         val imageWidth = 25.px
         val imageHeight = 25.px
 
-        val textColor = Color.parseColor("#FF3B3B3B")
-        val shadowColor = Color.parseColor("#82222222")
-
-        val displayTimeout = KeepOnUtils.getDisplayTimeout(timeout, context)
+        val displayTimeout = commonUtils.getDisplayTimeout(timeout)
 
         val bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val paint = Paint()
         paint.isAntiAlias = true
-        paint.style = Paint.Style.FILL
-        paint.color = Color.WHITE
+        paint.style = paintStyleFill
+        paint.color = colorWhite
         paint.setShadowLayer(2f, 1f, 1f, shadowColor)
 
         canvas.drawCircle(
@@ -172,10 +178,10 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData, private val con
             paint
         )
 
-        paint.style = Paint.Style.STROKE
+        paint.style = paintStyleStroke
         paint.color = textColor
         paint.strokeWidth = 2f
-        paint.strokeCap = Paint.Cap.ROUND
+        paint.strokeCap = paintCapRound
 
         canvas.drawCircle(
             (imageWidth / 2).toFloat(),
@@ -191,67 +197,66 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData, private val con
             else -> 5f.px
         }
         // Set text size from saved preference
-        textSize += (Preferences.getQSStyleFontSize(context) / 2).px
+        textSize += (preferences.getQSStyleFontSize() / 2).px
         paint.textSize = textSize
 
         // Set typeface from saved preference
-        val bold = Preferences.getQSStyleFontBold(context)
-        val typeface: Typeface = when {
-            Preferences.getQSStyleTypefaceSansSerif(context) -> {
+        val bold = preferences.getQSStyleFontBold()
+        paint.typeface = when {
+            preferences.getQSStyleTypefaceSansSerif() -> {
                 if (bold) {
-                    Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+                    sansSerifBold
                 } else {
-                    Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
+                    sansSerifNormal
                 }
             }
-            Preferences.getQSStyleTypefaceSerif(context) -> {
+            preferences.getQSStyleTypefaceSerif() -> {
                 if (bold) {
-                    Typeface.create(Typeface.SERIF, Typeface.BOLD)
+                    serifBold
                 } else {
-                    Typeface.create(Typeface.SERIF, Typeface.NORMAL)
+                    serifNormal
                 }
             }
-            Preferences.getQSStyleTypefaceMonospace(context) -> {
+            preferences.getQSStyleTypefaceMonospace() -> {
                 if (bold) {
-                    Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+                    monospaceBold
                 } else {
-                    Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
+                    monospaceNormal
                 }
             }
-            else -> Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+            else -> sansSerifBold
         }
-        paint.typeface = typeface
 
         // Set text style from saved preference
-        val paintStyle: Paint.Style = when {
-            Preferences.getQSStyleTextFill(context) -> {
-                Paint.Style.FILL
+        val paintStyle = when {
+            preferences.getQSStyleTextFill() -> {
+                paintStyleFill
             }
-            Preferences.getQSStyleTextFillStroke(context) -> {
+            preferences.getQSStyleTextFillStroke() -> {
                 paint.strokeWidth = 1f.px
-                Paint.Style.FILL_AND_STROKE
+                paintStyleFillAndStroke
             }
-            Preferences.getQSStyleTextStroke(context) -> {
+            preferences.getQSStyleTextStroke() -> {
                 paint.strokeWidth = 1f.px
-                Paint.Style.STROKE
+                paintStyleStroke
             }
-            else -> Paint.Style.FILL
+            else -> paintStyleFill
         }
         paint.style = paintStyle
-        paint.strokeCap = Paint.Cap.ROUND
+        paint.strokeCap = paintCapRound
 
         // Set text skew from preference
-        paint.textSkewX = (-(Preferences.getQSStyleFontSkew(context) / 1.7).toFloat())
+        paint.textSkewX = (-(preferences.getQSStyleFontSkew() / 1.7).toFloat())
 
         // Set font SMCP from preference
-        if (Preferences.getQSStyleFontSMCP(context)) {
+        if (preferences.getQSStyleFontSMCP()) {
             paint.fontFeatureSettings = "smcp"
         }
 
         // Set font underline from preference
-        paint.isUnderlineText = Preferences.getQSStyleFontUnderline(context)
+        paint.isUnderlineText = preferences.getQSStyleFontUnderline()
 
-        paint.textAlign = Paint.Align.LEFT
+        paint.textAlign = paintAlignLeft
         paint.isAntiAlias = true
         paint.color = textColor
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
@@ -273,7 +278,7 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData, private val con
         // Draw text
         canvas.drawText(
             displayTimeout,
-            x + (Preferences.getQSStyleFontSpacing(context) / 2).px,
+            x + (preferences.getQSStyleFontSpacing() / 2).px,
             y,
             paint
         )
@@ -281,5 +286,25 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData, private val con
         canvas.restore()
 
         return bitmap
+    }
+
+    companion object {
+        private val sansSerifBold by lazy { Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD) }
+        private val sansSerifNormal by lazy { Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL) }
+        private val serifBold by lazy { Typeface.create(Typeface.SERIF, Typeface.BOLD) }
+        private val serifNormal by lazy { Typeface.create(Typeface.SERIF, Typeface.NORMAL) }
+        private val monospaceBold by lazy { Typeface.create(Typeface.MONOSPACE, Typeface.BOLD) }
+        private val monospaceNormal by lazy { Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL) }
+
+        private val paintStyleFill by lazy { Paint.Style.FILL }
+        private val paintStyleFillAndStroke by lazy { Paint.Style.FILL_AND_STROKE }
+        private val paintStyleStroke by lazy { Paint.Style.STROKE }
+        private val paintCapRound by lazy { Paint.Cap.ROUND }
+        private val paintAlignLeft by lazy { Paint.Align.LEFT }
+
+        private val colorTransparent by lazy { Color.TRANSPARENT }
+        private val colorWhite by lazy { Color.WHITE }
+        private val textColor by lazy { Color.parseColor("#FF3B3B3B") }
+        private val shadowColor by lazy { Color.parseColor("#82222222") }
     }
 }

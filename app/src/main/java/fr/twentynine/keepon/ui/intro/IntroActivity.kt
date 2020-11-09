@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.intro
+package fr.twentynine.keepon.ui.intro
 
 import android.content.ComponentName
 import android.content.Context
@@ -6,9 +6,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.provider.Settings
-import android.view.Window
-import android.view.WindowManager
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.github.appintro.AppIntro2
 import com.github.appintro.AppIntroFragment
@@ -16,25 +13,28 @@ import com.github.appintro.AppIntroPageTransformerType
 import com.github.appintro.indicator.PageIndicatorAnimationType
 import com.github.appintro.indicator.PageIndicatorViewIndicatorController
 import com.github.appintro.model.SliderPage
-import fr.twentynine.keepon.MainActivity
+import fr.twentynine.keepon.ui.MainActivity
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.intro.fragments.IntroFragmentAddQSTile
-import fr.twentynine.keepon.intro.fragments.IntroFragmentNotification
-import fr.twentynine.keepon.intro.fragments.IntroFragmentPermission
-import fr.twentynine.keepon.utils.BundleScrubber
-import fr.twentynine.keepon.utils.KeepOnUtils
-import fr.twentynine.keepon.utils.Preferences
+import fr.twentynine.keepon.di.ToothpickHelper
+import fr.twentynine.keepon.ui.intro.fragments.IntroFragmentAddQSTile
+import fr.twentynine.keepon.ui.intro.fragments.IntroFragmentNotification
+import fr.twentynine.keepon.ui.intro.fragments.IntroFragmentPermission
+import fr.twentynine.keepon.utils.ActivityUtils
+import fr.twentynine.keepon.utils.CommonUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
+import toothpick.ktp.delegate.lazy
 
 class IntroActivity : AppIntro2() {
+
+    private val activityUtils: ActivityUtils by lazy()
+    private val commonUtils: CommonUtils by lazy()
+    private val preferences: Preferences by lazy()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // A hack to prevent a private serializable classloader attack
-        if (BundleScrubber.scrub(intent)) {
-            finish()
-            return
-        }
+        // Inject dependencies with Toothpick
+        ToothpickHelper.scopedInjection(this)
 
         // Ignore implicit intents, because they are not valid.
         if (packageName != intent.getPackage() && ComponentName(this, this.javaClass.name) != intent.component) {
@@ -78,10 +78,10 @@ class IntroActivity : AppIntro2() {
         sliderPageInfo4.backgroundColor = COLOR_SLIDE_INFO4
 
         // Check if it's first launch or help launch
-        if (Preferences.getSkipIntro(this)) {
+        if (preferences.getSkipIntro()) {
             addSlide(AppIntroFragment.newInstance(sliderPageHome))
             if (!Settings.System.canWrite(this.applicationContext)) addSlide(IntroFragmentPermission.newInstance())
-            if (KeepOnUtils.isNotificationEnabled(this)) addSlide(IntroFragmentNotification.newInstance())
+            if (activityUtils.isNotificationEnabled()) addSlide(IntroFragmentNotification.newInstance())
             addSlide(AppIntroFragment.newInstance(sliderPageInfo1))
             addSlide(AppIntroFragment.newInstance(sliderPageInfo2))
             addSlide(AppIntroFragment.newInstance(sliderPageInfo3))
@@ -109,17 +109,17 @@ class IntroActivity : AppIntro2() {
 
         indicatorController = PageIndicatorViewIndicatorController(this, null, PageIndicatorAnimationType.DROP)
 
-        isWizardMode = !Preferences.getSkipIntro(this)
+        isWizardMode = !preferences.getSkipIntro()
         isButtonsEnabled = true
         showStatusBar(true)
         isColorTransitionsEnabled = true
 
-        KeepOnUtils.startScreenTimeoutObserverService(this)
+        commonUtils.startScreenTimeoutObserverService()
 
         // Set initial timeout for first launch
-        if (!Preferences.getSkipIntro(this)) {
-            Preferences.setOriginalTimeout(Preferences.getCurrentTimeout(this), this)
-            Preferences.setPreviousValue(Preferences.getCurrentTimeout(this), this)
+        if (!preferences.getSkipIntro()) {
+            preferences.setOriginalTimeout(preferences.getCurrentTimeout())
+            preferences.setPreviousValue(preferences.getCurrentTimeout())
         }
     }
 
@@ -127,64 +127,15 @@ class IntroActivity : AppIntro2() {
         if (Settings.System.canWrite(this)) {
             super.onDonePressed(currentFragment)
 
-            Preferences.setSkipIntro(true, this)
+            preferences.setSkipIntro(true)
             startActivity(Intent(this, MainActivity::class.java))
             finish()
-        }
-    }
-
-    override fun onSlideChanged(oldFragment: Fragment?, newFragment: Fragment?) {
-        super.onSlideChanged(oldFragment, newFragment)
-
-        if (newFragment != null && newFragment.view != null) {
-            val title: TextView = newFragment.requireView().findViewById(R.id.title)
-
-            when (title.text) {
-                getString(R.string.intro_home_title) -> {
-                    setNavBarColor(COLOR_SLIDE_HOME)
-                    changeStatusBarColor(COLOR_SLIDE_HOME)
-                }
-                getString(R.string.dialog_permission_title) -> {
-                    setNavBarColor(COLOR_SLIDE_PERM)
-                    changeStatusBarColor(COLOR_SLIDE_PERM)
-                }
-                getString(R.string.dialog_notification_title) -> {
-                    setNavBarColor(COLOR_SLIDE_NOTIF)
-                    changeStatusBarColor(COLOR_SLIDE_NOTIF)
-                }
-                getString(R.string.intro_info1_title) -> {
-                    setNavBarColor(COLOR_SLIDE_INFO1)
-                    changeStatusBarColor(COLOR_SLIDE_INFO1)
-                }
-                getString(R.string.intro_info2_title) -> {
-                    setNavBarColor(COLOR_SLIDE_INFO2)
-                    changeStatusBarColor(COLOR_SLIDE_INFO2)
-                }
-                getString(R.string.intro_info3_title) -> {
-                    setNavBarColor(COLOR_SLIDE_INFO3)
-                    changeStatusBarColor(COLOR_SLIDE_INFO3)
-                }
-                getString(R.string.intro_info4_title) -> {
-                    setNavBarColor(COLOR_SLIDE_INFO4)
-                    changeStatusBarColor(COLOR_SLIDE_INFO4)
-                }
-                getString(R.string.intro_qstile_title) -> {
-                    setNavBarColor(COLOR_SLIDE_QSTILE)
-                    changeStatusBarColor(COLOR_SLIDE_QSTILE)
-                }
-            }
         }
     }
 
     public override fun onSkipPressed(currentFragment: Fragment?) {
         super.onSkipPressed(currentFragment)
         finish()
-    }
-
-    private fun changeStatusBarColor(color: Int) {
-        val window: Window = window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = color
     }
 
     companion object {

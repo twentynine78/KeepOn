@@ -4,18 +4,28 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.tasker.Intent.Companion.ACTION_FIRE_SETTING
 import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_BUNDLE
 import fr.twentynine.keepon.tasker.PluginBundleManager.Companion.isBundleValid
 import fr.twentynine.keepon.utils.BundleScrubber
-import fr.twentynine.keepon.utils.Preferences
+import fr.twentynine.keepon.utils.preferences.Preferences
+import toothpick.ktp.delegate.lazy
 
 class FireReceiver : BroadcastReceiver() {
 
+    private val bundleScrubber: BundleScrubber by lazy()
+    private val preferences: Preferences by lazy()
+
+    init {
+        // Inject dependencies with Toothpick
+        ToothpickHelper.scopedInjection(this)
+    }
+
     override fun onReceive(context: Context, intent: Intent) {
         // A hack to prevent a private serializable classloader attack
-        if (BundleScrubber.scrub(intent)) {
+        if (bundleScrubber.scrub(intent)) {
             return
         }
 
@@ -31,13 +41,13 @@ class FireReceiver : BroadcastReceiver() {
 
         val bundle = intent.getBundleExtra(EXTRA_BUNDLE)
 
-        if (BundleScrubber.scrub(intent) || null == bundle || !isBundleValid(bundle)) {
+        if (bundleScrubber.scrub(intent) || null == bundle || !isBundleValid(bundle)) {
             return
         }
 
         val timeoutValue = bundle.getInt(PluginBundleManager.BUNDLE_EXTRA_TIMEOUT_VALUE)
 
-        if (timeoutValue == -42 || timeoutValue == -43 || Preferences.getTimeoutValueArray().contains(timeoutValue)) {
+        if (timeoutValue == -42 || timeoutValue == -43 || preferences.getTimeoutValueArray().contains(timeoutValue)) {
             val broadcastIntent = Intent(context.applicationContext, ServicesManagerReceiver::class.java)
             broadcastIntent.action = ServicesManagerReceiver.ACTION_SET_TIMEOUT
             broadcastIntent.putExtra("timeout", timeoutValue)

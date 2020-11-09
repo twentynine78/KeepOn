@@ -14,35 +14,46 @@ import androidx.collection.ArrayMap
 import androidx.collection.arrayMapOf
 import com.google.android.material.radiobutton.MaterialRadioButton
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.tasker.Intent.Companion.ACTION_EDIT_SETTING
 import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_BUNDLE
 import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_STRING_BLURB
 import fr.twentynine.keepon.utils.BundleScrubber
-import fr.twentynine.keepon.utils.Preferences
+import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.android.synthetic.main.activity_tasker_edit.*
+import toothpick.ktp.delegate.lazy
 
 class EditActivity : AppCompatActivity() {
-    private var isCancelled = false
 
-    private val timeoutMap: ArrayMap<Int, Int> = arrayMapOf(
-        R.id.timeout_previous to -43,
-        R.id.timeout_default to -42,
-        R.id.timeout_15_seconds to Preferences.getTimeoutValueArray()[0],
-        R.id.timeout_30_seconds to Preferences.getTimeoutValueArray()[1],
-        R.id.timeout_1_minute to Preferences.getTimeoutValueArray()[2],
-        R.id.timeout_2_minutes to Preferences.getTimeoutValueArray()[3],
-        R.id.timeout_5_minutes to Preferences.getTimeoutValueArray()[4],
-        R.id.timeout_10_minutes to Preferences.getTimeoutValueArray()[5],
-        R.id.timeout_30_minutes to Preferences.getTimeoutValueArray()[6],
-        R.id.timeout_1_hour to Preferences.getTimeoutValueArray()[7],
-        R.id.timeout_infinite to Preferences.getTimeoutValueArray()[8]
-    )
+    private val bundleScrubber: BundleScrubber by lazy()
+    private val preferences: Preferences by lazy()
+
+    private val timeoutMap: ArrayMap<Int, Int> by lazy {
+        arrayMapOf(
+            R.id.timeout_previous to -43,
+            R.id.timeout_default to -42,
+            R.id.timeout_15_seconds to preferences.getTimeoutValueArray()[0],
+            R.id.timeout_30_seconds to preferences.getTimeoutValueArray()[1],
+            R.id.timeout_1_minute to preferences.getTimeoutValueArray()[2],
+            R.id.timeout_2_minutes to preferences.getTimeoutValueArray()[3],
+            R.id.timeout_5_minutes to preferences.getTimeoutValueArray()[4],
+            R.id.timeout_10_minutes to preferences.getTimeoutValueArray()[5],
+            R.id.timeout_30_minutes to preferences.getTimeoutValueArray()[6],
+            R.id.timeout_1_hour to preferences.getTimeoutValueArray()[7],
+            R.id.timeout_infinite to preferences.getTimeoutValueArray()[8]
+        )
+    }
+
+    private var isCancelled = false
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Inject dependencies with Toothpick
+        ToothpickHelper.scopedInjection(this)
+
         // A hack to prevent a private serializable classloader attack
-        if (BundleScrubber.scrub(intent)) {
+        if (bundleScrubber.scrub(intent)) {
             setResult(RESULT_CANCELED)
             finish()
             return
@@ -63,7 +74,7 @@ class EditActivity : AppCompatActivity() {
         }
 
         // Set DarkTheme
-        if (Preferences.getDarkTheme(this)) {
+        if (preferences.getDarkTheme()) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
 
@@ -79,7 +90,7 @@ class EditActivity : AppCompatActivity() {
         fab_save.setOnClickListener { finish() }
 
         // Disable option 'previous value' if no previous value found
-        if (Preferences.getPreviousValue(this) == 0) {
+        if (preferences.getPreviousValue() == 0) {
             timeout_previous.isEnabled = false
         }
 
@@ -98,7 +109,7 @@ class EditActivity : AppCompatActivity() {
 
         val forwardedBundle = intent.getBundleExtra(EXTRA_BUNDLE)
 
-        if (PluginBundleManager.isBundleValid(forwardedBundle) && forwardedBundle != null) {
+        if (forwardedBundle != null && PluginBundleManager.isBundleValid(forwardedBundle)) {
             val forwardedTimeout = forwardedBundle.getInt(PluginBundleManager.BUNDLE_EXTRA_TIMEOUT_VALUE)
             if (timeoutMap.containsValue(forwardedTimeout)) {
                 var timeoutCheckedId = -1
@@ -150,7 +161,7 @@ class EditActivity : AppCompatActivity() {
 
                 val resultIntent = Intent()
                 val resultBundle = Bundle()
-                resultBundle.putInt(PluginBundleManager.BUNDLE_EXTRA_TIMEOUT_VALUE, timeout!!)
+                if (timeout != null) resultBundle.putInt(PluginBundleManager.BUNDLE_EXTRA_TIMEOUT_VALUE, timeout)
                 resultIntent.putExtra(EXTRA_BUNDLE, resultBundle)
 
                 // add text for display in tasker

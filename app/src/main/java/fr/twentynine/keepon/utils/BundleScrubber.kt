@@ -2,8 +2,12 @@ package fr.twentynine.keepon.utils
 
 import android.content.Intent
 import android.os.Bundle
+import fr.twentynine.keepon.di.annotation.ApplicationScope
+import javax.inject.Singleton
 
-object BundleScrubber {
+@ApplicationScope
+@Singleton
+class BundleScrubber {
 
     fun scrub(intent: Intent?): Boolean {
         return if (null == intent) {

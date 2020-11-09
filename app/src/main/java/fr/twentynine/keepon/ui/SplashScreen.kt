@@ -1,4 +1,4 @@
-package fr.twentynine.keepon
+package fr.twentynine.keepon.ui
 
 import android.content.ComponentName
 import android.content.Context
@@ -10,19 +10,28 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
-import fr.twentynine.keepon.intro.IntroActivity
+import fr.twentynine.keepon.R
+import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
+import fr.twentynine.keepon.ui.intro.IntroActivity
 import fr.twentynine.keepon.utils.BundleScrubber
-import fr.twentynine.keepon.utils.Preferences
+import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import toothpick.ktp.delegate.lazy
 
 class SplashScreen : AppCompatActivity() {
 
+    private val bundleScrubber: BundleScrubber by lazy()
+    private val preferences: Preferences by lazy()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Inject dependencies with Toothpick
+        ToothpickHelper.scopedInjection(this)
 
         // Manage shortcut
         if (intent.action == ServicesManagerReceiver.ACTION_SET_TIMEOUT) {
@@ -30,9 +39,7 @@ class SplashScreen : AppCompatActivity() {
             moveTaskToBack(true)
 
             // A hack to prevent a private serializable classloader attack and ignore implicit intents, because they are not valid
-            if (BundleScrubber.scrub(intent) ||
-                (packageName != intent.getPackage() && ComponentName(this, this.javaClass.name) != intent.component)
-            ) {
+            if (bundleScrubber.scrub(intent) || (packageName != intent.getPackage() && ComponentName(this, this.javaClass.name) != intent.component)) {
                 finish()
                 return
             }
@@ -51,6 +58,7 @@ class SplashScreen : AppCompatActivity() {
                     sendBroadcast(broadcastIntent)
                 }
             }
+
             finish()
             return
         }
@@ -79,14 +87,14 @@ class SplashScreen : AppCompatActivity() {
         // Set DarkTheme
         val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
-            Preferences.setDarkTheme(true, this)
+            preferences.setDarkTheme(true)
         }
 
-        if (Preferences.getDarkTheme(this)) {
+        if (preferences.getDarkTheme()) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
 
-        if (!Preferences.getSkipIntro(this)) {
+        if (!preferences.getSkipIntro()) {
             // Start Intro on first launch
             lifecycleScope.launch(Dispatchers.Main) {
                 delay(SPLASH_TIME_OUT)

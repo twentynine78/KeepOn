@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.intro.fragments
+package fr.twentynine.keepon.ui.intro.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,15 +7,27 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.github.appintro.SlideBackgroundColorHolder
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.intro.IntroActivity.Companion.COLOR_SLIDE_QSTILE
-import fr.twentynine.keepon.utils.KeepOnUtils
-import fr.twentynine.keepon.utils.Preferences
+import fr.twentynine.keepon.di.ToothpickHelper
+import fr.twentynine.keepon.ui.intro.IntroActivity.Companion.COLOR_SLIDE_QSTILE
+import fr.twentynine.keepon.utils.ActivityUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.android.synthetic.main.fragment_intro_button.view.*
+import toothpick.ktp.delegate.lazy
 
 class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder {
 
+    private val activityUtils: ActivityUtils by lazy()
+    private val preferences: Preferences by lazy()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_intro_button, container, false)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Inject dependencies with Toothpick
+        ToothpickHelper.scopedInjection(this)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -23,10 +35,10 @@ class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder {
         setBackgroundColor(defaultBackgroundColor)
 
         val mButton = view.button
-        mButton.setBackgroundColor(KeepOnUtils.darkerColor(COLOR_SLIDE_QSTILE, 0.4f))
+        mButton.setBackgroundColor(activityUtils.darkerColor(COLOR_SLIDE_QSTILE, 0.4f))
         mButton.text = getString(R.string.intro_qstile_button)
         mButton.setOnClickListener {
-            KeepOnUtils.getAddQSTileDialog(requireContext()).show()
+            activityUtils.getAddQSTileDialog().show()
         }
 
         val mTitle = view.title
@@ -38,7 +50,7 @@ class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder {
         val mImage2 = view.image2
         mImage2.setImageResource(R.mipmap.img_intro_qstile_2)
 
-        if (Preferences.getTileAdded(requireContext())) {
+        if (preferences.getTileAdded()) {
             mButton.visibility = View.INVISIBLE
         } else {
             mButton.visibility = View.VISIBLE
@@ -54,16 +66,17 @@ class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder {
         get() = COLOR_SLIDE_QSTILE
 
     override fun setBackgroundColor(backgroundColor: Int) {
-        requireView().main.setBackgroundColor(backgroundColor)
+        view?.main?.setBackgroundColor(backgroundColor)
     }
 
     private fun updateButtonVisibility() {
-        val mButton = requireView().button
-        if (mButton != null) {
-            if (Preferences.getTileAdded(requireContext())) {
-                mButton.visibility = View.INVISIBLE
-            } else {
-                mButton.visibility = View.VISIBLE
+        view?.let {
+            if (it.button != null) {
+                if (preferences.getTileAdded()) {
+                    it.button.visibility = View.INVISIBLE
+                } else {
+                    it.button.visibility = View.VISIBLE
+                }
             }
         }
     }

@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.utils.preferences
+package fr.twentynine.keepon.utils.preferences.provider
 
 import android.content.Context
 import android.content.SharedPreferences

@@ -10,49 +10,96 @@ import android.os.IBinder
 import android.provider.Settings
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ServiceLifecycleDispatcher
 import com.bumptech.glide.Priority
+import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import fr.twentynine.keepon.MainActivity
-import fr.twentynine.keepon.glide.GlideApp
-import fr.twentynine.keepon.glide.TimeoutIconData
+import fr.twentynine.keepon.di.ToothpickHelper
+import fr.twentynine.keepon.utils.glide.TimeoutIconData
+import fr.twentynine.keepon.ui.MainActivity
 import fr.twentynine.keepon.utils.BundleScrubber
-import fr.twentynine.keepon.utils.KeepOnUtils
-import fr.twentynine.keepon.utils.Preferences
+import fr.twentynine.keepon.utils.CommonUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
+import toothpick.ktp.delegate.lazy
 
-class KeepOnTileService : TileService() {
+class KeepOnTileService : TileService(), LifecycleOwner {
+
+    private val commonUtils: CommonUtils by lazy()
+    private val bundleScrubber: BundleScrubber by lazy()
+    private val preferences: Preferences by lazy()
+    private val glideApp: RequestManager by lazy()
+
+    private val qsGlideTarget: CustomTarget<Bitmap> by lazy {
+        object : CustomTarget<Bitmap>(50.px, 50.px) {
+            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                if (qsTile != null) {
+                    qsTile.state =
+                        if (preferences.getKeepOnState()) {
+                            Tile.STATE_ACTIVE
+                        } else {
+                            Tile.STATE_INACTIVE
+                        }
+
+                    qsTile.icon = Icon.createWithBitmap(resource)
+
+                    qsTile.updateTile()
+                }
+            }
+            override fun onLoadCleared(placeholder: Drawable?) {}
+        }
+    }
+
+    private val dispatcher = ServiceLifecycleDispatcher(this)
 
     private val Int.px: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
+    private var lastSetTimeout: Int
+        get() = globalLastSetTimeout
+        set(value) { globalLastSetTimeout = value }
+
+    override fun onCreate() {
+        dispatcher.onServicePreSuperOnCreate()
+        super.onCreate()
+
+        // Inject dependencies with Toothpick
+        ToothpickHelper.scopedInjection(this)
+    }
+
     override fun onBind(intent: Intent?): IBinder? {
         if (intent != null) {
             // A hack to prevent a private serializable classloader attack and ignore implicit intents, because they are not valid
-            if (BundleScrubber.scrub(intent) ||
-                (packageName != intent.getPackage() && ComponentName(this, this.javaClass.name) != intent.component)
-            ) {
-                return super.onBind(intent)
+            if (bundleScrubber.scrub(intent) || (packageName != intent.getPackage() && ComponentName(this, this.javaClass.name) != intent.component)) {
+                return null
             }
         }
 
-        Preferences.setTileAdded(true, this)
+        if (!preferences.getTileAdded()) {
+            preferences.setTileAdded(true)
+            requestListeningState(this, ComponentName(this, this::class.java))
+        }
 
-        KeepOnUtils.startScreenTimeoutObserverService(this)
+        commonUtils.startScreenTimeoutObserverService()
 
-        requestListeningState(this, ComponentName(this, KeepOnTileService::class.java))
+        dispatcher.onServicePreSuperOnBind()
         return super.onBind(intent)
     }
 
     override fun onTileAdded() {
+        preferences.setTileAdded(true)
+
+        requestListeningState(this, ComponentName(this, this::class.java))
+
+        commonUtils.startScreenTimeoutObserverService()
+
         super.onTileAdded()
-
-        Preferences.setTileAdded(true, this)
-
-        requestListeningState(this, ComponentName(this, KeepOnTileService::class.java))
     }
 
     override fun onTileRemoved() {
-        Preferences.setTileAdded(false, this)
+        preferences.setTileAdded(false)
 
         super.onTileRemoved()
 
@@ -63,57 +110,56 @@ class KeepOnTileService : TileService() {
         super.onStartListening()
 
         if (qsTile != null) {
-            val newTimeout = Preferences.getCurrentTimeout(this)
+            val newTimeout = preferences.getCurrentTimeout()
 
-            // Create bitmap and load to tile icon
-            GlideApp.with(this)
-                .asBitmap()
-                .priority(Priority.HIGH)
-                .load(TimeoutIconData(newTimeout, 2, KeepOnUtils.getIconStyleSignature(this)))
-                .into(object : CustomTarget<Bitmap>(50.px, 50.px) {
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        if (qsTile != null) {
-                            qsTile.state =
-                                if (Preferences.getKeepOnState(this@KeepOnTileService)) {
-                                    Tile.STATE_ACTIVE
-                                } else {
-                                    Tile.STATE_INACTIVE
-                                }
-                            qsTile.icon = Icon.createWithBitmap(resource)
-
-                            qsTile.updateTile()
-                        }
-                    }
-
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                    }
-                })
+            if (lastSetTimeout != newTimeout) {
+                // Create bitmap and load to tile icon
+                glideApp
+                    .asBitmap()
+                    .priority(Priority.HIGH)
+                    .load(TimeoutIconData(newTimeout, 2, commonUtils.getIconStyleSignature()))
+                    .into(qsGlideTarget)
+            } else {
+                qsTile.updateTile()
+            }
+            lastSetTimeout = newTimeout
         }
     }
 
     override fun onClick() {
         super.onClick()
-        Preferences.setTileAdded(true, this)
 
-        if (Preferences.getSkipIntro(this)) {
-            if (Preferences.getSelectedTimeout(this).size < 1 ||
-                !Settings.System.canWrite(this)
-            ) {
+        if (preferences.getSkipIntro()) {
+            if (preferences.getSelectedTimeout().size < 1 || !Settings.System.canWrite(this)) {
                 val mainIntent = MainActivity.newIntent(this.applicationContext)
-                mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
-                if (Preferences.getSelectedTimeout(this).size < 1 && Settings.System.canWrite(this)) {
-                    mainIntent.putExtra(KeepOnUtils.TAG_MISSING_SETTINGS, true)
-                    KeepOnUtils.sendBroadcastMissingSettings(this)
+                if (preferences.getSelectedTimeout().size < 1 && Settings.System.canWrite(this)) {
+                    mainIntent.action = MainActivity.ACTION_MISSING_SETTINGS
+                    commonUtils.sendBroadcastMissingSettings()
                 }
-
                 startActivityAndCollapse(mainIntent)
-                return
             }
-
-            KeepOnUtils.startScreenTimeoutObserverService(this)
-
-            Preferences.setTimeout(Preferences.getNextTimeoutValue(this), this)
+            preferences.setTimeout(preferences.getNextTimeoutValue())
         }
+    }
+
+    override fun getLifecycle(): Lifecycle {
+        return dispatcher.lifecycle
+    }
+
+    override fun onDestroy() {
+        dispatcher.onServicePreSuperOnDestroy()
+        super.onDestroy()
+    }
+
+    @Suppress("deprecation")
+    override fun onStart(intent: Intent?, startId: Int) {
+        dispatcher.onServicePreSuperOnStart()
+        super.onStart(intent, startId)
+    }
+
+    companion object {
+        private var globalLastSetTimeout = -1
     }
 }

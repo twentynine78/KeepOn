@@ -1,7 +1,6 @@
-package fr.twentynine.keepon
+package fr.twentynine.keepon.ui
 
 import android.animation.Animator
-import android.app.Dialog
 import android.app.admin.DevicePolicyManager
 import android.content.BroadcastReceiver
 import android.content.ComponentName
@@ -16,10 +15,8 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings.System.canWrite
-import android.service.quicksettings.TileService
 import android.text.Html
 import android.util.DisplayMetrics
 import android.view.Menu
@@ -33,29 +30,29 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Priority
+import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.switchmaterial.SwitchMaterial
-import fr.twentynine.keepon.generate.Rate
-import fr.twentynine.keepon.glide.GlideApp
-import fr.twentynine.keepon.glide.TimeoutIconData
-import fr.twentynine.keepon.intro.IntroActivity
-import fr.twentynine.keepon.services.KeepOnTileService
-import fr.twentynine.keepon.utils.BundleScrubber
-import fr.twentynine.keepon.utils.KeepOnUtils
-import fr.twentynine.keepon.utils.Preferences
+import fr.twentynine.keepon.R
+import fr.twentynine.keepon.di.ToothpickHelper
+import fr.twentynine.keepon.ui.intro.IntroActivity
+import fr.twentynine.keepon.utils.ActivityUtils
+import fr.twentynine.keepon.utils.CommonUtils
+import fr.twentynine.keepon.utils.Rate
+import fr.twentynine.keepon.utils.glide.TimeoutIconData
+import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bottom_sheet_tile_settings.*
 import kotlinx.android.synthetic.main.card_main_about.*
 import kotlinx.android.synthetic.main.card_main_settings.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
+import toothpick.ktp.delegate.lazy
 import java.util.Formatter
 import java.util.Locale
 import kotlin.collections.ArrayList
@@ -63,13 +60,19 @@ import kotlin.math.hypot
 import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
+
     data class TimeoutSwitch(val switch: SwitchMaterial, val timeoutValue: Int)
 
-    private var missingSettingsDialog: Dialog? = null
-    private var permissionDialog: Dialog? = null
-    private var notificationDialog: Dialog? = null
-    private var rate: Rate? = null
-    private var snackbar: Snackbar? = null
+    private val activityUtils: ActivityUtils by lazy()
+    private val commonUtils: CommonUtils by lazy()
+    private val preferences: Preferences by lazy()
+    private val rate: Rate by lazy()
+    private val glideApp: RequestManager by lazy()
+
+    private val snackbar: Snackbar by lazy {
+        Snackbar.make(findViewById(android.R.id.content), getString(R.string.settings_save), Snackbar.LENGTH_LONG)
+            .setAnchorView(R.id.bottomSheet)
+    }
 
     private var receiverRegistered = false
 
@@ -90,12 +93,6 @@ class MainActivity : AppCompatActivity() {
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent != null) {
-                // A hack to prevent a private serializable classloader attack
-                if (BundleScrubber.scrub(intent)) {
-                    finish()
-                    return
-                }
-
                 when (intent.action) {
                     ACTION_UPDATE_UI -> {
                         // Update all switch from saved preference
@@ -106,9 +103,9 @@ class MainActivity : AppCompatActivity() {
                     }
                     ACTION_MISSING_SETTINGS -> {
                         // Show missing settings dialog
-                        if (Preferences.getSelectedTimeout(context!!).size <= 1) {
-                            if (!missingSettingsDialog!!.isShowing) {
-                                missingSettingsDialog?.show()
+                        if (preferences.getSelectedTimeout().size <= 1) {
+                            if (!activityUtils.getMissingSettingsDialog().isShowing) {
+                                activityUtils.getMissingSettingsDialog().show()
                             }
                         }
                     }
@@ -120,11 +117,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // A hack to prevent a private serializable classloader attack
-        if (BundleScrubber.scrub(intent)) {
-            finish()
-            return
-        }
+        // Install Toothpick Activity module and inject
+        ToothpickHelper.scopedInjection(this)
 
         // Ignore implicit intents, because they are not valid.
         if (packageName != intent.getPackage() && ComponentName(this, this.javaClass.name) != intent.component) {
@@ -132,35 +126,30 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        if (!Preferences.getSkipIntro(this)) {
+        if (!preferences.getSkipIntro()) {
             // Start SplashScreen
             val splashIntent = SplashScreen.newIntent(this.applicationContext)
-            splashIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(splashIntent)
             finish()
             return
         }
 
         // Set DarkTheme
-        if (Preferences.getDarkTheme(this)) {
+        if (preferences.getDarkTheme()) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        // Create Snackbar for saving settings
-        snackbar = Snackbar.make(findViewById(android.R.id.content), getString(R.string.settings_save), Snackbar.LENGTH_LONG)
-            .setAnchorView(R.id.bottomSheet)
-
         // Set OnClickListener for each switch
         for (timeoutSwitch: TimeoutSwitch in getTimeoutSwitchsArray()) {
             timeoutSwitch.switch.setOnClickListener { saveSelectedSwitch() }
             timeoutSwitch.switch.setOnLongClickListener {
-                KeepOnUtils.getDefaultTimeoutDialog(
+                activityUtils.getDefaultTimeoutDialog(
                     timeoutSwitch.timeoutValue,
-                    timeoutSwitch.switch.text.toString(),
-                    this
+                    timeoutSwitch.switch.text.toString()
                 ).show()
 
                 true
@@ -169,67 +158,62 @@ class MainActivity : AppCompatActivity() {
 
         // Set OnClickListener to open credits dialog
         card_about_credits_label.setOnClickListener {
-            KeepOnUtils.getCreditsDialog(this).show()
+            activityUtils.getCreditsDialog().show()
         }
         card_about_credits.setOnClickListener {
-            KeepOnUtils.getCreditsDialog(this).show()
+            activityUtils.getCreditsDialog().show()
         }
 
         // Manage checkbox for monitor screen off or not
-        checkBoxScreenOff.isChecked = Preferences.getResetTimeoutOnScreenOff(this)
+        checkBoxScreenOff.isChecked = preferences.getResetTimeoutOnScreenOff()
         checkBoxScreenOff.setOnCheckedChangeListener { _, isChecked ->
-            Preferences.setResetTimeoutOnScreenOff(isChecked, this)
+            preferences.setResetTimeoutOnScreenOff(isChecked)
 
             if (!isChecked) {
-                KeepOnUtils.stopScreenOffReceiverService(this)
+                commonUtils.stopScreenOffReceiverService()
             }
 
-            if (Preferences.getKeepOnState(this) && isChecked) {
-                KeepOnUtils.startScreenOffReceiverService(this)
+            if (preferences.getKeepOnState() && isChecked) {
+                commonUtils.startScreenOffReceiverService()
             }
-            snackbar?.show()
+            snackbar.show()
         }
 
         // Set application version on about card
         val sVersion = StringBuilder(getString(R.string.about_card_version))
             .append(" ")
-            .append(KeepOnUtils.getAppVersion(this))
+            .append(activityUtils.getAppVersion())
         card_about_version_tv.text = Html.fromHtml(sVersion.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
 
-        animateCardView()
-
-        // Create Dialogs
-        missingSettingsDialog = KeepOnUtils.getMissingSettingsDialog(this)
-        permissionDialog = KeepOnUtils.getPermissionDialog(this, MainActivity::class.java)
-        notificationDialog = KeepOnUtils.getNotificationDialog(this, MainActivity::class.java)
+        animateViews()
 
         // Show dialog if missing settings on tile click
-        if (intent.extras != null) {
-            if (intent.extras!!.getBoolean(KeepOnUtils.TAG_MISSING_SETTINGS, false) &&
-                Preferences.getSelectedTimeout(this).size <= 1
-            ) {
-                if (!missingSettingsDialog!!.isShowing) {
-                    missingSettingsDialog?.show()
+        if (intent.action != null) {
+            if (intent.action == ACTION_MISSING_SETTINGS && preferences.getSelectedTimeout().size <= 1) {
+                if (!activityUtils.getMissingSettingsDialog().isShowing) {
+                    activityUtils.getMissingSettingsDialog().show()
                 }
             }
         }
 
         // Set OnClick listener for bottom sheet peek views
-        bottomSheetPeekTextView.setOnClickListener {
+        val bottomSheetStateOnClickListener = View.OnClickListener {
             if (BottomSheetBehavior.from(bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED) {
                 BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
             } else {
                 BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
+        bottomSheetPeekTextView.setOnClickListener { bottomSheetStateOnClickListener.onClick(it) }
+        bottomSheetPeekArrow.setOnClickListener { bottomSheetStateOnClickListener.onClick(it) }
 
         // Set OnClick listener for Tile Preview to switch like from Quick Settings
         tilePreview.setOnClickListener {
-            if (Preferences.getSelectedTimeout(this).size < 1) {
-                KeepOnUtils.sendBroadcastMissingSettings(this)
+            if (preferences.getSelectedTimeout().size < 1) {
+                commonUtils.sendBroadcastMissingSettings()
             }
 
-            Preferences.setTimeout(Preferences.getNextTimeoutValue(this), this)
+            preferences.setTimeout(preferences.getNextTimeoutValue())
         }
 
         // Define tile preview max size and adjust bottomsheet margin view height
@@ -255,22 +239,15 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (snackbar!!.isShown) snackbar?.dismiss()
+                if (snackbar.isShown) snackbar.dismiss()
             }
         })
-
-        // Set initial bottom sheet state
-        BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
 
         // Load QS Style preference
         loadQSStylePreferences()
 
-        // Build Generate snackbar
-        rate = Rate.Builder(this)
-            .setFeedbackAction(Uri.parse(SUPPORT_URI))
-            .setSnackBarParent(cardViewContainer)
-            .build()
-            .count()
+        // Add count to Genrate
+        rate.count()
     }
 
     override fun onResume() {
@@ -279,16 +256,16 @@ class MainActivity : AppCompatActivity() {
         // Check permission to write settings
         if (canWrite(this)) {
             // Show Dialog to disable notifications if enabled
-            if (KeepOnUtils.isNotificationEnabled(this)) {
-                if (!notificationDialog!!.isShowing) {
-                    notificationDialog?.show()
+            if (activityUtils.isNotificationEnabled()) {
+                if (!activityUtils.getNotificationDialog().isShowing) {
+                    activityUtils.getNotificationDialog().show()
                 }
             }
 
             registerBroadcastReceiver()
 
             // Start service to monitor screen timeout
-            KeepOnUtils.startScreenTimeoutObserverService(this)
+            commonUtils.startScreenTimeoutObserverService()
 
             // Update all switch from saved preference
             updateSwitchs(getTimeoutSwitchsArray())
@@ -296,12 +273,23 @@ class MainActivity : AppCompatActivity() {
             // Set tile preview Image View
             updateTilePreview()
 
+            // Show dialog if missing settings on tile click
+            if (intent != null && intent.action != null) {
+                if (intent.action == ACTION_MISSING_SETTINGS &&
+                    preferences.getSelectedTimeout().size <= 1
+                ) {
+                    if (!activityUtils.getMissingSettingsDialog().isShowing) {
+                        activityUtils.getMissingSettingsDialog().show()
+                    }
+                }
+            }
+
             // Show Genrate snackbar
-            rate?.showRequest()
+            rate.showRequest()
         } else {
             // Show permission Dialog
-            if (!permissionDialog!!.isShowing) {
-                permissionDialog?.show()
+            if (!activityUtils.getPermissionDialog().isShowing) {
+                activityUtils.getPermissionDialog().show()
             }
         }
     }
@@ -314,9 +302,9 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_theme -> {
-                val isDarkTheme = Preferences.getDarkTheme(this)
+                val isDarkTheme = preferences.getDarkTheme()
 
-                Preferences.setDarkTheme(!isDarkTheme, this)
+                preferences.setDarkTheme(!isDarkTheme)
                 if (isDarkTheme) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 } else {
@@ -344,17 +332,6 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
     }
 
-    override fun onDestroy() {
-        if (snackbar!!.isShown) snackbar?.dismiss()
-        missingSettingsDialog = null
-        permissionDialog = null
-        notificationDialog = null
-        rate = null
-        snackbar = null
-
-        super.onDestroy()
-    }
-
     override fun onBackPressed() {
         if (BottomSheetBehavior.from(bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED) {
             BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
@@ -365,15 +342,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun getTimeoutSwitchsArray(): ArrayList<TimeoutSwitch> {
         return arrayListOf(
-            TimeoutSwitch(switch15s, Preferences.getTimeoutValueArray()[0]),
-            TimeoutSwitch(switch30s, Preferences.getTimeoutValueArray()[1]),
-            TimeoutSwitch(switch1m, Preferences.getTimeoutValueArray()[2]),
-            TimeoutSwitch(switch2m, Preferences.getTimeoutValueArray()[3]),
-            TimeoutSwitch(switch5m, Preferences.getTimeoutValueArray()[4]),
-            TimeoutSwitch(switch10m, Preferences.getTimeoutValueArray()[5]),
-            TimeoutSwitch(switch30m, Preferences.getTimeoutValueArray()[6]),
-            TimeoutSwitch(switch1h, Preferences.getTimeoutValueArray()[7]),
-            TimeoutSwitch(switchInfinite, Preferences.getTimeoutValueArray()[8])
+            TimeoutSwitch(switch15s, preferences.getTimeoutValueArray()[0]),
+            TimeoutSwitch(switch30s, preferences.getTimeoutValueArray()[1]),
+            TimeoutSwitch(switch1m, preferences.getTimeoutValueArray()[2]),
+            TimeoutSwitch(switch2m, preferences.getTimeoutValueArray()[3]),
+            TimeoutSwitch(switch5m, preferences.getTimeoutValueArray()[4]),
+            TimeoutSwitch(switch10m, preferences.getTimeoutValueArray()[5]),
+            TimeoutSwitch(switch30m, preferences.getTimeoutValueArray()[6]),
+            TimeoutSwitch(switch1h, preferences.getTimeoutValueArray()[7]),
+            TimeoutSwitch(switchInfinite, preferences.getTimeoutValueArray()[8])
         )
     }
 
@@ -387,12 +364,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateTilePreview() {
         // Set Bitmap to Tile Preview
-        val currentTimeout = Preferences.getCurrentTimeout(this)
+        val currentTimeout = preferences.getCurrentTimeout()
 
-        GlideApp.with(this)
+        glideApp
             .asBitmap()
             .priority(Priority.HIGH)
-            .load(TimeoutIconData(currentTimeout, 1, KeepOnUtils.getIconStyleSignature(this)))
+            .load(TimeoutIconData(currentTimeout, 1, commonUtils.getIconStyleSignature()))
             .into(object : CustomTarget<Bitmap>(150.px, 150.px) {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     tilePreview.setImageBitmap(resource)
@@ -400,10 +377,7 @@ class MainActivity : AppCompatActivity() {
                     val layerDrawableCircle: LayerDrawable = tilePreviewBackground.drawable as LayerDrawable
                     val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
 
-                    if (Preferences.getCurrentTimeout(this@MainActivity) == Preferences.getOriginalTimeout(
-                            this@MainActivity
-                        )
-                    ) {
+                    if (preferences.getCurrentTimeout() == preferences.getOriginalTimeout()) {
                         tilePreview.imageTintList = getColorStateList(R.color.colorTilePreviewDisabled)
                         circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackgroundDisabled))
                     } else {
@@ -411,18 +385,22 @@ class MainActivity : AppCompatActivity() {
                         circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackground))
                     }
                 }
+
                 override fun onLoadCleared(placeholder: Drawable?) {
                 }
             })
     }
 
     private fun updateSwitchs(switchsArray: ArrayList<TimeoutSwitch>) {
+        val normalTypeFace = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+        val boldTypeFace = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+
         for (timeoutSwitch in switchsArray) {
             val switch = timeoutSwitch.switch
             val timeout = timeoutSwitch.timeoutValue
-            val selectedSwitch = Preferences.getSelectedTimeout(this)
-            val originalTimeout = Preferences.getOriginalTimeout(this)
-            val currentTimeout = Preferences.getCurrentTimeout(this)
+            val selectedSwitch = preferences.getSelectedTimeout()
+            val originalTimeout = preferences.getOriginalTimeout()
+            val currentTimeout = preferences.getCurrentTimeout()
 
             // Check for DevicePolicy restriction
             val mDPM = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
@@ -438,8 +416,8 @@ class MainActivity : AppCompatActivity() {
 
                 // Set original timeout in checkBoxScreenOff text
                 checkBoxScreenOff.text = Formatter().format(
-                        getString(R.string.reset_checkbox),
-                        switch.text.toString().toLowerCase(Locale.getDefault())
+                    getString(R.string.reset_checkbox),
+                    switch.text.toString().toLowerCase(Locale.getDefault())
                 ).toString()
             } else {
                 switch.isClickable = true
@@ -448,9 +426,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             if (currentTimeout == timeout) {
-                switch.setTypeface(Typeface.DEFAULT, Typeface.BOLD)
+                switch.typeface = boldTypeFace
             } else {
-                switch.setTypeface(Typeface.DEFAULT, Typeface.NORMAL)
+                switch.typeface = normalTypeFace
             }
 
             if (adminTimeout < timeout) {
@@ -468,38 +446,123 @@ class MainActivity : AppCompatActivity() {
     private fun saveSelectedSwitch() {
         val resultList: ArrayList<Int> = ArrayList()
         for (timeoutSwitch in getTimeoutSwitchsArray()) {
-            if (timeoutSwitch.switch.isChecked && timeoutSwitch.timeoutValue != Preferences.getOriginalTimeout(this)) {
+            if (timeoutSwitch.switch.isChecked && timeoutSwitch.timeoutValue != preferences.getOriginalTimeout()) {
                 resultList.add(timeoutSwitch.timeoutValue)
             }
         }
 
-        Preferences.setSelectedTimeout(resultList, this)
+        preferences.setSelectedTimeout(resultList)
 
-        snackbar?.show()
+        snackbar.show()
 
         // Update App shortcuts
-        lifecycleScope.launch(Dispatchers.Default) {
-            delay(1000)
-            withTimeout(60000) {
-                KeepOnUtils.manageAppShortcut(this@MainActivity)
-            }
-        }
+        commonUtils.manageAppShortcut()
     }
 
-    private fun animateCardView() {
+    private fun loadQSStylePreferences() {
+        // Load value from activityUtils
+        slider_size.value = preferences.getQSStyleFontSize().toFloat()
+        seek_skew.value = preferences.getQSStyleFontSkew().toFloat()
+        seek_space.value = preferences.getQSStyleFontSpacing().toFloat()
+
+        radio_typeface_san_serif.isChecked = preferences.getQSStyleTypefaceSansSerif()
+        radio_typeface_serif.isChecked = preferences.getQSStyleTypefaceSerif()
+        radio_typeface_monospace.isChecked = preferences.getQSStyleTypefaceMonospace()
+
+        radio_style_fill.isChecked = preferences.getQSStyleTextFill()
+        radio_style_fill_stroke.isChecked = preferences.getQSStyleTextFillStroke()
+        radio_style_stroke.isChecked = preferences.getQSStyleTextStroke()
+
+        switch_fake_bold.isChecked = preferences.getQSStyleFontBold()
+        switch_underline.isChecked = preferences.getQSStyleFontUnderline()
+        switch_smcp.isChecked = preferences.getQSStyleFontSMCP()
+
+        // Set OnClickListener and OnSeekBarChangeListener for QS Style controls
+        val qsStyleOnChangeListener = Slider.OnChangeListener { _, _, _ -> saveQSStyleSlidePreferences() }
+        val qsStyleOnclickListener = View.OnClickListener { saveQSStyleClickPreferences() }
+        val qsStyleOnclickListenerTypeface = View.OnClickListener {
+            if (radio_typeface_san_serif.isChecked) {
+                switch_smcp.isEnabled = true
+                switch_smcp.isChecked = preferences.getQSStyleFontSMCP()
+            } else {
+                switch_smcp.isEnabled = false
+                switch_smcp.isChecked = false
+            }
+            saveQSStyleClickPreferences()
+        }
+
+        slider_size.addOnChangeListener(qsStyleOnChangeListener)
+        seek_skew.addOnChangeListener(qsStyleOnChangeListener)
+        seek_space.addOnChangeListener(qsStyleOnChangeListener)
+
+        radio_style_fill.setOnClickListener(qsStyleOnclickListener)
+        radio_style_fill_stroke.setOnClickListener(qsStyleOnclickListener)
+        radio_style_stroke.setOnClickListener(qsStyleOnclickListener)
+
+        switch_fake_bold.setOnClickListener(qsStyleOnclickListener)
+        switch_underline.setOnClickListener(qsStyleOnclickListener)
+        switch_smcp.setOnClickListener(qsStyleOnclickListener)
+
+        radio_typeface_san_serif.setOnClickListener(qsStyleOnclickListenerTypeface)
+        radio_typeface_serif.setOnClickListener(qsStyleOnclickListenerTypeface)
+        radio_typeface_monospace.setOnClickListener(qsStyleOnclickListenerTypeface)
+    }
+
+    private fun saveQSStyleSlidePreferences() {
+        preferences.setQSStyleFontSize(slider_size.value.toInt())
+        preferences.setQSStyleFontSkew(seek_skew.value.toInt())
+        preferences.setQSStyleFontSpacing(seek_space.value.toInt())
+
+        // Update Tile Preview
+        updateTilePreview()
+
+        // Update QS Tile
+        commonUtils.updateQSTile(500)
+
+        // Update App shortcuts
+        commonUtils.manageAppShortcut()
+    }
+
+    private fun saveQSStyleClickPreferences() {
+        // Save all values to Preferences
+        preferences.setQSStyleTextFill(radio_style_fill.isChecked)
+        preferences.setQSStyleTextFillStroke(radio_style_fill_stroke.isChecked)
+        preferences.setQSStyleTextStroke(radio_style_stroke.isChecked)
+
+        preferences.setQSStyleFontBold(switch_fake_bold.isChecked)
+        preferences.setQSStyleFontUnderline(switch_underline.isChecked)
+        if (switch_smcp.isEnabled) {
+            preferences.setQSStyleFontSMCP(switch_smcp.isChecked)
+        }
+
+        preferences.setQSStyleTypefaceSansSerif(radio_typeface_san_serif.isChecked)
+        preferences.setQSStyleTypefaceSerif(radio_typeface_serif.isChecked)
+        preferences.setQSStyleTypefaceMonospace(radio_typeface_monospace.isChecked)
+
+        // Update Tile Preview
+        updateTilePreview()
+
+        // Update QS Tile
+        commonUtils.updateQSTile(500)
+
+        // Update App shortcuts
+        commonUtils.manageAppShortcut()
+    }
+
+    private fun animateViews() {
         cardViewContainer.post {
             if (cardViewContainer.isAttachedToWindow) {
-                processCardViewAnim(selectionCard!!, 0)
-                processCardViewAnim(aboutCard!!, ANIMATION_DURATION)
+                processCardViewAnim(selectionCard, 0)
+                processCardViewAnim(aboutCard, ANIMATION_DURATION)
             }
         }
     }
 
     private fun processCardViewAnim(cardView: CardView, startDelay: Long) {
-        val cx = cardView.width / 2
-        val cy = cardView.height / 2
+        val cx = cardView.left
+        val cy = cardView.top
 
-        val finalRadius = hypot(cx.toDouble(), cy.toDouble()).toFloat()
+        val finalRadius = hypot(cardView.width.toDouble(), cardView.height.toDouble()).toFloat()
         val anim = ViewAnimationUtils.createCircularReveal(cardView, cx, cy, 0f, finalRadius)
 
         anim.startDelay = startDelay
@@ -521,7 +584,8 @@ class MainActivity : AppCompatActivity() {
         transitionBottomSheetBackgroundColor(slideOffset)
 
         // Adapt tile preview image view
-        tilePreview.layoutParams.width = defaultPreviewSize + (slideOffset * (maxPreviewSize - defaultPreviewSize).dp).roundToInt().px
+        val tilePreviewWidth = defaultPreviewSize + (slideOffset * (maxPreviewSize - defaultPreviewSize).dp).roundToInt().px
+        tilePreview.layoutParams.width = tilePreviewWidth
         tilePreview.layoutParams.height = defaultPreviewSize + (slideOffset * (maxPreviewSize - defaultPreviewSize).dp).roundToInt().px
 
         // Set padding to tile preview image view
@@ -529,14 +593,12 @@ class MainActivity : AppCompatActivity() {
         tilePreview.setPadding(newPadding, newPadding, newPadding, newPadding)
 
         // Adapt bottom sheet text view left margin
-        val params: ConstraintLayout.LayoutParams = ConstraintLayout.LayoutParams(
-            bottomSheetPeekTextView.layoutParams
-        )
+        val params: ConstraintLayout.LayoutParams = ConstraintLayout.LayoutParams(bottomSheetPeekTextView.layoutParams)
         params.setMargins(
-            (10.px + ((slideOffset * (maxPreviewSize - defaultPreviewSize).dp * coefficientStartMarginPeek))).roundToInt().px,
-            10.px,
-            10.px,
-            10.px
+                (10.px + ((slideOffset * (maxPreviewSize - defaultPreviewSize).dp * coefficientStartMarginPeek))).roundToInt().px,
+                10.px,
+                10.px,
+                10.px
         )
         bottomSheetPeekTextView.layoutParams = params
 
@@ -597,130 +659,6 @@ class MainActivity : AppCompatActivity() {
             (startR + (fraction * (endR - startR)).toInt() shl 16) or
             (startG + (fraction * (endG - startG)).toInt() shl 8) or
             startB + (fraction * (endB - startB)).toInt()
-    }
-
-    private fun loadQSStylePreferences() {
-        // Load value from preferences
-        slider_size.value = Preferences.getQSStyleFontSize(this).toFloat()
-        seek_skew.value = Preferences.getQSStyleFontSkew(this).toFloat()
-        seek_space.value = Preferences.getQSStyleFontSpacing(this).toFloat()
-
-        radio_typeface_san_serif.isChecked = Preferences.getQSStyleTypefaceSansSerif(this)
-        radio_typeface_serif.isChecked = Preferences.getQSStyleTypefaceSerif(this)
-        radio_typeface_monospace.isChecked = Preferences.getQSStyleTypefaceMonospace(this)
-
-        radio_style_fill.isChecked = Preferences.getQSStyleTextFill(this)
-        radio_style_fill_stroke.isChecked = Preferences.getQSStyleTextFillStroke(this)
-        radio_style_stroke.isChecked = Preferences.getQSStyleTextStroke(this)
-
-        switch_fake_bold.isChecked = Preferences.getQSStyleFontBold(this)
-        switch_underline.isChecked = Preferences.getQSStyleFontUnderline(this)
-        switch_smcp.isChecked = Preferences.getQSStyleFontSMCP(this)
-
-        // Set OnClickListener and OnSeekBarChangeListener for QS Style controls
-        val qsStyleOnChangeListener = Slider.OnChangeListener { _, _, _ -> saveQSStyleSlidePreferences() }
-        val qsStyleOnclickListener = View.OnClickListener { saveQSStyleClickPreferences() }
-        val qsStyleOnclickListenerTypeface = View.OnClickListener {
-            if (radio_typeface_san_serif.isChecked) {
-                switch_smcp.isEnabled = true
-                switch_smcp.isChecked = Preferences.getQSStyleFontSMCP(this)
-            } else {
-                switch_smcp.isEnabled = false
-                switch_smcp.isChecked = false
-            }
-            saveQSStyleClickPreferences()
-        }
-
-        slider_size.addOnChangeListener(qsStyleOnChangeListener)
-        seek_skew.addOnChangeListener(qsStyleOnChangeListener)
-        seek_space.addOnChangeListener(qsStyleOnChangeListener)
-
-        radio_style_fill.setOnClickListener(qsStyleOnclickListener)
-        radio_style_fill_stroke.setOnClickListener(qsStyleOnclickListener)
-        radio_style_stroke.setOnClickListener(qsStyleOnclickListener)
-
-        switch_fake_bold.setOnClickListener(qsStyleOnclickListener)
-        switch_underline.setOnClickListener(qsStyleOnclickListener)
-        switch_smcp.setOnClickListener(qsStyleOnclickListener)
-
-        radio_typeface_san_serif.setOnClickListener(qsStyleOnclickListenerTypeface)
-        radio_typeface_serif.setOnClickListener(qsStyleOnclickListenerTypeface)
-        radio_typeface_monospace.setOnClickListener(qsStyleOnclickListenerTypeface)
-    }
-
-    private fun saveQSStyleSlidePreferences() {
-        Preferences.setQSStyleFontSize(slider_size.value.toInt(), this)
-        Preferences.setQSStyleFontSkew(seek_skew.value.toInt(), this)
-        Preferences.setQSStyleFontSpacing(seek_space.value.toInt(), this)
-
-        // Update Tile Preview
-        updateTilePreview()
-
-        // Update QS Tile
-        if (Preferences.getTileAdded(this)) {
-            lifecycleScope.launch(Dispatchers.Default) {
-                delay(500)
-                withTimeout(
-                    60000
-                ) {
-                    TileService.requestListeningState(
-                        this@MainActivity,
-                        ComponentName(applicationContext, KeepOnTileService::class.java)
-                    )
-                }
-            }
-        }
-
-        // Update App shortcuts
-        lifecycleScope.launch(Dispatchers.Default) {
-            delay(1000)
-            withTimeout(60000) {
-                KeepOnUtils.manageAppShortcut(this@MainActivity)
-            }
-        }
-    }
-
-    private fun saveQSStyleClickPreferences() {
-        // Save all values to Preferences
-        Preferences.setQSStyleTextFill(radio_style_fill.isChecked, this)
-        Preferences.setQSStyleTextFillStroke(radio_style_fill_stroke.isChecked, this)
-        Preferences.setQSStyleTextStroke(radio_style_stroke.isChecked, this)
-
-        Preferences.setQSStyleFontBold(switch_fake_bold.isChecked, this)
-        Preferences.setQSStyleFontUnderline(switch_underline.isChecked, this)
-        if (switch_smcp.isEnabled) {
-            Preferences.setQSStyleFontSMCP(switch_smcp.isChecked, this)
-        }
-
-        Preferences.setQSStyleTypefaceSansSerif(radio_typeface_san_serif.isChecked, this)
-        Preferences.setQSStyleTypefaceSerif(radio_typeface_serif.isChecked, this)
-        Preferences.setQSStyleTypefaceMonospace(radio_typeface_monospace.isChecked, this)
-
-        // Update Tile Preview
-        updateTilePreview()
-
-        // Update QS Tile
-        if (Preferences.getTileAdded(this)) {
-            lifecycleScope.launch(Dispatchers.Default) {
-                delay(500)
-                withTimeout(
-                    60000
-                ) {
-                    TileService.requestListeningState(
-                        this@MainActivity,
-                        ComponentName(applicationContext, KeepOnTileService::class.java)
-                    )
-                }
-            }
-        }
-
-        // Update App shortcuts
-        lifecycleScope.launch(Dispatchers.Default) {
-            delay(1000)
-            withTimeout(60000) {
-                KeepOnUtils.manageAppShortcut(this@MainActivity)
-            }
-        }
     }
 
     companion object {
