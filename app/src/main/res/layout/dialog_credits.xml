@@ -5,15 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:layout_width="match_parent"
+    <com.google.android.material.imageview.ShapeableImageView
+        android:layout_width="60dp"
         android:layout_height="60dp"
         android:id="@+id/image_dialog"
         android:gravity="center"
+        android:layout_centerHorizontal="true"
         android:elevation="2dp"
-        android:src="@mipmap/dialog_logo_credit"
         android:scaleType="fitCenter"
-        android:contentDescription="@string/app_name" />
+        android:contentDescription="@string/app_name"
+        app:shapeAppearanceOverlay="@style/circleImageView"
+        app:srcCompat="@mipmap/dialog_logo_credit" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

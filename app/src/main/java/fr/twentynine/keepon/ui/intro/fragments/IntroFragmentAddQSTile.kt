@@ -51,7 +51,7 @@ class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder {
         mImage2.setImageResource(R.mipmap.img_intro_qstile_2)
 
         if (preferences.getTileAdded()) {
-            mButton.visibility = View.INVISIBLE
+            mButton.visibility = View.GONE
         } else {
             mButton.visibility = View.VISIBLE
         }
@@ -73,7 +73,7 @@ class IntroFragmentAddQSTile : Fragment(), SlideBackgroundColorHolder {
         view?.let {
             if (it.button != null) {
                 if (preferences.getTileAdded()) {
-                    it.button.visibility = View.INVISIBLE
+                    it.button.visibility = View.GONE
                 } else {
                     it.button.visibility = View.VISIBLE
                 }

@@ -28,6 +28,7 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
@@ -80,17 +81,14 @@ class MainActivity : AppCompatActivity() {
     private var receiverRegistered = false
 
     // Define default and max size of views and coefficient for bottomsheet slide
-    private val defaultPreviewSize = 60.px
+    private val defaultPreviewSize = 62.px
     private val defaultPreviewPadding = 14.px
     private var maxPreviewSize = 110.px
     private var maxPreviewPadding = defaultPreviewPadding + ((maxPreviewSize - defaultPreviewSize) / 7)
-    private var defaultBottomMarginViewHeight = ((maxPreviewSize - defaultPreviewSize) / 2)
+    private var defaultBottomMarginViewHeight = ((maxPreviewSize - defaultPreviewSize) / 4) + 1.px
 
     private val Int.px: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
-
-    private val Int.dp: Int
-        get() = (this / Resources.getSystem().displayMetrics.density).toInt()
 
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -230,7 +228,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         maxPreviewPadding = defaultPreviewPadding + ((maxPreviewSize - defaultPreviewSize) / 10)
-        defaultBottomMarginViewHeight = ((maxPreviewSize - defaultPreviewSize) / 2) + 1.px
+        defaultBottomMarginViewHeight = ((maxPreviewSize - defaultPreviewSize) / 4) + 1.px
         bottomMarginView.layoutParams.height = defaultBottomMarginViewHeight
         bottomMarginView.requestLayout()
 
@@ -245,8 +243,11 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        // Set initial bottom sheet state and retrieve saved state if exist
+        // Set BottomSheet to collapsed at launch
         BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
+        setOnSlideBottomSheetAnim(0.0F)
+
+        // Retrieve saved state of BottomSheet if exist
         if (savedInstanceState != null) {
             bottomSheetStateExpanded = savedInstanceState.getBoolean(BOTTOM_SHEET_STATE_EXPANDED, false)
         }
@@ -288,7 +289,7 @@ class MainActivity : AppCompatActivity() {
             // Set tile preview Image View
             updateTilePreview()
 
-            // Restore BottomSheet to expand state if needed
+            // Restore BottomSheet state
             if (bottomSheetStateExpanded) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     delay(800)
@@ -632,16 +633,16 @@ class MainActivity : AppCompatActivity() {
         transitionBottomSheetBackgroundColor(slideOffset)
 
         // Adapt tile preview image view
-        val tilePreviewWidth = defaultPreviewSize + (slideOffset * (maxPreviewSize - defaultPreviewSize).dp).roundToInt().px
+        val tilePreviewWidth = defaultPreviewSize + (slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt()
         tilePreview.layoutParams.width = tilePreviewWidth
-        tilePreview.layoutParams.height = defaultPreviewSize + (slideOffset * (maxPreviewSize - defaultPreviewSize).dp).roundToInt().px
+        tilePreview.layoutParams.height = defaultPreviewSize + (slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt()
 
         // Set padding to tile preview image view
-        val newPadding = defaultPreviewPadding + (slideOffset * (maxPreviewPadding - defaultPreviewPadding).dp).roundToInt().px
+        val newPadding = defaultPreviewPadding + (slideOffset * (maxPreviewPadding - defaultPreviewPadding)).roundToInt()
         tilePreview.setPadding(newPadding, newPadding, newPadding, newPadding)
 
         // Adapt bottom sheet text view padding
-        bottomSheetPeekTextView.updatePadding((30.px + tilePreviewWidth), 0, 65.px, 6.px)
+        bottomSheetPeekTextView.updatePadding((23.px + tilePreviewWidth), 0, 65.px, 10.px)
 
         // Rotate peek arrow
         bottomSheetPeekArrow.pivotX = (bottomSheetPeekArrow.measuredWidth / 2).toFloat()
@@ -649,7 +650,15 @@ class MainActivity : AppCompatActivity() {
         bottomSheetPeekArrow.rotation = slideOffset * -180
 
         // Adapt bottom margin view
-        bottomMarginView.layoutParams.height = defaultBottomMarginViewHeight - ((slideOffset * (maxPreviewSize - defaultPreviewSize).dp) / 2).roundToInt().px
+        bottomMarginView.layoutParams.height = defaultBottomMarginViewHeight - ((slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt() / 4)
+
+        // Adapt bottom margin of the guideline view
+        val params: ConstraintLayout.LayoutParams = guideline.layoutParams as ConstraintLayout.LayoutParams
+        params.topToTop = tilePreview.id
+        params.bottomToBottom = tilePreview.id
+        params.startToStart = tilePreview.id
+        params.endToEnd = tilePreview.id
+        params.setMargins(0, 0, 0, 10.px + (slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt() / 2)
 
         // Apply modification
         tilePreview.requestLayout()
@@ -657,6 +666,7 @@ class MainActivity : AppCompatActivity() {
         bottomSheetPeekArrow.requestLayout()
         bottomMarginView.requestLayout()
         bottomSheet.requestLayout()
+        guideline.requestLayout()
     }
 
     private fun transitionBottomSheetBackgroundColor(slideOffset: Float) {

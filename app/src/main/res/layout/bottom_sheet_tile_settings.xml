@@ -12,7 +12,7 @@
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     app:behavior_hideable="false"
-    app:behavior_peekHeight="75dp"
+    app:behavior_peekHeight="80dp"
     app:gestureInsetBottomIgnored="true"
     tools:context=".ui.MainActivity">
 
@@ -27,19 +27,51 @@
         app:layout_constraintTop_toTopOf="@+id/tilePreview"
         app:layout_constraintBottom_toBottomOf="@+id/tilePreview"/>
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/tilePreviewBorder"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="25dp"
-        android:elevation="5dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginStart="20dp"
+        android:elevation="6dp"
         android:background="@drawable/circle_background_border"
         android:scaleType="centerCrop"
         android:contentDescription="@string/bottom_sheet_preview_desc"
+        app:shapeAppearanceOverlay="@style/circleImageView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tilePreview"
         app:layout_constraintBottom_toBottomOf="@+id/tilePreview" />
+
+    <ImageView
+        android:id="@+id/tilePreviewBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginStart="20dp"
+        android:elevation="7dp"
+        android:padding="2dp"
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/bottom_sheet_preview_desc"
+        app:srcCompat="@drawable/circle_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/tilePreview"
+        app:layout_constraintBottom_toBottomOf="@+id/tilePreview"/>
+
+    <ImageView
+        android:id="@+id/tilePreview"
+        android:layout_width="62dp"
+        android:layout_height="62dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginStart="20dp"
+        android:elevation="8dp"
+        android:scaleType="centerInside"
+        android:padding="14dp"
+        android:contentDescription="@string/bottom_sheet_preview_desc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@mipmap/ic_qs_keepon"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottomSheetBackground"
@@ -58,10 +90,11 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:textColor="@color/colorText"
+            android:textAlignment="gravity"
             android:gravity="center"
-            android:paddingStart="90dp"
+            android:paddingStart="85dp"
             android:paddingEnd="65dp"
-            android:paddingBottom="6dp"
+            android:paddingBottom="7dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -77,13 +110,12 @@
         <ImageView
             android:id="@+id/bottomSheetPeekArrow"
             android:layout_width="30dp"
-            android:layout_height="50dp"
+            android:layout_height="30dp"
             android:layout_marginEnd="30dp"
+            android:layout_marginTop="8dp"
             android:scaleType="fitCenter"
-            android:paddingBottom="4dp"
-            android:foregroundGravity="center"
-            android:src="@drawable/ic_arrow_up"
             android:contentDescription="@string/bottom_sheet_arrow_desc"
+            app:srcCompat="@drawable/ic_arrow_up"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -104,8 +136,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="30dp"
+                android:layout_height="match_parent"
+                android:paddingBottom="40dp"
                 android:orientation="vertical">
 
                 <com.google.android.material.textview.MaterialTextView
@@ -365,42 +397,11 @@
         </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ImageView
-        android:id="@+id/tilePreviewBackground"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="25dp"
-        android:elevation="7dp"
-        android:outlineProvider="none"
-        android:padding="2dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/circle_background"
-        android:contentDescription="@string/bottom_sheet_preview_desc"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/tilePreview"
-        app:layout_constraintBottom_toBottomOf="@+id/tilePreview"/>
-
-    <ImageView
-        android:id="@+id/tilePreview"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="25dp"
-        android:foregroundGravity="center"
-        android:elevation="8dp"
-        android:outlineProvider="none"
-        android:scaleType="centerInside"
-        android:padding="14dp"
-        android:contentDescription="@string/bottom_sheet_preview_desc"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
     <View
         android:id="@+id/bottomMarginView"
         android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_height="13dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bottomSheetBackground"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
