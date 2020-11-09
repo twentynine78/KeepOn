@@ -9,10 +9,16 @@
     tools:context=".ui.MainActivity"
     tools:ignore="Overdraw">
 
+    <include layout="@layout/content_main"/>
+
+    <include layout="@layout/bottom_sheet_tile_settings" />
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_behavior=".ui.MainAppBarBehavior"
+        app:expanded="true">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -23,9 +29,5 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
     </com.google.android.material.appbar.AppBarLayout>
-
-    <include layout="@layout/content_main"/>
-
-    <include layout="@layout/bottom_sheet_tile_settings" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

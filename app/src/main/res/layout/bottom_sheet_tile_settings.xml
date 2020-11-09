@@ -8,6 +8,8 @@
     android:layout_height="wrap_content"
     android:elevation="10dp"
     android:outlineProvider="none"
+    app:layout_constrainedHeight="true"
+    app:layout_constraintBottom_toBottomOf="parent"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     app:behavior_hideable="false"
     app:behavior_peekHeight="75dp"
@@ -26,6 +28,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/tilePreview"/>
 
     <ImageView
+        android:id="@+id/tilePreviewBorder"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="25dp"
@@ -44,22 +47,26 @@
         android:layout_height="wrap_content"
         android:elevation="6dp"
         android:background="@drawable/bottom_sheet_background"
-        android:paddingBottom="10dp"
         app:layout_constrainedHeight="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline">
+        app:layout_constraintTop_toTopOf="@+id/guideline"
+        app:layout_constraintBottom_toTopOf="@id/bottomMarginView">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/bottomSheetPeekTextView"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="50dp"
             android:textColor="@color/colorText"
             android:gravity="center"
+            android:paddingStart="90dp"
+            android:paddingEnd="65dp"
             android:paddingBottom="6dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:textStyle="bold"
             android:text="@string/bottom_sheet_peek_text"
             app:autoSizeTextType="uniform"
@@ -81,57 +88,58 @@
             app:layout_constraintEnd_toEndOf="parent"/>
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/bottomSheetScrollView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
-            android:paddingBottom="10dp"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            android:paddingBottom="0dp"
+            android:orientation="vertical"
+            app:layout_constrainedHeight="true"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/bottomSheetPeekTextView"
-            app:layout_constraintVertical_bias="1.0">
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="15dp"
-                android:layout_gravity="center_vertical"
-                android:paddingBottom="25dp">
+                android:paddingBottom="30dp"
+                android:orientation="vertical">
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center"
+                    android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
+                    android:text="@string/bottom_sheet_font_options_label"
+                    android:textAlignment="center"
                     android:textColor="@color/colorText"
-                    android:textStyle="bold"
                     android:textSize="14sp"
-                    android:text="@string/bottom_sheet_font_options_label"/>
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:baselineAligned="false"
                     android:layout_marginTop="8dp"
-                    android:layout_marginBottom="18dp">
+                    android:layout_marginBottom="18dp"
+                    android:baselineAligned="false"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:text="@string/bottom_sheet_size_label"
                             android:textAlignment="center"
-                            android:textColor="@color/colorText"
-                            android:text="@string/bottom_sheet_size_label"/>
+                            android:textColor="@color/colorText" />
 
                         <com.google.android.material.slider.Slider
                             android:id="@+id/slider_size"
@@ -139,24 +147,24 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:layout_marginBottom="10dp"
-                            android:valueFrom="-5.0"
-                            android:valueTo="5.0"
                             android:stepSize="1.0"
-                            android:value="0"/>
+                            android:value="0"
+                            android:valueFrom="-5.0"
+                            android:valueTo="5.0" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:text="@string/bottom_sheet_skew_label"
                             android:textAlignment="center"
-                            android:textColor="@color/colorText"
-                            android:text="@string/bottom_sheet_skew_label"/>
+                            android:textColor="@color/colorText" />
 
                         <com.google.android.material.slider.Slider
                             android:id="@+id/seek_skew"
@@ -164,24 +172,24 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:layout_marginBottom="10dp"
-                            android:valueFrom="-1.0"
-                            android:valueTo="1.0"
                             android:stepSize="1.0"
-                            android:value="0"/>
+                            android:value="0"
+                            android:valueFrom="-1.0"
+                            android:valueTo="1.0" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:text="@string/bottom_sheet_position_label"
                             android:textAlignment="center"
-                            android:textColor="@color/colorText"
-                            android:text="@string/bottom_sheet_position_label"/>
+                            android:textColor="@color/colorText" />
 
                         <com.google.android.material.slider.Slider
                             android:id="@+id/seek_space"
@@ -190,70 +198,74 @@
                             android:layout_marginTop="10dp"
                             android:layout_marginBottom="10dp"
                             android:max="10"
-                            android:valueFrom="-5.0"
-                            android:valueTo="5.0"
                             android:stepSize="1.0"
-                            android:value="0"/>
+                            android:value="0"
+                            android:valueFrom="-5.0"
+                            android:valueTo="5.0" />
                     </LinearLayout>
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginTop="12dp">
+                        android:layout_marginTop="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAlignment="center"
                             android:layout_marginBottom="12dp"
+                            android:text="@string/bottom_sheet_typeface_label"
+                            android:textAlignment="center"
                             android:textColor="@color/colorText"
-                            android:textStyle="bold"
                             android:textSize="14sp"
-                            android:text="@string/bottom_sheet_typeface_label"/>
+                            android:textStyle="bold" />
 
                         <RadioGroup
-                            android:layout_gravity="center"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center"
                             android:textColor="@color/colorText">
 
                             <com.google.android.material.radiobutton.MaterialRadioButton
                                 android:id="@+id/radio_typeface_san_serif"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/colorText"
-                                android:text="@string/bottom_sheet_typeface_san_serif"/>
+                                android:text="@string/bottom_sheet_typeface_san_serif"
+                                android:textColor="@color/colorText" />
 
                             <com.google.android.material.radiobutton.MaterialRadioButton
                                 android:id="@+id/radio_typeface_serif"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/colorText"
-                                android:text="@string/bottom_sheet_typeface_serif"/>
+                                android:text="@string/bottom_sheet_typeface_serif"
+                                android:textColor="@color/colorText" />
 
                             <com.google.android.material.radiobutton.MaterialRadioButton
                                 android:id="@+id/radio_typeface_monospace"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/colorText"
-                                android:text="@string/bottom_sheet_typeface_monospace"/>
+                                android:text="@string/bottom_sheet_typeface_monospace"
+                                android:textColor="@color/colorText" />
                         </RadioGroup>
                     </LinearLayout>
 
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:paddingStart="5dp"
-                        android:paddingEnd="5dp"
-                        android:layout_marginTop="12dp">
+                        android:paddingEnd="5dp">
 
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="match_parent"
@@ -275,8 +287,8 @@
                             android:gravity="center|start"
                             android:paddingTop="9dp"
                             android:paddingBottom="9dp"
-                            android:textColor="@color/colorText"
-                            android:text="@string/bottom_sheet_style_bold"/>
+                            android:text="@string/bottom_sheet_style_bold"
+                            android:textColor="@color/colorText" />
 
                         <com.google.android.material.checkbox.MaterialCheckBox
                             android:id="@+id/switch_underline"
@@ -287,8 +299,8 @@
                             android:gravity="center|start"
                             android:paddingTop="9dp"
                             android:paddingBottom="9dp"
-                            android:textColor="@color/colorText"
-                            android:text="@string/bottom_sheet_style_underline"/>
+                            android:text="@string/bottom_sheet_style_underline"
+                            android:textColor="@color/colorText" />
 
                         <com.google.android.material.checkbox.MaterialCheckBox
                             android:id="@+id/switch_smcp"
@@ -299,50 +311,52 @@
                             android:gravity="center|start"
                             android:paddingTop="9dp"
                             android:paddingBottom="9dp"
-                            android:textColor="@color/colorText"
-                            android:text="@string/bottom_sheet_style_smcp"/>
+                            android:text="@string/bottom_sheet_style_smcp"
+                            android:textColor="@color/colorText" />
                     </LinearLayout>
 
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
                         android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginTop="12dp">
+                        android:orientation="vertical">
 
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAlignment="center"
                             android:layout_marginBottom="12dp"
+                            android:text="@string/bottom_sheet_text_style_label"
+                            android:textAlignment="center"
                             android:textColor="@color/colorText"
-                            android:textStyle="bold"
                             android:textSize="14sp"
-                            android:text="@string/bottom_sheet_text_style_label"/>
+                            android:textStyle="bold" />
 
                         <RadioGroup
-                            android:layout_gravity="center"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center">
 
                             <com.google.android.material.radiobutton.MaterialRadioButton
                                 android:id="@+id/radio_style_fill"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/colorText"
-                                android:text="@string/bottom_sheet_style_fill"/>
+                                android:text="@string/bottom_sheet_style_fill"
+                                android:textColor="@color/colorText" />
 
                             <com.google.android.material.radiobutton.MaterialRadioButton
                                 android:id="@+id/radio_style_fill_stroke"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/colorText"
-                                android:text="@string/bottom_sheet_style_fill_and_stroke"/>
+                                android:text="@string/bottom_sheet_style_fill_and_stroke"
+                                android:textColor="@color/colorText" />
 
                             <com.google.android.material.radiobutton.MaterialRadioButton
                                 android:id="@+id/radio_style_stroke"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/colorText"
-                                android:text="@string/bottom_sheet_style_stroke"/>
+                                android:text="@string/bottom_sheet_style_stroke"
+                                android:textColor="@color/colorText" />
 
                         </RadioGroup>
                     </LinearLayout>
@@ -384,7 +398,7 @@
     <View
         android:id="@+id/bottomMarginView"
         android:layout_width="match_parent"
-        android:layout_height="26dp"
+        android:layout_height="25dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bottomSheetBackground"/>

@@ -26,8 +26,8 @@ import android.view.ViewAnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Priority
 import com.bumptech.glide.RequestManager
@@ -79,7 +79,6 @@ class MainActivity : AppCompatActivity() {
     // Define default and max size of views and coefficient for bottomsheet slide
     private val defaultPreviewSize = 60.px
     private val defaultPreviewPadding = 14.px
-    private val coefficientStartMarginPeek = 1.1
     private var maxPreviewSize = 110.px
     private var maxPreviewPadding = defaultPreviewPadding + ((maxPreviewSize - defaultPreviewSize) / 7)
     private var defaultBottomMarginViewHeight = ((maxPreviewSize - defaultPreviewSize) / 2)
@@ -592,15 +591,8 @@ class MainActivity : AppCompatActivity() {
         val newPadding = defaultPreviewPadding + (slideOffset * (maxPreviewPadding - defaultPreviewPadding).dp).roundToInt().px
         tilePreview.setPadding(newPadding, newPadding, newPadding, newPadding)
 
-        // Adapt bottom sheet text view left margin
-        val params: ConstraintLayout.LayoutParams = ConstraintLayout.LayoutParams(bottomSheetPeekTextView.layoutParams)
-        params.setMargins(
-                (10.px + ((slideOffset * (maxPreviewSize - defaultPreviewSize).dp * coefficientStartMarginPeek))).roundToInt().px,
-                10.px,
-                10.px,
-                10.px
-        )
-        bottomSheetPeekTextView.layoutParams = params
+        // Adapt bottom sheet text view padding
+        bottomSheetPeekTextView.updatePadding((30.px + tilePreviewWidth), 0, 65.px, 6.px)
 
         // Rotate peek arrow
         bottomSheetPeekArrow.pivotX = (bottomSheetPeekArrow.measuredWidth / 2).toFloat()
