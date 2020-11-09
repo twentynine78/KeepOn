@@ -53,6 +53,7 @@ import kotlinx.android.synthetic.main.card_main_about.*
 import kotlinx.android.synthetic.main.card_main_settings.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import toothpick.ktp.delegate.lazy
 import java.util.Formatter
@@ -244,11 +245,24 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        // Set initial bottom sheet state and retrieve saved state if exist
+        BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
+        if (savedInstanceState != null) {
+            bottomSheetStateExpanded = savedInstanceState.getBoolean(BOTTOM_SHEET_STATE_EXPANDED, false)
+        }
+
         // Load QS Style preference
         loadQSStylePreferences()
 
         // Add count to Genrate
         rate.count()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        val value = BottomSheetBehavior.from(bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED
+        outState.putBoolean(BOTTOM_SHEET_STATE_EXPANDED, value)
     }
 
     override fun onResume() {
@@ -273,6 +287,22 @@ class MainActivity : AppCompatActivity() {
 
             // Set tile preview Image View
             updateTilePreview()
+
+            // Restore BottomSheet to expand state if needed
+            if (bottomSheetStateExpanded) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    delay(800)
+                    var offset = 0.0F
+                    for (x in 1..10) {
+                        setOnSlideBottomSheetAnim(offset)
+                        offset += 0.1F
+                    }
+                    BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
+                    setOnSlideBottomSheetAnim(offset)
+                    // Reset state for next launch
+                    bottomSheetStateExpanded = false
+                }
+            }
 
             // Show dialog if missing settings on tile click
             if (intent != null && intent.action != null) {
@@ -679,6 +709,9 @@ class MainActivity : AppCompatActivity() {
         const val SUPPORT_URI = "mailto:twentynine78@protonmail.com"
 
         const val ANIMATION_DURATION: Long = 300
+
+        const val BOTTOM_SHEET_STATE_EXPANDED = "BOTTOM_SHEET_STATE"
+        private var bottomSheetStateExpanded = false
 
         fun newIntent(context: Context): Intent {
             return Intent(context, MainActivity::class.java)
