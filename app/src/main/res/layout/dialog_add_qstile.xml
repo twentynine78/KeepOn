@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -15,254 +16,259 @@
         android:scaleType="fitCenter"
         android:contentDescription="@string/app_name" />
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:layout_centerHorizontal="true"
-        android:gravity="center_horizontal"
-        android:elevation="1dp"
         android:layout_below="@id/image_dialog"
         android:layout_marginTop="-20dp"
         android:background="@drawable/dialog_background"
-        tools:ignore="HardcodedText,ContentDescription" >
+        android:elevation="1dp">
 
-        <RelativeLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp">
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/btn_close"
+            android:gravity="center_horizontal"
+            tools:ignore="HardcodedText,ContentDescription" >
 
-            <TextView
-                android:id="@+id/add_qstile_warning"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
-                android:layout_marginBottom="10dp"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:textSize="14sp"
-                android:textColor="@color/colorText"
-                android:textColorLink="@color/colorTextLink"
-                android:textAlignment="textStart"
-                android:textStyle="bold"
-                android:text="@string/dialog_add_qstile_warning"/>
+                android:layout_height="wrap_content">
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_below="@id/add_qstile_warning"
-                android:src="@drawable/small_circle_background"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="6dp" />
+                <TextView
+                    android:id="@+id/add_qstile_warning"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/colorText"
+                    android:textColorLink="@color/colorTextLink"
+                    android:textAlignment="textStart"
+                    android:textStyle="bold"
+                    android:text="@string/dialog_add_qstile_warning"/>
 
-            <TextView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="6dp"
-                android:layout_below="@+id/add_qstile_warning"
-                android:textSize="16sp"
-                android:textColor="@color/colorBackgroundCard"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:text="1"/>
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_below="@id/add_qstile_warning"
+                    android:src="@drawable/small_circle_background"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="6dp" />
 
-            <TextView
-                android:id="@+id/add_qstile_text1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_below="@+id/add_qstile_warning"
-                android:paddingStart="40dp"
-                android:paddingEnd="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/colorText"
-                android:textColorLink="@color/colorTextLink"
-                android:textAlignment="textStart"
-                android:text="@string/dialog_add_qstile_text1"/>
+                <TextView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_below="@+id/add_qstile_warning"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorBackgroundCard"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:text="1"/>
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_below="@id/add_qstile_text1"
-                android:src="@drawable/small_circle_background"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="6dp" />
+                <TextView
+                    android:id="@+id/add_qstile_text1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_below="@+id/add_qstile_warning"
+                    android:paddingStart="40dp"
+                    android:paddingEnd="10dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorText"
+                    android:textColorLink="@color/colorTextLink"
+                    android:textAlignment="textStart"
+                    android:text="@string/dialog_add_qstile_text1"/>
 
-            <TextView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="6dp"
-                android:layout_below="@+id/add_qstile_text1"
-                android:textSize="16sp"
-                android:textColor="@color/colorBackgroundCard"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:text="2"/>
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_below="@id/add_qstile_text1"
+                    android:src="@drawable/small_circle_background"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="6dp" />
 
-            <TextView
-                android:id="@+id/add_qstile_text2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/add_qstile_text1"
-                android:paddingStart="40dp"
-                android:paddingEnd="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/colorText"
-                android:textColorLink="@color/colorTextLink"
-                android:textAlignment="textStart"
-                android:text="@string/dialog_add_qstile_text2"/>
+                <TextView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_below="@+id/add_qstile_text1"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorBackgroundCard"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:text="2"/>
 
-            <ImageView
-                android:id="@+id/add_qstile_image1"
-                android:layout_width="match_parent"
-                android:layout_height="90dp"
-                android:layout_marginBottom="-5dp"
-                android:layout_below="@+id/add_qstile_text2"
-                android:scaleType="center"
-                android:src="@mipmap/img_help1" />
+                <TextView
+                    android:id="@+id/add_qstile_text2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@+id/add_qstile_text1"
+                    android:paddingStart="40dp"
+                    android:paddingEnd="10dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorText"
+                    android:textColorLink="@color/colorTextLink"
+                    android:textAlignment="textStart"
+                    android:text="@string/dialog_add_qstile_text2"/>
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_below="@id/add_qstile_image1"
-                android:src="@drawable/small_circle_background"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="6dp" />
+                <ImageView
+                    android:id="@+id/add_qstile_image1"
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:layout_marginBottom="-5dp"
+                    android:layout_below="@+id/add_qstile_text2"
+                    android:scaleType="center"
+                    android:src="@mipmap/img_help1" />
 
-            <TextView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="6dp"
-                android:layout_below="@+id/add_qstile_image1"
-                android:textSize="16sp"
-                android:textColor="@color/colorBackgroundCard"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:text="3"/>
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_below="@id/add_qstile_image1"
+                    android:src="@drawable/small_circle_background"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="6dp" />
 
-            <TextView
-                android:id="@+id/add_qstile_text3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/add_qstile_image1"
-                android:paddingStart="40dp"
-                android:paddingEnd="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/colorText"
-                android:textColorLink="@color/colorTextLink"
-                android:textAlignment="textStart"
-                android:text="@string/dialog_add_qstile_text3"/>
+                <TextView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_below="@+id/add_qstile_image1"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorBackgroundCard"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:text="3"/>
 
-            <ImageView
-                android:id="@+id/add_qstile_image2"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginBottom="-5dp"
-                android:layout_below="@+id/add_qstile_text3"
-                android:scaleType="center"
-                android:src="@mipmap/img_help2" />
+                <TextView
+                    android:id="@+id/add_qstile_text3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@+id/add_qstile_image1"
+                    android:paddingStart="40dp"
+                    android:paddingEnd="10dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorText"
+                    android:textColorLink="@color/colorTextLink"
+                    android:textAlignment="textStart"
+                    android:text="@string/dialog_add_qstile_text3"/>
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_below="@id/add_qstile_image2"
-                android:src="@drawable/small_circle_background"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="6dp" />
+                <ImageView
+                    android:id="@+id/add_qstile_image2"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginBottom="-5dp"
+                    android:layout_below="@+id/add_qstile_text3"
+                    android:scaleType="center"
+                    android:src="@mipmap/img_help2" />
 
-            <TextView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="6dp"
-                android:layout_below="@+id/add_qstile_image2"
-                android:textSize="16sp"
-                android:textColor="@color/colorBackgroundCard"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:text="4"/>
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_below="@id/add_qstile_image2"
+                    android:src="@drawable/small_circle_background"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="6dp" />
 
-            <TextView
-                android:id="@+id/add_qstile_text4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/add_qstile_image2"
-                android:paddingStart="40dp"
-                android:paddingEnd="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/colorText"
-                android:textColorLink="@color/colorTextLink"
-                android:textAlignment="textStart"
-                android:text="@string/dialog_add_qstile_text4"/>
+                <TextView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_below="@+id/add_qstile_image2"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorBackgroundCard"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:text="4"/>
 
-            <ImageView
-                android:id="@+id/add_qstile_image3"
-                android:layout_width="match_parent"
-                android:layout_height="130dp"
-                android:layout_marginBottom="-5dp"
-                android:layout_below="@+id/add_qstile_text4"
-                android:scaleType="center"
-                android:src="@mipmap/img_help3" />
+                <TextView
+                    android:id="@+id/add_qstile_text4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@+id/add_qstile_image2"
+                    android:paddingStart="40dp"
+                    android:paddingEnd="10dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorText"
+                    android:textColorLink="@color/colorTextLink"
+                    android:textAlignment="textStart"
+                    android:text="@string/dialog_add_qstile_text4"/>
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_below="@id/add_qstile_image3"
-                android:src="@drawable/small_circle_background"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="6dp" />
+                <ImageView
+                    android:id="@+id/add_qstile_image3"
+                    android:layout_width="match_parent"
+                    android:layout_height="130dp"
+                    android:layout_marginBottom="-5dp"
+                    android:layout_below="@+id/add_qstile_text4"
+                    android:scaleType="center"
+                    android:src="@mipmap/img_help3" />
 
-            <TextView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="6dp"
-                android:layout_below="@+id/add_qstile_image3"
-                android:textSize="16sp"
-                android:textColor="@color/colorBackgroundCard"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:text="5"/>
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_below="@id/add_qstile_image3"
+                    android:src="@drawable/small_circle_background"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="6dp" />
 
-            <TextView
-                android:id="@+id/add_qstile_text5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_below="@+id/add_qstile_image3"
-                android:paddingStart="40dp"
-                android:paddingEnd="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/colorText"
-                android:textColorLink="@color/colorTextLink"
-                android:textAlignment="textStart"
-                android:text="@string/dialog_add_qstile_text5"/>
+                <TextView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_below="@+id/add_qstile_image3"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorBackgroundCard"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:text="5"/>
 
-            <Button
-                android:id="@+id/btn_close"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_centerHorizontal="true"
-                android:gravity="center_vertical|center_horizontal"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_below="@+id/add_qstile_text5"
-                android:elevation="1dp"
-                android:background="@drawable/dialog_button_background"
-                android:textColor="@color/colorText"
-                android:text="@string/dialog_add_qstile_button" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_below="@+id/add_qstile_image3"
+                    android:paddingStart="40dp"
+                    android:paddingEnd="10dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorText"
+                    android:textColorLink="@color/colorTextLink"
+                    android:textAlignment="textStart"
+                    android:text="@string/dialog_add_qstile_text5"/>
 
-        </RelativeLayout>
-    </androidx.core.widget.NestedScrollView>
+            </RelativeLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <Button
+            android:id="@+id/btn_close"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="bottom|center_horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:elevation="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/dialog_button_background"
+            android:textColor="@color/colorText"
+            android:text="@string/dialog_add_qstile_button" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>
