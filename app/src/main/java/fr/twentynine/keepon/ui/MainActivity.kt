@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var receiverRegistered = false
+    private var isPaused = false
 
     // Define default and max size of views and coefficient for bottomsheet slide
     private val defaultPreviewSize = 62.px
@@ -95,11 +96,13 @@ class MainActivity : AppCompatActivity() {
             if (intent != null) {
                 when (intent.action) {
                     ACTION_UPDATE_UI -> {
-                        // Update all switch from saved preference
-                        updateSwitchs(getTimeoutSwitchsArray())
+                        if (!isPaused) {
+                            // Update all switch from saved preference
+                            updateSwitchs(getTimeoutSwitchsArray())
 
-                        // Set tile preview Image View
-                        updateTilePreview()
+                            // Set tile preview Image View
+                            updateTilePreview()
+                        }
                     }
                     ACTION_MISSING_SETTINGS -> {
                         // Show missing settings dialog
@@ -110,6 +113,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
+                intent.action = null
             }
         }
     }
@@ -187,15 +191,6 @@ class MainActivity : AppCompatActivity() {
 
         animateViews()
 
-        // Show dialog if missing settings on tile click
-        if (intent.action != null) {
-            if (intent.action == ACTION_MISSING_SETTINGS && preferences.getSelectedTimeout().size <= 1) {
-                if (!activityUtils.getMissingSettingsDialog().isShowing) {
-                    activityUtils.getMissingSettingsDialog().show()
-                }
-            }
-        }
-
         // Set OnClick listener for bottom sheet peek views
         val bottomSheetStateOnClickListener = View.OnClickListener {
             if (BottomSheetBehavior.from(bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED) {
@@ -257,6 +252,13 @@ class MainActivity : AppCompatActivity() {
 
         // Add count to Genrate
         rate.count()
+
+        // Register BroadcastReceiver
+        val intentFiler = IntentFilter()
+        intentFiler.addAction(ACTION_UPDATE_UI)
+        intentFiler.addAction(ACTION_MISSING_SETTINGS)
+        registerReceiver(receiver, intentFiler)
+        receiverRegistered = true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -269,6 +271,8 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
+        isPaused = false
+
         // Check permission to write settings
         if (canWrite(this)) {
             // Show Dialog to disable notifications if enabled
@@ -277,8 +281,6 @@ class MainActivity : AppCompatActivity() {
                     activityUtils.getNotificationDialog().show()
                 }
             }
-
-            registerBroadcastReceiver()
 
             // Start service to monitor screen timeout
             commonUtils.startScreenTimeoutObserverService()
@@ -307,12 +309,11 @@ class MainActivity : AppCompatActivity() {
 
             // Show dialog if missing settings on tile click
             if (intent != null && intent.action != null) {
-                if (intent.action == ACTION_MISSING_SETTINGS &&
-                    preferences.getSelectedTimeout().size <= 1
-                ) {
+                if (intent.action == ACTION_MISSING_SETTINGS && preferences.getSelectedTimeout().size <= 1) {
                     if (!activityUtils.getMissingSettingsDialog().isShowing) {
                         activityUtils.getMissingSettingsDialog().show()
                     }
+                    intent.action = null
                 }
             }
 
@@ -356,12 +357,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
+        isPaused = true
+
+        super.onPause()
+    }
+
+    override fun onDestroy() {
         if (receiverRegistered) {
             unregisterReceiver(receiver)
             receiverRegistered = false
         }
 
-        super.onPause()
+        super.onDestroy()
     }
 
     override fun onBackPressed() {
@@ -384,14 +391,6 @@ class MainActivity : AppCompatActivity() {
             TimeoutSwitch(switch1h, preferences.getTimeoutValueArray()[7]),
             TimeoutSwitch(switchInfinite, preferences.getTimeoutValueArray()[8])
         )
-    }
-
-    private fun registerBroadcastReceiver() {
-        val intentFiler = IntentFilter()
-        intentFiler.addAction(ACTION_UPDATE_UI)
-        intentFiler.addAction(ACTION_MISSING_SETTINGS)
-        registerReceiver(receiver, intentFiler)
-        receiverRegistered = true
     }
 
     private fun updateTilePreview() {
