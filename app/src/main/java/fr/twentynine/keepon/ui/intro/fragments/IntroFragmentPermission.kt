@@ -46,7 +46,7 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
                 .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-            activityUtils.mCheckPermission.start()
+            activityUtils.checkPermission()
             requireContext().startActivity(intent)
         }
 

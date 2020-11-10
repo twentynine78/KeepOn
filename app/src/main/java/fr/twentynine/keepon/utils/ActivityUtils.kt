@@ -28,7 +28,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import toothpick.InjectConstructor
 import toothpick.ktp.delegate.lazy
 import java.util.Formatter
@@ -62,7 +61,7 @@ class ActivityUtils(private val activity: AppCompatActivity) {
                         .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                         .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-                    mCheckNotification.start()
+                    checkNotification()
                     activity.startActivity(intent)
                 }
             } else {
@@ -72,7 +71,7 @@ class ActivityUtils(private val activity: AppCompatActivity) {
                     .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-                mCheckNotification.start()
+                checkNotification()
                 activity.startActivity(intent)
             }
         }
@@ -98,7 +97,7 @@ class ActivityUtils(private val activity: AppCompatActivity) {
                 .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                 .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-            mCheckPermission.start()
+            checkPermission()
             activity.startActivity(intent)
         }
         // Set background transparent
@@ -156,45 +155,8 @@ class ActivityUtils(private val activity: AppCompatActivity) {
         // Set background transparent
         value.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
     }
-
-    val mCheckNotification: Job by lazy {
-        activity.lifecycleScope.launch(Dispatchers.Default) {
-            withContext(coroutineContext) {
-                delay(500)
-                repeat(300) {
-                    if (!isNotificationEnabled()) {
-                        try {
-                            val intent = Intent(activity.applicationContext, activity::class.java)
-                            activity.startActivity(intent)
-                        } finally {
-                            return@withContext
-                        }
-                    } else {
-                        delay(200)
-                    }
-                }
-            }
-        }
-    }
-    val mCheckPermission: Job by lazy {
-        activity.lifecycleScope.launch(Dispatchers.Default) {
-            withContext(coroutineContext) {
-                delay(500)
-                repeat(300) {
-                    if (Settings.System.canWrite(activity)) {
-                        try {
-                            val intent = Intent(activity.applicationContext, activity::class.java)
-                            activity.startActivity(intent)
-                        } finally {
-                            return@withContext
-                        }
-                    } else {
-                        delay(200)
-                    }
-                }
-            }
-        }
-    }
+    private var checkPermissionJob: Job? = null
+    private var checkNotificationJob: Job? = null
 
     init {
         // Inject dependencies with Toothpick
@@ -266,6 +228,43 @@ class ActivityUtils(private val activity: AppCompatActivity) {
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
             ""
+        }
+    }
+
+    fun checkNotification() {
+        checkNotificationJob?.cancel()
+        checkNotificationJob = activity.lifecycleScope.launch(Dispatchers.Default) {
+            delay(500)
+            repeat(300) {
+                if (!isNotificationEnabled()) {
+                    try {
+                        val intent = Intent(activity.applicationContext, activity::class.java)
+                        activity.startActivity(intent)
+                    } finally {
+                        return@launch
+                    }
+                } else {
+                    delay(200)
+                }
+            }
+        }
+    }
+    fun checkPermission() {
+        checkPermissionJob?.cancel()
+        checkPermissionJob = activity.lifecycleScope.launch(Dispatchers.Default) {
+            delay(500)
+            repeat(300) {
+                if (Settings.System.canWrite(activity)) {
+                    try {
+                        val intent = Intent(activity.applicationContext, activity::class.java)
+                        activity.startActivity(intent)
+                    } finally {
+                        return@launch
+                    }
+                } else {
+                    delay(200)
+                }
+            }
         }
     }
 }

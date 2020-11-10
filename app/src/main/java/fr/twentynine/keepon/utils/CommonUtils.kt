@@ -35,7 +35,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import toothpick.InjectConstructor
 import toothpick.ktp.delegate.lazy
@@ -88,39 +87,14 @@ class CommonUtils(private val application: Application) {
             preferences.getTimeoutValueArray()[8] to R.string.timeout_infinite
         )
     }
-    private val checkStartScreenOffReceiverServiceJob: Job by lazy {
-        ProcessLifecycleOwner.get().lifecycleScope.launch(Dispatchers.Default) {
-            withContext(coroutineContext) {
-                delay(2000)
-                repeat(5) {
-                    if (!ScreenOffReceiverService.isRunning) {
-                        application.sendBroadcast(bIntentStartScreenOffReceiverService)
-                    } else {
-                        return@withContext
-                    }
-                }
-            }
-        }
-    }
-    private val checkStartScreenTimeoutObserverServiceJob: Job by lazy {
-        ProcessLifecycleOwner.get().lifecycleScope.launch(Dispatchers.Default) {
-            withContext(coroutineContext) {
-                delay(2000)
-                repeat(5) {
-                    if (!ScreenTimeoutObserverService.isRunning) {
-                        application.sendBroadcast(bIntentStartScreenTimeoutObserverService)
-                    } else {
-                        return@withContext
-                    }
-                }
-            }
-        }
-    }
     private val Int.px: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
     private lateinit var manageShortcutJob: Job
     private lateinit var stringTimeout: String
+
+    private var checkStartScreenOffReceiverServiceJob: Job? = null
+    private var checkStartScreenTimeoutObserverServiceJob: Job? = null
 
     private var newTimeout: Int = 0
 
@@ -130,23 +104,27 @@ class CommonUtils(private val application: Application) {
     }
 
     fun startScreenOffReceiverService() {
-        if (!ScreenOffReceiverService.isRunning && !checkStartScreenOffReceiverServiceJob.isActive) {
+        var previousJobIsActive = false
+        checkStartScreenOffReceiverServiceJob?.let { previousJobIsActive = it.isActive }
+        if (!ScreenOffReceiverService.isRunning && !previousJobIsActive) {
             application.sendBroadcast(bIntentStartScreenOffReceiverService)
 
-            checkStartScreenOffReceiverServiceJob.start()
+            checkStartScreenOffReceiverService()
         }
     }
 
     fun stopScreenOffReceiverService() {
-        checkStartScreenOffReceiverServiceJob.cancel()
+        checkStartScreenOffReceiverServiceJob?.cancel()
         application.sendBroadcast(bIntentStopScreenOffReceiverService)
     }
 
     fun startScreenTimeoutObserverService() {
-        if (!ScreenTimeoutObserverService.isRunning && !checkStartScreenTimeoutObserverServiceJob.isActive) {
+        var previousJobIsActive = false
+        checkStartScreenTimeoutObserverServiceJob?.let { previousJobIsActive = it.isActive }
+        if (!ScreenTimeoutObserverService.isRunning && !previousJobIsActive) {
             application.sendBroadcast(bIntentStartScreenTimeoutObserverService)
 
-            checkStartScreenTimeoutObserverServiceJob.start()
+            checkStartScreenTimeoutObserverService()
         }
     }
 
@@ -283,6 +261,34 @@ class CommonUtils(private val application: Application) {
                     }
                     override fun onLoadCleared(placeholder: Drawable?) {}
                 })
+        }
+    }
+
+    private fun checkStartScreenOffReceiverService() {
+        checkStartScreenOffReceiverServiceJob?.cancel()
+        checkStartScreenOffReceiverServiceJob = ProcessLifecycleOwner.get().lifecycleScope.launch(Dispatchers.Default) {
+            delay(2000)
+            repeat(5) {
+                if (!ScreenOffReceiverService.isRunning) {
+                    application.sendBroadcast(bIntentStartScreenOffReceiverService)
+                } else {
+                    return@launch
+                }
+            }
+        }
+    }
+
+    private fun checkStartScreenTimeoutObserverService() {
+        checkStartScreenTimeoutObserverServiceJob?.cancel()
+        checkStartScreenTimeoutObserverServiceJob = ProcessLifecycleOwner.get().lifecycleScope.launch(Dispatchers.Default) {
+            delay(2000)
+            repeat(5) {
+                if (!ScreenTimeoutObserverService.isRunning) {
+                    application.sendBroadcast(bIntentStartScreenTimeoutObserverService)
+                } else {
+                    return@launch
+                }
+            }
         }
     }
 }

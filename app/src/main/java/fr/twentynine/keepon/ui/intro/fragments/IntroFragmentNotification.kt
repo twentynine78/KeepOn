@@ -50,7 +50,7 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder {
                         .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                         .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-                    activityUtils.mCheckNotification.start()
+                    activityUtils.checkNotification()
                     requireContext().startActivity(intent)
                 }
             } else {
@@ -60,7 +60,7 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder {
                     .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
                     .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-                activityUtils.mCheckNotification.start()
+                activityUtils.checkNotification()
                 requireContext().startActivity(intent)
             }
         }
