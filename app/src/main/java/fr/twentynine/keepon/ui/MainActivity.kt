@@ -239,8 +239,8 @@ class MainActivity : AppCompatActivity() {
         })
 
         // Set BottomSheet to collapsed at launch
-        BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
         setOnSlideBottomSheetAnim(0.0F)
+        BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
 
         // Retrieve saved state of BottomSheet if exist
         if (savedInstanceState != null) {
@@ -264,7 +264,11 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        val value = BottomSheetBehavior.from(bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED
+        val value = if (!bottomSheetStateExpanded) {
+            BottomSheetBehavior.from(bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED
+        } else {
+            bottomSheetStateExpanded
+        }
         outState.putBoolean(BOTTOM_SHEET_STATE_EXPANDED, value)
     }
 
@@ -295,14 +299,9 @@ class MainActivity : AppCompatActivity() {
             if (bottomSheetStateExpanded) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     delay(800)
-                    var offset = 0.0F
-                    for (x in 1..10) {
-                        setOnSlideBottomSheetAnim(offset)
-                        offset += 0.1F
-                    }
                     BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
-                    setOnSlideBottomSheetAnim(offset)
-                    // Reset state for next launch
+                    // Reset state for next launch after that the bottomsheet was expanded
+                    delay(400)
                     bottomSheetStateExpanded = false
                 }
             }
@@ -641,7 +640,7 @@ class MainActivity : AppCompatActivity() {
         tilePreview.setPadding(newPadding, newPadding, newPadding, newPadding)
 
         // Adapt bottom sheet text view padding
-        bottomSheetPeekTextView.updatePadding((23.px + tilePreviewWidth), 0, 65.px, 10.px)
+        bottomSheetPeekTextView.updatePadding((23.px + tilePreviewWidth), 0, 65.px, 7.px)
 
         // Rotate peek arrow
         bottomSheetPeekArrow.pivotX = (bottomSheetPeekArrow.measuredWidth / 2).toFloat()
