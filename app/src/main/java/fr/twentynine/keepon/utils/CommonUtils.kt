@@ -27,6 +27,7 @@ import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.services.KeepOnTileService
 import fr.twentynine.keepon.ui.MainActivity
 import fr.twentynine.keepon.ui.SplashScreen
+import fr.twentynine.keepon.utils.glide.TimeoutIconData
 import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -45,8 +46,12 @@ class CommonUtils(private val application: Application) {
     private val preferences: Preferences by lazy()
     private val glideApp: RequestManager by lazy()
 
-    private val updateIntent: Intent by lazy { Intent() }.apply { value.action = MainActivity.ACTION_UPDATE_UI }
-    private val missingIntent: Intent by lazy { Intent() }.apply { value.action = MainActivity.ACTION_MISSING_SETTINGS }
+    private val updateIntent: Intent by lazy { Intent(application.applicationContext, EventBroadcastReceiver::class.java) }.apply {
+        value.action = MainActivity.ACTION_UPDATE_UI
+    }
+    private val missingIntent: Intent by lazy { Intent(application.applicationContext, EventBroadcastReceiver::class.java) }.apply {
+        value.action = MainActivity.ACTION_MISSING_SETTINGS
+    }
     private val bIntentManageShortcut: Intent by lazy { Intent(application.applicationContext, ServicesManagerReceiver::class.java) }.apply {
         value.action = ServicesManagerReceiver.MANAGE_SHORTCUTS
     }
@@ -260,6 +265,7 @@ class CommonUtils(private val application: Application) {
                             }
                         }
                     }
+
                     override fun onLoadCleared(placeholder: Drawable?) {}
                 })
         }
