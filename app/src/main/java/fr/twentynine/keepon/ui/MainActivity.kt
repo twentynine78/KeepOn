@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
     class UpdateUIEvent
     class MissingSettingsEvent
 
-    data class TimeoutSwitch(val switch: SwitchMaterial, val timeoutValue: Int)
+    private data class TimeoutSwitch(val switch: SwitchMaterial, val timeoutValue: Int)
 
     private val activityUtils: ActivityUtils by lazy()
     private val commonUtils: CommonUtils by lazy()
