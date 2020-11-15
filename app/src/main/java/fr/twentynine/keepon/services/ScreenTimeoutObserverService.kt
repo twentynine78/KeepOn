@@ -30,20 +30,6 @@ class ScreenTimeoutObserverService : LifecycleService() {
         registerScreenTimeoutObserver(screenTimeoutObserver)
 
         startForeground(SERVICE_ID, serviceUtils.buildNotification(getString(R.string.notification_timeout_service)))
-
-        isRunning = true
-    }
-
-    override fun onDestroy() {
-        unregisterScreenTimeoutObserver(screenTimeoutObserver)
-
-        isRunning = false
-
-        if (restart) {
-            commonUtils.startScreenTimeoutObserverService()
-        }
-
-        super.onDestroy()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -58,14 +44,23 @@ class ScreenTimeoutObserverService : LifecycleService() {
             }
         }
 
-        isRunning = true
-
         return START_STICKY
+    }
+
+    override fun onDestroy() {
+        unregisterScreenTimeoutObserver(screenTimeoutObserver)
+
+        if (restart) {
+            commonUtils.startScreenTimeoutObserverService()
+        }
+
+        super.onDestroy()
     }
 
     private fun stopForegroundService() {
         restart = false
-        isRunning = false
+
+        unregisterScreenTimeoutObserver(screenTimeoutObserver)
 
         stopForeground(true)
 
@@ -73,25 +68,21 @@ class ScreenTimeoutObserverService : LifecycleService() {
     }
 
     private fun registerScreenTimeoutObserver(screenTimeoutObserver: ScreenTimeoutObserver) {
-        if (!observerRegistered) {
+        if (!ScreenTimeoutObserver.isRegistered) {
+            ScreenTimeoutObserver.isRegistered = true
+
             val setting = Settings.System.getUriFor(Settings.System.SCREEN_OFF_TIMEOUT)
-
             mContentResolver.registerContentObserver(setting, false, screenTimeoutObserver)
-
-            observerRegistered = true
         }
     }
 
     private fun unregisterScreenTimeoutObserver(screenTimeoutObserver: ScreenTimeoutObserver) {
-        mContentResolver.unregisterContentObserver(screenTimeoutObserver)
+        ScreenTimeoutObserver.isRegistered = false
 
-        observerRegistered = false
+        mContentResolver.unregisterContentObserver(screenTimeoutObserver)
     }
 
     companion object {
         private const val SERVICE_ID = 1110
-        private var observerRegistered = false
-
-        var isRunning = false
     }
 }

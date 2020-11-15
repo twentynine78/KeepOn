@@ -23,11 +23,8 @@ import com.bumptech.glide.request.transition.Transition
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.di.annotation.ApplicationScope
-import fr.twentynine.keepon.utils.glide.TimeoutIconData
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.services.KeepOnTileService
-import fr.twentynine.keepon.services.ScreenOffReceiverService
-import fr.twentynine.keepon.services.ScreenTimeoutObserverService
 import fr.twentynine.keepon.ui.MainActivity
 import fr.twentynine.keepon.ui.SplashScreen
 import fr.twentynine.keepon.utils.preferences.Preferences
@@ -53,16 +50,20 @@ class CommonUtils(private val application: Application) {
     private val bIntentManageShortcut: Intent by lazy { Intent(application.applicationContext, ServicesManagerReceiver::class.java) }.apply {
         value.action = ServicesManagerReceiver.MANAGE_SHORTCUTS
     }
-    private val bIntentStartScreenOffReceiverService: Intent by lazy { Intent(application.applicationContext, ServicesManagerReceiver::class.java) }.apply {
+    private val bIntentStartScreenOffReceiverService: Intent by lazy {
+        Intent(application.applicationContext, ServicesManagerReceiver::class.java) }.apply {
         value.action = ServicesManagerReceiver.ACTION_START_FOREGROUND_SCREEN_OFF_SERVICE
     }
-    private val bIntentStopScreenOffReceiverService: Intent by lazy { Intent(application.applicationContext, ServicesManagerReceiver::class.java) }.apply {
+    private val bIntentStopScreenOffReceiverService: Intent by lazy {
+        Intent(application.applicationContext, ServicesManagerReceiver::class.java) }.apply {
         value.action = ServicesManagerReceiver.ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE
     }
-    private val bIntentStartScreenTimeoutObserverService: Intent by lazy { Intent(application.applicationContext, ServicesManagerReceiver::class.java) }.apply {
+    private val bIntentStartScreenTimeoutObserverService: Intent by lazy {
+        Intent(application.applicationContext, ServicesManagerReceiver::class.java) }.apply {
         value.action = ServicesManagerReceiver.ACTION_START_FOREGROUND_TIMEOUT_SERVICE
     }
-    private val shortcutIntent: Intent by lazy { Intent(application.applicationContext, SplashScreen::class.java) }.apply {
+    private val shortcutIntent: Intent by lazy {
+        Intent(application.applicationContext, SplashScreen::class.java) }.apply {
         value.action = ServicesManagerReceiver.ACTION_SET_TIMEOUT
     }
     private val shortcutManager: ShortcutManager? by lazy {
@@ -106,7 +107,7 @@ class CommonUtils(private val application: Application) {
     fun startScreenOffReceiverService() {
         var previousJobIsActive = false
         checkStartScreenOffReceiverServiceJob?.let { previousJobIsActive = it.isActive }
-        if (!ScreenOffReceiverService.isRunning && !previousJobIsActive) {
+        if (!ServicesManagerReceiver.screenOffReceiverServiceIsRunning && !previousJobIsActive) {
             application.sendBroadcast(bIntentStartScreenOffReceiverService)
 
             checkStartScreenOffReceiverService()
@@ -121,7 +122,7 @@ class CommonUtils(private val application: Application) {
     fun startScreenTimeoutObserverService() {
         var previousJobIsActive = false
         checkStartScreenTimeoutObserverServiceJob?.let { previousJobIsActive = it.isActive }
-        if (!ScreenTimeoutObserverService.isRunning && !previousJobIsActive) {
+        if (!ServicesManagerReceiver.screenTimeoutObserverServiceIsRunning && !previousJobIsActive) {
             application.sendBroadcast(bIntentStartScreenTimeoutObserverService)
 
             checkStartScreenTimeoutObserverService()
@@ -267,9 +268,9 @@ class CommonUtils(private val application: Application) {
     private fun checkStartScreenOffReceiverService() {
         checkStartScreenOffReceiverServiceJob?.cancel()
         checkStartScreenOffReceiverServiceJob = ProcessLifecycleOwner.get().lifecycleScope.launch(Dispatchers.Default) {
-            delay(2000)
             repeat(5) {
-                if (!ScreenOffReceiverService.isRunning) {
+                delay(2000)
+                if (!ServicesManagerReceiver.screenOffReceiverServiceIsRunning) {
                     application.sendBroadcast(bIntentStartScreenOffReceiverService)
                 } else {
                     return@launch
@@ -281,9 +282,9 @@ class CommonUtils(private val application: Application) {
     private fun checkStartScreenTimeoutObserverService() {
         checkStartScreenTimeoutObserverServiceJob?.cancel()
         checkStartScreenTimeoutObserverServiceJob = ProcessLifecycleOwner.get().lifecycleScope.launch(Dispatchers.Default) {
-            delay(2000)
             repeat(5) {
-                if (!ScreenTimeoutObserverService.isRunning) {
+                delay(2000)
+                if (!ServicesManagerReceiver.screenTimeoutObserverServiceIsRunning) {
                     application.sendBroadcast(bIntentStartScreenTimeoutObserverService)
                 } else {
                     return@launch

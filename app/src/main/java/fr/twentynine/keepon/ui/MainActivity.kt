@@ -289,6 +289,11 @@ class MainActivity : AppCompatActivity() {
             // Start service to monitor screen timeout
             commonUtils.startScreenTimeoutObserverService()
 
+            // Start service to monitor screen off if needed
+            if (preferences.getKeepOnState() && preferences.getResetTimeoutOnScreenOff()) {
+                commonUtils.startScreenOffReceiverService()
+            }
+
             // Update all switch from saved preference
             updateSwitchs(getTimeoutSwitchsArray())
 
@@ -395,6 +400,7 @@ class MainActivity : AppCompatActivity() {
     private fun updateTilePreview() {
         // Set Bitmap to Tile Preview
         val currentTimeout = preferences.getCurrentTimeout()
+        val originalTimeout = preferences.getOriginalTimeout()
 
         glideApp
             .asBitmap()
@@ -407,7 +413,7 @@ class MainActivity : AppCompatActivity() {
                     val layerDrawableCircle: LayerDrawable = tilePreviewBackground.drawable as LayerDrawable
                     val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
 
-                    if (preferences.getCurrentTimeout() == preferences.getOriginalTimeout()) {
+                    if (currentTimeout == originalTimeout) {
                         tilePreview.imageTintList = getColorStateList(R.color.colorTilePreviewDisabled)
                         circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackgroundDisabled))
                     } else {
@@ -429,8 +435,8 @@ class MainActivity : AppCompatActivity() {
             val switch = timeoutSwitch.switch
             val timeout = timeoutSwitch.timeoutValue
             val selectedSwitch = preferences.getSelectedTimeout()
-            val originalTimeout = preferences.getOriginalTimeout()
             val currentTimeout = preferences.getCurrentTimeout()
+            val originalTimeout = preferences.getOriginalTimeout()
 
             // Check for DevicePolicy restriction
             val mDPM = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager

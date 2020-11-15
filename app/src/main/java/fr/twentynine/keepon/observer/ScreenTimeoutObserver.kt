@@ -62,4 +62,8 @@ class ScreenTimeoutObserver(val application: Application) : ContentObserver(null
         // Manage dynamics shortcut
         commonUtils.manageAppShortcut()
     }
+
+    companion object {
+        var isRegistered = false
+    }
 }

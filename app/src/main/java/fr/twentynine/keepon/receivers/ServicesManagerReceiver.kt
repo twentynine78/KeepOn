@@ -33,18 +33,17 @@ class ServicesManagerReceiver : BroadcastReceiver() {
         if (action != null) {
             when (action) {
                 Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED -> {
+                    screenOffReceiverServiceIsRunning = false
+                    screenTimeoutObserverServiceIsRunning = false
+
                     commonUtils.updateQSTile(0)
 
                     // Start ScreenTimeoutObserverService
-                    val startIntentScreenTimeout = Intent(context.applicationContext, ScreenTimeoutObserverService::class.java)
-                    startIntentScreenTimeout.action = ACTION_START_FOREGROUND_TIMEOUT_SERVICE
-                    ContextCompat.startForegroundService(context.applicationContext, startIntentScreenTimeout)
+                    commonUtils.startScreenTimeoutObserverService()
 
+                    // Start ScreenOffReceiverService if needed
                     if (preferences.getKeepOnState() && preferences.getResetTimeoutOnScreenOff()) {
-                        // Start ScreenOffReceiverService
-                        val startIntentScreenOff = Intent(context.applicationContext, ScreenOffReceiverService::class.java)
-                        startIntentScreenOff.action = ACTION_START_FOREGROUND_SCREEN_OFF_SERVICE
-                        ContextCompat.startForegroundService(context.applicationContext, startIntentScreenOff)
+                        commonUtils.startScreenOffReceiverService()
                     }
 
                     // Manage dynamics shortcut
@@ -54,21 +53,25 @@ class ServicesManagerReceiver : BroadcastReceiver() {
                     val startIntent = Intent(context.applicationContext, ScreenTimeoutObserverService::class.java)
                     startIntent.action = action
                     ContextCompat.startForegroundService(context.applicationContext, startIntent)
+                    screenTimeoutObserverServiceIsRunning = true
                 }
                 ACTION_STOP_FOREGROUND_TIMEOUT_SERVICE -> {
                     val stopIntent = Intent(context.applicationContext, ScreenTimeoutObserverService::class.java)
                     stopIntent.action = action
                     ContextCompat.startForegroundService(context.applicationContext, stopIntent)
+                    screenTimeoutObserverServiceIsRunning = false
                 }
                 ACTION_START_FOREGROUND_SCREEN_OFF_SERVICE -> {
                     val startIntent = Intent(context.applicationContext, ScreenOffReceiverService::class.java)
                     startIntent.action = action
                     ContextCompat.startForegroundService(context.applicationContext, startIntent)
+                    screenOffReceiverServiceIsRunning = true
                 }
                 ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE -> {
                     val stopIntent = Intent(context.applicationContext, ScreenOffReceiverService::class.java)
                     stopIntent.action = action
                     ContextCompat.startForegroundService(context.applicationContext, stopIntent)
+                    screenOffReceiverServiceIsRunning = false
                 }
                 ACTION_SET_TIMEOUT -> {
                     if (intent.extras != null) {
@@ -96,5 +99,8 @@ class ServicesManagerReceiver : BroadcastReceiver() {
         const val ACTION_STOP_FOREGROUND_TIMEOUT_SERVICE = "ACTION_STOP_FOREGROUND_TIMEOUT_SERVICE"
         const val ACTION_SET_TIMEOUT = "ACTION_SET_TIMEOUT"
         const val MANAGE_SHORTCUTS = "MANAGE_SHORTCUTS"
+
+        var screenOffReceiverServiceIsRunning = false
+        var screenTimeoutObserverServiceIsRunning = false
     }
 }

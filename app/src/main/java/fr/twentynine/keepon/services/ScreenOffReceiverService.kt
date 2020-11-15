@@ -28,20 +28,6 @@ class ScreenOffReceiverService : LifecycleService() {
         registerScreenOffReceiver()
 
         startForeground(SERVICE_ID, serviceUtils.buildNotification(getString(R.string.notification_screen_off_service)))
-
-        isRunning = true
-    }
-
-    override fun onDestroy() {
-        unregisterScreenOffReceiver()
-
-        isRunning = false
-
-        if (restart) {
-            commonUtils.startScreenOffReceiverService()
-        }
-
-        super.onDestroy()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -56,14 +42,23 @@ class ScreenOffReceiverService : LifecycleService() {
             }
         }
 
-        isRunning = true
-
         return START_STICKY
+    }
+
+    override fun onDestroy() {
+        unregisterScreenOffReceiver()
+
+        if (restart) {
+            commonUtils.startScreenOffReceiverService()
+        }
+
+        super.onDestroy()
     }
 
     private fun stopForegroundService() {
         restart = false
-        isRunning = false
+
+        unregisterScreenOffReceiver()
 
         stopForeground(true)
 
@@ -74,23 +69,21 @@ class ScreenOffReceiverService : LifecycleService() {
         val intentFilter = IntentFilter()
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF)
         try {
-            registerReceiver(screenOffReceiver, intentFilter)
-        } catch (e: Exception) {
-            e.printStackTrace()
+            applicationContext.registerReceiver(screenOffReceiver, intentFilter)
+        } catch (e: IllegalArgumentException) {
+            return
         }
     }
 
     private fun unregisterScreenOffReceiver() {
         try {
-            unregisterReceiver(screenOffReceiver)
-        } catch (e: Exception) {
-            e.printStackTrace()
+            applicationContext.unregisterReceiver(screenOffReceiver)
+        } catch (e: IllegalArgumentException) {
+            return
         }
     }
 
     companion object {
         private const val SERVICE_ID = 1111
-
-        var isRunning = false
     }
 }

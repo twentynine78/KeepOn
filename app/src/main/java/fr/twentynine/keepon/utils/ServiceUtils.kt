@@ -34,7 +34,9 @@ class ServiceUtils(private val service: Service) {
                 .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
         }
     }
-    private val pendingIntent: PendingIntent = PendingIntent.getActivity(service, 0, hideIntent, 0)
+    private val pendingIntent: PendingIntent by lazy {
+        PendingIntent.getActivity(service, 0, hideIntent, 0)
+    }
 
     init {
         // Create the NotificationChannel if needed

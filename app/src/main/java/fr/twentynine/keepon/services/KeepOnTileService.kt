@@ -70,6 +70,7 @@ class KeepOnTileService : TileService(), LifecycleOwner {
     }
 
     override fun onBind(intent: Intent?): IBinder? {
+        dispatcher.onServicePreSuperOnBind()
         if (intent != null) {
             // A hack to prevent a private serializable classloader attack and ignore implicit intents, because they are not valid
             if (bundleScrubber.scrub(intent) || (packageName != intent.getPackage() && ComponentName(this, this.javaClass.name) != intent.component)) {
@@ -84,7 +85,6 @@ class KeepOnTileService : TileService(), LifecycleOwner {
 
         commonUtils.startScreenTimeoutObserverService()
 
-        dispatcher.onServicePreSuperOnBind()
         return super.onBind(intent)
     }
 
@@ -134,13 +134,14 @@ class KeepOnTileService : TileService(), LifecycleOwner {
                 val mainIntent = MainActivity.newIntent(this.applicationContext)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
-                if (preferences.getSelectedTimeout().size < 1 && Settings.System.canWrite(this)) {
+                if (preferences.getSelectedTimeout().size < 1) {
                     mainIntent.action = MainActivity.ACTION_MISSING_SETTINGS
                     commonUtils.sendBroadcastMissingSettings()
                 }
                 startActivityAndCollapse(mainIntent)
+            } else {
+                preferences.setTimeout(preferences.getNextTimeoutValue())
             }
-            preferences.setTimeout(preferences.getNextTimeoutValue())
         }
     }
 

@@ -27,6 +27,12 @@ class ScreenOffReceiver : BroadcastReceiver() {
             preferences.setTimeout(preferences.getOriginalTimeout())
 
             commonUtils.stopScreenOffReceiverService()
+
+            try {
+                context.applicationContext.unregisterReceiver(this)
+            } catch (e: IllegalArgumentException) {
+                return
+            }
         }
     }
 }
