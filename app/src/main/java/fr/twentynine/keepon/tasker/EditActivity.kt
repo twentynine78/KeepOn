@@ -13,20 +13,23 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.collection.ArrayMap
 import androidx.collection.arrayMapOf
 import com.google.android.material.radiobutton.MaterialRadioButton
+import fr.twentynine.keepon.KeepOnApplication.Companion.viewBinding
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.databinding.ActivityTaskerEditBinding
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.tasker.Intent.Companion.ACTION_EDIT_SETTING
 import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_BUNDLE
 import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_STRING_BLURB
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.preferences.Preferences
-import kotlinx.android.synthetic.main.activity_tasker_edit.*
 import toothpick.ktp.delegate.lazy
 
 class EditActivity : AppCompatActivity() {
 
     private val bundleScrubber: BundleScrubber by lazy()
     private val preferences: Preferences by lazy()
+
+    private val binding: ActivityTaskerEditBinding by viewBinding(ActivityTaskerEditBinding::inflate)
 
     private val timeoutMap: ArrayMap<Int, Int> by lazy {
         arrayMapOf(
@@ -78,8 +81,7 @@ class EditActivity : AppCompatActivity() {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
 
-        setContentView(R.layout.activity_tasker_edit)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
 
         title = getString(R.string.app_name)
         supportActionBar?.subtitle = getString(R.string.tasker_activity_name)
@@ -87,11 +89,11 @@ class EditActivity : AppCompatActivity() {
         isCancelled = false
 
         // Set FAB action
-        fab_save.setOnClickListener { finish() }
+        binding.fabSave.setOnClickListener { finish() }
 
         // Disable option 'previous value' if no previous value found
         if (preferences.getPreviousValue() == 0) {
-            timeout_previous.isEnabled = false
+            binding.timeoutPrevious.isEnabled = false
         }
 
         // Check for DevicePolicy restriction
@@ -121,10 +123,12 @@ class EditActivity : AppCompatActivity() {
                 }
 
                 if (timeoutCheckedId != -1) {
-                    timeout_radiogroup.check(timeoutCheckedId)
+                    binding.timeoutRadiogroup.check(timeoutCheckedId)
                 }
             }
         }
+
+        setContentView(binding.root)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -152,10 +156,10 @@ class EditActivity : AppCompatActivity() {
         if (isCancelled) {
             setResult(RESULT_CANCELED)
         } else {
-            if (!timeoutMap.containsKey(timeout_radiogroup.checkedRadioButtonId)) {
+            if (!timeoutMap.containsKey(binding.timeoutRadiogroup.checkedRadioButtonId)) {
                 setResult(RESULT_CANCELED)
             } else {
-                val timeoutCheckedId = timeout_radiogroup.checkedRadioButtonId
+                val timeoutCheckedId = binding.timeoutRadiogroup.checkedRadioButtonId
                 val timeout = timeoutMap[timeoutCheckedId]
                 val timeoutText = findViewById<MaterialRadioButton>(timeoutCheckedId).text
 

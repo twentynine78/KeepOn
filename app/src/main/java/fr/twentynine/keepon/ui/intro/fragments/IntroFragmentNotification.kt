@@ -6,25 +6,23 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.github.appintro.SlideBackgroundColorHolder
+import fr.twentynine.keepon.KeepOnApplication.Companion.viewBinding
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.databinding.FragmentIntroButtonBinding
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.ui.intro.IntroActivity.Companion.COLOR_SLIDE_NOTIF
 import fr.twentynine.keepon.utils.ActivityUtils
 import fr.twentynine.keepon.utils.ServiceUtils
-import kotlinx.android.synthetic.main.fragment_intro_button.view.*
 import toothpick.ktp.delegate.lazy
 
-class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder {
+class IntroFragmentNotification : Fragment(R.layout.fragment_intro_button), SlideBackgroundColorHolder {
 
     private val activityUtils: ActivityUtils by lazy()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_intro_button, container, false)
+    private val binding: FragmentIntroButtonBinding by viewBinding(FragmentIntroButtonBinding::bind)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +36,7 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder {
 
         setBackgroundColor(defaultBackgroundColor)
 
-        val mButton = view.button
+        val mButton = binding.button
         mButton.setBackgroundColor(activityUtils.darkerColor(COLOR_SLIDE_NOTIF, 0.4f))
         mButton.text = getString(R.string.dialog_notification_button)
         mButton.setOnClickListener {
@@ -65,13 +63,13 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder {
             }
         }
 
-        val mTitle = view.title
+        val mTitle = binding.title
         mTitle.text = getString(R.string.dialog_notification_title)
-        val mDescription = view.description
+        val mDescription = binding.description
         mDescription.text = getString(R.string.dialog_notification_text)
-        val mImage = view.image
+        val mImage = binding.image
         mImage.setImageResource(R.mipmap.img_intro_notif)
-        val mImage2 = view.image2
+        val mImage2 = binding.image2
         mImage2.setImageResource(R.mipmap.img_intro_notif_2)
 
         if (activityUtils.isNotificationEnabled()) {
@@ -83,14 +81,10 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder {
 
     override fun onResume() {
         super.onResume()
-        view?.let {
-            if (it.button != null) {
-                if (activityUtils.isNotificationEnabled()) {
-                    it.button.visibility = View.VISIBLE
-                } else {
-                    it.button.visibility = View.INVISIBLE
-                }
-            }
+        if (activityUtils.isNotificationEnabled()) {
+            binding.button.visibility = View.VISIBLE
+        } else {
+            binding.button.visibility = View.INVISIBLE
         }
     }
 
@@ -98,7 +92,7 @@ class IntroFragmentNotification : Fragment(), SlideBackgroundColorHolder {
         get() = COLOR_SLIDE_NOTIF
 
     override fun setBackgroundColor(backgroundColor: Int) {
-        view?.main?.setBackgroundColor(backgroundColor)
+        binding.main.setBackgroundColor(backgroundColor)
     }
 
     companion object {

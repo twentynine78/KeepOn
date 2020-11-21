@@ -10,13 +10,14 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
+import fr.twentynine.keepon.KeepOnApplication.Companion.viewBinding
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.databinding.ActivitySplashScreenBinding
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.ui.intro.IntroActivity
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.preferences.Preferences
-import kotlinx.android.synthetic.main.activity_splash_screen.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -26,6 +27,8 @@ class SplashScreen : AppCompatActivity() {
 
     private val bundleScrubber: BundleScrubber by lazy()
     private val preferences: Preferences by lazy()
+
+    private val binding: ActivitySplashScreenBinding by viewBinding(ActivitySplashScreenBinding::inflate)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,20 +72,18 @@ class SplashScreen : AppCompatActivity() {
             return
         }
 
-        setContentView(R.layout.activity_splash_screen)
-
         // Set bounce animation on the logo and title
         val bounceAnimLogo: Animation = AnimationUtils.loadAnimation(
             this,
             R.anim.splash_bounce_logo
         )
-        logo_iv.startAnimation(bounceAnimLogo)
+        binding.logoIv.startAnimation(bounceAnimLogo)
 
         val bounceAnimTitle: Animation = AnimationUtils.loadAnimation(
             this,
             R.anim.splash_bounce_title
         )
-        title_tv.startAnimation(bounceAnimTitle)
+        binding.titleTv.startAnimation(bounceAnimTitle)
 
         // Set DarkTheme
         val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
@@ -93,6 +94,8 @@ class SplashScreen : AppCompatActivity() {
         if (preferences.getDarkTheme()) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
+
+        setContentView(binding.root)
 
         if (!preferences.getSkipIntro()) {
             // Start Intro on first launch

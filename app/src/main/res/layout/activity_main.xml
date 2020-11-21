@@ -9,9 +9,9 @@
     tools:context=".ui.MainActivity"
     tools:ignore="Overdraw">
 
-    <include layout="@layout/content_main"/>
+    <include android:id="@+id/includeContentMain" layout="@layout/content_main"/>
 
-    <include layout="@layout/bottom_sheet_tile_settings" />
+    <include android:id="@+id/includeBottomSheet" layout="@layout/bottom_sheet_tile_settings" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_height="wrap_content"

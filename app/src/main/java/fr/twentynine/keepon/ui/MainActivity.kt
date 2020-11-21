@@ -38,7 +38,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.switchmaterial.SwitchMaterial
+import fr.twentynine.keepon.KeepOnApplication.Companion.viewBinding
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.databinding.ActivityMainBinding
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.ui.intro.IntroActivity
 import fr.twentynine.keepon.utils.ActivityUtils
@@ -46,11 +48,6 @@ import fr.twentynine.keepon.utils.CommonUtils
 import fr.twentynine.keepon.utils.Rate
 import fr.twentynine.keepon.utils.glide.TimeoutIconData
 import fr.twentynine.keepon.utils.preferences.Preferences
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.bottom_sheet_tile_settings.*
-import kotlinx.android.synthetic.main.card_main_about.*
-import kotlinx.android.synthetic.main.card_main_settings.*
-import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -78,9 +75,11 @@ class MainActivity : AppCompatActivity() {
     private val rate: Rate by lazy()
     private val glideApp: RequestManager by lazy()
 
+    private val binding: ActivityMainBinding by viewBinding(ActivityMainBinding::inflate)
+
     private val snackbar: Snackbar by lazy {
-        Snackbar.make(findViewById(android.R.id.content), getString(R.string.settings_save), Snackbar.LENGTH_LONG)
-            .setAnchorView(R.id.bottomSheet)
+        Snackbar.make(binding.root, getString(R.string.settings_save), Snackbar.LENGTH_LONG)
+            .setAnchorView(binding.includeBottomSheet.bottomSheet)
     }
 
     private var isPaused = false
@@ -121,8 +120,7 @@ class MainActivity : AppCompatActivity() {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
 
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
 
         // Set OnClickListener for each switch
         for (timeoutSwitch: TimeoutSwitch in getTimeoutSwitchsArray()) {
@@ -138,16 +136,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Set OnClickListener to open credits dialog
-        card_about_credits_label.setOnClickListener {
+        binding.includeContentMain.includeCardAbout.cardAboutCreditsLabel.setOnClickListener {
             activityUtils.getCreditsDialog().show()
         }
-        card_about_credits.setOnClickListener {
+        binding.includeContentMain.includeCardAbout.cardAboutCredits.setOnClickListener {
             activityUtils.getCreditsDialog().show()
         }
 
         // Manage checkbox for monitor screen off or not
-        checkBoxScreenOff.isChecked = preferences.getResetTimeoutOnScreenOff()
-        checkBoxScreenOff.setOnCheckedChangeListener { _, isChecked ->
+        binding.includeContentMain.includeCardSettings.checkBoxScreenOff.isChecked = preferences.getResetTimeoutOnScreenOff()
+        binding.includeContentMain.includeCardSettings.checkBoxScreenOff.setOnCheckedChangeListener { _, isChecked ->
             preferences.setResetTimeoutOnScreenOff(isChecked)
 
             if (!isChecked) {
@@ -164,23 +162,21 @@ class MainActivity : AppCompatActivity() {
         val sVersion = StringBuilder(getString(R.string.about_card_version))
             .append(" ")
             .append(activityUtils.getAppVersion())
-        card_about_version_tv.text = Html.fromHtml(sVersion.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
-
-        animateViews()
+        binding.includeContentMain.includeCardAbout.cardAboutVersionTv.text = Html.fromHtml(sVersion.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
 
         // Set OnClick listener for bottom sheet peek views
         val bottomSheetStateOnClickListener = View.OnClickListener {
-            if (BottomSheetBehavior.from(bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED) {
-                BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
+            if (BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED) {
+                BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
             } else {
-                BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
+                BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
-        bottomSheetPeekTextView.setOnClickListener { bottomSheetStateOnClickListener.onClick(it) }
-        bottomSheetPeekArrow.setOnClickListener { bottomSheetStateOnClickListener.onClick(it) }
+        binding.includeBottomSheet.bottomSheetPeekTextView.setOnClickListener { bottomSheetStateOnClickListener.onClick(it) }
+        binding.includeBottomSheet.bottomSheetPeekArrow.setOnClickListener { bottomSheetStateOnClickListener.onClick(it) }
 
         // Set OnClick listener for Tile Preview to switch like from Quick Settings
-        tilePreview.setOnClickListener {
+        binding.includeBottomSheet.tilePreview.setOnClickListener {
             if (preferences.getSelectedTimeout().size < 1) {
                 EventBus.getDefault().post(MissingSettingsEvent())
             } else {
@@ -201,11 +197,11 @@ class MainActivity : AppCompatActivity() {
         }
         maxPreviewPadding = defaultPreviewPadding + ((maxPreviewSize - defaultPreviewSize) / 10)
         defaultBottomMarginViewHeight = ((maxPreviewSize - defaultPreviewSize) / 4) + 1.px
-        bottomMarginView.layoutParams.height = defaultBottomMarginViewHeight
-        bottomMarginView.requestLayout()
+        binding.includeBottomSheet.bottomMarginView.layoutParams.height = defaultBottomMarginViewHeight
+        binding.includeBottomSheet.bottomMarginView.requestLayout()
 
         // Set onSlide bottom sheet behavior
-        BottomSheetBehavior.from(bottomSheet).addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 setOnSlideBottomSheetAnim(slideOffset)
             }
@@ -217,7 +213,7 @@ class MainActivity : AppCompatActivity() {
 
         // Set BottomSheet to collapsed at launch
         setOnSlideBottomSheetAnim(0.0F)
-        BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
+        BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
 
         // Retrieve saved state of BottomSheet if exist
         if (savedInstanceState != null) {
@@ -232,13 +228,15 @@ class MainActivity : AppCompatActivity() {
 
         // Register EventBus
         EventBus.getDefault().register(this)
+        setContentView(binding.root)
+        animateViews()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
         val value = if (!bottomSheetStateExpanded) {
-            BottomSheetBehavior.from(bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED
+            BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED
         } else {
             bottomSheetStateExpanded
         }
@@ -277,7 +275,7 @@ class MainActivity : AppCompatActivity() {
             if (bottomSheetStateExpanded) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     delay(800)
-                    BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
+                    BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
                     // Reset state for next launch after that the bottomsheet was expanded
                     delay(400)
                     bottomSheetStateExpanded = false
@@ -334,8 +332,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (BottomSheetBehavior.from(bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED) {
-            BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
+        if (BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED) {
+            BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
         } else {
             finishAfterTransition()
         }
@@ -374,46 +372,46 @@ class MainActivity : AppCompatActivity() {
 
     private fun getTimeoutSwitchsArray(): ArrayList<TimeoutSwitch> {
         return arrayListOf(
-            TimeoutSwitch(switch15s, preferences.getTimeoutValueArray()[0]),
-            TimeoutSwitch(switch30s, preferences.getTimeoutValueArray()[1]),
-            TimeoutSwitch(switch1m, preferences.getTimeoutValueArray()[2]),
-            TimeoutSwitch(switch2m, preferences.getTimeoutValueArray()[3]),
-            TimeoutSwitch(switch5m, preferences.getTimeoutValueArray()[4]),
-            TimeoutSwitch(switch10m, preferences.getTimeoutValueArray()[5]),
-            TimeoutSwitch(switch30m, preferences.getTimeoutValueArray()[6]),
-            TimeoutSwitch(switch1h, preferences.getTimeoutValueArray()[7]),
-            TimeoutSwitch(switchInfinite, preferences.getTimeoutValueArray()[8])
+            TimeoutSwitch(binding.includeContentMain.includeCardSettings.switch15s, preferences.getTimeoutValueArray()[0]),
+            TimeoutSwitch(binding.includeContentMain.includeCardSettings.switch30s, preferences.getTimeoutValueArray()[1]),
+            TimeoutSwitch(binding.includeContentMain.includeCardSettings.switch1m, preferences.getTimeoutValueArray()[2]),
+            TimeoutSwitch(binding.includeContentMain.includeCardSettings.switch2m, preferences.getTimeoutValueArray()[3]),
+            TimeoutSwitch(binding.includeContentMain.includeCardSettings.switch5m, preferences.getTimeoutValueArray()[4]),
+            TimeoutSwitch(binding.includeContentMain.includeCardSettings.switch10m, preferences.getTimeoutValueArray()[5]),
+            TimeoutSwitch(binding.includeContentMain.includeCardSettings.switch30m, preferences.getTimeoutValueArray()[6]),
+            TimeoutSwitch(binding.includeContentMain.includeCardSettings.switch1h, preferences.getTimeoutValueArray()[7]),
+            TimeoutSwitch(binding.includeContentMain.includeCardSettings.switchInfinite, preferences.getTimeoutValueArray()[8])
         )
     }
 
     private fun updateTilePreview() {
-        // Set Bitmap to Tile Preview
-        val currentTimeout = preferences.getCurrentTimeout()
-        val originalTimeout = preferences.getOriginalTimeout()
+            // Set Bitmap to Tile Preview
+            val currentTimeout = preferences.getCurrentTimeout()
+            val originalTimeout = preferences.getOriginalTimeout()
 
-        glideApp
-            .asBitmap()
-            .priority(Priority.HIGH)
-            .load(TimeoutIconData(currentTimeout, 1, commonUtils.getIconStyleSignature()))
-            .into(object : CustomTarget<Bitmap>(150.px, 150.px) {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    tilePreview.setImageBitmap(resource)
-                    tilePreview.imageTintMode = PorterDuff.Mode.SRC_IN
-                    val layerDrawableCircle: LayerDrawable = tilePreviewBackground.drawable as LayerDrawable
-                    val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
+            glideApp
+                .asBitmap()
+                .priority(Priority.HIGH)
+                .load(TimeoutIconData(currentTimeout, 1, commonUtils.getIconStyleSignature()))
+                .into(object : CustomTarget<Bitmap>(150.px, 150.px) {
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        binding.includeBottomSheet.tilePreview.setImageBitmap(resource)
+                        binding.includeBottomSheet.tilePreview.imageTintMode = PorterDuff.Mode.SRC_IN
+                        val layerDrawableCircle: LayerDrawable = binding.includeBottomSheet.tilePreviewBackground.drawable as LayerDrawable
+                        val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
 
-                    if (currentTimeout == originalTimeout) {
-                        tilePreview.imageTintList = getColorStateList(R.color.colorTilePreviewDisabled)
-                        circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackgroundDisabled))
-                    } else {
-                        tilePreview.imageTintList = getColorStateList(R.color.colorTilePreview)
-                        circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackground))
+                        if (currentTimeout == originalTimeout) {
+                            binding.includeBottomSheet.tilePreview.imageTintList = getColorStateList(R.color.colorTilePreviewDisabled)
+                            circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackgroundDisabled))
+                        } else {
+                            binding.includeBottomSheet.tilePreview.imageTintList = getColorStateList(R.color.colorTilePreview)
+                            circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackground))
+                        }
                     }
-                }
 
-                override fun onLoadCleared(placeholder: Drawable?) {
-                }
-            })
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                    }
+                })
     }
 
     private fun updateSwitchs(switchsArray: ArrayList<TimeoutSwitch>) {
@@ -440,7 +438,7 @@ class MainActivity : AppCompatActivity() {
                 switch.setTextColor(getColor(R.color.colorTextDisabled))
 
                 // Set original timeout in checkBoxScreenOff text
-                checkBoxScreenOff.text = Formatter().format(
+                binding.includeContentMain.includeCardSettings.checkBoxScreenOff.text = Formatter().format(
                     getString(R.string.reset_checkbox),
                     switch.text.toString().toLowerCase(Locale.getDefault())
                 ).toString()
@@ -486,57 +484,57 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadQSStylePreferences() {
         // Load value from activityUtils
-        slider_size.value = preferences.getQSStyleFontSize().toFloat()
-        seek_skew.value = preferences.getQSStyleFontSkew().toFloat()
-        seek_space.value = preferences.getQSStyleFontSpacing().toFloat()
+        binding.includeBottomSheet.sliderSize.value = preferences.getQSStyleFontSize().toFloat()
+        binding.includeBottomSheet.seekSkew.value = preferences.getQSStyleFontSkew().toFloat()
+        binding.includeBottomSheet.seekSpace.value = preferences.getQSStyleFontSpacing().toFloat()
 
-        radio_typeface_san_serif.isChecked = preferences.getQSStyleTypefaceSansSerif()
-        radio_typeface_serif.isChecked = preferences.getQSStyleTypefaceSerif()
-        radio_typeface_monospace.isChecked = preferences.getQSStyleTypefaceMonospace()
+        binding.includeBottomSheet.radioTypefaceSanSerif.isChecked = preferences.getQSStyleTypefaceSansSerif()
+        binding.includeBottomSheet.radioTypefaceSerif.isChecked = preferences.getQSStyleTypefaceSerif()
+        binding.includeBottomSheet.radioTypefaceMonospace.isChecked = preferences.getQSStyleTypefaceMonospace()
 
-        radio_style_fill.isChecked = preferences.getQSStyleTextFill()
-        radio_style_fill_stroke.isChecked = preferences.getQSStyleTextFillStroke()
-        radio_style_stroke.isChecked = preferences.getQSStyleTextStroke()
+        binding.includeBottomSheet.radioStyleFill.isChecked = preferences.getQSStyleTextFill()
+        binding.includeBottomSheet.radioStyleFillStroke.isChecked = preferences.getQSStyleTextFillStroke()
+        binding.includeBottomSheet.radioStyleStroke.isChecked = preferences.getQSStyleTextStroke()
 
-        switch_fake_bold.isChecked = preferences.getQSStyleFontBold()
-        switch_underline.isChecked = preferences.getQSStyleFontUnderline()
-        switch_smcp.isChecked = preferences.getQSStyleFontSMCP()
+        binding.includeBottomSheet.switchFakeBold.isChecked = preferences.getQSStyleFontBold()
+        binding.includeBottomSheet.switchUnderline.isChecked = preferences.getQSStyleFontUnderline()
+        binding.includeBottomSheet.switchSmcp.isChecked = preferences.getQSStyleFontSMCP()
 
         // Set OnClickListener and OnSeekBarChangeListener for QS Style controls
         val qsStyleOnChangeListener = Slider.OnChangeListener { _, _, _ -> saveQSStyleSlidePreferences() }
         val qsStyleOnclickListener = View.OnClickListener { saveQSStyleClickPreferences() }
         val qsStyleOnclickListenerTypeface = View.OnClickListener {
-            if (radio_typeface_san_serif.isChecked) {
-                switch_smcp.isEnabled = true
-                switch_smcp.isChecked = preferences.getQSStyleFontSMCP()
+            if (binding.includeBottomSheet.radioTypefaceSanSerif.isChecked) {
+                binding.includeBottomSheet.switchSmcp.isEnabled = true
+                binding.includeBottomSheet.switchSmcp.isChecked = preferences.getQSStyleFontSMCP()
             } else {
-                switch_smcp.isEnabled = false
-                switch_smcp.isChecked = false
+                binding.includeBottomSheet.switchSmcp.isEnabled = false
+                binding.includeBottomSheet.switchSmcp.isChecked = false
             }
             saveQSStyleClickPreferences()
         }
 
-        slider_size.addOnChangeListener(qsStyleOnChangeListener)
-        seek_skew.addOnChangeListener(qsStyleOnChangeListener)
-        seek_space.addOnChangeListener(qsStyleOnChangeListener)
+        binding.includeBottomSheet.sliderSize.addOnChangeListener(qsStyleOnChangeListener)
+        binding.includeBottomSheet.seekSkew.addOnChangeListener(qsStyleOnChangeListener)
+        binding.includeBottomSheet.seekSpace.addOnChangeListener(qsStyleOnChangeListener)
 
-        radio_style_fill.setOnClickListener(qsStyleOnclickListener)
-        radio_style_fill_stroke.setOnClickListener(qsStyleOnclickListener)
-        radio_style_stroke.setOnClickListener(qsStyleOnclickListener)
+        binding.includeBottomSheet.radioStyleFill.setOnClickListener(qsStyleOnclickListener)
+        binding.includeBottomSheet.radioStyleFillStroke.setOnClickListener(qsStyleOnclickListener)
+        binding.includeBottomSheet.radioStyleStroke.setOnClickListener(qsStyleOnclickListener)
 
-        switch_fake_bold.setOnClickListener(qsStyleOnclickListener)
-        switch_underline.setOnClickListener(qsStyleOnclickListener)
-        switch_smcp.setOnClickListener(qsStyleOnclickListener)
+        binding.includeBottomSheet.switchFakeBold.setOnClickListener(qsStyleOnclickListener)
+        binding.includeBottomSheet.switchUnderline.setOnClickListener(qsStyleOnclickListener)
+        binding.includeBottomSheet.switchSmcp.setOnClickListener(qsStyleOnclickListener)
 
-        radio_typeface_san_serif.setOnClickListener(qsStyleOnclickListenerTypeface)
-        radio_typeface_serif.setOnClickListener(qsStyleOnclickListenerTypeface)
-        radio_typeface_monospace.setOnClickListener(qsStyleOnclickListenerTypeface)
+        binding.includeBottomSheet.radioTypefaceSanSerif.setOnClickListener(qsStyleOnclickListenerTypeface)
+        binding.includeBottomSheet.radioTypefaceSerif.setOnClickListener(qsStyleOnclickListenerTypeface)
+        binding.includeBottomSheet.radioTypefaceMonospace.setOnClickListener(qsStyleOnclickListenerTypeface)
     }
 
     private fun saveQSStyleSlidePreferences() {
-        preferences.setQSStyleFontSize(slider_size.value.toInt())
-        preferences.setQSStyleFontSkew(seek_skew.value.toInt())
-        preferences.setQSStyleFontSpacing(seek_space.value.toInt())
+        preferences.setQSStyleFontSize(binding.includeBottomSheet.sliderSize.value.toInt())
+        preferences.setQSStyleFontSkew(binding.includeBottomSheet.seekSkew.value.toInt())
+        preferences.setQSStyleFontSpacing(binding.includeBottomSheet.seekSpace.value.toInt())
 
         // Update Tile Preview
         updateTilePreview()
@@ -550,19 +548,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun saveQSStyleClickPreferences() {
         // Save all values to Preferences
-        preferences.setQSStyleTextFill(radio_style_fill.isChecked)
-        preferences.setQSStyleTextFillStroke(radio_style_fill_stroke.isChecked)
-        preferences.setQSStyleTextStroke(radio_style_stroke.isChecked)
+        preferences.setQSStyleTextFill(binding.includeBottomSheet.radioStyleFill.isChecked)
+        preferences.setQSStyleTextFillStroke(binding.includeBottomSheet.radioStyleFillStroke.isChecked)
+        preferences.setQSStyleTextStroke(binding.includeBottomSheet.radioStyleStroke.isChecked)
 
-        preferences.setQSStyleFontBold(switch_fake_bold.isChecked)
-        preferences.setQSStyleFontUnderline(switch_underline.isChecked)
-        if (switch_smcp.isEnabled) {
-            preferences.setQSStyleFontSMCP(switch_smcp.isChecked)
+        preferences.setQSStyleFontBold(binding.includeBottomSheet.switchFakeBold.isChecked)
+        preferences.setQSStyleFontUnderline(binding.includeBottomSheet.switchUnderline.isChecked)
+        if (binding.includeBottomSheet.switchSmcp.isEnabled) {
+            preferences.setQSStyleFontSMCP(binding.includeBottomSheet.switchSmcp.isChecked)
         }
 
-        preferences.setQSStyleTypefaceSansSerif(radio_typeface_san_serif.isChecked)
-        preferences.setQSStyleTypefaceSerif(radio_typeface_serif.isChecked)
-        preferences.setQSStyleTypefaceMonospace(radio_typeface_monospace.isChecked)
+        preferences.setQSStyleTypefaceSansSerif(binding.includeBottomSheet.radioTypefaceSanSerif.isChecked)
+        preferences.setQSStyleTypefaceSerif(binding.includeBottomSheet.radioTypefaceSerif.isChecked)
+        preferences.setQSStyleTypefaceMonospace(binding.includeBottomSheet.radioTypefaceMonospace.isChecked)
 
         // Update Tile Preview
         updateTilePreview()
@@ -575,10 +573,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun animateViews() {
-        cardViewContainer.post {
-            if (cardViewContainer.isAttachedToWindow) {
-                processCardViewAnim(selectionCard, 0)
-                processCardViewAnim(aboutCard, ANIMATION_DURATION)
+        binding.includeContentMain.cardViewContainer.post {
+            if (binding.includeContentMain.cardViewContainer.isAttachedToWindow) {
+                processCardViewAnim(binding.includeContentMain.includeCardSettings.selectionCard, 0)
+                processCardViewAnim(binding.includeContentMain.includeCardAbout.aboutCard, ANIMATION_DURATION)
             }
         }
 
@@ -594,10 +592,10 @@ class MainActivity : AppCompatActivity() {
         val animBottomSheetPreviewBorder: Animation = AnimationUtils.loadAnimation(this, R.anim.bottomsheet_preview_scale)
         animBottomSheetPreviewBorder.startOffset = 400L
 
-        bottomSheet.startAnimation(animBottomSheet)
-        tilePreview.startAnimation(animBottomSheetPreview)
-        tilePreviewBackground.startAnimation(animBottomSheetPreviewBackground)
-        tilePreviewBorder.startAnimation(animBottomSheetPreviewBorder)
+        binding.includeBottomSheet.bottomSheet.startAnimation(animBottomSheet)
+        binding.includeBottomSheet.tilePreview.startAnimation(animBottomSheetPreview)
+        binding.includeBottomSheet.tilePreviewBackground.startAnimation(animBottomSheetPreviewBackground)
+        binding.includeBottomSheet.tilePreviewBorder.startAnimation(animBottomSheetPreviewBorder)
     }
 
     private fun processCardViewAnim(cardView: CardView, startDelay: Long) {
@@ -627,46 +625,46 @@ class MainActivity : AppCompatActivity() {
 
         // Adapt tile preview image view
         val tilePreviewWidth = defaultPreviewSize + (slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt()
-        tilePreview.layoutParams.width = tilePreviewWidth
-        tilePreview.layoutParams.height = defaultPreviewSize + (slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt()
+        binding.includeBottomSheet.tilePreview.layoutParams.width = tilePreviewWidth
+        binding.includeBottomSheet.tilePreview.layoutParams.height = defaultPreviewSize + (slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt()
 
         // Set padding to tile preview image view
         val newPadding = defaultPreviewPadding + (slideOffset * (maxPreviewPadding - defaultPreviewPadding)).roundToInt()
-        tilePreview.setPadding(newPadding, newPadding, newPadding, newPadding)
+        binding.includeBottomSheet.tilePreview.setPadding(newPadding, newPadding, newPadding, newPadding)
 
         // Adapt bottom sheet text view padding
-        bottomSheetPeekTextView.updatePadding((23.px + tilePreviewWidth), 0, 65.px, 7.px)
+        binding.includeBottomSheet.bottomSheetPeekTextView.updatePadding((23.px + tilePreviewWidth), 0, 65.px, 7.px)
 
         // Rotate peek arrow
-        bottomSheetPeekArrow.pivotX = (bottomSheetPeekArrow.measuredWidth / 2).toFloat()
-        bottomSheetPeekArrow.pivotY = (bottomSheetPeekArrow.measuredHeight / 2).toFloat()
-        bottomSheetPeekArrow.rotation = slideOffset * -180
+        binding.includeBottomSheet.bottomSheetPeekArrow.pivotX = (binding.includeBottomSheet.bottomSheetPeekArrow.measuredWidth / 2).toFloat()
+        binding.includeBottomSheet.bottomSheetPeekArrow.pivotY = (binding.includeBottomSheet.bottomSheetPeekArrow.measuredHeight / 2).toFloat()
+        binding.includeBottomSheet.bottomSheetPeekArrow.rotation = slideOffset * -180
 
         // Adapt bottom margin view
-        bottomMarginView.layoutParams.height = defaultBottomMarginViewHeight - ((slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt() / 4)
+        binding.includeBottomSheet.bottomMarginView.layoutParams.height = defaultBottomMarginViewHeight - ((slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt() / 4)
 
         // Adapt bottom margin of the guideline view
-        val params: ConstraintLayout.LayoutParams = guideline.layoutParams as ConstraintLayout.LayoutParams
-        params.topToTop = tilePreview.id
-        params.bottomToBottom = tilePreview.id
-        params.startToStart = tilePreview.id
-        params.endToEnd = tilePreview.id
+        val params: ConstraintLayout.LayoutParams = binding.includeBottomSheet.guideline.layoutParams as ConstraintLayout.LayoutParams
+        params.topToTop = binding.includeBottomSheet.tilePreview.id
+        params.bottomToBottom = binding.includeBottomSheet.tilePreview.id
+        params.startToStart = binding.includeBottomSheet.tilePreview.id
+        params.endToEnd = binding.includeBottomSheet.tilePreview.id
         params.setMargins(0, 0, 0, 10.px + (slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt() / 2)
 
         // Apply modification
-        tilePreview.requestLayout()
-        bottomSheetPeekTextView.requestLayout()
-        bottomSheetPeekArrow.requestLayout()
-        bottomMarginView.requestLayout()
-        bottomSheet.requestLayout()
-        guideline.requestLayout()
+        binding.includeBottomSheet.tilePreview.requestLayout()
+        binding.includeBottomSheet.bottomSheetPeekTextView.requestLayout()
+        binding.includeBottomSheet.bottomSheetPeekArrow.requestLayout()
+        binding.includeBottomSheet.bottomMarginView.requestLayout()
+        binding.includeBottomSheet.bottomSheet.requestLayout()
+        binding.includeBottomSheet.guideline.requestLayout()
     }
 
     private fun transitionBottomSheetBackgroundColor(slideOffset: Float) {
         val colorFrom = resources.getColor(R.color.colorBottomSheet, theme)
         val colorTo = resources.getColor(R.color.colorBackgroundCard, theme)
 
-        val layerDrawableBottomSheep: LayerDrawable = bottomSheetBackground.background as LayerDrawable
+        val layerDrawableBottomSheep: LayerDrawable = binding.includeBottomSheet.bottomSheetBackground.background as LayerDrawable
         val bottomSheetBackgroundShape = layerDrawableBottomSheep.findDrawableByLayerId(R.id.shape_bottom_sheet_background) as GradientDrawable
         bottomSheetBackgroundShape.color = ColorStateList.valueOf(
             interpolateColor(
@@ -676,7 +674,7 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
-        val layerDrawableCircle: LayerDrawable = tilePreviewBackground.drawable as LayerDrawable
+        val layerDrawableCircle: LayerDrawable = binding.includeBottomSheet.tilePreviewBackground.drawable as LayerDrawable
         val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
         circleBackgroundShape.setStroke(
             3.px,

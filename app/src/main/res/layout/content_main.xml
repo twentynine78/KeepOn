@@ -15,9 +15,9 @@
         android:paddingBottom="?attr/actionBarSize"
         android:orientation="vertical">
 
-        <include layout="@layout/card_main_settings" />
+        <include android:id="@+id/includeCardSettings" layout="@layout/card_main_settings" />
 
-        <include layout="@layout/card_main_about" />
+        <include android:id="@+id/includeCardAbout" layout="@layout/card_main_about" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

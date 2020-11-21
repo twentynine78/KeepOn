@@ -4,26 +4,24 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.github.appintro.SlideBackgroundColorHolder
 import com.github.appintro.SlidePolicy
 import com.google.android.material.snackbar.Snackbar
+import fr.twentynine.keepon.KeepOnApplication.Companion.viewBinding
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.databinding.FragmentIntroButtonBinding
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.ui.intro.IntroActivity.Companion.COLOR_SLIDE_PERM
 import fr.twentynine.keepon.utils.ActivityUtils
-import kotlinx.android.synthetic.main.fragment_intro_button.view.*
 import toothpick.ktp.delegate.lazy
 
-class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePolicy {
+class IntroFragmentPermission : Fragment(R.layout.fragment_intro_button), SlideBackgroundColorHolder, SlidePolicy {
 
     private val activityUtils: ActivityUtils by lazy()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_intro_button, container, false)
+    private val binding: FragmentIntroButtonBinding by viewBinding(FragmentIntroButtonBinding::bind)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +35,7 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
 
         setBackgroundColor(defaultBackgroundColor)
 
-        val mButton = view.button
+        val mButton = binding.button
         mButton.setBackgroundColor(activityUtils.darkerColor(COLOR_SLIDE_PERM, 0.4f))
         mButton.text = getString(R.string.dialog_permission_button)
         mButton.setOnClickListener {
@@ -50,13 +48,13 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
             requireContext().startActivity(intent)
         }
 
-        val mTitle = view.title
+        val mTitle = binding.title
         mTitle.text = getString(R.string.dialog_permission_title)
-        val mDescription = view.description
+        val mDescription = binding.description
         mDescription.text = getString(R.string.dialog_permission_text)
-        val mImage = view.image
+        val mImage = binding.image
         mImage.setImageResource(R.mipmap.img_intro_perm)
-        val mImage2 = view.image2
+        val mImage2 = binding.image2
         mImage2.setImageResource(R.mipmap.img_intro_perm_2)
 
         if (Settings.System.canWrite(requireContext().applicationContext)) {
@@ -68,14 +66,10 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
 
     override fun onResume() {
         super.onResume()
-        view?.let {
-            if (it.button != null) {
-                if (Settings.System.canWrite(requireContext())) {
-                    it.button.visibility = View.INVISIBLE
-                } else {
-                    it.button.visibility = View.VISIBLE
-                }
-            }
+        if (Settings.System.canWrite(requireContext())) {
+            binding.button.visibility = View.INVISIBLE
+        } else {
+            binding.button.visibility = View.VISIBLE
         }
     }
 
@@ -90,18 +84,16 @@ class IntroFragmentPermission : Fragment(), SlideBackgroundColorHolder, SlidePol
         }
 
     override fun onUserIllegallyRequestedNextPage() {
-        view?.let {
-            return Snackbar.make(it, getString(R.string.intro_toast_permission_needed), Snackbar.LENGTH_LONG)
-                .setAnchorView(R.id.button)
-                .show()
-        }
+        return Snackbar.make(binding.root, getString(R.string.intro_toast_permission_needed), Snackbar.LENGTH_LONG)
+            .setAnchorView(binding.button)
+            .show()
     }
 
     override val defaultBackgroundColor: Int
         get() = COLOR_SLIDE_PERM
 
     override fun setBackgroundColor(backgroundColor: Int) {
-        view?.main?.setBackgroundColor(backgroundColor)
+        binding.main.setBackgroundColor(backgroundColor)
     }
 
     companion object {
