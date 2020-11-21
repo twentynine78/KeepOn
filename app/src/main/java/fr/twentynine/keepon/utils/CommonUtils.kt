@@ -52,10 +52,10 @@ class CommonUtils(private val application: Application) {
     private val processCoroutineContext by lazy { ProcessLifecycleOwner.get().lifecycleScope.coroutineContext }
     private val checkScreenOffReceiverServiceScope by lazy { CoroutineScope(Dispatchers.Default + processCoroutineContext).plus(Job()) }
     private val checkScreenTimeoutObserverServiceScope by lazy { CoroutineScope(Dispatchers.Default + processCoroutineContext).plus(Job()) }
-    private val updateIntent: Intent by lazy { Intent(application, EventBusBroadcastReceiver::class.java) }.apply {
+    private val updateIntent: Intent by lazy { Intent(MainActivity.ACTION_UPDATE_UI).setPackage(application.packageName) }.apply {
         value.action = MainActivity.ACTION_UPDATE_UI
     }
-    private val missingIntent: Intent by lazy { Intent(application, EventBusBroadcastReceiver::class.java) }.apply {
+    private val missingIntent: Intent by lazy { Intent(MainActivity.ACTION_MISSING_SETTINGS).setPackage(application.packageName) }.apply {
         value.action = MainActivity.ACTION_MISSING_SETTINGS
     }
     private val bIntentManageShortcut: Intent by lazy { Intent(application, ServicesManagerReceiver::class.java) }.apply {

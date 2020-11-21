@@ -4,7 +4,9 @@ import android.animation.Animator
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.BroadcastReceiver
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -51,9 +53,6 @@ import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import toothpick.ktp.delegate.lazy
 import java.util.Formatter
 import java.util.Locale
@@ -63,9 +62,6 @@ import kotlin.math.roundToInt
 
 @Suppress("TooManyFunctions")
 class MainActivity : AppCompatActivity() {
-
-    class UpdateUIEvent
-    class MissingSettingsEvent
 
     private data class TimeoutSwitch(val switch: SwitchMaterial, val timeoutValue: Int)
 
@@ -82,8 +78,6 @@ class MainActivity : AppCompatActivity() {
             .setAnchorView(binding.includeBottomSheet.bottomSheet)
     }
 
-    private var isPaused = false
-
     // Define default and max size of views and coefficient for bottomsheet slide
     private val defaultPreviewSize = 62.px
     private val defaultPreviewPadding = 14.px
@@ -93,6 +87,21 @@ class MainActivity : AppCompatActivity() {
 
     private val Int.px: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
+
+    private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent != null) {
+                when (intent.action) {
+                    ACTION_UPDATE_UI -> {
+                        updateUI()
+                    }
+                    ACTION_MISSING_SETTINGS -> {
+                        missingSettings()
+                    }
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -177,10 +186,10 @@ class MainActivity : AppCompatActivity() {
 
         // Set OnClick listener for Tile Preview to switch like from Quick Settings
         binding.includeBottomSheet.tilePreview.setOnClickListener {
-            if (preferences.getSelectedTimeout().size < 1) {
-                EventBus.getDefault().post(MissingSettingsEvent())
-            } else {
-                preferences.setTimeout(preferences.getNextTimeoutValue())
+                if (preferences.getSelectedTimeout().size < 1) {
+                    missingSettings()
+                } else {
+                    preferences.setTimeout(preferences.getNextTimeoutValue())
             }
         }
 
@@ -226,8 +235,12 @@ class MainActivity : AppCompatActivity() {
         // Add count to Genrate
         rate.count()
 
-        // Register EventBus
-        EventBus.getDefault().register(this)
+        // Register BroadcastReceiver
+        val intentFiler = IntentFilter()
+        intentFiler.addAction(ACTION_UPDATE_UI)
+        intentFiler.addAction(ACTION_MISSING_SETTINGS)
+        registerReceiver(receiver, intentFiler, "fr.twentynine.keepon.MAIN_BROADCAST_PERMISSION", null)
+
         setContentView(binding.root)
         animateViews()
     }
@@ -245,8 +258,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
-        isPaused = false
 
         // Check permission to write settings
         if (canWrite(this)) {
@@ -302,6 +313,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        unregisterReceiver(receiver)
+
+        super.onDestroy()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.action_menu, menu)
         return true
@@ -339,32 +356,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onPause() {
-        isPaused = true
-        super.onPause()
+    private fun updateUI() {
+        // Update all switch from saved preference
+        updateSwitchs(getTimeoutSwitchsArray())
+
+        // Set tile preview Image View
+        updateTilePreview()
     }
 
-    override fun onDestroy() {
-        // Unregister EventBus
-        EventBus.getDefault().unregister(this)
-        super.onDestroy()
-    }
-
-    @Suppress("unused", "unused_parameter")
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    fun handleUpdateUIEvent(event: UpdateUIEvent) {
-        if (!isPaused) {
-            // Update all switch from saved preference
-            updateSwitchs(getTimeoutSwitchsArray())
-
-            // Set tile preview Image View
-            updateTilePreview()
-        }
-    }
-
-    @Suppress("unused", "unused_parameter")
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    fun handleMissingSettingsEvent(event: MissingSettingsEvent) {
+    private fun missingSettings() {
         if (!activityUtils.getMissingSettingsDialog().isShowing) {
             activityUtils.getMissingSettingsDialog().show()
         }

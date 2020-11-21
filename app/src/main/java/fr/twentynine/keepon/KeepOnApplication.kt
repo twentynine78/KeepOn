@@ -10,8 +10,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
 import fr.twentynine.keepon.di.ToothpickHelper
-import fr.twentynine.keepon.eventbus.MyEventBusIndex
-import org.greenrobot.eventbus.EventBus
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -23,11 +21,6 @@ class KeepOnApplication : Application() {
         // Install Toothpick Application module in Application scope
         ToothpickHelper.scopedInjection(this)
 
-        EventBus.builder()
-            .logNoSubscriberMessages(false)
-            .sendNoSubscriberEvent(false)
-            .addIndex(MyEventBusIndex())
-            .installDefaultEventBus()
 
     companion object {
         // Helper function for Activity ViewBinding

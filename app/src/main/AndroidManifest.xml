@@ -7,6 +7,9 @@
 
     <dist:module dist:instant="true"/>
 
+    <permission android:name="fr.twentynine.keepon.MAIN_BROADCAST_PERMISSION" android:protectionLevel="signature"/>
+    <uses-permission android:name="fr.twentynine.keepon.MAIN_BROADCAST_PERMISSION" />
+
     <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -54,16 +57,6 @@
             android:finishOnTaskLaunch="true"
             android:label="@string/app_name"
             android:launchMode="singleTask"/>
-
-        <receiver
-            android:name=".utils.EventBusBroadcastReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="fr.twentynine.keepon.action.UPDATE_UI"/>
-                <action android:name="fr.twentynine.keepon.action.MISSING_SETTINGS"/>
-            </intent-filter>
-        </receiver>
 
         <activity
             android:name="fr.twentynine.keepon.ui.intro.IntroActivity"

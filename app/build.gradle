@@ -67,15 +67,6 @@ dependencies {
     implementation 'com.github.stephanenicolas.toothpick:smoothie-androidx:3.1.0'
     implementation 'com.github.stephanenicolas.toothpick:smoothie-lifecycle-ktp:3.1.0'
     kapt 'com.github.stephanenicolas.toothpick:toothpick-compiler:3.1.0'
-
-    implementation 'org.greenrobot:eventbus:3.2.0'
-    kapt "org.greenrobot:eventbus-annotation-processor:3.2.0"
-}
-
-kapt {
-    arguments {
-        arg('eventBusIndex', 'fr.twentynine.keepon.eventbus.MyEventBusIndex')
-    }
 }
 
 tasks.whenTaskAdded { task ->

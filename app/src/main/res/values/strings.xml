@@ -30,7 +30,7 @@
     <string name="about_card_version">&lt;b>Version:&lt;/b></string>
     <string name="about_card_author"><b>Author:</b> TwentyNine78</string>
     <string name="about_card_credits_label"><b>Credits:</b></string>
-    <string name="about_card_credits"><u>AppIntro, MultiProcessPreferences, Glide, Gene-rate, PageIndicatorView, Toothpick, EventBus</u></string>
+    <string name="about_card_credits"><u>AppIntro, MultiProcessPreferences, Glide, Gene-rate, PageIndicatorView, Toothpick</u></string>
     <string name="about_card_source"><b>Source Code:</b> <a href="https://github.com/twentynine78/KeepOn">https://github.com/twentynine78/KeepOn</a></string>
 
     <string name="qs_service_name">Keep screen on</string>
@@ -78,10 +78,6 @@
         &#160;&#160;&#160;<font size="14"><b>Toothpick</b></font>
         \n\nGitHub: https://github.com/stephanenicolas/toothpick
         \nLicence: https://github.com/stephanenicolas/toothpick/blob/master/LICENSE
-        \n\n\n
-        &#160;&#160;&#160;<font size="14"><b>EventBus</b></font>
-        \n\nGitHub: https://github.com/greenrobot/EventBus
-        \nLicence: https://github.com/greenrobot/EventBus/blob/master/LICENSE
         </font>
     </string>
     <string name="dialog_credits_button">Close</string>
