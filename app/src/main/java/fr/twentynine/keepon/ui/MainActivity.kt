@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.ColorStateList
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.graphics.Typeface
@@ -41,7 +40,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.switchmaterial.SwitchMaterial
-import fr.twentynine.keepon.KeepOnApplication.Companion.viewBinding
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.databinding.ActivityMainBinding
 import fr.twentynine.keepon.di.ToothpickHelper
@@ -51,6 +49,8 @@ import fr.twentynine.keepon.utils.CommonUtils
 import fr.twentynine.keepon.utils.Rate
 import fr.twentynine.keepon.utils.glide.TimeoutIconData
 import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.px
+import fr.twentynine.keepon.utils.viewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -85,9 +85,6 @@ class MainActivity : AppCompatActivity() {
     private var maxPreviewSize = 110.px
     private var maxPreviewPadding = defaultPreviewPadding + ((maxPreviewSize - defaultPreviewSize) / 7)
     private var defaultBottomMarginViewHeight = ((maxPreviewSize - defaultPreviewSize) / 4) + 1.px
-
-    private val Int.px: Int
-        get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {

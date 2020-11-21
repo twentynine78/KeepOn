@@ -1,6 +1,5 @@
 package fr.twentynine.keepon.utils.glide
 
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -15,6 +14,7 @@ import com.bumptech.glide.load.data.DataFetcher
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.utils.CommonUtils
 import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.px
 import toothpick.ktp.delegate.lazy
 
 class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<Bitmap> {
@@ -26,12 +26,6 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
         // Inject dependencies with Toothpick
         ToothpickHelper.scopedInjection(this)
     }
-
-    private val Float.px: Float
-        get() = (this * Resources.getSystem().displayMetrics.density)
-
-    private val Int.px: Int
-        get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
     override fun loadData(priority: Priority, callback: DataFetcher.DataCallback<in Bitmap>) {
         if (model.size != 3) {

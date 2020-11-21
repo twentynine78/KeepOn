@@ -2,7 +2,6 @@ package fr.twentynine.keepon.services
 
 import android.content.ComponentName
 import android.content.Intent
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
@@ -23,6 +22,7 @@ import fr.twentynine.keepon.ui.MainActivity
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.CommonUtils
 import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.px
 import toothpick.ktp.delegate.lazy
 
 class KeepOnTileService : TileService(), LifecycleOwner {
@@ -53,9 +53,6 @@ class KeepOnTileService : TileService(), LifecycleOwner {
     }
 
     private val dispatcher = ServiceLifecycleDispatcher(this)
-
-    private val Int.px: Int
-        get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
     private var lastSetTimeout: Int
         get() = globalLastSetTimeout

@@ -11,7 +11,6 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
-import fr.twentynine.keepon.KeepOnApplication.Companion.viewBinding
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.databinding.ActivitySplashScreenBinding
 import fr.twentynine.keepon.di.ToothpickHelper
@@ -20,6 +19,7 @@ import fr.twentynine.keepon.ui.intro.IntroActivity
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.CommonUtils
 import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.viewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

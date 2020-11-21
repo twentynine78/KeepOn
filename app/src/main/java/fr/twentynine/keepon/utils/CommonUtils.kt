@@ -99,8 +99,6 @@ class CommonUtils(private val application: Application) {
             preferences.getTimeoutValueArray()[8] to R.string.timeout_infinite
         )
     }
-    private val Int.px: Int
-        get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
     private lateinit var manageShortcutJob: Job
     private lateinit var stringTimeout: String

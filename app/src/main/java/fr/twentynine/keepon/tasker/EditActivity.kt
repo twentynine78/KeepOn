@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.collection.ArrayMap
 import androidx.collection.arrayMapOf
 import com.google.android.material.radiobutton.MaterialRadioButton
-import fr.twentynine.keepon.KeepOnApplication.Companion.viewBinding
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.databinding.ActivityTaskerEditBinding
 import fr.twentynine.keepon.di.ToothpickHelper
@@ -22,6 +21,7 @@ import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_BUNDLE
 import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_STRING_BLURB
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.preferences.Preferences
+import fr.twentynine.keepon.utils.viewBinding
 import toothpick.ktp.delegate.lazy
 
 class EditActivity : AppCompatActivity() {

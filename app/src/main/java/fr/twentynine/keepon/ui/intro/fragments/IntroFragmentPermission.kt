@@ -9,12 +9,12 @@ import androidx.fragment.app.Fragment
 import com.github.appintro.SlideBackgroundColorHolder
 import com.github.appintro.SlidePolicy
 import com.google.android.material.snackbar.Snackbar
-import fr.twentynine.keepon.KeepOnApplication.Companion.viewBinding
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.databinding.FragmentIntroButtonBinding
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.ui.intro.IntroActivity.Companion.COLOR_SLIDE_PERM
 import fr.twentynine.keepon.utils.ActivityUtils
+import fr.twentynine.keepon.utils.viewBinding
 import toothpick.ktp.delegate.lazy
 
 class IntroFragmentPermission : Fragment(R.layout.fragment_intro_button), SlideBackgroundColorHolder, SlidePolicy {

@@ -9,13 +9,13 @@ import android.text.TextUtils
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.github.appintro.SlideBackgroundColorHolder
-import fr.twentynine.keepon.KeepOnApplication.Companion.viewBinding
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.databinding.FragmentIntroButtonBinding
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.ui.intro.IntroActivity.Companion.COLOR_SLIDE_NOTIF
 import fr.twentynine.keepon.utils.ActivityUtils
 import fr.twentynine.keepon.utils.ServiceUtils
+import fr.twentynine.keepon.utils.viewBinding
 import toothpick.ktp.delegate.lazy
 
 class IntroFragmentNotification : Fragment(R.layout.fragment_intro_button), SlideBackgroundColorHolder {
