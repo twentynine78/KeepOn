@@ -110,14 +110,14 @@ class SplashScreen : AppCompatActivity() {
 
         if (!preferences.getSkipIntro()) {
             // Start Intro on first launch
-            lifecycleScope.launch(Dispatchers.Main) {
+            lifecycleScope.launch(Dispatchers.Default) {
                 delay(SPLASH_TIME_OUT)
                 startActivity(IntroActivity.newIntent(this@SplashScreen.applicationContext))
                 finish()
             }
         } else {
             // Launch MainActivity
-            lifecycleScope.launch(Dispatchers.Main) {
+            lifecycleScope.launch(Dispatchers.Default) {
                 val mainIntent = MainActivity.newIntent(this@SplashScreen.applicationContext)
                 var animateCount = 0
                 delay(SPLASH_TIME_OUT)
@@ -127,13 +127,15 @@ class SplashScreen : AppCompatActivity() {
                         finish()
                         return@launch
                     } else {
-                        if (binding.loadingLayout.visibility != View.VISIBLE) {
-                            binding.loadingLayout.visibility = View.VISIBLE
-                        }
-                        animateCount++
-                        if (animateCount >= 10) {
-                            animateLoadingDots()
-                            animateCount = 0
+                        launch(Dispatchers.Main) {
+                            if (binding.loadingLayout.visibility != View.VISIBLE) {
+                                binding.loadingLayout.visibility = View.VISIBLE
+                            }
+                            animateCount++
+                            if (animateCount >= 10) {
+                                animateLoadingDots()
+                                animateCount = 0
+                            }
                         }
                         delay(100)
                     }

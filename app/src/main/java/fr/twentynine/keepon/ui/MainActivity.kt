@@ -280,9 +280,11 @@ class MainActivity : AppCompatActivity() {
 
             // Restore BottomSheet state
             if (bottomSheetStateExpanded) {
-                lifecycleScope.launch(Dispatchers.Main) {
+                lifecycleScope.launch(Dispatchers.Default) {
                     delay(800)
-                    BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
+                    launch(Dispatchers.Main) {
+                        BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
+                    }
                     // Reset state for next launch after that the bottomsheet was expanded
                     delay(400)
                     bottomSheetStateExpanded = false
