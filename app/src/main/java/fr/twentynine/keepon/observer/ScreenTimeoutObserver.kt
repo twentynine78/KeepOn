@@ -1,20 +1,17 @@
 package fr.twentynine.keepon.observer
 
-import android.app.Application
 import android.database.ContentObserver
 import android.net.Uri
 import fr.twentynine.keepon.di.ToothpickHelper
-import fr.twentynine.keepon.di.annotation.ApplicationScope
+import fr.twentynine.keepon.di.annotation.ServiceScope
 import fr.twentynine.keepon.utils.CommonUtils
 import fr.twentynine.keepon.utils.preferences.Preferences
-import toothpick.InjectConstructor
 import toothpick.ktp.delegate.lazy
 import java.util.Calendar
 import java.util.TimeZone
 
-@ApplicationScope
-@InjectConstructor
-class ScreenTimeoutObserver(val application: Application) : ContentObserver(null) {
+@ServiceScope
+class ScreenTimeoutObserver : ContentObserver(null) {
 
     private val commonUtils: CommonUtils by lazy()
     private val preferences: Preferences by lazy()

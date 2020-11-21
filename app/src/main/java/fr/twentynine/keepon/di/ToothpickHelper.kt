@@ -11,7 +11,9 @@ import com.bumptech.glide.RequestManager
 import fr.twentynine.keepon.di.annotation.ActivityScope
 import fr.twentynine.keepon.di.annotation.ApplicationScope
 import fr.twentynine.keepon.di.annotation.ServiceScope
+import fr.twentynine.keepon.observer.ScreenTimeoutObserver
 import fr.twentynine.keepon.services.KeepOnTileService
+import fr.twentynine.keepon.services.ScreenTimeoutObserverService
 import fr.twentynine.keepon.utils.glide.GlideApp
 import toothpick.ktp.KTP
 import toothpick.ktp.binding.bind
@@ -71,6 +73,9 @@ object ToothpickHelper {
                     .supportScopeAnnotation(ServiceScope::class.java)
                     .installModules(module {
                         bind<Service>().toInstance(component)
+                        if (component is ScreenTimeoutObserverService) {
+                            bind<ScreenTimeoutObserver>().toInstance(ScreenTimeoutObserver())
+                        }
                     })
                     .closeOnDestroy(component)
                     .inject(component)
