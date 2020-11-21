@@ -33,8 +33,6 @@ class ScreenTimeoutObserverService : LifecycleService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        super.onStartCommand(intent, flags, startId)
-
         if (intent != null) {
             val action = intent.action
             if (action != null) {
@@ -44,7 +42,7 @@ class ScreenTimeoutObserverService : LifecycleService() {
             }
         }
 
-        return START_STICKY
+        return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {
