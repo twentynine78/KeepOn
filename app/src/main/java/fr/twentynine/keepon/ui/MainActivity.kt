@@ -189,7 +189,11 @@ class MainActivity : AppCompatActivity() {
         binding.includeBottomSheet.tilePreview.setOnClickListener {
             if (preferences.getAppIsLaunched()) {
                 if (preferences.getSelectedTimeout().size < 1) {
-                    missingSettings()
+                    if (preferences.getKeepOnState()) {
+                        preferences.setTimeout(preferences.getOriginalTimeout())
+                    } else {
+                        missingSettings()
+                    }
                 } else {
                     preferences.setTimeout(preferences.getNextTimeoutValue())
                 }

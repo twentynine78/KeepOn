@@ -136,14 +136,18 @@ class KeepOnTileService : TileService(), LifecycleOwner {
 
         if (preferences.getSkipIntro()) {
             if (preferences.getSelectedTimeout().size < 1 || !Settings.System.canWrite(this)) {
-                val mainIntent = MainActivity.newIntent(this.applicationContext)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                if (preferences.getKeepOnState()) {
+                    preferences.setTimeout(preferences.getOriginalTimeout())
+                } else {
+                    val mainIntent = MainActivity.newIntent(this.applicationContext)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
-                if (preferences.getSelectedTimeout().size < 1) {
-                    mainIntent.action = MainActivity.ACTION_MISSING_SETTINGS
-                    commonUtils.sendBroadcastMissingSettings()
+                    if (preferences.getSelectedTimeout().size < 1) {
+                        mainIntent.action = MainActivity.ACTION_MISSING_SETTINGS
+                        commonUtils.sendBroadcastMissingSettings()
+                    }
+                    startActivityAndCollapse(mainIntent)
                 }
-                startActivityAndCollapse(mainIntent)
             } else {
                 preferences.setTimeout(preferences.getNextTimeoutValue())
             }
