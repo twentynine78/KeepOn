@@ -70,7 +70,6 @@
             android:name=".services.KeepOnTileService"
             android:enabled="true"
             android:exported="true"
-            android:process=":tile"
             android:icon="@mipmap/ic_qs_keepon"
             android:label="@string/qs_service_name"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
@@ -84,8 +83,7 @@
         <receiver
             android:name=".receivers.ServicesManagerReceiver"
             android:enabled="true"
-            android:exported="false"
-            android:process=":receivers">
+            android:exported="false">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
@@ -109,8 +107,7 @@
         <receiver
             android:name=".receivers.ScreenOffReceiver"
             android:enabled="true"
-            android:exported="false"
-            android:process=":receivers">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.SCREEN_OFF"/>
                 <category android:name="android.intent.category.DEFAUL"/>
