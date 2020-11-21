@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:theme="@style/AppTheme.AppBarOverlay"
-        app:layout_behavior=".ui.MainAppBarBehavior"
+        app:layout_behavior=".utils.MainAppBarBehavior"
         app:expanded="true">
 
         <com.google.android.material.appbar.MaterialToolbar

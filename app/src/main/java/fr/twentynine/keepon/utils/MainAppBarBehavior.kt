@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui
+package fr.twentynine.keepon.utils
 
 import android.content.Context
 import android.util.AttributeSet
