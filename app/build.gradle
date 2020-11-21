@@ -52,6 +52,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-service:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-process:2.2.0'
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
     implementation 'androidx.lifecycle:lifecycle-common-java8:2.2.0'
     implementation 'androidx.collection:collection-ktx:1.1.0'
     implementation 'androidx.fragment:fragment-ktx:1.2.5'
