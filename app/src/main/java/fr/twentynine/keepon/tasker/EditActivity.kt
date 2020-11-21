@@ -33,17 +33,17 @@ class EditActivity : AppCompatActivity() {
 
     private val timeoutMap: ArrayMap<Int, Int> by lazy {
         arrayMapOf(
-            R.id.timeout_previous to -43,
-            R.id.timeout_default to -42,
-            R.id.timeout_15_seconds to preferences.getTimeoutValueArray()[0],
-            R.id.timeout_30_seconds to preferences.getTimeoutValueArray()[1],
-            R.id.timeout_1_minute to preferences.getTimeoutValueArray()[2],
-            R.id.timeout_2_minutes to preferences.getTimeoutValueArray()[3],
-            R.id.timeout_5_minutes to preferences.getTimeoutValueArray()[4],
-            R.id.timeout_10_minutes to preferences.getTimeoutValueArray()[5],
-            R.id.timeout_30_minutes to preferences.getTimeoutValueArray()[6],
-            R.id.timeout_1_hour to preferences.getTimeoutValueArray()[7],
-            R.id.timeout_infinite to preferences.getTimeoutValueArray()[8]
+            binding.timeoutPrevious.id to -43,
+            binding.timeoutDefault.id to -42,
+            binding.timeout15Seconds.id to preferences.getTimeoutValueArray()[0],
+            binding.timeout30Seconds.id to preferences.getTimeoutValueArray()[1],
+            binding.timeout1Minute.id to preferences.getTimeoutValueArray()[2],
+            binding.timeout2Minutes.id to preferences.getTimeoutValueArray()[3],
+            binding.timeout5Minutes.id to preferences.getTimeoutValueArray()[4],
+            binding.timeout10Minutes.id to preferences.getTimeoutValueArray()[5],
+            binding.timeout30Minutes.id to preferences.getTimeoutValueArray()[6],
+            binding.timeout1Hour.id to preferences.getTimeoutValueArray()[7],
+            binding.timeoutInfinite.id to preferences.getTimeoutValueArray()[8]
         )
     }
 
@@ -103,9 +103,9 @@ class EditActivity : AppCompatActivity() {
 
         for (timeout in timeoutMap) {
             if (adminTimeout < timeout.value) {
-                findViewById<MaterialRadioButton>(timeout.key).visibility = View.GONE
+                binding.root.findViewById<MaterialRadioButton>(timeout.key).visibility = View.GONE
             } else {
-                findViewById<MaterialRadioButton>(timeout.key).visibility = View.VISIBLE
+                binding.root.findViewById<MaterialRadioButton>(timeout.key).visibility = View.VISIBLE
             }
         }
 
@@ -161,7 +161,7 @@ class EditActivity : AppCompatActivity() {
             } else {
                 val timeoutCheckedId = binding.timeoutRadiogroup.checkedRadioButtonId
                 val timeout = timeoutMap[timeoutCheckedId]
-                val timeoutText = findViewById<MaterialRadioButton>(timeoutCheckedId).text
+                val timeoutText = binding.root.findViewById<MaterialRadioButton>(timeoutCheckedId).text
 
                 val resultIntent = Intent()
                 val resultBundle = Bundle()
