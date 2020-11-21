@@ -10,6 +10,7 @@ import fr.twentynine.keepon.observer.ScreenTimeoutObserver
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.CommonUtils
 import fr.twentynine.keepon.utils.ServiceUtils
+import fr.twentynine.keepon.utils.preferences.Preferences
 import toothpick.ktp.delegate.lazy
 
 class ScreenTimeoutObserverService : LifecycleService() {
@@ -18,6 +19,7 @@ class ScreenTimeoutObserverService : LifecycleService() {
     private val screenTimeoutObserver: ScreenTimeoutObserver by lazy()
     private val serviceUtils: ServiceUtils by lazy()
     private val commonUtils: CommonUtils by lazy()
+    private val preferences: Preferences by lazy()
 
     private var restart = true
 
@@ -47,6 +49,7 @@ class ScreenTimeoutObserverService : LifecycleService() {
 
     override fun onDestroy() {
         unregisterScreenTimeoutObserver(screenTimeoutObserver)
+        preferences.setAppILaunched(false)
 
         if (restart) {
             commonUtils.startScreenTimeoutObserverService()

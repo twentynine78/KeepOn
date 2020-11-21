@@ -29,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
@@ -186,10 +187,12 @@ class MainActivity : AppCompatActivity() {
 
         // Set OnClick listener for Tile Preview to switch like from Quick Settings
         binding.includeBottomSheet.tilePreview.setOnClickListener {
+            if (preferences.getAppIsLaunched()) {
                 if (preferences.getSelectedTimeout().size < 1) {
                     missingSettings()
                 } else {
                     preferences.setTimeout(preferences.getNextTimeoutValue())
+                }
             }
         }
 
@@ -266,14 +269,6 @@ class MainActivity : AppCompatActivity() {
                 if (!activityUtils.getNotificationDialog().isShowing) {
                     activityUtils.getNotificationDialog().show()
                 }
-            }
-
-            // Start service to monitor screen timeout
-            commonUtils.startScreenTimeoutObserverService()
-
-            // Start service to monitor screen off if needed
-            if (preferences.getKeepOnState() && preferences.getResetTimeoutOnScreenOff()) {
-                commonUtils.startScreenOffReceiverService()
             }
 
             // Update all switch from saved preference
@@ -385,6 +380,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateTilePreview() {
+        if (preferences.getAppIsLaunched()) {
             // Set Bitmap to Tile Preview
             val currentTimeout = preferences.getCurrentTimeout()
             val originalTimeout = preferences.getOriginalTimeout()
@@ -412,6 +408,15 @@ class MainActivity : AppCompatActivity() {
                     override fun onLoadCleared(placeholder: Drawable?) {
                     }
                 })
+        } else {
+            binding.includeBottomSheet.tilePreview.setImageDrawable(ContextCompat.getDrawable(this, R.mipmap.ic_qs_keepon))
+            binding.includeBottomSheet.tilePreview.imageTintMode = PorterDuff.Mode.SRC_IN
+            val layerDrawableCircle: LayerDrawable = binding.includeBottomSheet.tilePreviewBackground.drawable as LayerDrawable
+            val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
+
+            binding.includeBottomSheet.tilePreview.imageTintList = getColorStateList(R.color.colorTilePreviewDisabled)
+            circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackgroundDisabled))
+        }
     }
 
     private fun updateSwitchs(switchsArray: ArrayList<TimeoutSwitch>) {

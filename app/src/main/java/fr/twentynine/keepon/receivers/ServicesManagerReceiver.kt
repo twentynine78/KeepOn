@@ -36,8 +36,6 @@ class ServicesManagerReceiver : BroadcastReceiver() {
                     screenOffReceiverServiceIsRunning = false
                     screenTimeoutObserverServiceIsRunning = false
 
-                    commonUtils.updateQSTile(0)
-
                     // Start ScreenTimeoutObserverService
                     commonUtils.startScreenTimeoutObserverService()
 
@@ -45,9 +43,6 @@ class ServicesManagerReceiver : BroadcastReceiver() {
                     if (preferences.getKeepOnState() && preferences.getResetTimeoutOnScreenOff()) {
                         commonUtils.startScreenOffReceiverService()
                     }
-
-                    // Manage dynamics shortcut
-                    commonUtils.createShortcut()
                 }
                 ACTION_START_FOREGROUND_TIMEOUT_SERVICE -> {
                     val startIntent = Intent(context.applicationContext, ScreenTimeoutObserverService::class.java)

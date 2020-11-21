@@ -31,6 +31,7 @@ object ToothpickHelper {
                         bind<RequestManager>().toProviderInstance { GlideApp.with(component.applicationContext) }.providesSingleton()
                     })
                     .closeOnDestroy(ProcessLifecycleOwner.get())
+                    .inject(component)
             }
             is AppCompatActivity -> {
                 // Install Toothpick Activity module in Activity sub scope and inject

@@ -110,19 +110,24 @@ class KeepOnTileService : TileService(), LifecycleOwner {
         super.onStartListening()
 
         if (qsTile != null) {
-            val newTimeout = preferences.getCurrentTimeout()
+            if (preferences.getAppIsLaunched()) {
+                val newTimeout = preferences.getCurrentTimeout()
 
-            if (lastSetTimeout != newTimeout) {
-                // Create bitmap and load to tile icon
-                glideApp
-                    .asBitmap()
-                    .priority(Priority.HIGH)
-                    .load(TimeoutIconData(newTimeout, 2, commonUtils.getIconStyleSignature()))
-                    .into(qsGlideTarget)
+                if (lastSetTimeout != newTimeout) {
+                    // Create bitmap and load to tile icon
+                    glideApp
+                        .asBitmap()
+                        .priority(Priority.HIGH)
+                        .load(TimeoutIconData(newTimeout, 2, commonUtils.getIconStyleSignature()))
+                        .into(qsGlideTarget)
+                } else {
+                    qsTile.updateTile()
+                }
+                lastSetTimeout = newTimeout
             } else {
+                qsTile.state = Tile.STATE_UNAVAILABLE
                 qsTile.updateTile()
             }
-            lastSetTimeout = newTimeout
         }
     }
 

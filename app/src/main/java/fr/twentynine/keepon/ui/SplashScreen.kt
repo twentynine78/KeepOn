@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.ui.intro.IntroActivity
 import fr.twentynine.keepon.utils.BundleScrubber
+import fr.twentynine.keepon.utils.CommonUtils
 import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -26,6 +28,7 @@ import toothpick.ktp.delegate.lazy
 class SplashScreen : AppCompatActivity() {
 
     private val bundleScrubber: BundleScrubber by lazy()
+    private val commonUtils: CommonUtils by lazy()
     private val preferences: Preferences by lazy()
 
     private val binding: ActivitySplashScreenBinding by viewBinding(ActivitySplashScreenBinding::inflate)
@@ -64,6 +67,14 @@ class SplashScreen : AppCompatActivity() {
 
             finish()
             return
+        }
+
+        // Start service to monitor screen timeout
+        commonUtils.startScreenTimeoutObserverService()
+
+        // Start service to monitor screen off if needed
+        if (preferences.getKeepOnState() && preferences.getResetTimeoutOnScreenOff()) {
+            commonUtils.startScreenOffReceiverService()
         }
 
         // Close this Activity if application already running
@@ -107,12 +118,41 @@ class SplashScreen : AppCompatActivity() {
         } else {
             // Launch MainActivity
             lifecycleScope.launch(Dispatchers.Main) {
-                delay(SPLASH_TIME_OUT)
                 val mainIntent = MainActivity.newIntent(this@SplashScreen.applicationContext)
+                var animateCount = 0
+                delay(SPLASH_TIME_OUT)
+                repeat(600) {
+                    if (preferences.getAppIsLaunched()) {
+                        startActivity(mainIntent)
+                        finish()
+                        return@launch
+                    } else {
+                        if (binding.loadingLayout.visibility != View.VISIBLE) {
+                            binding.loadingLayout.visibility = View.VISIBLE
+                        }
+                        animateCount++
+                        if (animateCount >= 10) {
+                            animateLoadingDots()
+                            animateCount = 0
+                        }
+                        delay(100)
+                    }
+                }
+                // Force start after 60 seconds
                 startActivity(mainIntent)
                 finish()
             }
         }
+    }
+
+    private fun animateLoadingDots() {
+        var nbDots = binding.loadingDotTv.text.length
+        if (nbDots >= 3) {
+            nbDots = 1
+        } else {
+            nbDots++
+        }
+        binding.loadingDotTv.text = ".".repeat(nbDots)
     }
 
     companion object {

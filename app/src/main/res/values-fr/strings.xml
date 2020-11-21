@@ -2,6 +2,8 @@
 <resources>
     <string name="app_desc">Garde ton écran allumé intelligemment !</string>
 
+    <string name="splash_loading_text">Chargement </string>
+
     <string name="app_intro">KeepOn Intro</string>
     <string name="menu_help_title">Aide</string>
     <string name="menu_theme_title">Theme</string>

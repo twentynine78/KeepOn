@@ -8,6 +8,40 @@
     android:background="@color/colorBackground"
     tools:ignore="Overdraw">
 
+    <LinearLayout
+        android:id="@+id/loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="80dp"
+        android:visibility="invisible">
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/splash_loading_text"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorText"
+            android:textAlignment="center"/>
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/loading_dot_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/splash_loading_dot"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorText"
+            android:textAlignment="center"/>
+    </LinearLayout>
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/title_tv"
         android:layout_width="wrap_content"

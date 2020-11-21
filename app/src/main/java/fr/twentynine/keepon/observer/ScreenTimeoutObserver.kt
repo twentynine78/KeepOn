@@ -24,6 +24,8 @@ class ScreenTimeoutObserver(val application: Application) : ContentObserver(null
     init {
         // Inject dependencies with Toothpick
         ToothpickHelper.scopedInjection(this)
+
+        onChange(true)
     }
 
     override fun onChange(selfChange: Boolean) {
@@ -31,14 +33,18 @@ class ScreenTimeoutObserver(val application: Application) : ContentObserver(null
     }
 
     override fun onChange(selfChange: Boolean, uri: Uri?) {
-        processChange()
+        processChange(selfChange)
     }
 
-    private fun processChange() {
-        if (!preferences.getValueChange() || (Calendar.getInstance(TimeZone.getTimeZone("utc")).timeInMillis >= preferences.getValueChangeTime() + 3000L)) {
-            preferences.setOriginalTimeout(preferences.getCurrentTimeout())
+    private fun processChange(selfChange: Boolean) {
+        if (selfChange) {
+            preferences.setAppILaunched(true)
+        } else {
+            if (!preferences.getValueChange() || (Calendar.getInstance(TimeZone.getTimeZone("utc")).timeInMillis >= preferences.getValueChangeTime() + 3000L)) {
+                preferences.setOriginalTimeout(preferences.getCurrentTimeout())
+            }
+            preferences.setValueChange(false)
         }
-        preferences.setValueChange(false)
 
         // Store previous timeout value
         preferences.setPreviousValue(preferences.getNewValue())

@@ -2,6 +2,9 @@
     <string name="app_name" translatable="false">KeepOn</string>
     <string name="app_desc">Keep your screen on smartly!</string>
 
+    <string name="splash_loading_text">Loading </string>
+    <string name="splash_loading_dot" translatable="false">.</string>
+
     <string name="app_intro">KeepOn Intro</string>
     <string name="menu_help_title">Help</string>
     <string name="menu_theme_title">Theme</string>

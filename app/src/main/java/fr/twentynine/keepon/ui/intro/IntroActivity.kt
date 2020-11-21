@@ -20,14 +20,12 @@ import fr.twentynine.keepon.ui.intro.fragments.IntroFragmentAddQSTile
 import fr.twentynine.keepon.ui.intro.fragments.IntroFragmentNotification
 import fr.twentynine.keepon.ui.intro.fragments.IntroFragmentPermission
 import fr.twentynine.keepon.utils.ActivityUtils
-import fr.twentynine.keepon.utils.CommonUtils
 import fr.twentynine.keepon.utils.preferences.Preferences
 import toothpick.ktp.delegate.lazy
 
 class IntroActivity : AppIntro2() {
 
     private val activityUtils: ActivityUtils by lazy()
-    private val commonUtils: CommonUtils by lazy()
     private val preferences: Preferences by lazy()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,8 +111,6 @@ class IntroActivity : AppIntro2() {
         isButtonsEnabled = true
         showStatusBar(true)
         isColorTransitionsEnabled = true
-
-        commonUtils.startScreenTimeoutObserverService()
 
         // Set initial timeout for first launch
         if (!preferences.getSkipIntro()) {

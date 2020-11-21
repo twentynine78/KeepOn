@@ -367,6 +367,16 @@ class Preferences(application: Application, private val contentResolver: Content
             .setLong(PREFS_BACKUP_FILENAME, APP_LAUNCH_COUNT, value)
     }
 
+    fun getAppIsLaunched(): Boolean {
+        return multiPreferences
+            .getBoolean(PREFS_FILENAME, APP_IS_LAUNCHED, false)
+    }
+
+    fun setAppILaunched(value: Boolean) {
+        multiPreferences
+            .setBoolean(PREFS_FILENAME, APP_IS_LAUNCHED, value)
+    }
+
     companion object {
         private const val PREFS_FILENAME = "keepon_prefs"
         private const val PREFS_BACKUP_FILENAME = "keepon_prefs_backup"
@@ -395,6 +405,7 @@ class Preferences(application: Application, private val contentResolver: Content
         private const val QS_STYLE_FONT_SMCP = "qsStyleFontSMCP"
         private const val APP_REVIEW_ASKED = "appReviewAsked"
         private const val APP_LAUNCH_COUNT = "appLaunchCount"
+        private const val APP_IS_LAUNCHED = "appIsLaunched"
 
         private const val DEFAULT_TIMEOUT = 60000
     }
