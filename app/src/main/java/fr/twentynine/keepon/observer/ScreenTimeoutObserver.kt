@@ -11,10 +11,8 @@ import toothpick.InjectConstructor
 import toothpick.ktp.delegate.lazy
 import java.util.Calendar
 import java.util.TimeZone
-import javax.inject.Singleton
 
 @ApplicationScope
-@Singleton
 @InjectConstructor
 class ScreenTimeoutObserver(val application: Application) : ContentObserver(null) {
 
