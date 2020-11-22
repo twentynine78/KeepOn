@@ -16,9 +16,9 @@ import com.google.android.material.radiobutton.MaterialRadioButton
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.databinding.ActivityTaskerEditBinding
 import fr.twentynine.keepon.di.ToothpickHelper
-import fr.twentynine.keepon.tasker.Intent.Companion.ACTION_EDIT_SETTING
-import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_BUNDLE
-import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_STRING_BLURB
+import fr.twentynine.keepon.tasker.TaskerIntent.Companion.ACTION_EDIT_SETTING
+import fr.twentynine.keepon.tasker.TaskerIntent.Companion.EXTRA_BUNDLE
+import fr.twentynine.keepon.tasker.TaskerIntent.Companion.EXTRA_STRING_BLURB
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.preferences.Preferences
 import fr.twentynine.keepon.utils.viewBinding

@@ -4,10 +4,12 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
+import fr.twentynine.keepon.R
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
-import fr.twentynine.keepon.tasker.Intent.Companion.ACTION_FIRE_SETTING
-import fr.twentynine.keepon.tasker.Intent.Companion.EXTRA_BUNDLE
+import fr.twentynine.keepon.tasker.TaskerIntent.Companion.ACTION_FIRE_SETTING
+import fr.twentynine.keepon.tasker.TaskerIntent.Companion.EXTRA_BUNDLE
 import fr.twentynine.keepon.tasker.PluginBundleManager.Companion.isBundleValid
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.preferences.Preferences
@@ -50,9 +52,14 @@ class FireReceiver : BroadcastReceiver() {
         if ((timeoutValue == -42 || timeoutValue == -43 || preferences.getTimeoutValueArray().contains(timeoutValue)) && preferences.getAppIsLaunched()) {
             val broadcastIntent = Intent(context.applicationContext, ServicesManagerReceiver::class.java)
             broadcastIntent.action = ServicesManagerReceiver.ACTION_SET_TIMEOUT
+            resultCode = TaskerIntent.RESULT_CONDITION_SATISFIED
             broadcastIntent.putExtra("timeout", timeoutValue)
-
             context.sendBroadcast(broadcastIntent)
+
+            resultCode = TaskerIntent.RESULT_CONDITION_SATISFIED
+        } else {
+            Toast.makeText(context.applicationContext, context.getString(R.string.initialization_not_ready), Toast.LENGTH_LONG).show()
+            resultCode = TaskerIntent.RESULT_CONDITION_UNSATISFIED
         }
     }
 }

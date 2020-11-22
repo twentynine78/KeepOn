@@ -3,6 +3,7 @@
     <string name="app_desc">Keep your screen on smartly!</string>
 
     <string name="initialization_short_text">Initialization</string>
+    <string name="initialization_not_ready">Sorry, The system components are not ready yet, please retry</string>
 
     <string name="splash_loading_text">Initialization of system components</string>
     <string name="splash_cannot_start_text">The system components are not ready yet, please try again later :(</string>

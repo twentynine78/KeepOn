@@ -19,7 +19,7 @@ package fr.twentynine.keepon.tasker
 /**
  * Contains Intent constants necessary for interacting with the plug-in API for Locale.
  */
-class Intent private constructor() {
+class TaskerIntent private constructor() {
     companion object {
         /**
          *
@@ -41,9 +41,9 @@ class Intent private constructor() {
          * "plug-in" is being queried. To avoid user confusion, it is recommended
          * that only a single plug-in be implemented per APK.
          *
-         * @see Intent.EXTRA_BUNDLE
+         * @see TaskerIntent.EXTRA_BUNDLE
          *
-         * @see Intent.EXTRA_STRING_BREADCRUMB
+         * @see TaskerIntent.EXTRA_STRING_BREADCRUMB
          */
         const val ACTION_EDIT_CONDITION =
             "com.twofortyfouram.locale.intent.action.EDIT_CONDITION"
@@ -71,13 +71,13 @@ class Intent private constructor() {
          * an Intent-filter for this action.
          *
          *
-         * @see Intent.EXTRA_BUNDLE
+         * @see TaskerIntent.EXTRA_BUNDLE
          *
-         * @see Intent.RESULT_CONDITION_SATISFIED
+         * @see TaskerIntent.RESULT_CONDITION_SATISFIED
          *
-         * @see Intent.RESULT_CONDITION_UNSATISFIED
+         * @see TaskerIntent.RESULT_CONDITION_UNSATISFIED
          *
-         * @see Intent.RESULT_CONDITION_UNKNOWN
+         * @see TaskerIntent.RESULT_CONDITION_UNKNOWN
          */
         const val ACTION_QUERY_CONDITION =
             "com.twofortyfouram.locale.intent.action.QUERY_CONDITION"
@@ -106,9 +106,9 @@ class Intent private constructor() {
          * only a single plug-in be implemented per APK.
          *
          *
-         * @see Intent.EXTRA_BUNDLE
+         * @see TaskerIntent.EXTRA_BUNDLE
          *
-         * @see Intent.EXTRA_STRING_BREADCRUMB
+         * @see TaskerIntent.EXTRA_STRING_BREADCRUMB
          */
         const val ACTION_EDIT_SETTING =
             "com.twofortyfouram.locale.intent.action.EDIT_SETTING"
@@ -129,7 +129,7 @@ class Intent private constructor() {
          * There MUST be only one `BroadcastReceiver` per APK that implements
          * an Intent-filter for this action.
          *
-         * @see Intent.EXTRA_BUNDLE
+         * @see TaskerIntent.EXTRA_BUNDLE
          */
         const val ACTION_FIRE_SETTING =
             "com.twofortyfouram.locale.intent.action.FIRE_SETTING"
@@ -164,7 +164,7 @@ class Intent private constructor() {
          * Hosts MAY throttle plug-ins that request queries too frequently.
          *
          *
-         * @see Intent.EXTRA_STRING_ACTIVITY_CLASS_NAME
+         * @see TaskerIntent.EXTRA_STRING_ACTIVITY_CLASS_NAME
          */
         const val ACTION_REQUEST_QUERY =
             "com.twofortyfouram.locale.intent.action.REQUEST_QUERY"
@@ -253,7 +253,7 @@ class Intent private constructor() {
          * `Activity`.
          *
          *
-         * @see Intent.ACTION_REQUEST_QUERY
+         * @see TaskerIntent.ACTION_REQUEST_QUERY
          */
         const val EXTRA_STRING_ACTIVITY_CLASS_NAME =
             "com.twofortyfouram.locale.intent.extra.ACTIVITY"
@@ -263,7 +263,7 @@ class Intent private constructor() {
          * Ordered broadcast result code indicating that a plug-in condition's state
          * is satisfied (true).
          *
-         * @see Intent.ACTION_QUERY_CONDITION
+         * @see TaskerIntent.ACTION_QUERY_CONDITION
          */
         const val RESULT_CONDITION_SATISFIED = 16
 
@@ -271,7 +271,7 @@ class Intent private constructor() {
          * Ordered broadcast result code indicating that a plug-in condition's state
          * is not satisfied (false).
          *
-         * @see Intent.ACTION_QUERY_CONDITION
+         * @see TaskerIntent.ACTION_QUERY_CONDITION
          */
         const val RESULT_CONDITION_UNSATISFIED = 17
 
@@ -301,7 +301,7 @@ class Intent private constructor() {
          * [.RESULT_CONDITION_UNSATISFIED].
          *
          *
-         * @see Intent.ACTION_QUERY_CONDITION
+         * @see TaskerIntent.ACTION_QUERY_CONDITION
          */
         const val RESULT_CONDITION_UNKNOWN = 18
     }

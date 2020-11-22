@@ -75,6 +75,8 @@
                             android:id="@+id/timeout_previous"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:paddingStart="30dp"
+                            android:paddingEnd="0dp"
                             android:text="@string/timeout_previous"/>
 
                         <com.google.android.material.radiobutton.MaterialRadioButton
@@ -82,60 +84,80 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="15dp"
+                            android:paddingStart="30dp"
+                            android:paddingEnd="0dp"
                             android:text="@string/timeout_restore"/>
 
                         <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_15_seconds"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:paddingStart="30dp"
+                            android:paddingEnd="0dp"
                             android:text="@string/timeout_15_seconds"/>
 
                         <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_30_seconds"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:paddingStart="30dp"
+                            android:paddingEnd="0dp"
                             android:text="@string/timeout_30_seconds"/>
 
                         <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_1_minute"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:paddingStart="30dp"
+                            android:paddingEnd="0dp"
                             android:text="@string/timeout_1_minute"/>
 
                         <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_2_minutes"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:paddingStart="30dp"
+                            android:paddingEnd="0dp"
                             android:text="@string/timeout_2_minutes"/>
 
                         <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_5_minutes"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:paddingStart="30dp"
+                            android:paddingEnd="0dp"
                             android:text="@string/timeout_5_minutes"/>
 
                         <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_10_minutes"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:paddingStart="30dp"
+                            android:paddingEnd="0dp"
                             android:text="@string/timeout_10_minutes"/>
 
                         <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_30_minutes"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:paddingStart="30dp"
+                            android:paddingEnd="0dp"
                             android:text="@string/timeout_30_minutes"/>
 
                         <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_1_hour"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:paddingStart="30dp"
+                            android:paddingEnd="0dp"
                             android:text="@string/timeout_1_hour"/>
 
                         <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/timeout_infinite"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:paddingStart="30dp"
+                            android:paddingEnd="0dp"
                             android:text="@string/timeout_infinite"/>
 
                     </RadioGroup>
