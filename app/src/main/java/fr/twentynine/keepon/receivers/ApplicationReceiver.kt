@@ -8,7 +8,7 @@ import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.utils.CommonUtils
 import toothpick.ktp.delegate.lazy
 
-class ServicesManagerReceiver : BroadcastReceiver() {
+class ApplicationReceiver : BroadcastReceiver() {
 
     private val commonUtils: CommonUtils by lazy()
 

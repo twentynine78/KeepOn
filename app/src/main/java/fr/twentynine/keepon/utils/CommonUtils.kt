@@ -23,7 +23,7 @@ import com.bumptech.glide.request.transition.Transition
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.di.annotation.ApplicationScope
-import fr.twentynine.keepon.receivers.ServicesManagerReceiver
+import fr.twentynine.keepon.receivers.ApplicationReceiver
 import fr.twentynine.keepon.services.KeepOnTileService
 import fr.twentynine.keepon.services.ScreenOffReceiverService
 import fr.twentynine.keepon.services.ScreenTimeoutObserverService
@@ -58,7 +58,7 @@ class CommonUtils(private val application: Application) {
         value.action = ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE
     }
     private val startScreenTimeoutObserverServiceIntent: Intent by lazy { Intent(application.applicationContext, ScreenTimeoutObserverService::class.java) }
-    private val manageShortcutsIntent: Intent by lazy { Intent(application, ServicesManagerReceiver::class.java) }.apply {
+    private val manageShortcutsIntent: Intent by lazy { Intent(application, ApplicationReceiver::class.java) }.apply {
         value.action = ACTION_MANAGE_SHORTCUTS
     }
     private val shortcutIntent: Intent by lazy {
