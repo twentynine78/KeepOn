@@ -72,6 +72,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_qs_keepon"
             android:label="@string/qs_service_name"
+            android:process=":services"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE"/>
@@ -83,7 +84,8 @@
         <receiver
             android:name=".receivers.ServicesManagerReceiver"
             android:enabled="true"
-            android:exported="false">
+            android:exported="false"
+            android:process=":services">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>

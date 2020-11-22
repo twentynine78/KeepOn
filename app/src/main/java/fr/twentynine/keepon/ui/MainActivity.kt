@@ -28,7 +28,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
@@ -104,16 +103,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Install Toothpick Activity module and inject
-        ToothpickHelper.scopedInjection(this)
-
         // Ignore implicit intents, because they are not valid.
         if (packageName != intent.getPackage() && ComponentName(this, this.javaClass.name) != intent.component) {
             finish()
             return
         }
 
-        if (!preferences.getSkipIntro()) {
+        // Install Toothpick Activity module and inject
+        ToothpickHelper.scopedInjection(this)
+
+        if (!preferences.getSkipIntro() || !preferences.getAppIsLaunched()) {
             // Start SplashScreen
             val splashIntent = SplashScreen.newIntent(this.applicationContext)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -383,43 +382,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateTilePreview() {
-        if (preferences.getAppIsLaunched()) {
-            // Set Bitmap to Tile Preview
-            val currentTimeout = preferences.getCurrentTimeout()
-            val originalTimeout = preferences.getOriginalTimeout()
+        // Set Bitmap to Tile Preview
+        val currentTimeout = preferences.getCurrentTimeout()
+        val originalTimeout = preferences.getOriginalTimeout()
 
-            glideApp
-                .asBitmap()
-                .priority(Priority.HIGH)
-                .load(TimeoutIconData(currentTimeout, 1, commonUtils.getIconStyleSignature()))
-                .into(object : CustomTarget<Bitmap>(150.px, 150.px) {
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        binding.includeBottomSheet.tilePreview.setImageBitmap(resource)
-                        binding.includeBottomSheet.tilePreview.imageTintMode = PorterDuff.Mode.SRC_IN
-                        val layerDrawableCircle: LayerDrawable = binding.includeBottomSheet.tilePreviewBackground.drawable as LayerDrawable
-                        val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
+        glideApp
+            .asBitmap()
+            .priority(Priority.HIGH)
+            .load(TimeoutIconData(currentTimeout, 1, commonUtils.getIconStyleSignature()))
+            .into(object : CustomTarget<Bitmap>(150.px, 150.px) {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    binding.includeBottomSheet.tilePreview.setImageBitmap(resource)
+                    binding.includeBottomSheet.tilePreview.imageTintMode = PorterDuff.Mode.SRC_IN
+                    val layerDrawableCircle: LayerDrawable = binding.includeBottomSheet.tilePreviewBackground.drawable as LayerDrawable
+                    val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
 
-                        if (currentTimeout == originalTimeout) {
-                            binding.includeBottomSheet.tilePreview.imageTintList = getColorStateList(R.color.colorTilePreviewDisabled)
-                            circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackgroundDisabled))
-                        } else {
-                            binding.includeBottomSheet.tilePreview.imageTintList = getColorStateList(R.color.colorTilePreview)
-                            circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackground))
-                        }
+                    if (currentTimeout == originalTimeout) {
+                        binding.includeBottomSheet.tilePreview.imageTintList = getColorStateList(R.color.colorTilePreviewDisabled)
+                        circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackgroundDisabled))
+                    } else {
+                        binding.includeBottomSheet.tilePreview.imageTintList = getColorStateList(R.color.colorTilePreview)
+                        circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackground))
                     }
+                }
 
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                    }
-                })
-        } else {
-            binding.includeBottomSheet.tilePreview.setImageDrawable(ContextCompat.getDrawable(this, R.mipmap.ic_qs_keepon))
-            binding.includeBottomSheet.tilePreview.imageTintMode = PorterDuff.Mode.SRC_IN
-            val layerDrawableCircle: LayerDrawable = binding.includeBottomSheet.tilePreviewBackground.drawable as LayerDrawable
-            val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
-
-            binding.includeBottomSheet.tilePreview.imageTintList = getColorStateList(R.color.colorTilePreviewDisabled)
-            circleBackgroundShape.color = ColorStateList.valueOf(getColor(R.color.colorTilePreviewBackgroundDisabled))
-        }
+                override fun onLoadCleared(placeholder: Drawable?) {
+                }
+            })
     }
 
     private fun updateSwitchs(switchsArray: ArrayList<TimeoutSwitch>) {

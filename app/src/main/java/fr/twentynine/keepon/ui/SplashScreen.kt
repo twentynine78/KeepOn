@@ -116,45 +116,49 @@ class SplashScreen : AppCompatActivity() {
                 finish()
             }
         } else {
-            // Launch MainActivity
+            // Launch MainActivity or show animated loading text
             lifecycleScope.launch(Dispatchers.Default) {
-                val mainIntent = MainActivity.newIntent(this@SplashScreen.applicationContext)
-                var animateCount = 0
+                var animateCount = 100
                 delay(SPLASH_TIME_OUT)
                 repeat(600) {
                     if (preferences.getAppIsLaunched()) {
-                        startActivity(mainIntent)
+                        startActivity(MainActivity.newIntent(this@SplashScreen.applicationContext))
                         finish()
                         return@launch
                     } else {
-                        launch(Dispatchers.Main) {
-                            if (binding.loadingLayout.visibility != View.VISIBLE) {
-                                binding.loadingLayout.visibility = View.VISIBLE
+                        animateCount++
+                        if (animateCount >= 10) {
+                            launch(Dispatchers.Main) {
+                                setAnimatedLoadingText()
+                                if (binding.loadingTv.visibility != View.VISIBLE) {
+                                    binding.loadingTv.visibility = View.VISIBLE
+                                }
                             }
-                            animateCount++
-                            if (animateCount >= 10) {
-                                animateLoadingDots()
-                                animateCount = 0
-                            }
+                            animateCount = 0
                         }
                         delay(100)
                     }
                 }
-                // Force start after 60 seconds
-                startActivity(mainIntent)
-                finish()
+                launch(Dispatchers.Main) {
+                    binding.loadingTv.visibility = View.INVISIBLE
+                    binding.loadingTv.text = getString(R.string.splash_cannot_start_text)
+                    binding.loadingTv.visibility = View.VISIBLE
+                }
             }
         }
     }
 
-    private fun animateLoadingDots() {
-        var nbDots = binding.loadingDotTv.text.length
-        if (nbDots >= 3) {
-            nbDots = 1
+    private fun setAnimatedLoadingText() {
+        val suffixLength = 3
+        var nbDot = binding.loadingTv.text.filter { it == '.' }.count()
+        if (nbDot >= suffixLength) {
+            nbDot = 1
         } else {
-            nbDots++
+            nbDot++
         }
-        binding.loadingDotTv.text = ".".repeat(nbDots)
+        binding.loadingTv.text = getString(R.string.splash_loading_text)
+            .plus(".".repeat(nbDot))
+            .plus(" ".repeat(suffixLength - nbDot))
     }
 
     companion object {

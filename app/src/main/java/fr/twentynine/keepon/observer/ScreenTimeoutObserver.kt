@@ -33,7 +33,7 @@ class ScreenTimeoutObserver : ContentObserver(null) {
 
     private fun processChange(selfChange: Boolean) {
         if (selfChange) {
-            preferences.setAppILaunched(true)
+            preferences.setAppIsLaunched(true)
         } else {
             if (!preferences.getValueChange() || (Calendar.getInstance(TimeZone.getTimeZone("utc")).timeInMillis >= preferences.getValueChangeTime() + 3000L)) {
                 preferences.setOriginalTimeout(preferences.getCurrentTimeout())
@@ -45,7 +45,7 @@ class ScreenTimeoutObserver : ContentObserver(null) {
         preferences.setPreviousValue(preferences.getNewValue())
         preferences.setNewValue(preferences.getCurrentTimeout())
 
-        // Manage services
+        // Start ScreenOffReceiverService if needed
         if (preferences.getKeepOnState()) {
             if (preferences.getResetTimeoutOnScreenOff()) {
                 commonUtils.startScreenOffReceiverService()

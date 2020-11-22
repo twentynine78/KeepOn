@@ -33,16 +33,8 @@ class ServicesManagerReceiver : BroadcastReceiver() {
         if (action != null) {
             when (action) {
                 Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED -> {
-                    screenOffReceiverServiceIsRunning = false
-                    screenTimeoutObserverServiceIsRunning = false
-
                     // Start ScreenTimeoutObserverService
                     commonUtils.startScreenTimeoutObserverService()
-
-                    // Start ScreenOffReceiverService if needed
-                    if (preferences.getKeepOnState() && preferences.getResetTimeoutOnScreenOff()) {
-                        commonUtils.startScreenOffReceiverService()
-                    }
                 }
                 ACTION_START_FOREGROUND_TIMEOUT_SERVICE -> {
                     val startIntent = Intent(context.applicationContext, ScreenTimeoutObserverService::class.java)
@@ -81,7 +73,7 @@ class ServicesManagerReceiver : BroadcastReceiver() {
                 }
                 MANAGE_SHORTCUTS -> {
                     // Manage dynamics shortcut
-                    commonUtils.createShortcut()
+                    commonUtils.createShortcuts()
                 }
             }
         }

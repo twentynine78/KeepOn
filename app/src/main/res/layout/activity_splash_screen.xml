@@ -1,73 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
+    android:animateLayoutChanges="true"
+    android:orientation="vertical"
     tools:ignore="Overdraw">
-
-    <LinearLayout
-        android:id="@+id/loading_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="80dp"
-        android:visibility="invisible">
-
-
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/splash_loading_text"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorText"
-            android:textAlignment="center"/>
-
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/loading_dot_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/splash_loading_dot"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorText"
-            android:textAlignment="center"/>
-    </LinearLayout>
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/title_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textSize="40sp"
-        android:textStyle="bold"
-        android:textColor="@color/colorText"
-        android:textAlignment="center"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="150dp"/>
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/logo_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="7"
         app:srcCompat="@mipmap/img_keepon"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="150dp"
+        android:paddingTop="70dp"
+        android:paddingBottom="30dp"
         android:layout_marginStart="80dp"
         android:layout_marginEnd="80dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
         android:contentDescription="@string/splashscreen_logo"/>
-</RelativeLayout>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:text="@string/app_name"
+        android:textSize="42sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorText"
+        android:textAlignment="center"
+        app:autoSizeStepGranularity="2sp"/>
+
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/loading_tv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="@string/splash_loading_text"
+        android:textColor="@color/colorText"
+        android:textAlignment="gravity"
+        android:gravity="center_horizontal|top"
+        android:visibility="invisible"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMinTextSize="12sp"
+        app:autoSizeMaxTextSize="20sp"
+        app:autoSizeStepGranularity="2sp"/>
+</LinearLayout>

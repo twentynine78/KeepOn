@@ -16,6 +16,7 @@ import com.bumptech.glide.Priority
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import fr.twentynine.keepon.R
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.utils.glide.TimeoutIconData
 import fr.twentynine.keepon.ui.MainActivity
@@ -24,6 +25,7 @@ import fr.twentynine.keepon.utils.CommonUtils
 import fr.twentynine.keepon.utils.preferences.Preferences
 import fr.twentynine.keepon.utils.px
 import toothpick.ktp.delegate.lazy
+import java.lang.StringBuilder
 
 class KeepOnTileService : TileService(), LifecycleOwner {
 
@@ -45,11 +47,22 @@ class KeepOnTileService : TileService(), LifecycleOwner {
 
                     qsTile.icon = Icon.createWithBitmap(resource)
 
+                    if (qsTile.label != qsTileLabel) {
+                        qsTile.label = qsTileLabel
+                    }
+
                     qsTile.updateTile()
                 }
             }
             override fun onLoadCleared(placeholder: Drawable?) {}
         }
+    }
+    private val qsTileLabel by lazy { getString(R.string.qs_service_name) }
+    private val qsTileLoadingLabel by lazy {
+        StringBuilder()
+            .append(qsTileLabel)
+            .append(" - ")
+            .append(getString(R.string.initialization_short_text))
     }
 
     private val dispatcher = ServiceLifecycleDispatcher(this)
@@ -82,6 +95,8 @@ class KeepOnTileService : TileService(), LifecycleOwner {
 
         commonUtils.startScreenTimeoutObserverService()
 
+        commonUtils.updateQSTile(0)
+
         return super.onBind(intent)
     }
 
@@ -110,7 +125,7 @@ class KeepOnTileService : TileService(), LifecycleOwner {
             if (preferences.getAppIsLaunched()) {
                 val newTimeout = preferences.getCurrentTimeout()
 
-                if (lastSetTimeout != newTimeout) {
+                if (lastSetTimeout != newTimeout || qsTile.state == Tile.STATE_UNAVAILABLE) {
                     // Create bitmap and load to tile icon
                     glideApp
                         .asBitmap()
@@ -122,6 +137,8 @@ class KeepOnTileService : TileService(), LifecycleOwner {
                 }
                 lastSetTimeout = newTimeout
             } else {
+                qsTile.label = qsTileLoadingLabel
+                qsTile.icon = Icon.createWithResource(this, R.mipmap.ic_loading)
                 qsTile.state = Tile.STATE_UNAVAILABLE
                 qsTile.updateTile()
             }
@@ -152,6 +169,7 @@ class KeepOnTileService : TileService(), LifecycleOwner {
             } else {
                 commonUtils.startScreenTimeoutObserverService()
                 preferences.setTimeout(preferences.getCurrentTimeout())
+                commonUtils.updateQSTile(0)
             }
         }
     }

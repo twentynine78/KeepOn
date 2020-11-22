@@ -5,7 +5,6 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
@@ -148,11 +147,17 @@ class CommonUtils(private val application: Application) {
         }
     }
 
+    fun setApplicationAsStoped() {
+        preferences.setAppIsLaunched(false)
+        updateQSTile(0)
+        clearShortcuts()
+    }
+
     fun manageAppShortcut() {
         application.sendBroadcast(bIntentManageShortcut)
     }
 
-    fun createShortcut() {
+    fun createShortcuts() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             if (this::manageShortcutJob.isInitialized) {
                 manageShortcutJob.cancel()
@@ -189,6 +194,12 @@ class CommonUtils(private val application: Application) {
                 }
                 availableTimeout.clear()
             }
+        }
+    }
+
+    fun clearShortcuts() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            shortcutManager?.removeAllDynamicShortcuts()
         }
     }
 

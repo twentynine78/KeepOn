@@ -47,7 +47,7 @@ class FireReceiver : BroadcastReceiver() {
 
         val timeoutValue = bundle.getInt(PluginBundleManager.BUNDLE_EXTRA_TIMEOUT_VALUE)
 
-        if (timeoutValue == -42 || timeoutValue == -43 || preferences.getTimeoutValueArray().contains(timeoutValue)) {
+        if ((timeoutValue == -42 || timeoutValue == -43 || preferences.getTimeoutValueArray().contains(timeoutValue)) && preferences.getAppIsLaunched()) {
             val broadcastIntent = Intent(context.applicationContext, ServicesManagerReceiver::class.java)
             broadcastIntent.action = ServicesManagerReceiver.ACTION_SET_TIMEOUT
             broadcastIntent.putExtra("timeout", timeoutValue)

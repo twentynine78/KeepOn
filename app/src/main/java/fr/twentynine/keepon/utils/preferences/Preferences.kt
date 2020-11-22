@@ -372,7 +372,7 @@ class Preferences(application: Application, private val contentResolver: Content
             .getBoolean(PREFS_FILENAME, APP_IS_LAUNCHED, false)
     }
 
-    fun setAppILaunched(value: Boolean) {
+    fun setAppIsLaunched(value: Boolean) {
         multiPreferences
             .setBoolean(PREFS_FILENAME, APP_IS_LAUNCHED, value)
     }

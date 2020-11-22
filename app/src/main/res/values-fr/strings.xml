@@ -2,7 +2,10 @@
 <resources>
     <string name="app_desc">Garde ton écran allumé intelligemment !</string>
 
-    <string name="splash_loading_text">Chargement </string>
+    <string name="initialization_short_text">Initialisation</string>
+
+    <string name="splash_loading_text">Initialisation des composants systèmes</string>
+    <string name="splash_cannot_start_text">Les composants systèmes ne sont pas encore prêts, merci de réessayer plus tard :(</string>
 
     <string name="app_intro">KeepOn Intro</string>
     <string name="menu_help_title">Aide</string>
