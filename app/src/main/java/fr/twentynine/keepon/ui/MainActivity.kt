@@ -89,10 +89,10 @@ class MainActivity : AppCompatActivity() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent != null) {
                 when (intent.action) {
-                    ACTION_UPDATE_UI -> {
+                    CommonUtils.ACTION_MAIN_ACTIVITY_UPDATE_UI -> {
                         updateUI()
                     }
-                    ACTION_MISSING_SETTINGS -> {
+                    CommonUtils.ACTION_MAIN_ACTIVITY_MISSING_SETTINGS -> {
                         missingSettings()
                     }
                 }
@@ -240,8 +240,8 @@ class MainActivity : AppCompatActivity() {
 
         // Register BroadcastReceiver
         val intentFiler = IntentFilter()
-        intentFiler.addAction(ACTION_UPDATE_UI)
-        intentFiler.addAction(ACTION_MISSING_SETTINGS)
+        intentFiler.addAction(CommonUtils.ACTION_MAIN_ACTIVITY_UPDATE_UI)
+        intentFiler.addAction(CommonUtils.ACTION_MAIN_ACTIVITY_MISSING_SETTINGS)
         registerReceiver(receiver, intentFiler, "fr.twentynine.keepon.MAIN_BROADCAST_PERMISSION", null)
 
         setContentView(binding.root)
@@ -292,7 +292,7 @@ class MainActivity : AppCompatActivity() {
 
             // Show dialog if missing settings on tile click
             if (intent != null && intent.action != null) {
-                if (intent.action == ACTION_MISSING_SETTINGS && preferences.getSelectedTimeout().size <= 1) {
+                if (intent.action == CommonUtils.ACTION_MAIN_ACTIVITY_MISSING_SETTINGS && preferences.getSelectedTimeout().size <= 1) {
                     if (!activityUtils.getMissingSettingsDialog().isShowing) {
                         activityUtils.getMissingSettingsDialog().show()
                     }
@@ -476,7 +476,7 @@ class MainActivity : AppCompatActivity() {
         snackbar.show()
 
         // Update App shortcuts
-        commonUtils.manageAppShortcut()
+        commonUtils.manageAppShortcuts()
     }
 
     private fun loadQSStylePreferences() {
@@ -540,7 +540,7 @@ class MainActivity : AppCompatActivity() {
         commonUtils.updateQSTile(500)
 
         // Update App shortcuts
-        commonUtils.manageAppShortcut()
+        commonUtils.manageAppShortcuts()
     }
 
     private fun saveQSStyleClickPreferences() {
@@ -566,7 +566,7 @@ class MainActivity : AppCompatActivity() {
         commonUtils.updateQSTile(500)
 
         // Update App shortcuts
-        commonUtils.manageAppShortcut()
+        commonUtils.manageAppShortcuts()
     }
 
     private fun animateViews() {
@@ -701,9 +701,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val ACTION_UPDATE_UI = "fr.twentynine.keepon.action.UPDATE_UI"
-        const val ACTION_MISSING_SETTINGS = "fr.twentynine.keepon.action.MISSING_SETTINGS"
-
         const val SUPPORT_URI = "mailto:twentynine78@protonmail.com"
 
         const val ANIMATION_DURATION: Long = 300

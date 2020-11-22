@@ -7,7 +7,6 @@ import android.content.Intent
 import android.widget.Toast
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.di.ToothpickHelper
-import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.tasker.TaskerIntent.Companion.ACTION_FIRE_SETTING
 import fr.twentynine.keepon.tasker.TaskerIntent.Companion.EXTRA_BUNDLE
 import fr.twentynine.keepon.tasker.PluginBundleManager.Companion.isBundleValid
@@ -47,19 +46,16 @@ class FireReceiver : BroadcastReceiver() {
             return
         }
 
-        val timeoutValue = bundle.getInt(PluginBundleManager.BUNDLE_EXTRA_TIMEOUT_VALUE)
+        var timeoutValue = bundle.getInt(PluginBundleManager.BUNDLE_EXTRA_TIMEOUT_VALUE)
 
-        if ((timeoutValue == -42 || timeoutValue == -43 || preferences.getTimeoutValueArray().contains(timeoutValue)) && preferences.getAppIsLaunched()) {
-            val broadcastIntent = Intent(context.applicationContext, ServicesManagerReceiver::class.java)
-            broadcastIntent.action = ServicesManagerReceiver.ACTION_SET_TIMEOUT
-            resultCode = TaskerIntent.RESULT_CONDITION_SATISFIED
-            broadcastIntent.putExtra("timeout", timeoutValue)
-            context.sendBroadcast(broadcastIntent)
-
-            resultCode = TaskerIntent.RESULT_CONDITION_SATISFIED
+        resultCode = if ((timeoutValue == -42 || timeoutValue == -43 || preferences.getTimeoutValueArray().contains(timeoutValue)) && preferences.getAppIsLaunched()) {
+            if (timeoutValue == -42) timeoutValue = preferences.getOriginalTimeout()
+            if (timeoutValue == -43) timeoutValue = preferences.getPreviousValue()
+            preferences.setTimeout(timeoutValue)
+            TaskerIntent.RESULT_CONDITION_SATISFIED
         } else {
             Toast.makeText(context.applicationContext, context.getString(R.string.initialization_not_ready), Toast.LENGTH_LONG).show()
-            resultCode = TaskerIntent.RESULT_CONDITION_UNSATISFIED
+            TaskerIntent.RESULT_CONDITION_UNSATISFIED
         }
     }
 }

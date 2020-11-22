@@ -14,7 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.databinding.ActivitySplashScreenBinding
 import fr.twentynine.keepon.di.ToothpickHelper
-import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.ui.intro.IntroActivity
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.CommonUtils
@@ -40,7 +39,7 @@ class SplashScreen : AppCompatActivity() {
         ToothpickHelper.scopedInjection(this)
 
         // Manage shortcut
-        if (intent.action == ServicesManagerReceiver.ACTION_SET_TIMEOUT) {
+        if (intent.action == CommonUtils.ACTION_SHORTCUT_SET_TIMEOUT) {
             // Prevent Activity to bring to front
             moveTaskToBack(true)
 
@@ -50,21 +49,16 @@ class SplashScreen : AppCompatActivity() {
                 return
             }
 
+            // Set new timeout and finish activity
             if (intent.extras != null) {
-                val extraKey = "timeout"
-                val timeout = intent.getIntExtra(extraKey, 0)
+                var timeout = intent.getIntExtra("timeout", 0)
                 if (timeout != 0) {
-                    val broadcastIntent = Intent(
-                        this.applicationContext,
-                        ServicesManagerReceiver::class.java
-                    )
-                    broadcastIntent.action = intent.action
-                    broadcastIntent.putExtra(extraKey, timeout)
+                    if (timeout == -42) timeout = preferences.getOriginalTimeout()
+                    if (timeout == -43) timeout = preferences.getPreviousValue()
 
-                    sendBroadcast(broadcastIntent)
+                    preferences.setTimeout(timeout)
                 }
             }
-
             finish()
             return
         }
@@ -84,16 +78,9 @@ class SplashScreen : AppCompatActivity() {
         }
 
         // Set bounce animation on the logo and title
-        val bounceAnimLogo: Animation = AnimationUtils.loadAnimation(
-            this,
-            R.anim.splash_bounce_logo
-        )
+        val bounceAnimLogo: Animation = AnimationUtils.loadAnimation(this, R.anim.splash_bounce_logo)
+        val bounceAnimTitle: Animation = AnimationUtils.loadAnimation(this, R.anim.splash_bounce_title)
         binding.logoIv.startAnimation(bounceAnimLogo)
-
-        val bounceAnimTitle: Animation = AnimationUtils.loadAnimation(
-            this,
-            R.anim.splash_bounce_title
-        )
         binding.titleTv.startAnimation(bounceAnimTitle)
 
         // Set DarkTheme
@@ -101,7 +88,6 @@ class SplashScreen : AppCompatActivity() {
         if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
             preferences.setDarkTheme(true)
         }
-
         if (preferences.getDarkTheme()) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }

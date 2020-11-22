@@ -23,14 +23,14 @@ class KeepOnApplication : Application(), LifecycleObserver {
         ToothpickHelper.scopedInjection(this)
 
         if (isServicesProcess()) {
-            commonUtils.setApplicationAsStoped()
+            commonUtils.setApplicationAsStopped()
             ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun processInDestroyState() {
-        commonUtils.setApplicationAsStoped()
+        commonUtils.setApplicationAsStopped()
     }
 
     private fun isServicesProcess(): Boolean {

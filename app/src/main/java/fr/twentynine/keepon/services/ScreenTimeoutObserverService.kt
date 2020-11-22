@@ -1,18 +1,19 @@
 package fr.twentynine.keepon.services
 
 import android.content.ContentResolver
-import android.content.Intent
 import android.provider.Settings
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.OnLifecycleEvent
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.observer.ScreenTimeoutObserver
-import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.CommonUtils
 import fr.twentynine.keepon.utils.ServiceUtils
 import toothpick.ktp.delegate.lazy
 
-class ScreenTimeoutObserverService : LifecycleService() {
+class ScreenTimeoutObserverService : LifecycleService(), LifecycleObserver {
 
     private val mContentResolver: ContentResolver by lazy()
     private val screenTimeoutObserver: ScreenTimeoutObserver by lazy()
@@ -21,9 +22,13 @@ class ScreenTimeoutObserverService : LifecycleService() {
 
     private var restart = true
 
-    override fun onCreate() {
-        super.onCreate()
+    init {
+        lifecycle.addObserver(this)
+    }
 
+    @Suppress("unused")
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    fun serviceInCreatedState() {
         // Inject dependencies with Toothpick
         ToothpickHelper.scopedInjection(this)
 
@@ -32,42 +37,23 @@ class ScreenTimeoutObserverService : LifecycleService() {
         startForeground(SERVICE_ID, serviceUtils.buildNotification(getString(R.string.notification_timeout_service)))
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent != null) {
-            val action = intent.action
-            if (action != null) {
-                when (action) {
-                    ServicesManagerReceiver.ACTION_STOP_FOREGROUND_TIMEOUT_SERVICE -> stopForegroundService()
-                }
-            }
-        }
-
-        return super.onStartCommand(intent, flags, startId)
+    @Suppress("unused")
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun serviceInStartedState() {
+        isRunning = true
     }
 
-    override fun onDestroy() {
-        stopService()
+    @Suppress("unused")
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun serviceInStoppedState() {
+        isRunning = false
+
+        unregisterScreenTimeoutObserver(screenTimeoutObserver)
+        commonUtils.setApplicationAsStopped()
 
         if (restart) {
             commonUtils.startScreenTimeoutObserverService()
         }
-
-        super.onDestroy()
-    }
-
-    private fun stopForegroundService() {
-        restart = false
-
-        stopService()
-
-        stopForeground(true)
-
-        stopSelf()
-    }
-
-    private fun stopService() {
-        unregisterScreenTimeoutObserver(screenTimeoutObserver)
-        commonUtils.setApplicationAsStoped()
     }
 
     private fun registerScreenTimeoutObserver(screenTimeoutObserver: ScreenTimeoutObserver) {
@@ -87,5 +73,7 @@ class ScreenTimeoutObserverService : LifecycleService() {
 
     companion object {
         private const val SERVICE_ID = 1110
+
+        var isRunning = false
     }
 }

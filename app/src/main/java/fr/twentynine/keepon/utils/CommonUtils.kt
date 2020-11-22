@@ -12,6 +12,7 @@ import android.os.Build
 import android.service.quicksettings.TileService
 import androidx.collection.ArrayMap
 import androidx.collection.arrayMapOf
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
@@ -24,17 +25,15 @@ import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.di.annotation.ApplicationScope
 import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.services.KeepOnTileService
-import fr.twentynine.keepon.ui.MainActivity
+import fr.twentynine.keepon.services.ScreenOffReceiverService
+import fr.twentynine.keepon.services.ScreenTimeoutObserverService
 import fr.twentynine.keepon.ui.SplashScreen
 import fr.twentynine.keepon.utils.glide.TimeoutIconData
 import fr.twentynine.keepon.utils.preferences.Preferences
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import kotlinx.coroutines.withTimeout
 import toothpick.InjectConstructor
 import toothpick.ktp.delegate.lazy
@@ -48,33 +47,23 @@ class CommonUtils(private val application: Application) {
     private val preferences: Preferences by lazy()
     private val glideApp: RequestManager by lazy()
 
-    private val processCoroutineContext by lazy { ProcessLifecycleOwner.get().lifecycleScope.coroutineContext }
-    private val checkScreenOffReceiverServiceScope by lazy { CoroutineScope(Dispatchers.Default + processCoroutineContext).plus(Job()) }
-    private val checkScreenTimeoutObserverServiceScope by lazy { CoroutineScope(Dispatchers.Default + processCoroutineContext).plus(Job()) }
-    private val updateIntent: Intent by lazy { Intent(MainActivity.ACTION_UPDATE_UI).setPackage(application.packageName) }.apply {
-        value.action = MainActivity.ACTION_UPDATE_UI
+    private val updateIntent: Intent by lazy { Intent(ACTION_MAIN_ACTIVITY_UPDATE_UI).setPackage(application.packageName) }.apply {
+        value.action = ACTION_MAIN_ACTIVITY_UPDATE_UI
     }
-    private val missingIntent: Intent by lazy { Intent(MainActivity.ACTION_MISSING_SETTINGS).setPackage(application.packageName) }.apply {
-        value.action = MainActivity.ACTION_MISSING_SETTINGS
+    private val missingIntent: Intent by lazy { Intent(ACTION_MAIN_ACTIVITY_MISSING_SETTINGS).setPackage(application.packageName) }.apply {
+        value.action = ACTION_MAIN_ACTIVITY_MISSING_SETTINGS
     }
-    private val bIntentManageShortcut: Intent by lazy { Intent(application, ServicesManagerReceiver::class.java) }.apply {
-        value.action = ServicesManagerReceiver.MANAGE_SHORTCUTS
+    private val startScreenOffReceiverServiceIntent: Intent by lazy { Intent(application.applicationContext, ScreenOffReceiverService::class.java) }
+    private val stopScreenOffReceiverServiceIntent: Intent by lazy { Intent(application.applicationContext, ScreenOffReceiverService::class.java) }.apply {
+        value.action = ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE
     }
-    private val bIntentStartScreenOffReceiverService: Intent by lazy {
-        Intent(application, ServicesManagerReceiver::class.java) }.apply {
-        value.action = ServicesManagerReceiver.ACTION_START_FOREGROUND_SCREEN_OFF_SERVICE
-    }
-    private val bIntentStopScreenOffReceiverService: Intent by lazy {
-        Intent(application, ServicesManagerReceiver::class.java) }.apply {
-        value.action = ServicesManagerReceiver.ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE
-    }
-    private val bIntentStartScreenTimeoutObserverService: Intent by lazy {
-        Intent(application, ServicesManagerReceiver::class.java) }.apply {
-        value.action = ServicesManagerReceiver.ACTION_START_FOREGROUND_TIMEOUT_SERVICE
+    private val startScreenTimeoutObserverServiceIntent: Intent by lazy { Intent(application.applicationContext, ScreenTimeoutObserverService::class.java) }
+    private val manageShortcutsIntent: Intent by lazy { Intent(application, ServicesManagerReceiver::class.java) }.apply {
+        value.action = ACTION_MANAGE_SHORTCUTS
     }
     private val shortcutIntent: Intent by lazy {
         Intent(application, SplashScreen::class.java) }.apply {
-        value.action = ServicesManagerReceiver.ACTION_SET_TIMEOUT
+        value.action = ACTION_SHORTCUT_SET_TIMEOUT
     }
     private val shortcutManager: ShortcutManager? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
@@ -110,23 +99,20 @@ class CommonUtils(private val application: Application) {
     }
 
     fun startScreenOffReceiverService() {
-        if (!ServicesManagerReceiver.screenOffReceiverServiceIsRunning) {
-            application.sendBroadcast(bIntentStartScreenOffReceiverService)
-
-            checkStartScreenOffReceiverService()
+        if (!ScreenOffReceiverService.isRunning) {
+            ContextCompat.startForegroundService(application.applicationContext, startScreenOffReceiverServiceIntent)
         }
     }
 
     fun stopScreenOffReceiverService() {
-        checkScreenOffReceiverServiceScope.cancel()
-        application.sendBroadcast(bIntentStopScreenOffReceiverService)
+        if (ScreenOffReceiverService.isRunning) {
+            ContextCompat.startForegroundService(application.applicationContext, stopScreenOffReceiverServiceIntent)
+        }
     }
 
     fun startScreenTimeoutObserverService() {
-        if (!ServicesManagerReceiver.screenTimeoutObserverServiceIsRunning) {
-            application.sendBroadcast(bIntentStartScreenTimeoutObserverService)
-
-            checkStartScreenTimeoutObserverService()
+        if (!ScreenTimeoutObserverService.isRunning) {
+            ContextCompat.startForegroundService(application.applicationContext, startScreenTimeoutObserverServiceIntent)
         }
     }
 
@@ -147,14 +133,14 @@ class CommonUtils(private val application: Application) {
         }
     }
 
-    fun setApplicationAsStoped() {
+    fun setApplicationAsStopped() {
         preferences.setAppIsLaunched(false)
         updateQSTile(0)
         clearShortcuts()
     }
 
-    fun manageAppShortcut() {
-        application.sendBroadcast(bIntentManageShortcut)
+    fun manageAppShortcuts() {
+        application.sendBroadcast(manageShortcutsIntent)
     }
 
     fun createShortcuts() {
@@ -194,12 +180,6 @@ class CommonUtils(private val application: Application) {
                 }
                 availableTimeout.clear()
             }
-        }
-    }
-
-    fun clearShortcuts() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-            shortcutManager?.removeAllDynamicShortcuts()
         }
     }
 
@@ -279,31 +259,18 @@ class CommonUtils(private val application: Application) {
         }
     }
 
-    private fun checkStartScreenOffReceiverService() {
-        checkScreenOffReceiverServiceScope.cancel()
-        checkScreenOffReceiverServiceScope.launch {
-            repeat(5) {
-                delay(2000)
-                if (!ServicesManagerReceiver.screenOffReceiverServiceIsRunning) {
-                    application.sendBroadcast(bIntentStartScreenOffReceiverService)
-                } else {
-                    return@launch
-                }
-            }
+    private fun clearShortcuts() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            shortcutManager?.removeAllDynamicShortcuts()
         }
     }
 
-    private fun checkStartScreenTimeoutObserverService() {
-        checkScreenTimeoutObserverServiceScope.cancel()
-        checkScreenTimeoutObserverServiceScope.launch {
-            repeat(5) {
-                delay(2000)
-                if (!ServicesManagerReceiver.screenTimeoutObserverServiceIsRunning) {
-                    application.sendBroadcast(bIntentStartScreenTimeoutObserverService)
-                } else {
-                    return@launch
-                }
-            }
-        }
+    companion object {
+        const val ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE = "ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE"
+        const val ACTION_SHORTCUT_SET_TIMEOUT = "ACTION_SHORTCUT_SET_TIMEOUT"
+        const val ACTION_MANAGE_SHORTCUTS = "ACTION_MANAGE_SHORTCUTS"
+
+        const val ACTION_MAIN_ACTIVITY_UPDATE_UI = "ACTION_MAIN_ACTIVITY_UPDATE_UI"
+        const val ACTION_MAIN_ACTIVITY_MISSING_SETTINGS = "ACTION_MAIN_ACTIVITY_MISSING_SETTINGS"
     }
 }

@@ -3,15 +3,17 @@ package fr.twentynine.keepon.services
 import androidx.lifecycle.LifecycleService
 import android.content.Intent
 import android.content.IntentFilter
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.receivers.ScreenOffReceiver
-import fr.twentynine.keepon.receivers.ServicesManagerReceiver
 import fr.twentynine.keepon.utils.ServiceUtils
 import fr.twentynine.keepon.utils.CommonUtils
 import toothpick.ktp.delegate.lazy
 
-class ScreenOffReceiverService : LifecycleService() {
+class ScreenOffReceiverService : LifecycleService(), LifecycleObserver {
 
     private val screenOffReceiver: ScreenOffReceiver by lazy()
     private val serviceUtils: ServiceUtils by lazy()
@@ -19,9 +21,25 @@ class ScreenOffReceiverService : LifecycleService() {
 
     private var restart = true
 
-    override fun onCreate() {
-        super.onCreate()
+    init {
+        lifecycle.addObserver(this)
+    }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent != null) {
+            val action = intent.action
+            if (action != null) {
+                when (action) {
+                    CommonUtils.ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE -> stopForegroundService()
+                }
+            }
+        }
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+    @Suppress("unused")
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    fun serviceInCreatedState() {
         // Inject dependencies with Toothpick
         ToothpickHelper.scopedInjection(this)
 
@@ -30,33 +48,26 @@ class ScreenOffReceiverService : LifecycleService() {
         startForeground(SERVICE_ID, serviceUtils.buildNotification(getString(R.string.notification_screen_off_service)))
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent != null) {
-            val action = intent.action
-            if (action != null) {
-                when (action) {
-                    ServicesManagerReceiver.ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE -> stopForegroundService()
-                }
-            }
-        }
-
-        return super.onStartCommand(intent, flags, startId)
+    @Suppress("unused")
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun serviceInStartedState() {
+        isRunning = true
     }
 
-    override fun onDestroy() {
+    @Suppress("unused")
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun serviceInStoppedState() {
+        isRunning = false
+
         unregisterScreenOffReceiver()
 
         if (restart) {
             commonUtils.startScreenOffReceiverService()
         }
-
-        super.onDestroy()
     }
 
     private fun stopForegroundService() {
         restart = false
-
-        unregisterScreenOffReceiver()
 
         stopForeground(true)
 
@@ -83,5 +94,7 @@ class ScreenOffReceiverService : LifecycleService() {
 
     companion object {
         private const val SERVICE_ID = 1111
+
+        var isRunning = false
     }
 }

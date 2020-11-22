@@ -61,7 +61,7 @@ class ScreenTimeoutObserver : ContentObserver(null) {
         commonUtils.sendBroadcastUpdateMainUI()
 
         // Manage dynamics shortcut
-        commonUtils.manageAppShortcut()
+        commonUtils.manageAppShortcuts()
     }
 
     companion object {

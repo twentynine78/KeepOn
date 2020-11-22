@@ -148,28 +148,22 @@ class KeepOnTileService : TileService(), LifecycleOwner {
     override fun onClick() {
         super.onClick()
 
-        if (preferences.getSkipIntro()) {
-            if (preferences.getAppIsLaunched()) {
-                if (preferences.getSelectedTimeout().size < 1 || !Settings.System.canWrite(this)) {
-                    if (preferences.getKeepOnState()) {
-                        preferences.setTimeout(preferences.getOriginalTimeout())
-                    } else {
-                        val mainIntent = MainActivity.newIntent(this.applicationContext)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-                        if (preferences.getSelectedTimeout().size < 1) {
-                            mainIntent.action = MainActivity.ACTION_MISSING_SETTINGS
-                            commonUtils.sendBroadcastMissingSettings()
-                        }
-                        startActivityAndCollapse(mainIntent)
-                    }
+        if (preferences.getAppIsLaunched() && preferences.getSkipIntro()) {
+            if (preferences.getSelectedTimeout().size < 1 || !Settings.System.canWrite(this)) {
+                if (preferences.getKeepOnState()) {
+                    preferences.setTimeout(preferences.getOriginalTimeout())
                 } else {
-                    preferences.setTimeout(preferences.getNextTimeoutValue())
+                    val mainIntent = MainActivity.newIntent(this.applicationContext)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                    if (preferences.getSelectedTimeout().size < 1) {
+                        mainIntent.action = CommonUtils.ACTION_MAIN_ACTIVITY_MISSING_SETTINGS
+                        commonUtils.sendBroadcastMissingSettings()
+                    }
+                    startActivityAndCollapse(mainIntent)
                 }
             } else {
-                commonUtils.startScreenTimeoutObserverService()
-                preferences.setTimeout(preferences.getCurrentTimeout())
-                commonUtils.updateQSTile(0)
+                preferences.setTimeout(preferences.getNextTimeoutValue())
             }
         }
     }

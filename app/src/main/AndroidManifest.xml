@@ -72,7 +72,6 @@
             android:exported="true"
             android:icon="@mipmap/ic_qs_keepon"
             android:label="@string/qs_service_name"
-            android:process=":services"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE"/>
@@ -84,8 +83,7 @@
         <receiver
             android:name=".receivers.ServicesManagerReceiver"
             android:enabled="true"
-            android:exported="false"
-            android:process=":services">
+            android:exported="false">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
@@ -109,7 +107,8 @@
         <receiver
             android:name=".receivers.ScreenOffReceiver"
             android:enabled="true"
-            android:exported="false">
+            android:exported="false"
+            android:process=":services">
             <intent-filter>
                 <action android:name="android.intent.action.SCREEN_OFF"/>
                 <category android:name="android.intent.category.DEFAUL"/>
@@ -125,7 +124,6 @@
         <activity
             android:name=".tasker.EditActivity"
             android:label="@string/tasker_activity_name"
-            android:process=":tasker"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING"/>
@@ -134,7 +132,6 @@
 
         <receiver android:name=".tasker.FireReceiver"
             android:exported="true"
-            android:process=":tasker"
             tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="com.twofortyfouram.locale.intent.action.FIRE_SETTING"/>
