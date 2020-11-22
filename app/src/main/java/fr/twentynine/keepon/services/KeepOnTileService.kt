@@ -77,6 +77,8 @@ class KeepOnTileService : TileService(), LifecycleOwner {
 
         // Inject dependencies with Toothpick
         ToothpickHelper.scopedInjection(this)
+
+        if (!preferences.getTileAdded()) preferences.setTileAdded(true)
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -86,11 +88,6 @@ class KeepOnTileService : TileService(), LifecycleOwner {
             if (bundleScrubber.scrub(intent) || (packageName != intent.getPackage() && ComponentName(this, this.javaClass.name) != intent.component)) {
                 return null
             }
-        }
-
-        if (!preferences.getTileAdded()) {
-            preferences.setTileAdded(true)
-            requestListeningState(this, ComponentName(this, this::class.java))
         }
 
         commonUtils.startScreenTimeoutObserverService()
@@ -103,9 +100,9 @@ class KeepOnTileService : TileService(), LifecycleOwner {
     override fun onTileAdded() {
         preferences.setTileAdded(true)
 
-        requestListeningState(this, ComponentName(this, this::class.java))
-
         commonUtils.startScreenTimeoutObserverService()
+
+        commonUtils.updateQSTile(0)
 
         super.onTileAdded()
     }
