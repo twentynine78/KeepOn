@@ -1,13 +1,13 @@
 package fr.twentynine.keepon.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Paint
+import android.graphics.Color
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
-import android.widget.CheckBox
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
@@ -15,7 +15,6 @@ import com.google.android.material.snackbar.Snackbar.SnackbarLayout
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.di.annotation.ActivityScope
-import fr.twentynine.keepon.ui.MainActivity
 import fr.twentynine.keepon.utils.preferences.Preferences
 import toothpick.InjectConstructor
 import toothpick.ktp.delegate.lazy
@@ -161,6 +160,12 @@ class Rate(private val mActivity: AppCompatActivity) {
     private fun showRatingSnackbar() {
         // Wie is hier nou de snackbar?
         val snackbar = Snackbar.make(mActivity.findViewById(R.id.cardViewContainer), "", Snackbar.LENGTH_INDEFINITE)
+
+        // Set background transparent and remove padding
+        snackbar.view.setBackgroundColor(Color.TRANSPARENT)
+        snackbar.view.setPadding(0, 0, 0, 0)
+
+        // Get snackbar layout
         val layout = snackbar.view as SnackbarLayout
 
         // Hide default text
@@ -169,55 +174,20 @@ class Rate(private val mActivity: AppCompatActivity) {
 
         // Inflate our custom view
         val inflater = (mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
-        val layoutId: Int = R.layout.generate_snackbar
-        val snackView = inflater.inflate(layoutId, null)
+        @SuppressLint("InflateParams")
+        val snackView = inflater.inflate(R.layout.generate_snackbar, null)
 
-        // Configure the view
-        val tvMessage = snackView.findViewById<TextView>(R.id.text)
-        tvMessage.text = mActivity.getString(R.string.generate_please_rate)
-
-        val cbNever = snackView.findViewById<CheckBox>(R.id.cb_never)
-        cbNever.text = mActivity.getString(R.string.generate_button_dont_ask)
-        cbNever.isChecked = DEFAULT_CHECKED
-
-        val btFeedback = snackView.findViewById<Button>(R.id.bt_negative)
-        btFeedback.visibility = View.VISIBLE
-        btFeedback.text = mActivity.getString(R.string.generate_button_feedback)
-        btFeedback.paintFlags = btFeedback.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-
+        // Set OnClickListener for buttons
         val btRate = snackView.findViewById<Button>(R.id.bt_positive)
-        snackView.findViewById<View>(R.id.tv_swipe).visibility = View.VISIBLE
-
-        snackbar.addCallback(object : Snackbar.Callback() {
-            override fun onDismissed(transientBottomBar: Snackbar, @DismissEvent event: Int) {
-                super.onDismissed(transientBottomBar, event)
-                if (cbNever.isChecked) {
-                    saveAsked()
-                }
-            }
-        })
-
-        // Rate listener
         btRate.setOnClickListener {
             snackbar.dismiss()
             openPlayStore()
             saveAsked()
         }
-
-        // Feedback listener
-        btFeedback.setOnClickListener {
+        val btNo = snackView.findViewById<Button>(R.id.bt_negative)
+        btNo.setOnClickListener {
             snackbar.dismiss()
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.SUPPORT_URI))
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            if (canOpenIntent(intent)) {
-                mActivity.startActivity(intent)
-            }
             saveAsked()
-        }
-
-        // Checkbox listener
-        cbNever.setOnCheckedChangeListener { _, checked ->
-            preferences.setAppReviewAsked(checked)
         }
 
         // Add the view to the Snackbar's layout
@@ -261,293 +231,10 @@ class Rate(private val mActivity: AppCompatActivity) {
         preferences.setAppReviewAsked(true)
     }
 
-    /* Unused functions
-
-class Builder {
-
-    private val mRate: Rate = Rate()
-
-    /**
-     * Sets the Uri to open when the user clicks the feedback button.
-     * This can use the scheme `mailto:`, `tel:`, `geo:`, `https:`, etc.
-     *
-     * @param uri The Uri to open, or `null` to hide the feedback button
-     * @return The current [Builder]
-     * @see .setFeedbackAction
-     */
-    fun setFeedbackAction(uri: Uri?): Builder {
-        if (uri == null) {
-            mRate.mFeedbackAction = null
-        } else {
-            mRate.mFeedbackAction = object : OnFeedbackAdapter() {
-                override fun onFeedbackTapped() {
-                    val intent = Intent(Intent.ACTION_VIEW, uri)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    if (mRate.canOpenIntent(intent)) {
-                        mRate.mActivity.startActivity(intent)
-                    }
-                }
-            }
-        }
-        return this
-    }
-
-    /**
-     * Sets the parent view for a Snackbar. This enables the use of a Snackbar for the rating
-     * request instead of the default dialog.
-     *
-     * @param parent The parent view to put the Snackbar in, or `null` to disable the
-     * Snackbar
-     * @return The current [Builder]
-     */
-    fun setSnackBarParent(parent: ViewGroup?): Builder {
-        mRate.mParentView = parent
-        return this
-    }
-
-    /**
-     * Build the [Rate] instance
-     *
-     * @return a new Rate instance as configured by the current [Builder]
-     */
-    fun build(): Rate {
-        return mRate
-    }
-
-private var mTextPositive = mActivity.getString(R.string.generate_button_yes)
-private var mTextNegative = mActivity.getString(R.string.generate_button_feedback)
-private var mTextCancel = mActivity.getString(R.string.generate_button_no)
-
-    /**
-     * Set number of times [.count] should be called before triggering the rating
-     * request
-     *
-     * @param count Number of times (inclusive) to call [.count] before rating
-     * request should show. Defaults to [.DEFAULT_COUNT]
-     * @return The current [Builder]
-     */
-    fun setTriggerCount(count: Int): Builder {
-        mRate.mTriggerCount = count
-        return this
-    }
-
-    /**
-     * Set amount of time the app should be installed before asking for a rating. Defaults to 5
-     * days.
-     *
-     * @param millis Amount of time in milliseconds the app should be installed before asking a
-     * rating.
-     * @return The current [Builder]
-     */
-    fun setMinimumInstallTime(millis: Int): Builder {
-        mRate.mMinInstallTime = millis.toLong()
-        return this
-    }
-
-    /**
-     * Sets the repeat count to bother the user again if "don't ask again" was checked.
-     *
-     * @param repeatCount Integer how often rate will wait if "don't ask again" was checked
-     * (default 30).
-     * @return The current [Builder]
-     */
-    fun setRepeatCount(repeatCount: Int): Builder {
-        mRate.mRepeatCount = repeatCount
-        return this
-    }
-
-    /**
-     * Sets the message to show in the rating request.
-     *
-     * @param resId The message that asks the user for a rating
-     * @return The current [Builder]
-     * @see .setMessage
-     */
-    fun setMessage(@StringRes resId: Int): Builder {
-        return setMessage(mRate.mActivity.getString(resId))
-    }
-
-    /**
-     * Sets the text to show in the rating request on the positive button.
-     *
-     * @param message The text on the positive button
-     * @return The current [Builder]
-     * @see .setPositiveButton
-     */
-    private fun setPositiveButton(message: CharSequence?): Builder {
-        mRate.mTextPositive = message.toString()
-        return this
-    }
-
-    /**
-     * Sets the text to show in the rating request on the positive button.
-     *
-     * @param resId The text on the positive button
-     * @return The current [Builder]
-     * @see .setPositiveButton
-     */
-    fun setPositiveButton(@StringRes resId: Int): Builder {
-        return setPositiveButton(mRate.mActivity.getString(resId))
-    }
-
-    /**
-     * Sets the message to show in the rating request.
-     *
-     * @param message The message that asks the user for a rating
-     * @return The current [Builder]
-     * @see .setMessage
-     */
-    private fun setMessage(message: CharSequence?): Builder {
-        mRate.mMessage = message.toString()
-        return this
-    }
-
-    /**
-     * Sets the text to show in the rating request on the negative button.
-     *
-     * @param message The text on the negative button
-     * @return The current [Builder]
-     * @see .setNegativeButton
-     */
-    private fun setNegativeButton(message: CharSequence?): Builder {
-        mRate.mTextNegative = message.toString()
-        return this
-    }
-
-    /**
-     * Sets the text to show in the rating request on the negative button.
-     *
-     * @param resId The text on the negative button
-     * @return The current [Builder]
-     * @see .setNegativeButton
-     */
-    fun setNegativeButton(@StringRes resId: Int): Builder {
-        return setNegativeButton(mRate.mActivity.getString(resId))
-    }
-
-    /**
-     * Sets the text to show in the rating request on the cancel button.
-     * Note that this will not be used when using a SnackBar.
-     *
-     * @param message The text on the cancel button
-     * @return The current [Builder]
-     * @see .setSnackBarParent
-     * @see .setCancelButton
-     */
-    fun setCancelButton(message: CharSequence?): Builder {
-        mRate.mTextCancel = message.toString()
-        return this
-    }
-
-    /**
-     * Sets the text to show in the rating request on the cancel button.
-     * Note that this will not be used when using a SnackBar.
-     *
-     * @param resId The text on the cancel button
-     * @return The current [Builder]
-     * @see .setSnackBarParent
-     * @see .setCancelButton
-     */
-    fun setCancelButton(@StringRes resId: Int): Builder {
-        return setCancelButton(mRate.mActivity.getString(resId))
-    }
-
-    /**
-     * Sets the text to show in the rating request on the checkbox.
-     *
-     * @param message The text on the checkbox
-     * @return The current [Builder]
-     */
-    fun setNeverAgainText(message: CharSequence?): Builder {
-        mRate.mTextNever = message.toString()
-        return this
-    }
-
-    /**
-     * Sets the text to show in the rating request on the checkbox.
-     *
-     * @param resId The text on the checkbox
-     * @return The current [Builder]
-     */
-    fun setNeverAgainText(@StringRes resId: Int): Builder {
-        return setNeverAgainText(mRate.mActivity.getString(resId))
-    }
-
-    /**
-     * Sets the text to show in the feedback link.
-     *
-     * @param message The text in the link
-     * @return The current [Builder]
-     */
-    fun setFeedbackText(message: CharSequence?): Builder {
-        mRate.mTextFeedback = message.toString()
-        return this
-    }
-
-    /**
-     * Sets the text to show in the feedback link.
-     *
-     * @param resId The text in the link
-     * @return The current [Builder]
-     */
-    fun setFeedbackText(@StringRes resId: Int): Builder {
-        return setFeedbackText(mRate.mActivity.getString(resId))
-    }
-
-    /**
-     * Sets the action to perform when the user clicks the feedback button.
-     *
-     * @param action Callback when the user taps the feedback button, or `null` to hide
-     * the feedback button
-     * @return The current [Builder]
-     * @see .setFeedbackAction
-     */
-    fun setFeedbackAction(action: OnFeedbackListener?): Builder {
-        mRate.mFeedbackAction = action
-        return this
-    }
-
-    /**
-     * Sets the destination rate link if not Google Play.
-     *
-     * @param rateDestinationStore The destination link
-     * (i.e. "amzn://apps/android?p=com.pixplicity.generate" ).
-     * Keeps default Google Play store
-     * as destination if rateDestinationStore is `null` or
-     * empty.
-     * @return The current [Builder]
-     */
-    fun setRateDestinationStore(rateDestinationStore: String?): Builder {
-        if (!TextUtils.isEmpty(rateDestinationStore)) {
-            mRate.mStoreLink = rateDestinationStore
-        }
-        return this
-    }
-
-    /**
-     * Shows or hides the 'swipe to dismiss' notion in the Snackbar. When disabled, the
-     * Snackbar will automatically hide after a view seconds. When enabled, the Snackbar will
-     * show indefinitely until dismissed by the user. **Note that the
-     * Snackbar can only be swiped when one of the parent views is a
-     * `CoordinatorLayout`!** Also, **toggling this does not change
-     * if the Snackbar can actually be swiped to dismiss!**
-     *
-     * @param visible Show/hide the 'swipe to dismiss' text, and disable/enable auto-hide.
-     * Default is {code true}.
-     * @return The current [Builder]
-     */
-    fun setSwipeToDismissVisible(visible: Boolean): Builder {
-        mRate.mSnackBarSwipeToDismiss = visible
-        return this
-    }
-    }
-    */
-
     companion object {
         private const val DEFAULT_COUNT = 5
-        private const val DEFAULT_REPEAT_COUNT = 15
+        private const val DEFAULT_REPEAT_COUNT = 20
 
         private const val DEFAULT_INSTALL_TIME = (5 * (1000 * 60 * 60 * 24)).toLong() // 5 days (1000 -> to seconds * 60 -> to minutes * 60 -> to hours * 24 -> to days)
-        private const val DEFAULT_CHECKED = true
     }
 }

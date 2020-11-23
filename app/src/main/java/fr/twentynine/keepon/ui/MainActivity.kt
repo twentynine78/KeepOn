@@ -701,8 +701,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val SUPPORT_URI = "mailto:twentynine78@protonmail.com"
-
         const val ANIMATION_DURATION: Long = 300
 
         const val BOTTOM_SHEET_STATE_EXPANDED = "BOTTOM_SHEET_STATE"

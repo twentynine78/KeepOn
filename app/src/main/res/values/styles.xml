@@ -87,4 +87,11 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
+    <style name="generateButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_gravity">center_horizontal|bottom</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="backgroundTint">@color/colorGenerateButton</item>
+        <item name="android:textColor">@color/colorGenerateButtonText</item>
+    </style>
 </resources>

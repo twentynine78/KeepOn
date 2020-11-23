@@ -139,13 +139,11 @@
     <string name="bottom_sheet_style_fill_and_stroke">Fill and Stroke</string>
     <string name="bottom_sheet_style_stroke">Stroke</string>
 
-    <string name="generate_please_rate">Hey there! You seem to like this app, would you mind visiting the Play Store and give a rating? It would help me a great deal!
-    \n\nIf instead you hate this app, we would love to hear your feedback so we can improve. Thanks!</string>
-    <string name="generate_please_rate_short">Hey, you seem to like this app. You would help me a great deal with a 5-star rating!</string>
-    <string name="generate_button_yes">Rate!</string>
-    <string name="generate_button_feedback">Give feedback</string>
-    <string name="generate_button_dont_ask">Don’t ask again</string>
-    <string name="generate_swipe_to_dismiss">Swipe to dismiss</string>
+    <string name="generate_evaluate">Rate KeepOn</string>
+    <string name="generate_please_rate">If you enjoy using KeepOn, would you mind taking a moment to rate it? It won\'t take more than a minute. Thanks for your support!</string>
+    <string name="generate_button_yes">Rate KeepOn!</string>
+    <string name="generate_button_no">No, thanks</string>
+    <string name="generate_swipe_to_dismiss">Swipe to be called back later</string>
 
     <!-- A format string for breadcrumbs in the titlebar.  For left to right languages, such as English, the format will look something like "Main Activity > Sub Activity > Sub Activity 2".  Item #1 is the previous path, item #2 is the separator, and item #3 is the current item.  For most left to right languages, this shouldn't need to be changed. -->
     <string name="twofortyfouram_locale_breadcrumb_format" translatable="false" tools:ignore="UnusedResources">%1$s%2$s%3$s</string>

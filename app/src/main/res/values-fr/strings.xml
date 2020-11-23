@@ -138,13 +138,11 @@
     <string name="bottom_sheet_style_fill_and_stroke">Remplissage et contours</string>
     <string name="bottom_sheet_style_stroke">Contours</string>
 
-    <string name="generate_please_rate">Salut ! Tu sembles aimer cette application, pourrais-tu te rendre sur le Play Store et donner une note ? Cela m\'aiderait beaucoup !
-    \n\nSi au contraire, tu détestes cette application, j\'aimerais avoir ton avis afin de pouvoir l\'améliorer. Merci !</string>
-    <string name="generate_please_rate_short">Tu as l\'air d\'aimer cette application. Tu m\'aiderais beaucoup avec une note de 5 étoiles !</string>
-    <string name="generate_button_yes">Noter !</string>
-    <string name="generate_button_feedback">Donne ton avis</string>
-    <string name="generate_button_dont_ask">Ne plus demander</string>
-    <string name="generate_swipe_to_dismiss">Balaye pour supprimer</string>
+    <string name="generate_evaluate">Noter KeepOn</string>
+    <string name="generate_please_rate">Si tu aimes utiliser KeepOn, peux-tu prendre un moment pour l\'évaluer ? Cela ne prendra pas plus d\'une minute. Merci pour ton soutien !</string>
+    <string name="generate_button_yes">Noter KeepOn !</string>
+    <string name="generate_button_no">Non, merci</string>
+    <string name="generate_swipe_to_dismiss">Glisser pour être rappelé plus tard</string>
 
     <string name="tasker_menu_dontsave">Annuler</string>
     <string name="tasker_menu_save">Sauvegarder</string>
