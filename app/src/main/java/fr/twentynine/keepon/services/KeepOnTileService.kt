@@ -79,6 +79,10 @@ class KeepOnTileService : TileService(), LifecycleOwner {
         ToothpickHelper.scopedInjection(this)
 
         if (!preferences.getTileAdded()) preferences.setTileAdded(true)
+
+        commonUtils.updateQSTile()
+
+        commonUtils.startScreenTimeoutObserverService()
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -89,20 +93,13 @@ class KeepOnTileService : TileService(), LifecycleOwner {
                 return null
             }
         }
-
-        commonUtils.startScreenTimeoutObserverService()
-
-        commonUtils.updateQSTile(0)
-
         return super.onBind(intent)
     }
 
     override fun onTileAdded() {
         preferences.setTileAdded(true)
 
-        commonUtils.startScreenTimeoutObserverService()
-
-        commonUtils.updateQSTile(0)
+        commonUtils.updateQSTile()
 
         super.onTileAdded()
     }

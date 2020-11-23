@@ -20,7 +20,7 @@ class TimeoutIconModelLoader : ModelLoader<TimeoutIconData, Bitmap> {
     }
 
     @Nullable
-    override fun buildLoadData(model: TimeoutIconData, width: Int, height: Int, options: Options): LoadData<Bitmap>? {
+    override fun buildLoadData(model: TimeoutIconData, width: Int, height: Int, options: Options): LoadData<Bitmap> {
         return LoadData(ObjectKey(model), TimeoutIconDataFetcher(model))
     }
 

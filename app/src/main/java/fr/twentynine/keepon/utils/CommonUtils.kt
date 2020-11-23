@@ -124,7 +124,7 @@ class CommonUtils(private val application: Application) {
         application.sendBroadcast(missingIntent)
     }
 
-    fun updateQSTile(delay: Long) {
+    fun updateQSTile(delay: Long = 0) {
         ProcessLifecycleOwner.get().lifecycleScope.launch(Dispatchers.Default) {
             delay(delay)
             withTimeout(60000) {
@@ -135,7 +135,7 @@ class CommonUtils(private val application: Application) {
 
     fun setApplicationAsStopped() {
         preferences.setAppIsLaunched(false)
-        updateQSTile(0)
+        updateQSTile()
         clearShortcuts()
     }
 

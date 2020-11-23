@@ -55,7 +55,7 @@ class ScreenTimeoutObserver : ContentObserver(null) {
         }
 
         // Update QS Tile
-        commonUtils.updateQSTile(0)
+        commonUtils.updateQSTile()
 
         // Update Main Activity
         commonUtils.sendBroadcastUpdateMainUI()
