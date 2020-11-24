@@ -174,7 +174,7 @@ class Rate(private val mActivity: AppCompatActivity) {
 
         // Inflate our custom view
         val inflater = (mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater)
-        @SuppressLint("InflateParams")
+        @Suppress("InflateParams")
         val snackView = inflater.inflate(R.layout.generate_snackbar, null)
 
         // Set OnClickListener for buttons
