@@ -94,6 +94,8 @@ class IntroFragmentPermission : Fragment(R.layout.fragment_intro_button), SlideB
 
     override fun setBackgroundColor(backgroundColor: Int) {
         binding.main.setBackgroundColor(backgroundColor)
+        activityUtils.setStatusBarColor(backgroundColor)
+        activityUtils.setNavBarColor(backgroundColor)
     }
 
     companion object {

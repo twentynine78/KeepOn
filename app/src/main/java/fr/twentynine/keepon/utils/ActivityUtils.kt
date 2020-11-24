@@ -13,9 +13,11 @@ import android.os.Build
 import android.provider.Settings
 import android.text.TextUtils
 import android.view.Window
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.graphics.ColorUtils
@@ -210,6 +212,10 @@ class ActivityUtils(private val activity: AppCompatActivity) {
         return mDefaultTimeoutDialog
     }
 
+    fun getDefaultTimeoutDialog(): Dialog {
+        return mDefaultTimeoutDialog
+    }
+
     fun getCreditsDialog(): Dialog {
         return mCreditsDialog
     }
@@ -266,5 +272,16 @@ class ActivityUtils(private val activity: AppCompatActivity) {
                 }
             }
         }
+    }
+
+    @Suppress("DEPRECATION")
+    fun setStatusBarColor(@ColorInt color: Int) {
+        activity.window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        activity.window.statusBarColor = color
+    }
+
+    fun setNavBarColor(@ColorInt color: Int) {
+        activity.window.navigationBarColor = color
     }
 }

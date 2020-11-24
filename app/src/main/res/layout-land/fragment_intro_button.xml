@@ -7,77 +7,52 @@
     android:layout_height="match_parent"
     android:paddingTop="@dimen/appintro_statusbar_height"
     android:paddingBottom="@dimen/appintro2_bottombar_height"
-    tools:background="@android:color/black">
+    tools:background="@color/appintro_background_color">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/title"
         style="@style/AppIntroDefaultHeading"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:gravity="center"
-        app:layout_constraintVertical_weight="2"
-        app:layout_constraintBottom_toTopOf="@+id/image"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/description"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/midline"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="spread"
         tools:text="Welcome" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:scaleType="centerInside"
+        style="@style/AppIntroDefaultImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintVertical_weight="5"
         android:contentDescription="@string/app_intro_image_content_description"
-        app:layout_constraintBottom_toTopOf="@+id/bottomView"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/midline"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        tools:src="@mipmap/img_intro_perm"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image2"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:scaleType="centerInside"
+        style="@style/AppIntroDefaultImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintVertical_weight="5"
         android:contentDescription="@string/app_intro_image_content_description"
-        app:layout_constraintBottom_toTopOf="@+id/bottomView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        tools:src="@mipmap/img_intro_perm"/>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/bottomView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintVertical_weight="3"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/midline"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image"
-        android:orientation="vertical">
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/description"
         style="@style/AppIntroDefaultText"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="10dp"
-        app:autoSizeTextType="uniform"
-        app:autoSizeMinTextSize="12sp"
-        app:autoSizeMaxTextSize="@dimen/appintro_desctext_size"
-        app:autoSizeStepGranularity="2sp"
-        app:layout_constraintBottom_toTopOf="@id/button"
+        android:layout_height="wrap_content"
+        android:autoLink="web"
+        app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/midline"
+        app:layout_constraintTop_toBottomOf="@+id/title"
         tools:text="This is a demo of the AppIntro Library" />
 
     <com.google.android.material.button.MaterialButton
@@ -87,9 +62,15 @@
         android:textColor="@android:color/white"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/midline"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="Button" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/midline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -224,6 +224,10 @@ class CommonUtils(private val application: Application) {
         return stringTimeout
     }
 
+    fun getDisplayTimeoutArray(): ArrayMap<Int, Int> {
+        return timeoutMap
+    }
+
     private fun setShortcutsIconWithGlide(timeout: Int, shortcutInfo: ShortcutInfo.Builder) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             // Set real value for special timeout (current and previous)

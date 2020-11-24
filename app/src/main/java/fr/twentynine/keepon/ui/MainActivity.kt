@@ -100,6 +100,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private var dialogSetOriginalTimeoutValue: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -132,6 +134,7 @@ class MainActivity : AppCompatActivity() {
         for (timeoutSwitch: TimeoutSwitch in getTimeoutSwitchsArray()) {
             timeoutSwitch.switch.setOnClickListener { saveSelectedSwitch() }
             timeoutSwitch.switch.setOnLongClickListener {
+                dialogSetOriginalTimeoutValue = timeoutSwitch.timeoutValue
                 activityUtils.getDefaultTimeoutDialog(
                     timeoutSwitch.timeoutValue,
                     timeoutSwitch.switch.text.toString()
@@ -227,10 +230,8 @@ class MainActivity : AppCompatActivity() {
         setOnSlideBottomSheetAnim(0.0F)
         BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
 
-        // Retrieve saved state of BottomSheet if exist
-        if (savedInstanceState != null) {
-            bottomSheetStateExpanded = savedInstanceState.getBoolean(BOTTOM_SHEET_STATE_EXPANDED, false)
-        }
+        // Retrieve saved state
+        retrieveSavedState(savedInstanceState)
 
         // Load QS Style preference
         loadQSStylePreferences()
@@ -248,15 +249,42 @@ class MainActivity : AppCompatActivity() {
         animateViews()
     }
 
+    private fun retrieveSavedState(savedInstanceState: Bundle?) {
+        if (savedInstanceState != null) {
+            // Restore BottomSheet state
+            if (savedInstanceState.getBoolean(BOTTOM_SHEET_STATE_EXPANDED, false)) {
+                lifecycleScope.launch(Dispatchers.Default) {
+                    delay(800)
+                    launch(Dispatchers.Main) {
+                        BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
+                    }
+                    delay(400)
+                }
+            }
+            // Restore dialog to set original timeout
+            if (savedInstanceState.getBoolean(DIALOG_SET_ORIGINAL_TIMEOUT_SHOWED, false)) {
+                val dialogTimeout = savedInstanceState.getInt(DIALOG_SET_ORIGINAL_TIMEOUT_VALUE, 0)
+                if (dialogTimeout != 0) {
+                    commonUtils.getDisplayTimeoutArray()[dialogTimeout]?.let { dialogTextId ->
+                        activityUtils.getDefaultTimeoutDialog(dialogTimeout, getString(dialogTextId)).show()
+                    }
+                }
+            }
+            // Restore credits dialog
+            if (savedInstanceState.getBoolean(DIALOG_CREDITS_SHOWED, false)) {
+                activityUtils.getCreditsDialog().show()
+            }
+        }
+        savedInstanceState?.clear()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        val value = if (!bottomSheetStateExpanded) {
-            BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED
-        } else {
-            bottomSheetStateExpanded
-        }
-        outState.putBoolean(BOTTOM_SHEET_STATE_EXPANDED, value)
+        outState.putBoolean(DIALOG_SET_ORIGINAL_TIMEOUT_SHOWED, activityUtils.getDefaultTimeoutDialog().isShowing)
+        outState.putInt(DIALOG_SET_ORIGINAL_TIMEOUT_VALUE, dialogSetOriginalTimeoutValue)
+        outState.putBoolean(DIALOG_CREDITS_SHOWED, activityUtils.getCreditsDialog().isShowing)
+        outState.putBoolean(BOTTOM_SHEET_STATE_EXPANDED, BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state == BottomSheetBehavior.STATE_EXPANDED)
     }
 
     override fun onResume() {
@@ -276,19 +304,6 @@ class MainActivity : AppCompatActivity() {
 
             // Set tile preview Image View
             updateTilePreview()
-
-            // Restore BottomSheet state
-            if (bottomSheetStateExpanded) {
-                lifecycleScope.launch(Dispatchers.Default) {
-                    delay(800)
-                    launch(Dispatchers.Main) {
-                        BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
-                    }
-                    // Reset state for next launch after that the bottomsheet was expanded
-                    delay(400)
-                    bottomSheetStateExpanded = false
-                }
-            }
 
             // Show dialog if missing settings on tile click
             if (intent != null && intent.action != null) {
@@ -703,8 +718,10 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val ANIMATION_DURATION: Long = 300
 
+        const val DIALOG_SET_ORIGINAL_TIMEOUT_SHOWED = "DIALOG_SET_ORIGINAL_TIMEOUT_SHOWED"
+        const val DIALOG_SET_ORIGINAL_TIMEOUT_VALUE = "DIALOG_SET_ORIGINAL_TIMEOUT_VALUE"
+        const val DIALOG_CREDITS_SHOWED = "DIALOG_CREDITS_SHOWED"
         const val BOTTOM_SHEET_STATE_EXPANDED = "BOTTOM_SHEET_STATE"
-        private var bottomSheetStateExpanded = false
 
         fun newIntent(context: Context): Intent {
             return Intent(context, MainActivity::class.java)

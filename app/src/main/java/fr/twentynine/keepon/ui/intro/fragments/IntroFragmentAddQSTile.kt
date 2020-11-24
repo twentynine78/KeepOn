@@ -53,6 +53,12 @@ class IntroFragmentAddQSTile : Fragment(R.layout.fragment_intro_button), SlideBa
         } else {
             mButton.visibility = View.VISIBLE
         }
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getBoolean(DIALOG_QS_HELP_SHOWED, false)) {
+                activityUtils.getAddQSTileDialog().show()
+            }
+        }
     }
 
     override fun onResume() {
@@ -69,9 +75,19 @@ class IntroFragmentAddQSTile : Fragment(R.layout.fragment_intro_button), SlideBa
 
     override fun setBackgroundColor(backgroundColor: Int) {
         binding.main.setBackgroundColor(backgroundColor)
+        activityUtils.setStatusBarColor(backgroundColor)
+        activityUtils.setNavBarColor(backgroundColor)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putBoolean(DIALOG_QS_HELP_SHOWED, activityUtils.getAddQSTileDialog().isShowing)
     }
 
     companion object {
+        internal const val DIALOG_QS_HELP_SHOWED = "DIALOG_QS_HELP"
+
         fun newInstance(): IntroFragmentAddQSTile {
             return IntroFragmentAddQSTile()
         }

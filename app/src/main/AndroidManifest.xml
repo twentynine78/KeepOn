@@ -35,13 +35,13 @@
         <activity
             android:name=".ui.SplashScreen"
             android:description="@string/app_desc"
-            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.SplashScreen"
+            android:screenOrientation="sensor"
             android:exported="true"
             android:finishOnTaskLaunch="true"
             android:label="@string/app_name"
             android:noHistory="true"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.SplashScreen">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES"/>
                 <action android:name="android.intent.action.MAIN"/>
@@ -52,7 +52,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:description="@string/app_desc"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:exported="false"
             android:finishOnTaskLaunch="true"
             android:label="@string/app_name"
@@ -60,7 +60,7 @@
 
         <activity
             android:name="fr.twentynine.keepon.ui.intro.IntroActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:exported="false"
             android:finishOnTaskLaunch="true"
             android:label="@string/app_intro"
@@ -124,6 +124,7 @@
         <activity
             android:name=".tasker.EditActivity"
             android:label="@string/tasker_activity_name"
+            android:screenOrientation="sensor"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING"/>
