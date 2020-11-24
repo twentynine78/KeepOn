@@ -106,7 +106,7 @@ class SplashScreen : AppCompatActivity() {
             lifecycleScope.launch(Dispatchers.Default) {
                 var animateCount = 100
                 delay(SPLASH_TIME_OUT)
-                repeat(600) {
+                repeat(150) {
                     if (preferences.getAppIsLaunched()) {
                         startActivity(MainActivity.newIntent(this@SplashScreen.applicationContext))
                         finish()
