@@ -16,7 +16,7 @@ import com.bumptech.glide.request.RequestOptions
 class GlideModule : AppGlideModule() {
 
     override fun applyOptions(context: Context, builder: GlideBuilder) {
-        val diskCacheSizeBytes = 1024 * 1024 * 5 // 5 MB
+        val diskCacheSizeBytes = (1024 * 1024) * 2 // 2 MB
 
         builder
             .setDiskCache(InternalCacheDiskCacheFactory(context, diskCacheSizeBytes.toLong()))
@@ -24,7 +24,7 @@ class GlideModule : AppGlideModule() {
                 RequestOptions()
                     .format(DecodeFormat.PREFER_RGB_565)
                     .circleCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             )
     }
 
