@@ -308,9 +308,7 @@ class MainActivity : AppCompatActivity() {
             // Show dialog if missing settings on tile click
             if (intent != null && intent.action != null) {
                 if (intent.action == CommonUtils.ACTION_MAIN_ACTIVITY_MISSING_SETTINGS && preferences.getSelectedTimeout().size <= 1) {
-                    if (!activityUtils.getMissingSettingsDialog().isShowing) {
-                        activityUtils.getMissingSettingsDialog().show()
-                    }
+                    missingSettings()
                     intent.action = null
                 }
             }
@@ -377,7 +375,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun missingSettings() {
-        if (!activityUtils.getMissingSettingsDialog().isShowing) {
+        if (canWrite(this) && !activityUtils.isNotificationEnabled() && !activityUtils.getMissingSettingsDialog().isShowing) {
             activityUtils.getMissingSettingsDialog().show()
         }
     }
