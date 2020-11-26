@@ -1,6 +1,7 @@
 package fr.twentynine.keepon.ui
 
 import android.animation.Animator
+import android.animation.ArgbEvaluator
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
@@ -670,7 +671,8 @@ class MainActivity : AppCompatActivity() {
         binding.includeBottomSheet.bottomSheetPeekArrow.rotation = slideOffset * -180
 
         // Adapt bottom margin view
-        binding.includeBottomSheet.bottomMarginView.layoutParams.height = defaultBottomMarginViewHeight - ((slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt() / 4)
+        binding.includeBottomSheet.bottomMarginView.layoutParams.height =
+            defaultBottomMarginViewHeight - ((slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt() / 4)
 
         // Adapt bottom margin of the guideline view
         val params: ConstraintLayout.LayoutParams = binding.includeBottomSheet.guideline.layoutParams as ConstraintLayout.LayoutParams
@@ -694,42 +696,19 @@ class MainActivity : AppCompatActivity() {
     private fun transitionBottomSheetBackgroundColor(slideOffset: Float) {
         val colorFrom = resources.getColor(R.color.colorBottomSheet, theme)
         val colorTo = resources.getColor(R.color.colorBackgroundCard, theme)
+        val offsetColor = ArgbEvaluator().evaluate(slideOffset, colorFrom, colorTo) as Int
 
-        binding.includeBottomSheet.bottomSheetCardView.setCardBackgroundColor(ColorStateList.valueOf(
-            interpolateColor(
-                slideOffset,
-                colorFrom,
-                colorTo
+        // Fix strange color that appear in night mode
+        if (offsetColor != -15592942) {
+            binding.includeBottomSheet.bottomSheetCardView.setCardBackgroundColor(ColorStateList.valueOf(offsetColor))
+
+            val layerDrawableCircle: LayerDrawable = binding.includeBottomSheet.tilePreviewBackground.drawable as LayerDrawable
+            val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
+            circleBackgroundShape.setStroke(
+                (defaultTilePreviewBackgroundStrokeWidth + (slideOffset).px.roundToInt()),
+                ColorStateList.valueOf(offsetColor)
             )
-        ))
-
-        val layerDrawableCircle: LayerDrawable = binding.includeBottomSheet.tilePreviewBackground.drawable as LayerDrawable
-        val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
-        circleBackgroundShape.setStroke(
-            (defaultTilePreviewBackgroundStrokeWidth + (slideOffset).px.roundToInt()),
-            ColorStateList.valueOf(
-                interpolateColor(
-                    slideOffset,
-                    colorFrom,
-                    colorTo
-                )
-            )
-        )
-    }
-
-    private fun interpolateColor(fraction: Float, startValue: Int, endValue: Int): Int {
-        val startA = startValue shr 24 and 0xff
-        val startR = startValue shr 16 and 0xff
-        val startG = startValue shr 8 and 0xff
-        val startB = startValue and 0xff
-        val endA = endValue shr 24 and 0xff
-        val endR = endValue shr 16 and 0xff
-        val endG = endValue shr 8 and 0xff
-        val endB = endValue and 0xff
-        return startA + (fraction * (endA - startA)).toInt() shl 24 or
-            (startR + (fraction * (endR - startR)).toInt() shl 16) or
-            (startG + (fraction * (endG - startG)).toInt() shl 8) or
-            startB + (fraction * (endB - startB)).toInt()
+        }
     }
 
     companion object {
