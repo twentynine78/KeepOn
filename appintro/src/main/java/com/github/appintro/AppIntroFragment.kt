@@ -19,6 +19,8 @@ class AppIntroFragment : AppIntroBaseFragment() {
          * @param description CharSequence which will be the slide description
          * @param imageDrawable @DrawableRes (Integer) the image that will be
          *                             displayed, obtained from Resources
+         * @param image2Drawable @DrawableRes (Integer) the image that will be
+         *                             displayed on top of imageDrawable, obtained from Resources
          * @param backgroundColor @ColorInt (Integer) custom background color
          * @param titleColor @ColorInt (Integer) custom title color
          * @param descriptionColor @ColorInt (Integer) custom description color
@@ -36,6 +38,7 @@ class AppIntroFragment : AppIntroBaseFragment() {
             title: CharSequence? = null,
             description: CharSequence? = null,
             @DrawableRes imageDrawable: Int = 0,
+            @DrawableRes image2Drawable: Int = 0,
             @ColorInt backgroundColor: Int = 0,
             @ColorInt titleColor: Int = 0,
             @ColorInt descriptionColor: Int = 0,
@@ -48,6 +51,7 @@ class AppIntroFragment : AppIntroBaseFragment() {
                     title = title,
                     description = description,
                     imageDrawable = imageDrawable,
+                    image2Drawable = image2Drawable,
                     backgroundColor = backgroundColor,
                     titleColor = titleColor,
                     descriptionColor = descriptionColor,
