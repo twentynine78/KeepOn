@@ -4,7 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingTop="10dp"
+    android:paddingBottom="20dp"
+    android:maxWidth="320dp">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:layout_width="60dp"
@@ -12,265 +15,282 @@
         android:id="@+id/image_dialog"
         android:gravity="center"
         android:layout_centerHorizontal="true"
-        android:elevation="2dp"
+        android:elevation="4dp"
         android:scaleType="fitCenter"
         android:contentDescription="@string/app_name"
-        app:shapeAppearanceOverlay="@style/circleImageView"
+        app:shapeAppearanceOverlay="@style/CircleImageViewStyle"
         app:srcCompat="@mipmap/dialog_logo_help" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/image_dialog"
         android:layout_marginTop="-20dp"
-        android:background="@drawable/dialog_background"
-        android:elevation="1dp">
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/colorBorder"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="3dp"
+        app:cardBackgroundColor="@color/colorBackgroundCard">
 
-        <androidx.core.widget.NestedScrollView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="10dp"
-            app:layout_constrainedHeight="true"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/btn_close"
-            android:gravity="center_horizontal"
-            tools:ignore="HardcodedText,ContentDescription" >
+            android:layout_height="wrap_content">
 
-            <RelativeLayout
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:scrollbars="vertical"
+                android:scrollbarSize="1dp"
+                android:scrollbarThumbVertical="@color/colorTextDisabled"
+                app:layout_constrainedHeight="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/btn_close"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:ignore="HardcodedText,ContentDescription" >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/add_qstile_warning"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:textSize="14sp"
+                        android:textColor="@color/colorText"
+                        android:textColorLink="@color/colorTextLink"
+                        android:textAlignment="textStart"
+                        android:textStyle="bold"
+                        android:text="@string/dialog_add_qstile_warning"/>
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_below="@id/add_qstile_warning"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="6dp"
+                        app:srcCompat="@drawable/small_circle_background" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_below="@+id/add_qstile_warning"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBackgroundCard"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:text="1"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/add_qstile_text1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_below="@+id/add_qstile_warning"
+                        android:paddingStart="40dp"
+                        android:paddingEnd="10dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorText"
+                        android:textColorLink="@color/colorTextLink"
+                        android:textAlignment="textStart"
+                        android:text="@string/dialog_add_qstile_text1"/>
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_below="@id/add_qstile_text1"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="6dp"
+                        app:srcCompat="@drawable/small_circle_background" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_below="@+id/add_qstile_text1"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBackgroundCard"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:text="2"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/add_qstile_text2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@+id/add_qstile_text1"
+                        android:paddingStart="40dp"
+                        android:paddingEnd="10dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorText"
+                        android:textColorLink="@color/colorTextLink"
+                        android:textAlignment="textStart"
+                        android:text="@string/dialog_add_qstile_text2"/>
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/add_qstile_image1"
+                        android:layout_width="match_parent"
+                        android:layout_height="90dp"
+                        android:layout_marginBottom="-5dp"
+                        android:layout_below="@+id/add_qstile_text2"
+                        android:scaleType="center"
+                        app:srcCompat="@mipmap/img_help1" />
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_below="@id/add_qstile_image1"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="6dp"
+                        app:srcCompat="@drawable/small_circle_background"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_below="@+id/add_qstile_image1"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBackgroundCard"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:text="3"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/add_qstile_text3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@+id/add_qstile_image1"
+                        android:paddingStart="40dp"
+                        android:paddingEnd="10dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorText"
+                        android:textColorLink="@color/colorTextLink"
+                        android:textAlignment="textStart"
+                        android:text="@string/dialog_add_qstile_text3"/>
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/add_qstile_image2"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginBottom="-5dp"
+                        android:layout_below="@+id/add_qstile_text3"
+                        android:scaleType="center"
+                        app:srcCompat="@mipmap/img_help2" />
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_below="@id/add_qstile_image2"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="6dp"
+                        app:srcCompat="@drawable/small_circle_background" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_below="@+id/add_qstile_image2"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBackgroundCard"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:text="4"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/add_qstile_text4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@+id/add_qstile_image2"
+                        android:paddingStart="40dp"
+                        android:paddingEnd="10dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorText"
+                        android:textColorLink="@color/colorTextLink"
+                        android:textAlignment="textStart"
+                        android:text="@string/dialog_add_qstile_text4"/>
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/add_qstile_image3"
+                        android:layout_width="match_parent"
+                        android:layout_height="130dp"
+                        android:layout_marginBottom="-5dp"
+                        android:layout_below="@+id/add_qstile_text4"
+                        android:scaleType="center"
+                        app:srcCompat="@mipmap/img_help3" />
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_below="@id/add_qstile_image3"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="6dp"
+                        app:srcCompat="@drawable/small_circle_background" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_below="@+id/add_qstile_image3"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorBackgroundCard"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:text="5"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_below="@+id/add_qstile_image3"
+                        android:paddingStart="40dp"
+                        android:paddingEnd="10dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorText"
+                        android:textColorLink="@color/colorTextLink"
+                        android:textAlignment="textStart"
+                        android:text="@string/dialog_add_qstile_text5"/>
+
+                </RelativeLayout>
+            </androidx.core.widget.NestedScrollView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_close"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/add_qstile_warning"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:textSize="14sp"
-                    android:textColor="@color/colorText"
-                    android:textColorLink="@color/colorTextLink"
-                    android:textAlignment="textStart"
-                    android:textStyle="bold"
-                    android:text="@string/dialog_add_qstile_warning"/>
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_below="@id/add_qstile_warning"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginTop="6dp"
-                    app:srcCompat="@drawable/small_circle_background" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_below="@+id/add_qstile_warning"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBackgroundCard"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:text="1"/>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/add_qstile_text1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_below="@+id/add_qstile_warning"
-                    android:paddingStart="40dp"
-                    android:paddingEnd="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorText"
-                    android:textColorLink="@color/colorTextLink"
-                    android:textAlignment="textStart"
-                    android:text="@string/dialog_add_qstile_text1"/>
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_below="@id/add_qstile_text1"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginTop="6dp"
-                    app:srcCompat="@drawable/small_circle_background" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_below="@+id/add_qstile_text1"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBackgroundCard"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:text="2"/>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/add_qstile_text2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_below="@+id/add_qstile_text1"
-                    android:paddingStart="40dp"
-                    android:paddingEnd="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorText"
-                    android:textColorLink="@color/colorTextLink"
-                    android:textAlignment="textStart"
-                    android:text="@string/dialog_add_qstile_text2"/>
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/add_qstile_image1"
-                    android:layout_width="match_parent"
-                    android:layout_height="90dp"
-                    android:layout_marginBottom="-5dp"
-                    android:layout_below="@+id/add_qstile_text2"
-                    android:scaleType="center"
-                    app:srcCompat="@mipmap/img_help1" />
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_below="@id/add_qstile_image1"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginTop="6dp"
-                    app:srcCompat="@drawable/small_circle_background"/>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_below="@+id/add_qstile_image1"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBackgroundCard"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:text="3"/>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/add_qstile_text3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_below="@+id/add_qstile_image1"
-                    android:paddingStart="40dp"
-                    android:paddingEnd="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorText"
-                    android:textColorLink="@color/colorTextLink"
-                    android:textAlignment="textStart"
-                    android:text="@string/dialog_add_qstile_text3"/>
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/add_qstile_image2"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginBottom="-5dp"
-                    android:layout_below="@+id/add_qstile_text3"
-                    android:scaleType="center"
-                    app:srcCompat="@mipmap/img_help2" />
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_below="@id/add_qstile_image2"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginTop="6dp"
-                    app:srcCompat="@drawable/small_circle_background" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_below="@+id/add_qstile_image2"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBackgroundCard"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:text="4"/>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/add_qstile_text4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_below="@+id/add_qstile_image2"
-                    android:paddingStart="40dp"
-                    android:paddingEnd="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorText"
-                    android:textColorLink="@color/colorTextLink"
-                    android:textAlignment="textStart"
-                    android:text="@string/dialog_add_qstile_text4"/>
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/add_qstile_image3"
-                    android:layout_width="match_parent"
-                    android:layout_height="130dp"
-                    android:layout_marginBottom="-5dp"
-                    android:layout_below="@+id/add_qstile_text4"
-                    android:scaleType="center"
-                    app:srcCompat="@mipmap/img_help3" />
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_below="@id/add_qstile_image3"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginTop="6dp"
-                    app:srcCompat="@drawable/small_circle_background" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_below="@+id/add_qstile_image3"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBackgroundCard"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:text="5"/>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_below="@+id/add_qstile_image3"
-                    android:paddingStart="40dp"
-                    android:paddingEnd="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorText"
-                    android:textColorLink="@color/colorTextLink"
-                    android:textAlignment="textStart"
-                    android:text="@string/dialog_add_qstile_text5"/>
-
-            </RelativeLayout>
-        </androidx.core.widget.NestedScrollView>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_close"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:gravity="bottom|center_horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:elevation="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:background="@drawable/dialog_button_background"
-            android:textColor="@color/colorText"
-            android:text="@string/dialog_add_qstile_button" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_height="40dp"
+                android:gravity="bottom|center_horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:elevation="1dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:background="@drawable/dialog_button_background"
+                android:textColor="@color/colorText"
+                android:text="@string/dialog_add_qstile_button" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 </RelativeLayout>

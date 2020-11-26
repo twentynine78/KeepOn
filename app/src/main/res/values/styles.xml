@@ -1,14 +1,39 @@
-<resources>
+<resources xmlns:tool="http://schemas.android.com/tools">
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:navigationBarColor">@color/colorNavigationBar</item>
         <item name="android:windowDisablePreview">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
         <item name="materialButtonStyle">@style/DialogButtonStyle</item>
         <item name="snackbarStyle">@style/SnackbarStyle</item>
         <item name="sliderStyle">@style/SliderStyle</item>
         <item name="floatingActionButtonStyle">@style/Widget.App.FloatingActionButton</item>
+        <item name="android:colorEdgeEffect">@color/colorPrimary</item>
+    </style>
+
+    <style name="ToolbarStyle">
+        <item name="android:elevation" tool:ignore="NewApi">6dp</item>
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="titleTextAppearance">@style/ToolbarTitleTextStyle</item>
+        <item name="subtitleTextColor">@color/colorTilePreview</item>
+        <item name="android:theme">@style/ThemeOverlay.MaterialComponents.Toolbar.Primary</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="popupTheme">@style/AppTheme.PopupOverlay</item>
+    </style>
+
+    <style name="ToolbarTitleTextStyle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/colorTilePreview</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ThemeOverlay.MaterialComponents.Toolbar.Primary" parent="">
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="actionMenuTextColor">@color/colorText</item>
     </style>
 
     <style name="SliderStyle" parent="Widget.MaterialComponents.Slider">
@@ -28,15 +53,13 @@
         <item name="colorAccent">@color/colorBackground</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar"/>
-
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents"/>
 
     <style name="CardViewStyle" parent="Widget.MaterialComponents.CardView">
         <item name="cardBackgroundColor">@color/colorBackgroundCard</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
-        <item name="cardElevation">1dp</item>
-        <item name="cardCornerRadius">5dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="cardCornerRadius">6dp</item>
         <item name="android:clickable">false</item>
     </style>
 
@@ -45,6 +68,7 @@
         <item name="android:windowMinWidthMinor">90%</item>
         <item name="android:windowAnimationStyle">@style/DialogAnimationStyle</item>
         <item name="materialButtonStyle">@style/DialogButtonStyle</item>
+        <item name="android:colorEdgeEffect">@color/colorPrimary</item>
     </style>
 
     <style name="DialogAnimationStyle">
@@ -69,7 +93,7 @@
 
     <style name="SnackbarStyle" parent="Widget.MaterialComponents.Snackbar">
         <item name="android:layout_margin">20dp</item>
-        <item name="elevation">11dp</item>
+        <item name="elevation">8dp</item>
         <item name="animationMode">fade</item>
     </style>
 
@@ -83,12 +107,12 @@
         <item name="colorOnSurface">@android:color/black</item>
     </style>
 
-    <style name="circleImageView" parent="">
+    <style name="CircleImageViewStyle" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
 
-    <style name="generateButton" parent="Widget.MaterialComponents.Button">
+    <style name="GenerateButtonStyle" parent="Widget.MaterialComponents.Button">
         <item name="android:layout_gravity">center_horizontal|bottom</item>
         <item name="android:textAllCaps">true</item>
         <item name="backgroundTint">@color/colorGenerateButton</item>

@@ -33,7 +33,7 @@
         android:scaleType="fitCenter"
         android:contentDescription="@string/app_name"
         android:background="#FF8BC1DE"
-        app:shapeAppearanceOverlay="@style/circleImageView"
+        app:shapeAppearanceOverlay="@style/CircleImageViewStyle"
         app:srcCompat="@mipmap/img_keepon" />
 
     <LinearLayout

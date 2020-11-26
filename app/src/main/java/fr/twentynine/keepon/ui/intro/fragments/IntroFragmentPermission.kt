@@ -4,13 +4,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.util.DisplayMetrics
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import com.github.appintro.SlideBackgroundColorHolder
 import com.github.appintro.SlidePolicy
@@ -23,7 +20,6 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.ui.intro.IntroActivity.Companion.COLOR_SLIDE_PERM
 import fr.twentynine.keepon.utils.ActivityUtils
-import fr.twentynine.keepon.utils.px
 import toothpick.ktp.delegate.lazy
 
 class IntroFragmentPermission : Fragment(R.layout.fragment_intro_button), SlideSelectionListener, SlideBackgroundColorHolder, SlidePolicy {
@@ -99,21 +95,7 @@ class IntroFragmentPermission : Fragment(R.layout.fragment_intro_button), SlideS
     override fun onUserIllegallyRequestedNextPage() {
         view?.let {
             val snackbar = Snackbar.make(it.findViewById(R.id.main), getString(R.string.intro_toast_permission_needed), Snackbar.LENGTH_LONG)
-            snackbar.anchorView = view?.findViewById<MaterialButton>(R.id.button)
-
-            val layout = snackbar.view as Snackbar.SnackbarLayout
-            val layoutParams = layout.layoutParams as CoordinatorLayout.LayoutParams
-            val displayMetrics: DisplayMetrics = this.resources.displayMetrics
-            val dpWidth = displayMetrics.widthPixels / displayMetrics.density
-            if (dpWidth >= 620) {
-                layoutParams.width = 590.px
-                layoutParams.anchorId = R.id.button
-                layoutParams.anchorGravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
-                layoutParams.gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
-            } else {
-                layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
-            }
-            snackbar.view.layoutParams = layoutParams
+            snackbar.view.layoutParams = activityUtils.getSnackbarLayoutParams(snackbar, it.findViewById<MaterialButton>(R.id.button))
             snackbar.show()
         }
     }

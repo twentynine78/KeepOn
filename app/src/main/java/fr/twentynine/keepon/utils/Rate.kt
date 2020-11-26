@@ -1,15 +1,18 @@
 package fr.twentynine.keepon.utils
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
+import android.util.DisplayMetrics
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.Snackbar.SnackbarLayout
 import fr.twentynine.keepon.R
@@ -189,6 +192,18 @@ class Rate(private val mActivity: AppCompatActivity) {
             snackbar.dismiss()
             saveAsked()
         }
+
+        val layoutParams = layout.layoutParams as CoordinatorLayout.LayoutParams
+        val displayMetrics: DisplayMetrics = mActivity.resources.displayMetrics
+        val dpWidth = displayMetrics.widthPixels / displayMetrics.density
+        if (dpWidth >= 620) {
+            layoutParams.width = 580.px
+            layoutParams.anchorGravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
+            layoutParams.gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
+        } else {
+            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+        }
+        snackbar.view.layoutParams = layoutParams
 
         // Add the view to the Snackbar's layout
         layout.addView(snackView, 0)

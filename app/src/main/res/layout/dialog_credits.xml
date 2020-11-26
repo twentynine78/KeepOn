@@ -3,7 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingTop="10dp"
+    android:paddingBottom="20dp"
+    android:maxWidth="320dp">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:layout_width="60dp"
@@ -11,65 +14,82 @@
         android:id="@+id/image_dialog"
         android:gravity="center"
         android:layout_centerHorizontal="true"
-        android:elevation="2dp"
+        android:elevation="4dp"
         android:scaleType="fitCenter"
         android:contentDescription="@string/app_name"
-        app:shapeAppearanceOverlay="@style/circleImageView"
+        app:shapeAppearanceOverlay="@style/CircleImageViewStyle"
         app:srcCompat="@mipmap/dialog_logo_credit" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/image_dialog"
         android:layout_marginTop="-20dp"
-        android:background="@drawable/dialog_background"
-        android:elevation="1dp">
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/colorBorder"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="3dp"
+        app:cardBackgroundColor="@color/colorBackgroundCard">
 
-        <androidx.core.widget.NestedScrollView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="10dp"
-            app:layout_constrainedHeight="true"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/btn_close"
-            android:gravity="center_horizontal" >
+            android:layout_height="wrap_content">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:scrollbars="vertical"
+                android:scrollbarSize="1dp"
+                android:scrollbarThumbVertical="@color/colorTextDisabled"
+                app:layout_constrainedHeight="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/btn_close"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" >
 
-                <com.google.android.material.textview.MaterialTextView
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="10dp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorText"
-                    android:textColorLink="@color/colorTextLink"
-                    android:textAlignment="textStart"
-                    android:autoLink="web"
-                    android:text="@string/dialog_credits_text"/>
+                    android:layout_height="wrap_content">
 
-            </RelativeLayout>
-        </androidx.core.widget.NestedScrollView>
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="10dp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorText"
+                        android:textColorLink="@color/colorTextLink"
+                        android:textAlignment="textStart"
+                        android:autoLink="web"
+                        android:text="@string/dialog_credits_text"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_close"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:gravity="bottom|center_horizontal"
-            android:layout_marginBottom="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:elevation="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:background="@drawable/dialog_button_background"
-            android:textColor="@color/colorText"
-            android:text="@string/dialog_credits_button" />
+                </RelativeLayout>
+            </androidx.core.widget.NestedScrollView>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_close"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="bottom|center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:elevation="1dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:background="@drawable/dialog_button_background"
+                android:textColor="@color/colorText"
+                android:text="@string/dialog_credits_button" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 </RelativeLayout>

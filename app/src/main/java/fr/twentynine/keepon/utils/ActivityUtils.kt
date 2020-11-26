@@ -12,6 +12,10 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.text.TextUtils
+import android.util.DisplayMetrics
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
@@ -19,9 +23,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.Snackbar
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.di.annotation.ActivityScope
@@ -79,6 +85,9 @@ class ActivityUtils(private val activity: AppCompatActivity) {
         }
         // Set background transparent
         value.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
+
+        // Adjust width
+        adjustDialogWidth(value)
     }
     private val mPermissionDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
         value.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -104,6 +113,9 @@ class ActivityUtils(private val activity: AppCompatActivity) {
         }
         // Set background transparent
         value.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
+
+        // Adjust width
+        adjustDialogWidth(value)
     }
     private val mMissingSettingsDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
         value.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -122,6 +134,9 @@ class ActivityUtils(private val activity: AppCompatActivity) {
         }
         // Set background transparent
         value.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
+
+        // Adjust width
+        adjustDialogWidth(value)
     }
     private val mDefaultTimeoutDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
         value.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -132,6 +147,9 @@ class ActivityUtils(private val activity: AppCompatActivity) {
         value.findViewById<ImageView>(R.id.image_dialog).setImageBitmap(BitmapFactory.decodeResource(activity.resources, R.mipmap.dialog_logo_default))
         // Set Button text
         value.findViewById<Button>(R.id.btn_dialog).text = activity.getString(R.string.dialog_default_timeout_button)
+
+        // Adjust width
+        adjustDialogWidth(value)
     }
     private val mCreditsDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
         value.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -144,6 +162,9 @@ class ActivityUtils(private val activity: AppCompatActivity) {
         }
         // Set background transparent
         value.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
+
+        // Adjust width
+        adjustDialogWidth(value)
     }
     private val mAddQSTileDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
         value.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -156,6 +177,9 @@ class ActivityUtils(private val activity: AppCompatActivity) {
         }
         // Set background transparent
         value.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
+
+        // Adjust width
+        adjustDialogWidth(value)
     }
     private var checkPermissionJob: Job? = null
     private var checkNotificationJob: Job? = null
@@ -283,5 +307,36 @@ class ActivityUtils(private val activity: AppCompatActivity) {
 
     fun setNavBarColor(@ColorInt color: Int) {
         activity.window.navigationBarColor = color
+    }
+
+    fun getSnackbarLayoutParams(snackbar: Snackbar, anchorView: View): CoordinatorLayout.LayoutParams {
+        snackbar.anchorView = anchorView
+        val layout = snackbar.view as Snackbar.SnackbarLayout
+        val layoutParams = layout.layoutParams as CoordinatorLayout.LayoutParams
+        val displayMetrics: DisplayMetrics = activity.resources.displayMetrics
+        val dpWidth = displayMetrics.widthPixels / displayMetrics.density
+        if (dpWidth >= 620) {
+            layoutParams.width = 585.px
+            layoutParams.anchorId = anchorView.id
+            layoutParams.anchorGravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
+            layoutParams.gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
+        } else {
+            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+        }
+        return layoutParams
+    }
+
+    private fun adjustDialogWidth(dialog: Dialog) {
+        dialog.window?.let {
+            val layoutParams = it.attributes
+            val displayMetrics: DisplayMetrics = activity.resources.displayMetrics
+            val dpWidth = displayMetrics.widthPixels / displayMetrics.density
+            if (dpWidth >= 620) {
+                layoutParams.width = 580.px
+                layoutParams.gravity = Gravity.CENTER
+            } else {
+                layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
+            }
+        }
     }
 }

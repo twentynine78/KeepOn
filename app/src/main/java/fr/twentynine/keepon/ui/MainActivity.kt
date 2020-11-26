@@ -51,7 +51,6 @@ import fr.twentynine.keepon.utils.preferences.Preferences
 import fr.twentynine.keepon.utils.px
 import fr.twentynine.keepon.utils.viewBinding
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import toothpick.ktp.delegate.lazy
 import java.util.Formatter
@@ -74,16 +73,18 @@ class MainActivity : AppCompatActivity() {
     private val binding: ActivityMainBinding by viewBinding(ActivityMainBinding::inflate)
 
     private val snackbar: Snackbar by lazy {
-        Snackbar.make(binding.root, getString(R.string.settings_save), Snackbar.LENGTH_LONG)
-            .setAnchorView(binding.includeBottomSheet.bottomSheet)
+        val snackbar = Snackbar.make(binding.root, getString(R.string.settings_save), Snackbar.LENGTH_LONG)
+        snackbar.view.layoutParams = activityUtils.getSnackbarLayoutParams(snackbar, binding.includeBottomSheet.bottomSheet)
+        snackbar
     }
 
     // Define default and max size of views and coefficient for bottomsheet slide
     private val defaultPreviewSize = 62.px
     private val defaultPreviewPadding = 14.px
     private var maxPreviewSize = 110.px
+    private val defaultTilePreviewBackgroundStrokeWidth = 4.px
     private var maxPreviewPadding = defaultPreviewPadding + ((maxPreviewSize - defaultPreviewSize) / 7)
-    private var defaultBottomMarginViewHeight = ((maxPreviewSize - defaultPreviewSize) / 4) + 1.px
+    private var defaultBottomMarginViewHeight = ((maxPreviewSize - defaultPreviewSize) / 4) + 1
 
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -211,7 +212,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         maxPreviewPadding = defaultPreviewPadding + ((maxPreviewSize - defaultPreviewSize) / 10)
-        defaultBottomMarginViewHeight = ((maxPreviewSize - defaultPreviewSize) / 4) + 1.px
+        defaultBottomMarginViewHeight = ((maxPreviewSize - defaultPreviewSize) / 4) + 1
         binding.includeBottomSheet.bottomMarginView.layoutParams.height = defaultBottomMarginViewHeight
         binding.includeBottomSheet.bottomMarginView.requestLayout()
 
@@ -230,9 +231,6 @@ class MainActivity : AppCompatActivity() {
         setOnSlideBottomSheetAnim(0.0F)
         BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state = BottomSheetBehavior.STATE_COLLAPSED
 
-        // Retrieve saved state
-        retrieveSavedState(savedInstanceState)
-
         // Load QS Style preference
         loadQSStylePreferences()
 
@@ -246,19 +244,19 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(receiver, intentFiler, "fr.twentynine.keepon.MAIN_BROADCAST_PERMISSION", null)
 
         setContentView(binding.root)
-        animateViews()
+
+        // Retrieve saved state
+        retrieveSavedState(savedInstanceState)
     }
 
     private fun retrieveSavedState(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
+            animateViews(false)
+
             // Restore BottomSheet state
             if (savedInstanceState.getBoolean(BOTTOM_SHEET_STATE_EXPANDED, false)) {
-                lifecycleScope.launch(Dispatchers.Default) {
-                    delay(800)
-                    launch(Dispatchers.Main) {
-                        BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
-                    }
-                    delay(400)
+                lifecycleScope.launch(Dispatchers.Main) {
+                    BottomSheetBehavior.from(binding.includeBottomSheet.bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
                 }
             }
             // Restore dialog to set original timeout
@@ -275,8 +273,9 @@ class MainActivity : AppCompatActivity() {
             if (savedInstanceState.getBoolean(DIALOG_CREDITS_SHOWED, false)) {
                 activityUtils.getCreditsDialog().show()
             }
+        } else {
+            animateViews()
         }
-        savedInstanceState?.clear()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -583,33 +582,37 @@ class MainActivity : AppCompatActivity() {
         commonUtils.manageAppShortcuts()
     }
 
-    private fun animateViews() {
+    private fun animateViews(performAnimation: Boolean = true) {
+        val animationDuration = if (performAnimation) { ANIMATION_DURATION } else { 0 }
+
         binding.includeContentMain.cardViewContainer.post {
             if (binding.includeContentMain.cardViewContainer.isAttachedToWindow) {
-                processCardViewAnim(binding.includeContentMain.includeCardSettings.selectionCard, 0)
-                processCardViewAnim(binding.includeContentMain.includeCardAbout.aboutCard, ANIMATION_DURATION)
+                processCardViewAnim(binding.includeContentMain.includeCardSettings.selectionCard, 0, animationDuration)
+                processCardViewAnim(binding.includeContentMain.includeCardAbout.aboutCard, animationDuration, animationDuration)
             }
         }
 
-        val animBottomSheet: Animation = AnimationUtils.loadAnimation(this, R.anim.bottomsheet_translate)
-        animBottomSheet.startOffset = 50L
+        if (performAnimation) {
+            val animBottomSheet: Animation = AnimationUtils.loadAnimation(this, R.anim.bottomsheet_translate)
+            animBottomSheet.startOffset = 50L
 
-        val animBottomSheetPreview: Animation = AnimationUtils.loadAnimation(this, R.anim.bottomsheet_preview_scale)
-        animBottomSheetPreview.startOffset = 400L
+            val animBottomSheetPreview: Animation = AnimationUtils.loadAnimation(this, R.anim.bottomsheet_preview_scale)
+            animBottomSheetPreview.startOffset = 400L
 
-        val animBottomSheetPreviewBackground: Animation = AnimationUtils.loadAnimation(this, R.anim.bottomsheet_preview_scale)
-        animBottomSheetPreviewBackground.startOffset = 400L
+            val animBottomSheetPreviewBackground: Animation = AnimationUtils.loadAnimation(this, R.anim.bottomsheet_preview_scale)
+            animBottomSheetPreviewBackground.startOffset = 400L
 
-        val animBottomSheetPreviewBorder: Animation = AnimationUtils.loadAnimation(this, R.anim.bottomsheet_preview_scale)
-        animBottomSheetPreviewBorder.startOffset = 400L
+            val animBottomSheetPreviewBorder: Animation = AnimationUtils.loadAnimation(this, R.anim.bottomsheet_preview_scale)
+            animBottomSheetPreviewBorder.startOffset = 400L
 
-        binding.includeBottomSheet.bottomSheet.startAnimation(animBottomSheet)
-        binding.includeBottomSheet.tilePreview.startAnimation(animBottomSheetPreview)
-        binding.includeBottomSheet.tilePreviewBackground.startAnimation(animBottomSheetPreviewBackground)
-        binding.includeBottomSheet.tilePreviewBorder.startAnimation(animBottomSheetPreviewBorder)
+            binding.includeBottomSheet.bottomSheet.startAnimation(animBottomSheet)
+            binding.includeBottomSheet.tilePreview.startAnimation(animBottomSheetPreview)
+            binding.includeBottomSheet.tilePreviewBackground.startAnimation(animBottomSheetPreviewBackground)
+            binding.includeBottomSheet.tilePreviewBorder.startAnimation(animBottomSheetPreviewBorder)
+        }
     }
 
-    private fun processCardViewAnim(cardView: CardView, startDelay: Long) {
+    private fun processCardViewAnim(cardView: CardView, startDelay: Long, animationDuration: Long) {
         val cx = cardView.left
         val cy = cardView.top
 
@@ -617,7 +620,7 @@ class MainActivity : AppCompatActivity() {
         val anim = ViewAnimationUtils.createCircularReveal(cardView, cx, cy, 0f, finalRadius)
 
         anim.startDelay = startDelay
-        anim.duration = ANIMATION_DURATION
+        anim.duration = animationDuration
         anim.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
                 cardView.visibility = View.VISIBLE
@@ -635,12 +638,12 @@ class MainActivity : AppCompatActivity() {
         transitionBottomSheetBackgroundColor(slideOffset)
 
         // Adapt tile preview image view
-        val tilePreviewWidth = defaultPreviewSize + (slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt()
+        val tilePreviewWidth = (defaultPreviewSize + (slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt())
         binding.includeBottomSheet.tilePreview.layoutParams.width = tilePreviewWidth
         binding.includeBottomSheet.tilePreview.layoutParams.height = defaultPreviewSize + (slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt()
 
         // Set padding to tile preview image view
-        val newPadding = defaultPreviewPadding + (slideOffset * (maxPreviewPadding - defaultPreviewPadding)).roundToInt()
+        val newPadding = (defaultPreviewPadding + (slideOffset * (maxPreviewPadding - defaultPreviewPadding)).roundToInt())
         binding.includeBottomSheet.tilePreview.setPadding(newPadding, newPadding, newPadding, newPadding)
 
         // Adapt bottom sheet text view padding
@@ -664,6 +667,8 @@ class MainActivity : AppCompatActivity() {
 
         // Apply modification
         binding.includeBottomSheet.tilePreview.requestLayout()
+        binding.includeBottomSheet.tilePreviewBackground.requestLayout()
+        binding.includeBottomSheet.bottomSheetCardView.requestLayout()
         binding.includeBottomSheet.bottomSheetPeekTextView.requestLayout()
         binding.includeBottomSheet.bottomSheetPeekArrow.requestLayout()
         binding.includeBottomSheet.bottomMarginView.requestLayout()
@@ -675,20 +680,18 @@ class MainActivity : AppCompatActivity() {
         val colorFrom = resources.getColor(R.color.colorBottomSheet, theme)
         val colorTo = resources.getColor(R.color.colorBackgroundCard, theme)
 
-        val layerDrawableBottomSheep: LayerDrawable = binding.includeBottomSheet.bottomSheetBackground.background as LayerDrawable
-        val bottomSheetBackgroundShape = layerDrawableBottomSheep.findDrawableByLayerId(R.id.shape_bottom_sheet_background) as GradientDrawable
-        bottomSheetBackgroundShape.color = ColorStateList.valueOf(
+        binding.includeBottomSheet.bottomSheetCardView.setCardBackgroundColor(ColorStateList.valueOf(
             interpolateColor(
                 slideOffset,
                 colorFrom,
                 colorTo
             )
-        )
+        ))
 
         val layerDrawableCircle: LayerDrawable = binding.includeBottomSheet.tilePreviewBackground.drawable as LayerDrawable
         val circleBackgroundShape = layerDrawableCircle.findDrawableByLayerId(R.id.shape_circle_background) as GradientDrawable
         circleBackgroundShape.setStroke(
-            3.px,
+            (defaultTilePreviewBackgroundStrokeWidth + (slideOffset).px.roundToInt()),
             ColorStateList.valueOf(
                 interpolateColor(
                     slideOffset,
