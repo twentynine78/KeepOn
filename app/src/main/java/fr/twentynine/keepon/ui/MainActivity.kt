@@ -10,6 +10,7 @@ import android.content.IntentFilter
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.PorterDuff
+import android.graphics.Rect
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
@@ -20,6 +21,7 @@ import android.text.Html
 import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.animation.Animation
@@ -222,9 +224,7 @@ class MainActivity : AppCompatActivity() {
                 setOnSlideBottomSheetAnim(slideOffset)
             }
 
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (snackbar.isShown) snackbar.dismiss()
-            }
+            override fun onStateChanged(bottomSheet: View, newState: Int) {}
         })
 
         // Set BottomSheet to collapsed at launch
@@ -321,6 +321,21 @@ class MainActivity : AppCompatActivity() {
                 activityUtils.getPermissionDialog().show()
             }
         }
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            if (snackbar.isShown) {
+                val sRect = Rect()
+                snackbar.view.getHitRect(sRect)
+
+                // Only be dismiss snackbar if the user clicks outside it.
+                if (!sRect.contains(ev.x.toInt(), ev.y.toInt())) {
+                    snackbar.dismiss()
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     override fun onDestroy() {
