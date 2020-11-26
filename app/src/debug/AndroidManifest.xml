@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dist="http://schemas.android.com/apk/distribution"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="fr.twentynine.keepon">
+
+    <dist:module dist:instant="true"/>
+
+    <permission android:name="fr.twentynine.keepon.MAIN_BROADCAST_PERMISSION" android:protectionLevel="signature"/>
+    <uses-permission android:name="fr.twentynine.keepon.MAIN_BROADCAST_PERMISSION" />
+
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+        </intent>
+    </queries>
+
+    <application
+        android:name=".DebugKeepOnApplication"
+        android:allowBackup="true"
+        android:description="@string/app_desc"
+        android:fullBackupContent="@xml/backup_descriptor"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:replace="android:name"
+        tools:ignore="GoogleAppIndexingWarning">
+
+        <activity
+            android:name=".ui.SplashScreen"
+            android:description="@string/app_desc"
+            android:theme="@style/AppTheme.SplashScreen"
+            android:screenOrientation="sensor"
+            android:exported="true"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/app_name"
+            android:noHistory="true"
+            android:launchMode="singleTask"
+            android:process=":ui">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES"/>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:description="@string/app_desc"
+            android:screenOrientation="sensor"
+            android:exported="false"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:process=":ui"/>
+
+        <activity
+            android:name="fr.twentynine.keepon.ui.intro.IntroActivity"
+            android:screenOrientation="sensor"
+            android:exported="false"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/app_intro"
+            android:launchMode="singleTask"
+            android:process=":ui"/>
+
+        <service
+            android:name=".services.KeepOnTileService"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/ic_qs_keepon"
+            android:label="@string/qs_service_name"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+            <meta-data android:name="android.service.quicksettings.ACTIVE_TILE" android:value="true"/>
+            <meta-data android:name="android.service.quicksettings.TOGGLEABLE_TILE" android:value="true" />
+        </service>
+
+        <receiver
+            android:name=".receivers.ApplicationReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+            </intent-filter>
+        </receiver>
+
+        <provider
+            android:name=".utils.preferences.provider.MultiProvider"
+            android:authorities="fr.twentynine.keepon.utils.preferences.provider.MultiProvider"
+            android:exported="false"
+            android:process=":preferences"/>
+
+        <service
+            android:name=".services.ScreenOffReceiverService"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":services"/>
+
+        <receiver
+            android:name=".receivers.ScreenOffReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_OFF"/>
+                <category android:name="android.intent.category.DEFAUL"/>
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".services.ScreenTimeoutObserverService"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":services"/>
+
+        <activity
+            android:name=".tasker.EditActivity"
+            android:label="@string/tasker_activity_name"
+            android:screenOrientation="sensor"
+            android:exported="true"
+            android:process=":ui">
+            <intent-filter>
+                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING"/>
+            </intent-filter>
+        </activity>
+
+        <receiver android:name=".tasker.FireReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="com.twofortyfouram.locale.intent.action.FIRE_SETTING"/>
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

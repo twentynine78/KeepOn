@@ -10,10 +10,11 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.utils.CommonUtils
+import leakcanary.AppWatcher
 import toothpick.ktp.delegate.lazy
 
 @Suppress("unused")
-class KeepOnApplication : Application(), LifecycleObserver {
+class DebugKeepOnApplication : Application(), LifecycleObserver {
 
     private val commonUtils: CommonUtils by lazy()
 
@@ -26,11 +27,19 @@ class KeepOnApplication : Application(), LifecycleObserver {
             commonUtils.setApplicationAsStopped()
             ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         }
+        // Install Leak Canary on UI process
+        if (isUiProcess()) {
+            AppWatcher.manualInstall(this)
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun processInDestroyState() {
         commonUtils.setApplicationAsStopped()
+    }
+
+    private fun isUiProcess(): Boolean {
+        return getCurrentProcessName().endsWith(":ui")
     }
 
     private fun isServicesProcess(): Boolean {
