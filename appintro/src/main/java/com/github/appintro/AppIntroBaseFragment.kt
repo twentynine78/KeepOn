@@ -133,6 +133,7 @@ abstract class AppIntroBaseFragment : Fragment(), SlideSelectionListener, SlideB
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(ARG_DRAWABLE, drawable)
+        outState.putInt(ARG_DRAWABLE2, drawable2)
         outState.putInt(ARG_BG_DRAWABLE, bgDrawable)
         outState.putString(ARG_TITLE, title)
         outState.putString(ARG_DESC, description)
