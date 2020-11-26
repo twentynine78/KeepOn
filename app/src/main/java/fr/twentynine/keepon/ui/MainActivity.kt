@@ -265,6 +265,7 @@ class MainActivity : AppCompatActivity() {
             if (savedInstanceState.getBoolean(DIALOG_SET_ORIGINAL_TIMEOUT_SHOWED, false)) {
                 val dialogTimeout = savedInstanceState.getInt(DIALOG_SET_ORIGINAL_TIMEOUT_VALUE, 0)
                 if (dialogTimeout != 0) {
+                    dialogSetOriginalTimeoutValue = dialogTimeout
                     commonUtils.getDisplayTimeoutArray()[dialogTimeout]?.let { dialogTextId ->
                         activityUtils.getDefaultTimeoutDialog(dialogTimeout, getString(dialogTextId)).show()
                     }
