@@ -314,7 +314,7 @@
                         android:layout_marginBottom="10dp"
                         android:orientation="horizontal">
 
-                        <RadioGroup
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -324,7 +324,7 @@
                             android:paddingBottom="2dp"
                             android:orientation="vertical">
 
-                            <LinearLayout
+                            <RadioGroup
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:orientation="vertical"
@@ -352,8 +352,8 @@
                                     android:text="@string/bottom_sheet_typeface_monospace"
                                     android:textColor="@color/colorText" />
 
-                            </LinearLayout>
-                        </RadioGroup>
+                            </RadioGroup>
+                        </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -407,7 +407,7 @@
                             </LinearLayout>
                         </LinearLayout>
 
-                        <RadioGroup
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -418,7 +418,7 @@
                             android:orientation="vertical"
                             android:layout_gravity="center">
 
-                            <LinearLayout
+                            <RadioGroup
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:orientation="vertical"
@@ -445,8 +445,8 @@
                                     android:layout_height="wrap_content"
                                     android:text="@string/bottom_sheet_style_stroke"
                                     android:textColor="@color/colorText" />
-                            </LinearLayout>
-                        </RadioGroup>
+                            </RadioGroup>
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
