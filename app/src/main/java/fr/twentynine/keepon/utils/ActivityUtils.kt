@@ -19,6 +19,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorInt
@@ -309,7 +310,7 @@ class ActivityUtils(private val activity: AppCompatActivity) {
         activity.window.navigationBarColor = color
     }
 
-    fun getSnackbarLayoutParams(snackbar: Snackbar, anchorView: View): CoordinatorLayout.LayoutParams {
+    fun getSnackbarCoordinatorLayoutParams(snackbar: Snackbar, anchorView: View): CoordinatorLayout.LayoutParams {
         snackbar.anchorView = anchorView
         val layout = snackbar.view as Snackbar.SnackbarLayout
         val layoutParams = layout.layoutParams as CoordinatorLayout.LayoutParams
@@ -319,6 +320,21 @@ class ActivityUtils(private val activity: AppCompatActivity) {
             layoutParams.width = 585.px
             layoutParams.anchorId = anchorView.id
             layoutParams.anchorGravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
+            layoutParams.gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
+        } else {
+            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+        }
+        return layoutParams
+    }
+
+    fun getSnackbarFrameLayoutParams(snackbar: Snackbar, anchorView: View): FrameLayout.LayoutParams {
+        snackbar.anchorView = anchorView
+        val layout = snackbar.view as Snackbar.SnackbarLayout
+        val layoutParams = layout.layoutParams as FrameLayout.LayoutParams
+        val displayMetrics: DisplayMetrics = activity.resources.displayMetrics
+        val dpWidth = displayMetrics.widthPixels / displayMetrics.density
+        if (dpWidth >= 620) {
+            layoutParams.width = 585.px
             layoutParams.gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
         } else {
             layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT

@@ -95,7 +95,7 @@ class IntroFragmentPermission : Fragment(R.layout.fragment_intro_button), SlideS
     override fun onUserIllegallyRequestedNextPage() {
         view?.let {
             val snackbar = Snackbar.make(it.findViewById(R.id.main), getString(R.string.intro_toast_permission_needed), Snackbar.LENGTH_LONG)
-            snackbar.view.layoutParams = activityUtils.getSnackbarLayoutParams(snackbar, it.findViewById<MaterialButton>(R.id.button))
+            snackbar.view.layoutParams = activityUtils.getSnackbarFrameLayoutParams(snackbar, it.findViewById<MaterialButton>(R.id.button))
             snackbar.show()
         }
     }
