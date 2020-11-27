@@ -13,7 +13,7 @@ import fr.twentynine.keepon.utils.CommonUtils
 import toothpick.ktp.delegate.lazy
 
 @Suppress("unused")
-class KeepOnApplication : Application(), LifecycleObserver {
+open class KeepOnApplication : Application(), LifecycleObserver {
 
     private val commonUtils: CommonUtils by lazy()
 
@@ -37,7 +37,7 @@ class KeepOnApplication : Application(), LifecycleObserver {
         return getCurrentProcessName().endsWith(":services")
     }
 
-    private fun getCurrentProcessName(): String {
+    protected fun getCurrentProcessName(): String {
         val pid = Process.myPid()
         val manager = this.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         for (processInfo in manager.runningAppProcesses) {
