@@ -56,7 +56,9 @@ import fr.twentynine.keepon.utils.preferences.Preferences
 import fr.twentynine.keepon.utils.px
 import fr.twentynine.keepon.utils.viewBinding
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import toothpick.ktp.delegate.lazy
 import java.util.Formatter
 import java.util.Locale
@@ -165,16 +167,21 @@ class MainActivity : AppCompatActivity() {
         // Manage checkbox for monitor screen off or not
         binding.includeContentMain.includeCardSettings.checkBoxScreenOff.isChecked = preferences.getResetTimeoutOnScreenOff()
         binding.includeContentMain.includeCardSettings.checkBoxScreenOff.setOnCheckedChangeListener { _, isChecked ->
-            preferences.setResetTimeoutOnScreenOff(isChecked)
+            lifecycleScope.launch(Dispatchers.Default) {
+                preferences.setResetTimeoutOnScreenOff(isChecked)
 
-            if (!isChecked) {
-                commonUtils.stopScreenOffReceiverService()
-            }
+                if (!isChecked) {
+                    commonUtils.stopScreenOffReceiverService()
+                }
 
-            if (preferences.getKeepOnState() && isChecked) {
-                commonUtils.startScreenOffReceiverService()
+                if (preferences.getKeepOnState() && isChecked) {
+                    commonUtils.startScreenOffReceiverService()
+                }
+                delay(100)
+                withContext(Dispatchers.Main) {
+                    snackbar.show()
+                }
             }
-            snackbar.show()
         }
 
         // Set application version on about card
@@ -326,13 +333,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (ev.action == MotionEvent.ACTION_DOWN) {
-            if (snackbar.isShown) {
-                val sRect = Rect()
-                snackbar.view.getHitRect(sRect)
+            lifecycleScope.launch(Dispatchers.Default) {
+                if (snackbar.isShown) {
+                    val sRect = Rect()
+                    snackbar.view.getHitRect(sRect)
 
-                // Only be dismiss snackbar if the user clicks outside it.
-                if (!sRect.contains(ev.x.toInt(), ev.y.toInt())) {
-                    snackbar.dismiss()
+                    // Only be dismiss snackbar if the user clicks outside it.
+                    if (!sRect.contains(ev.x.toInt(), ev.y.toInt())) {
+                        withContext(Dispatchers.Main) {
+                            snackbar.dismiss()
+                        }
+                    }
                 }
             }
         }
@@ -487,19 +498,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun saveSelectedSwitch() {
-        val resultList: ArrayList<Int> = ArrayList()
-        for (timeoutSwitch in getTimeoutSwitchsArray()) {
-            if (timeoutSwitch.switch.isChecked && timeoutSwitch.timeoutValue != preferences.getOriginalTimeout()) {
-                resultList.add(timeoutSwitch.timeoutValue)
+        lifecycleScope.launch(Dispatchers.Default) {
+            val resultList: ArrayList<Int> = ArrayList()
+            for (timeoutSwitch in getTimeoutSwitchsArray()) {
+                if (timeoutSwitch.switch.isChecked && timeoutSwitch.timeoutValue != preferences.getOriginalTimeout()) {
+                    resultList.add(timeoutSwitch.timeoutValue)
+                }
             }
+
+            preferences.setSelectedTimeout(resultList)
+
+            delay(100)
+            withContext(Dispatchers.Main) {
+                snackbar.show()
+            }
+
+            // Update App shortcuts
+            commonUtils.manageAppShortcuts()
         }
-
-        preferences.setSelectedTimeout(resultList)
-
-        snackbar.show()
-
-        // Update App shortcuts
-        commonUtils.manageAppShortcuts()
     }
 
     private fun loadQSStylePreferences() {
@@ -552,44 +568,52 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun saveQSStyleSlidePreferences() {
-        preferences.setQSStyleFontSize(binding.includeBottomSheet.sliderSize.value.toInt())
-        preferences.setQSStyleFontSkew(binding.includeBottomSheet.seekSkew.value.toInt())
-        preferences.setQSStyleFontSpacing(binding.includeBottomSheet.seekSpace.value.toInt())
+        lifecycleScope.launch(Dispatchers.Default) {
+            preferences.setQSStyleFontSize(binding.includeBottomSheet.sliderSize.value.toInt())
+            preferences.setQSStyleFontSkew(binding.includeBottomSheet.seekSkew.value.toInt())
+            preferences.setQSStyleFontSpacing(binding.includeBottomSheet.seekSpace.value.toInt())
 
-        // Update Tile Preview
-        updateTilePreview()
+            withContext(Dispatchers.Main) {
+                // Update Tile Preview
+                updateTilePreview()
+            }
 
-        // Update QS Tile
-        commonUtils.updateQSTile(500)
+            // Update QS Tile
+            commonUtils.updateQSTile()
 
-        // Update App shortcuts
-        commonUtils.manageAppShortcuts()
+            // Update App shortcuts
+            commonUtils.manageAppShortcuts()
+        }
     }
 
     private fun saveQSStyleClickPreferences() {
-        // Save all values to Preferences
-        preferences.setQSStyleTextFill(binding.includeBottomSheet.radioStyleFill.isChecked)
-        preferences.setQSStyleTextFillStroke(binding.includeBottomSheet.radioStyleFillStroke.isChecked)
-        preferences.setQSStyleTextStroke(binding.includeBottomSheet.radioStyleStroke.isChecked)
+        lifecycleScope.launch(Dispatchers.Default) {
+            // Save all values to Preferences
+            preferences.setQSStyleTextFill(binding.includeBottomSheet.radioStyleFill.isChecked)
+            preferences.setQSStyleTextFillStroke(binding.includeBottomSheet.radioStyleFillStroke.isChecked)
+            preferences.setQSStyleTextStroke(binding.includeBottomSheet.radioStyleStroke.isChecked)
 
-        preferences.setQSStyleFontBold(binding.includeBottomSheet.switchFakeBold.isChecked)
-        preferences.setQSStyleFontUnderline(binding.includeBottomSheet.switchUnderline.isChecked)
-        if (binding.includeBottomSheet.switchSmcp.isEnabled) {
-            preferences.setQSStyleFontSMCP(binding.includeBottomSheet.switchSmcp.isChecked)
+            preferences.setQSStyleFontBold(binding.includeBottomSheet.switchFakeBold.isChecked)
+            preferences.setQSStyleFontUnderline(binding.includeBottomSheet.switchUnderline.isChecked)
+            if (binding.includeBottomSheet.switchSmcp.isEnabled) {
+                preferences.setQSStyleFontSMCP(binding.includeBottomSheet.switchSmcp.isChecked)
+            }
+
+            preferences.setQSStyleTypefaceSansSerif(binding.includeBottomSheet.radioTypefaceSanSerif.isChecked)
+            preferences.setQSStyleTypefaceSerif(binding.includeBottomSheet.radioTypefaceSerif.isChecked)
+            preferences.setQSStyleTypefaceMonospace(binding.includeBottomSheet.radioTypefaceMonospace.isChecked)
+
+            withContext(Dispatchers.Main) {
+                // Update Tile Preview
+                updateTilePreview()
+            }
+
+            // Update QS Tile
+            commonUtils.updateQSTile()
+
+            // Update App shortcuts
+            commonUtils.manageAppShortcuts()
         }
-
-        preferences.setQSStyleTypefaceSansSerif(binding.includeBottomSheet.radioTypefaceSanSerif.isChecked)
-        preferences.setQSStyleTypefaceSerif(binding.includeBottomSheet.radioTypefaceSerif.isChecked)
-        preferences.setQSStyleTypefaceMonospace(binding.includeBottomSheet.radioTypefaceMonospace.isChecked)
-
-        // Update Tile Preview
-        updateTilePreview()
-
-        // Update QS Tile
-        commonUtils.updateQSTile(500)
-
-        // Update App shortcuts
-        commonUtils.manageAppShortcuts()
     }
 
     private fun animateViews(performAnimation: Boolean = true) {
@@ -652,12 +676,8 @@ class MainActivity : AppCompatActivity() {
         binding.includeBottomSheet.tilePreview.layoutParams.width = tilePreviewWidth
         binding.includeBottomSheet.tilePreview.layoutParams.height = defaultPreviewSize + (slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt()
 
-        // Set padding to tile preview image view
-        val newPadding = (defaultPreviewPadding + (slideOffset * (maxPreviewPadding - defaultPreviewPadding)).roundToInt())
-        binding.includeBottomSheet.tilePreview.setPadding(newPadding, newPadding, newPadding, newPadding)
-
-        // Adapt bottom sheet text view padding
-        binding.includeBottomSheet.bottomSheetPeekTextView.updatePadding((23.px + tilePreviewWidth), 0, 65.px, 7.px)
+        // Get padding to tile preview image view
+        val newTilePreviewPadding = (defaultPreviewPadding + (slideOffset * (maxPreviewPadding - defaultPreviewPadding)).roundToInt())
 
         // Rotate peek arrow
         binding.includeBottomSheet.bottomSheetPeekArrow.pivotX = (binding.includeBottomSheet.bottomSheetPeekArrow.measuredWidth / 2).toFloat()
@@ -676,7 +696,12 @@ class MainActivity : AppCompatActivity() {
         params.endToEnd = binding.includeBottomSheet.tilePreview.id
         params.setMargins(0, 0, 0, 10.px + (slideOffset * (maxPreviewSize - defaultPreviewSize)).roundToInt() / 2)
 
-        // Apply modification
+        // Set padding to tile preview image view
+        binding.includeBottomSheet.tilePreview.updatePadding(newTilePreviewPadding, newTilePreviewPadding, newTilePreviewPadding, newTilePreviewPadding)
+        // Adapt bottom sheet text view padding
+        binding.includeBottomSheet.bottomSheetPeekTextView.updatePadding((23.px + tilePreviewWidth), 0, 65.px, 7.px)
+
+        // Apply other modifications
         binding.includeBottomSheet.tilePreview.requestLayout()
         binding.includeBottomSheet.tilePreviewBackground.requestLayout()
         binding.includeBottomSheet.bottomSheetCardView.requestLayout()

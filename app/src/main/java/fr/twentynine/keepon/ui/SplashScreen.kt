@@ -22,6 +22,7 @@ import fr.twentynine.keepon.utils.viewBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import toothpick.ktp.delegate.lazy
 
 class SplashScreen : AppCompatActivity() {
@@ -114,7 +115,7 @@ class SplashScreen : AppCompatActivity() {
                     } else {
                         animateCount++
                         if (animateCount >= 10) {
-                            launch(Dispatchers.Main) {
+                            withContext(Dispatchers.Main) {
                                 setAnimatedLoadingText()
                                 if (binding.loadingTv.visibility != View.VISIBLE) {
                                     binding.loadingTv.visibility = View.VISIBLE
@@ -125,7 +126,7 @@ class SplashScreen : AppCompatActivity() {
                         delay(100)
                     }
                 }
-                launch(Dispatchers.Main) {
+                withContext(Dispatchers.Main) {
                     binding.loadingTv.visibility = View.INVISIBLE
                     binding.loadingTv.text = getString(R.string.splash_cannot_start_text)
                     binding.loadingTv.visibility = View.VISIBLE

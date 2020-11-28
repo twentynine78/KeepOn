@@ -14,7 +14,6 @@ import androidx.collection.ArrayMap
 import androidx.collection.arrayMapOf
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Priority
 import com.bumptech.glide.RequestManager
@@ -32,9 +31,7 @@ import fr.twentynine.keepon.utils.glide.TimeoutIconData
 import fr.twentynine.keepon.utils.preferences.Preferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
 import toothpick.InjectConstructor
 import toothpick.ktp.delegate.lazy
 import javax.inject.Singleton
@@ -124,13 +121,8 @@ class CommonUtils(private val application: Application) {
         application.sendBroadcast(missingIntent)
     }
 
-    fun updateQSTile(delay: Long = 0) {
-        ProcessLifecycleOwner.get().lifecycleScope.launch(Dispatchers.Default) {
-            delay(delay)
-            withTimeout(60000) {
-                TileService.requestListeningState(application, ComponentName(application, KeepOnTileService::class.java))
-            }
-        }
+    fun updateQSTile() {
+        TileService.requestListeningState(application.applicationContext, ComponentName(application, KeepOnTileService::class.java))
     }
 
     fun setApplicationAsStopped() {
@@ -149,7 +141,7 @@ class CommonUtils(private val application: Application) {
                 manageShortcutJob.cancel()
             }
 
-            manageShortcutJob = ProcessLifecycleOwner.get().lifecycle.coroutineScope.launch(Dispatchers.IO) {
+            manageShortcutJob = ProcessLifecycleOwner.get().lifecycleScope.launch(Dispatchers.IO) {
                 // Create dynamic list of timeout values
                 val availableTimeout: ArrayList<Int> = ArrayList()
                 availableTimeout.addAll(preferences.getSelectedTimeout())
