@@ -62,11 +62,6 @@ class IntroFragmentAddQSTile : Fragment(R.layout.fragment_intro_button), SlideSe
         }
     }
 
-    override fun onDestroyView() {
-        activityUtils.getAddQSTileDialog().dismiss()
-        super.onDestroyView()
-    }
-
     override fun setBackgroundColor(backgroundColor: Int) {
         binding.main.setBackgroundColor(backgroundColor)
     }

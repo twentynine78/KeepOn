@@ -27,6 +27,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.graphics.ColorUtils
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import fr.twentynine.keepon.R
@@ -92,6 +94,9 @@ class ActivityUtils(private val activity: AppCompatActivity) {
 
         // Adjust width
         adjustDialogWidth(value)
+
+        // Add LifecycleObserver
+        addDialogLifecycleObserver(value)
     }
     private val mPermissionDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
         value.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -120,6 +125,9 @@ class ActivityUtils(private val activity: AppCompatActivity) {
 
         // Adjust width
         adjustDialogWidth(value)
+
+        // Add LifecycleObserver
+        addDialogLifecycleObserver(value)
     }
     private val mMissingSettingsDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
         value.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -141,6 +149,9 @@ class ActivityUtils(private val activity: AppCompatActivity) {
 
         // Adjust width
         adjustDialogWidth(value)
+
+        // Add LifecycleObserver
+        addDialogLifecycleObserver(value)
     }
     private val mDefaultTimeoutDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
         value.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -154,6 +165,9 @@ class ActivityUtils(private val activity: AppCompatActivity) {
 
         // Adjust width
         adjustDialogWidth(value)
+
+        // Add LifecycleObserver
+        addDialogLifecycleObserver(value)
     }
     private val mCreditsDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
         value.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -169,6 +183,9 @@ class ActivityUtils(private val activity: AppCompatActivity) {
 
         // Adjust width
         adjustDialogWidth(value)
+
+        // Add LifecycleObserver
+        addDialogLifecycleObserver(value)
     }
     private val mAddQSTileDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
         value.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -184,6 +201,9 @@ class ActivityUtils(private val activity: AppCompatActivity) {
 
         // Adjust width
         adjustDialogWidth(value)
+
+        // Add LifecycleObserver
+        addDialogLifecycleObserver(value)
     }
     private var checkPermissionJob: Job? = null
     private var checkNotificationJob: Job? = null
@@ -221,9 +241,9 @@ class ActivityUtils(private val activity: AppCompatActivity) {
         // Set Text
         mDefaultTimeoutDialog.findViewById<TextView>(R.id.text_dialog)
             .text = Formatter().format(
-                activity.getString(R.string.dialog_default_timeout_text),
-                timeoutText.toLowerCase(Locale.getDefault())
-            ).toString()
+            activity.getString(R.string.dialog_default_timeout_text),
+            timeoutText.toLowerCase(Locale.getDefault())
+        ).toString()
 
         // Set Button action
         mDefaultTimeoutDialog.findViewById<Button>(R.id.btn_dialog)
@@ -366,6 +386,24 @@ class ActivityUtils(private val activity: AppCompatActivity) {
             } else {
                 layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT
             }
+        }
+    }
+
+    private fun addDialogLifecycleObserver(dialog: Dialog) {
+        val dialogObserver = DialogLifeCycleObserver(dialog)
+
+        dialog.setOnShowListener {
+            activity.lifecycle.addObserver(dialogObserver)
+        }
+        dialog.setOnDismissListener {
+            activity.lifecycle.removeObserver(dialogObserver)
+        }
+    }
+
+    inner class DialogLifeCycleObserver(private val dialog: Dialog) : DefaultLifecycleObserver {
+
+        override fun onDestroy(owner: LifecycleOwner) {
+            dialog.dismiss()
         }
     }
 }
