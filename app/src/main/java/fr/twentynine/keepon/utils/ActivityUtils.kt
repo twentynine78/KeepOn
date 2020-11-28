@@ -400,7 +400,7 @@ class ActivityUtils(private val activity: AppCompatActivity) {
         }
     }
 
-    inner class DialogLifeCycleObserver(private val dialog: Dialog) : DefaultLifecycleObserver {
+    private class DialogLifeCycleObserver(private val dialog: Dialog) : DefaultLifecycleObserver {
 
         override fun onDestroy(owner: LifecycleOwner) {
             dialog.dismiss()
