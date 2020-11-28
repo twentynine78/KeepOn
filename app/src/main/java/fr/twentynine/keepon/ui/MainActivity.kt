@@ -51,7 +51,6 @@ import fr.twentynine.keepon.ui.intro.IntroActivity
 import fr.twentynine.keepon.utils.ActivityUtils
 import fr.twentynine.keepon.utils.CommonUtils
 import fr.twentynine.keepon.utils.Rate
-import fr.twentynine.keepon.utils.glide.TimeoutIconData
 import fr.twentynine.keepon.utils.preferences.Preferences
 import fr.twentynine.keepon.utils.px
 import fr.twentynine.keepon.utils.viewBinding
@@ -423,7 +422,7 @@ class MainActivity : AppCompatActivity() {
         glideApp
             .asBitmap()
             .priority(Priority.HIGH)
-            .load(TimeoutIconData(currentTimeout, 1, commonUtils.getIconStyleSignature()))
+            .load(commonUtils.getTimeoutIconData(currentTimeout, 1))
             .into(object : CustomTarget<Bitmap>(150.px, 150.px) {
                 override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     binding.includeBottomSheet.tilePreview.setImageBitmap(resource)

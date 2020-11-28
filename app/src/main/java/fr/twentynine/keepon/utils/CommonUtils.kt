@@ -175,21 +175,23 @@ class CommonUtils(private val application: Application) {
         }
     }
 
-    fun getIconStyleSignature(): String {
-        return StringBuilder()
-            .append(preferences.getQSStyleFontSize())
-            .append(preferences.getQSStyleFontSkew())
-            .append(preferences.getQSStyleFontSpacing())
-            .append(preferences.getQSStyleTypefaceSansSerif())
-            .append(preferences.getQSStyleTypefaceSerif())
-            .append(preferences.getQSStyleTypefaceMonospace())
-            .append(preferences.getQSStyleFontBold())
-            .append(preferences.getQSStyleFontUnderline())
-            .append(preferences.getQSStyleFontSMCP())
-            .append(preferences.getQSStyleTextFill())
-            .append(preferences.getQSStyleTextFillStroke())
-            .append(preferences.getQSStyleTextStroke())
-            .toString()
+    fun getTimeoutIconData(iconTimeout: Int, iconSize: Int): TimeoutIconData {
+        return TimeoutIconData(
+            iconTimeout,
+            iconSize,
+            preferences.getQSStyleFontSize(),
+            preferences.getQSStyleFontSkew(),
+            preferences.getQSStyleFontSpacing(),
+            preferences.getQSStyleTypefaceSansSerif(),
+            preferences.getQSStyleTypefaceSerif(),
+            preferences.getQSStyleTypefaceMonospace(),
+            preferences.getQSStyleFontBold(),
+            preferences.getQSStyleFontUnderline(),
+            preferences.getQSStyleFontSMCP(),
+            preferences.getQSStyleTextFill(),
+            preferences.getQSStyleTextFillStroke(),
+            preferences.getQSStyleTextStroke()
+        )
     }
 
     fun getDisplayTimeout(screenOffTimeout: Int): String {
@@ -237,7 +239,7 @@ class CommonUtils(private val application: Application) {
             glideApp
                 .asBitmap()
                 .priority(Priority.LOW)
-                .load(TimeoutIconData(newTimeout, 3, getIconStyleSignature()))
+                .load(getTimeoutIconData(newTimeout, 3))
                 .into(object : CustomTarget<Bitmap>(25.px, 25.px) {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                         // Set bitmap to shortcut icon

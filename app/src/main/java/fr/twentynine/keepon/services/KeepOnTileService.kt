@@ -18,7 +18,6 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.di.ToothpickHelper
-import fr.twentynine.keepon.utils.glide.TimeoutIconData
 import fr.twentynine.keepon.ui.MainActivity
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.CommonUtils
@@ -124,7 +123,7 @@ class KeepOnTileService : TileService(), LifecycleOwner {
                     glideApp
                         .asBitmap()
                         .priority(Priority.HIGH)
-                        .load(TimeoutIconData(newTimeout, 2, commonUtils.getIconStyleSignature()))
+                        .load(commonUtils.getTimeoutIconData(newTimeout, 2))
                         .into(qsGlideTarget)
                 } else {
                     qsTile.updateTile()

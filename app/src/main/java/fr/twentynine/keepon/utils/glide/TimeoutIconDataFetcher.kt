@@ -13,14 +13,12 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.data.DataFetcher
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.utils.CommonUtils
-import fr.twentynine.keepon.utils.preferences.Preferences
 import fr.twentynine.keepon.utils.px
 import toothpick.ktp.delegate.lazy
 
 class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<Bitmap> {
 
     private val commonUtils: CommonUtils by lazy()
-    private val preferences: Preferences by lazy()
 
     init {
         // Inject dependencies with Toothpick
@@ -28,10 +26,10 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
     }
 
     override fun loadData(priority: Priority, callback: DataFetcher.DataCallback<in Bitmap>) {
-        if (model.size != 3) {
-            callback.onDataReady(getBitmapFromText(model.timeout, model.size == 1))
+        if (model.iconSize != 3) {
+            callback.onDataReady(getBitmapFromText(model.iconTimeout, model.iconSize == 1))
         } else {
-            callback.onDataReady(getShortcutBitmapFromText(model.timeout))
+            callback.onDataReady(getShortcutBitmapFromText(model.iconTimeout))
         }
     }
 
@@ -67,27 +65,27 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
             else -> 60f.px / scaleRatio
         }
         // Set text size from saved preference
-        textSize += (preferences.getQSStyleFontSize() * 2).px / scaleRatio
+        textSize += (model.iconStyleFontSize * 2).px / scaleRatio
         paint.textSize = textSize
 
         // Set typeface from saved preference
-        val bold = preferences.getQSStyleFontBold()
+        val bold = model.iconStyleFontBold
         paint.typeface = when {
-            preferences.getQSStyleTypefaceSansSerif() -> {
+            model.iconStyleTypefaceSansSerif -> {
                 if (bold) {
                     sansSerifBold
                 } else {
                     sansSerifNormal
                 }
             }
-            preferences.getQSStyleTypefaceSerif() -> {
+            model.iconStyleTypefaceSerif -> {
                 if (bold) {
                     serifBold
                 } else {
                     serifNormal
                 }
             }
-            preferences.getQSStyleTypefaceMonospace() -> {
+            model.iconStyleTypefaceMonospace -> {
                 if (bold) {
                     monospaceBold
                 } else {
@@ -99,14 +97,14 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
 
         // Set text style from saved preference
         val paintStyle = when {
-            preferences.getQSStyleTextFill() -> {
+            model.iconStyleTextFill -> {
                 paintStyleFill
             }
-            preferences.getQSStyleTextFillStroke() -> {
+            model.iconStyleTextFillStroke -> {
                 paint.strokeWidth = 3f.px / scaleRatio
                 paintStyleFillAndStroke
             }
-            preferences.getQSStyleTextStroke() -> {
+            model.iconStyleTextStroke -> {
                 paint.strokeWidth = 3f.px / scaleRatio
                 paintStyleStroke
             }
@@ -115,15 +113,15 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
         paint.style = paintStyle
 
         // Set text skew from preference
-        paint.textSkewX = (-(preferences.getQSStyleFontSkew() / 1.7).toFloat())
+        paint.textSkewX = (-(model.iconStyleFontSkew / 1.7).toFloat())
 
         // Set font SMCP from preference
-        if (preferences.getQSStyleFontSMCP()) {
+        if (model.iconStyleFontSMCP) {
             paint.fontFeatureSettings = "smcp"
         }
 
         // Set font underline from preference
-        paint.isUnderlineText = preferences.getQSStyleFontUnderline()
+        paint.isUnderlineText = model.iconStyleFontUnderline
 
         paint.textAlign = paintAlignLeft
         paint.isAntiAlias = true
@@ -141,7 +139,7 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
         // Draw text
         canvas.drawText(
             displayTimeout,
-            x + ((preferences.getQSStyleFontSpacing() * 7).px / scaleRatio),
+            x + ((model.iconStyleFontSpacing * 7).px / scaleRatio),
             y,
             paint
         )
@@ -191,27 +189,27 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
             else -> 5f.px
         }
         // Set text size from saved preference
-        textSize += (preferences.getQSStyleFontSize() / 2).px
+        textSize += (model.iconStyleFontSize / 2).px
         paint.textSize = textSize
 
         // Set typeface from saved preference
-        val bold = preferences.getQSStyleFontBold()
+        val bold = model.iconStyleFontBold
         paint.typeface = when {
-            preferences.getQSStyleTypefaceSansSerif() -> {
+            model.iconStyleTypefaceSansSerif -> {
                 if (bold) {
                     sansSerifBold
                 } else {
                     sansSerifNormal
                 }
             }
-            preferences.getQSStyleTypefaceSerif() -> {
+            model.iconStyleTypefaceSerif -> {
                 if (bold) {
                     serifBold
                 } else {
                     serifNormal
                 }
             }
-            preferences.getQSStyleTypefaceMonospace() -> {
+            model.iconStyleTypefaceMonospace -> {
                 if (bold) {
                     monospaceBold
                 } else {
@@ -223,14 +221,14 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
 
         // Set text style from saved preference
         val paintStyle = when {
-            preferences.getQSStyleTextFill() -> {
+            model.iconStyleTextFill -> {
                 paintStyleFill
             }
-            preferences.getQSStyleTextFillStroke() -> {
+            model.iconStyleTextFillStroke -> {
                 paint.strokeWidth = 1f.px
                 paintStyleFillAndStroke
             }
-            preferences.getQSStyleTextStroke() -> {
+            model.iconStyleTextStroke -> {
                 paint.strokeWidth = 1f.px
                 paintStyleStroke
             }
@@ -240,15 +238,15 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
         paint.strokeCap = paintCapRound
 
         // Set text skew from preference
-        paint.textSkewX = (-(preferences.getQSStyleFontSkew() / 1.7).toFloat())
+        paint.textSkewX = (-(model.iconStyleFontSkew / 1.7).toFloat())
 
         // Set font SMCP from preference
-        if (preferences.getQSStyleFontSMCP()) {
+        if (model.iconStyleFontSMCP) {
             paint.fontFeatureSettings = "smcp"
         }
 
         // Set font underline from preference
-        paint.isUnderlineText = preferences.getQSStyleFontUnderline()
+        paint.isUnderlineText = model.iconStyleFontUnderline
 
         paint.textAlign = paintAlignLeft
         paint.isAntiAlias = true
@@ -272,7 +270,7 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
         // Draw text
         canvas.drawText(
             displayTimeout,
-            x + (preferences.getQSStyleFontSpacing() / 2).px,
+            x + (model.iconStyleFontSpacing / 2).px,
             y,
             paint
         )
