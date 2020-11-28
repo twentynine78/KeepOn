@@ -33,9 +33,8 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import androidx.core.view.updatePadding
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Priority
 import com.bumptech.glide.RequestManager
@@ -66,7 +65,7 @@ import kotlin.math.hypot
 import kotlin.math.roundToInt
 
 @Suppress("TooManyFunctions")
-class MainActivity : AppCompatActivity(), LifecycleObserver {
+class MainActivity : AppCompatActivity() {
 
     private data class TimeoutSwitch(val switch: SwitchMaterial, val timeoutValue: Int)
 
@@ -110,7 +109,7 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
     private var dialogSetOriginalTimeoutValue: Int = 0
 
     init {
-        lifecycle.addObserver(this)
+        lifecycle.addObserver(MyLifeCycleObserver())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -375,22 +374,6 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
         } else {
             finishAfterTransition()
         }
-    }
-
-    @Suppress("unused")
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    fun activityInCreatedState() {
-        // Register BroadcastReceiver
-        val intentFiler = IntentFilter()
-        intentFiler.addAction(CommonUtils.ACTION_MAIN_ACTIVITY_UPDATE_UI)
-        intentFiler.addAction(CommonUtils.ACTION_MAIN_ACTIVITY_MISSING_SETTINGS)
-        registerReceiver(receiver, intentFiler, MAIN_BROADCAST_PERMISSION, null)
-    }
-
-    @Suppress("unused")
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun activityInDestroyedState() {
-        unregisterReceiver(receiver)
     }
 
     private fun updateUI() {
@@ -734,6 +717,21 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
 
         fun newIntent(context: Context): Intent {
             return Intent(context, MainActivity::class.java)
+        }
+    }
+
+    inner class MyLifeCycleObserver : DefaultLifecycleObserver {
+
+        override fun onCreate(owner: LifecycleOwner) {
+            // Register BroadcastReceiver
+            val intentFiler = IntentFilter()
+            intentFiler.addAction(CommonUtils.ACTION_MAIN_ACTIVITY_UPDATE_UI)
+            intentFiler.addAction(CommonUtils.ACTION_MAIN_ACTIVITY_MISSING_SETTINGS)
+            registerReceiver(receiver, intentFiler, MAIN_BROADCAST_PERMISSION, null)
+        }
+
+        override fun onDestroy(owner: LifecycleOwner) {
+            unregisterReceiver(receiver)
         }
     }
 }

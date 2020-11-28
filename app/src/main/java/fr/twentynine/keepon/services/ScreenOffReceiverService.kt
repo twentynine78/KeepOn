@@ -1,11 +1,10 @@
 package fr.twentynine.keepon.services
 
-import androidx.lifecycle.LifecycleService
 import android.content.Intent
 import android.content.IntentFilter
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleService
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.receivers.ScreenOffReceiver
@@ -13,7 +12,7 @@ import fr.twentynine.keepon.utils.ServiceUtils
 import fr.twentynine.keepon.utils.CommonUtils
 import toothpick.ktp.delegate.lazy
 
-class ScreenOffReceiverService : LifecycleService(), LifecycleObserver {
+class ScreenOffReceiverService : LifecycleService() {
 
     private val screenOffReceiver: ScreenOffReceiver by lazy()
     private val serviceUtils: ServiceUtils by lazy()
@@ -22,7 +21,7 @@ class ScreenOffReceiverService : LifecycleService(), LifecycleObserver {
     private var restart = true
 
     init {
-        lifecycle.addObserver(this)
+        lifecycle.addObserver(MyLifeCycleObserver())
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -35,35 +34,6 @@ class ScreenOffReceiverService : LifecycleService(), LifecycleObserver {
             }
         }
         return super.onStartCommand(intent, flags, startId)
-    }
-
-    @Suppress("unused")
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    fun serviceInCreatedState() {
-        // Inject dependencies with Toothpick
-        ToothpickHelper.scopedInjection(this)
-
-        registerScreenOffReceiver()
-
-        startForeground(SERVICE_ID, serviceUtils.buildNotification(getString(R.string.notification_screen_off_service)))
-    }
-
-    @Suppress("unused")
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun serviceInStartedState() {
-        isRunning = true
-    }
-
-    @Suppress("unused")
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun serviceInStoppedState() {
-        isRunning = false
-
-        unregisterScreenOffReceiver()
-
-        if (restart) {
-            commonUtils.startScreenOffReceiverService()
-        }
     }
 
     private fun stopForegroundService() {
@@ -96,5 +66,31 @@ class ScreenOffReceiverService : LifecycleService(), LifecycleObserver {
         private const val SERVICE_ID = 1111
 
         var isRunning = false
+    }
+
+    inner class MyLifeCycleObserver : DefaultLifecycleObserver {
+
+        override fun onCreate(owner: LifecycleOwner) {
+            // Inject dependencies with Toothpick
+            ToothpickHelper.scopedInjection(this@ScreenOffReceiverService)
+
+            registerScreenOffReceiver()
+
+            startForeground(SERVICE_ID, serviceUtils.buildNotification(getString(R.string.notification_screen_off_service)))
+        }
+
+        override fun onStart(owner: LifecycleOwner) {
+            isRunning = true
+        }
+
+        override fun onStop(owner: LifecycleOwner) {
+            isRunning = false
+
+            unregisterScreenOffReceiver()
+
+            if (restart) {
+                commonUtils.startScreenOffReceiverService()
+            }
+        }
     }
 }

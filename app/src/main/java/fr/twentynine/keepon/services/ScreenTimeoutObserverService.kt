@@ -2,10 +2,9 @@ package fr.twentynine.keepon.services
 
 import android.content.ContentResolver
 import android.provider.Settings
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleService
-import androidx.lifecycle.OnLifecycleEvent
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.observer.ScreenTimeoutObserver
@@ -13,7 +12,7 @@ import fr.twentynine.keepon.utils.CommonUtils
 import fr.twentynine.keepon.utils.ServiceUtils
 import toothpick.ktp.delegate.lazy
 
-class ScreenTimeoutObserverService : LifecycleService(), LifecycleObserver {
+class ScreenTimeoutObserverService : LifecycleService() {
 
     private val mContentResolver: ContentResolver by lazy()
     private val screenTimeoutObserver: ScreenTimeoutObserver by lazy()
@@ -23,37 +22,7 @@ class ScreenTimeoutObserverService : LifecycleService(), LifecycleObserver {
     private var restart = true
 
     init {
-        lifecycle.addObserver(this)
-    }
-
-    @Suppress("unused")
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    fun serviceInCreatedState() {
-        // Inject dependencies with Toothpick
-        ToothpickHelper.scopedInjection(this)
-
-        registerScreenTimeoutObserver(screenTimeoutObserver)
-
-        startForeground(SERVICE_ID, serviceUtils.buildNotification(getString(R.string.notification_timeout_service)))
-    }
-
-    @Suppress("unused")
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun serviceInStartedState() {
-        isRunning = true
-    }
-
-    @Suppress("unused")
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun serviceInStoppedState() {
-        isRunning = false
-
-        unregisterScreenTimeoutObserver(screenTimeoutObserver)
-        commonUtils.setApplicationAsStopped()
-
-        if (restart) {
-            commonUtils.startScreenTimeoutObserverService()
-        }
+        lifecycle.addObserver(MyLifeCycleObserver())
     }
 
     private fun registerScreenTimeoutObserver(screenTimeoutObserver: ScreenTimeoutObserver) {
@@ -75,5 +44,32 @@ class ScreenTimeoutObserverService : LifecycleService(), LifecycleObserver {
         private const val SERVICE_ID = 1110
 
         var isRunning = false
+    }
+
+    inner class MyLifeCycleObserver : DefaultLifecycleObserver {
+
+        override fun onCreate(owner: LifecycleOwner) {
+            // Inject dependencies with Toothpick
+            ToothpickHelper.scopedInjection(this@ScreenTimeoutObserverService)
+
+            registerScreenTimeoutObserver(screenTimeoutObserver)
+
+            startForeground(SERVICE_ID, serviceUtils.buildNotification(getString(R.string.notification_timeout_service)))
+        }
+
+        override fun onStart(owner: LifecycleOwner) {
+            isRunning = true
+        }
+
+        override fun onStop(owner: LifecycleOwner) {
+            isRunning = false
+
+            unregisterScreenTimeoutObserver(screenTimeoutObserver)
+            commonUtils.setApplicationAsStopped()
+
+            if (restart) {
+                commonUtils.startScreenTimeoutObserverService()
+            }
+        }
     }
 }
