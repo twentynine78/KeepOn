@@ -20,13 +20,18 @@ import fr.twentynine.keepon.ui.intro.fragments.IntroFragmentAddQSTile
 import fr.twentynine.keepon.ui.intro.fragments.IntroFragmentNotification
 import fr.twentynine.keepon.ui.intro.fragments.IntroFragmentPermission
 import fr.twentynine.keepon.utils.ActivityUtils
+import fr.twentynine.keepon.utils.CommonUtils
 import fr.twentynine.keepon.utils.preferences.Preferences
 import toothpick.ktp.delegate.lazy
 
 class IntroActivity : AppIntro2() {
 
     private val activityUtils: ActivityUtils by lazy()
+    private val commonUtils: CommonUtils by lazy()
     private val preferences: Preferences by lazy()
+
+    private var showSlidePerm = true
+    private var showSlideNotif = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +45,7 @@ class IntroActivity : AppIntro2() {
             return
         }
 
+        // Create standard slide
         val sliderPageHome = SliderPage()
         sliderPageHome.title = getString(R.string.intro_home_title)
         sliderPageHome.description = getString(R.string.intro_home_desc)
@@ -75,11 +81,23 @@ class IntroActivity : AppIntro2() {
         sliderPageInfo4.image2Drawable = R.mipmap.img_intro_info4_2
         sliderPageInfo4.backgroundColor = COLOR_SLIDE_INFO4
 
+        // Define slides to show
+        showSlidePerm = !Settings.System.canWrite(this.applicationContext)
+        showSlideNotif = activityUtils.isNotificationEnabled()
+        savedInstanceState?.let {
+            showSlidePerm = it.getBoolean(SLIDE_PERM_SHOWED, showSlidePerm)
+            showSlideNotif = it.getBoolean(SLIDE_NOTIF_SHOWED, showSlideNotif)
+        }
+
         // Check if it's first launch or help launch
         if (preferences.getSkipIntro()) {
             addSlide(AppIntroFragment.newInstance(sliderPageHome))
-            if (!Settings.System.canWrite(this.applicationContext)) addSlide(IntroFragmentPermission.newInstance())
-            if (activityUtils.isNotificationEnabled()) addSlide(IntroFragmentNotification.newInstance())
+            if (showSlidePerm) {
+                addSlide(IntroFragmentPermission.newInstance())
+            }
+            if (showSlideNotif) {
+                addSlide(IntroFragmentNotification.newInstance())
+            }
             addSlide(AppIntroFragment.newInstance(sliderPageInfo1))
             addSlide(AppIntroFragment.newInstance(sliderPageInfo2))
             addSlide(AppIntroFragment.newInstance(sliderPageInfo3))
@@ -114,6 +132,9 @@ class IntroActivity : AppIntro2() {
 
         // Set initial timeout for first launch
         if (!preferences.getSkipIntro()) {
+            // Start service to monitor screen timeout
+            commonUtils.startScreenTimeoutObserverService()
+
             preferences.setOriginalTimeout(preferences.getCurrentTimeout())
             preferences.setPreviousValue(preferences.getCurrentTimeout())
         }
@@ -134,7 +155,17 @@ class IntroActivity : AppIntro2() {
         finish()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putBoolean(SLIDE_PERM_SHOWED, showSlidePerm)
+        outState.putBoolean(SLIDE_NOTIF_SHOWED, showSlideNotif)
+    }
+
     companion object {
+        const val SLIDE_PERM_SHOWED = "SLIDE_PERM_SHOWED"
+        const val SLIDE_NOTIF_SHOWED = "SLIDE_NOTIF_SHOWED"
+
         val COLOR_SLIDE_PERM = Color.parseColor("#ffd800")
         val COLOR_SLIDE_NOTIF = Color.parseColor("#00c3ff")
         val COLOR_SLIDE_QSTILE = Color.parseColor("#4caf50")
