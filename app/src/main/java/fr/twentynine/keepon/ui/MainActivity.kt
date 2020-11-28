@@ -33,6 +33,9 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import androidx.core.view.updatePadding
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Priority
 import com.bumptech.glide.RequestManager
@@ -63,7 +66,7 @@ import kotlin.math.hypot
 import kotlin.math.roundToInt
 
 @Suppress("TooManyFunctions")
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LifecycleObserver {
 
     private data class TimeoutSwitch(val switch: SwitchMaterial, val timeoutValue: Int)
 
@@ -105,6 +108,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var dialogSetOriginalTimeoutValue: Int = 0
+
+    init {
+        lifecycle.addObserver(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -238,12 +245,6 @@ class MainActivity : AppCompatActivity() {
         // Add count to Genrate
         rate.count()
 
-        // Register BroadcastReceiver
-        val intentFiler = IntentFilter()
-        intentFiler.addAction(CommonUtils.ACTION_MAIN_ACTIVITY_UPDATE_UI)
-        intentFiler.addAction(CommonUtils.ACTION_MAIN_ACTIVITY_MISSING_SETTINGS)
-        registerReceiver(receiver, intentFiler, "fr.twentynine.keepon.MAIN_BROADCAST_PERMISSION", null)
-
         setContentView(binding.root)
 
         // Retrieve saved state
@@ -339,12 +340,6 @@ class MainActivity : AppCompatActivity() {
         return super.dispatchTouchEvent(ev)
     }
 
-    override fun onDestroy() {
-        unregisterReceiver(receiver)
-
-        super.onDestroy()
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.action_menu, menu)
         return true
@@ -380,6 +375,22 @@ class MainActivity : AppCompatActivity() {
         } else {
             finishAfterTransition()
         }
+    }
+
+    @Suppress("unused")
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    fun activityInCreatedState() {
+        // Register BroadcastReceiver
+        val intentFiler = IntentFilter()
+        intentFiler.addAction(CommonUtils.ACTION_MAIN_ACTIVITY_UPDATE_UI)
+        intentFiler.addAction(CommonUtils.ACTION_MAIN_ACTIVITY_MISSING_SETTINGS)
+        registerReceiver(receiver, intentFiler, MAIN_BROADCAST_PERMISSION, null)
+    }
+
+    @Suppress("unused")
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun activityInDestroyedState() {
+        unregisterReceiver(receiver)
     }
 
     private fun updateUI() {
@@ -713,6 +724,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val ANIMATION_DURATION: Long = 300
+
+        const val MAIN_BROADCAST_PERMISSION = "fr.twentynine.keepon.MAIN_BROADCAST_PERMISSION"
 
         const val DIALOG_SET_ORIGINAL_TIMEOUT_SHOWED = "DIALOG_SET_ORIGINAL_TIMEOUT_SHOWED"
         const val DIALOG_SET_ORIGINAL_TIMEOUT_VALUE = "DIALOG_SET_ORIGINAL_TIMEOUT_VALUE"
