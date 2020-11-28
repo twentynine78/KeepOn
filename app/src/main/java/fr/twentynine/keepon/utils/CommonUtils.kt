@@ -44,24 +44,23 @@ class CommonUtils(private val application: Application) {
     private val preferences: Preferences by lazy()
     private val glideApp: RequestManager by lazy()
 
-    private val updateIntent: Intent by lazy { Intent(ACTION_MAIN_ACTIVITY_UPDATE_UI).setPackage(application.packageName) }.apply {
-        value.action = ACTION_MAIN_ACTIVITY_UPDATE_UI
-    }
-    private val missingIntent: Intent by lazy { Intent(ACTION_MAIN_ACTIVITY_MISSING_SETTINGS).setPackage(application.packageName) }.apply {
-        value.action = ACTION_MAIN_ACTIVITY_MISSING_SETTINGS
-    }
+    private val updateIntent: Intent by lazy { Intent(ACTION_MAIN_ACTIVITY_UPDATE_UI).setPackage(application.packageName).also {
+        it.action = ACTION_MAIN_ACTIVITY_UPDATE_UI
+    } }
+    private val missingIntent: Intent by lazy { Intent(ACTION_MAIN_ACTIVITY_MISSING_SETTINGS).setPackage(application.packageName).also {
+        it.action = ACTION_MAIN_ACTIVITY_MISSING_SETTINGS
+    } }
     private val startScreenOffReceiverServiceIntent: Intent by lazy { Intent(application.applicationContext, ScreenOffReceiverService::class.java) }
-    private val stopScreenOffReceiverServiceIntent: Intent by lazy { Intent(application.applicationContext, ScreenOffReceiverService::class.java) }.apply {
-        value.action = ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE
-    }
+    private val stopScreenOffReceiverServiceIntent: Intent by lazy { Intent(application.applicationContext, ScreenOffReceiverService::class.java).also {
+        it.action = ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE
+    } }
     private val startScreenTimeoutObserverServiceIntent: Intent by lazy { Intent(application.applicationContext, ScreenTimeoutObserverService::class.java) }
-    private val manageShortcutsIntent: Intent by lazy { Intent(application, ApplicationReceiver::class.java) }.apply {
-        value.action = ACTION_MANAGE_SHORTCUTS
-    }
-    private val shortcutIntent: Intent by lazy {
-        Intent(application, SplashScreen::class.java) }.apply {
-        value.action = ACTION_SHORTCUT_SET_TIMEOUT
-    }
+    private val manageShortcutsIntent: Intent by lazy { Intent(application, ApplicationReceiver::class.java).also {
+        it.action = ACTION_MANAGE_SHORTCUTS
+    } }
+    private val shortcutIntent: Intent by lazy { Intent(application, SplashScreen::class.java).also {
+        it.action = ACTION_SHORTCUT_SET_TIMEOUT
+    } }
     private val shortcutManager: ShortcutManager? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             application.getSystemService(ShortcutManager::class.java)

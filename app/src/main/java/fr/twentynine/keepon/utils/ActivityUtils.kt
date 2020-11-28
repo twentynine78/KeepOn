@@ -53,20 +53,20 @@ class ActivityUtils(private val activity: AppCompatActivity) {
     private val maxScreenSizeDpWidth by lazy { 620 }
     private val snackbarMaxSizePxWidth by lazy { 585.px }
     private val dialogMaxSizePxWidth by lazy { 580.px }
-    private val mNotificationDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
-        value.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        value.setContentView(R.layout.dialog_custom)
-        value.setCancelable(true)
+    private val mNotificationDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle).also { dialog ->
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_custom)
+        dialog.setCancelable(true)
 
         // Set ImageView
-        value.findViewById<ImageView>(R.id.image_dialog).setImageBitmap(BitmapFactory.decodeResource(activity.resources, R.mipmap.dialog_logo_notification))
+        dialog.findViewById<ImageView>(R.id.image_dialog).setImageBitmap(BitmapFactory.decodeResource(activity.resources, R.mipmap.dialog_logo_notification))
         // Set TextView
-        value.findViewById<TextView>(R.id.text_dialog).text = activity.getString(R.string.dialog_notification_text)
+        dialog.findViewById<TextView>(R.id.text_dialog).text = activity.getString(R.string.dialog_notification_text)
         // Set Button
-        val button = value.findViewById<Button>(R.id.btn_dialog)
+        val button = dialog.findViewById<Button>(R.id.btn_dialog)
         button.text = activity.getString(R.string.dialog_notification_button)
         button.setOnClickListener {
-            value.dismiss()
+            dialog.dismiss()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 if (!TextUtils.isEmpty(ServiceUtils.NOTIFICATION_CHANNEL_ID)) {
                     val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
@@ -90,28 +90,28 @@ class ActivityUtils(private val activity: AppCompatActivity) {
             }
         }
         // Set background transparent
-        value.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
+        dialog.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
 
         // Adjust width
-        adjustDialogWidth(value)
+        adjustDialogWidth(dialog)
 
         // Add LifecycleObserver
-        addDialogLifecycleObserver(value)
-    }
-    private val mPermissionDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
-        value.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        value.setContentView(R.layout.dialog_custom)
-        value.setCancelable(false)
+        addDialogLifecycleObserver(dialog)
+    } }
+    private val mPermissionDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle).also { dialog ->
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_custom)
+        dialog.setCancelable(false)
 
         // Set ImageView
-        value.findViewById<ImageView>(R.id.image_dialog).setImageBitmap(BitmapFactory.decodeResource(activity.resources, R.mipmap.dialog_logo_permission))
+        dialog.findViewById<ImageView>(R.id.image_dialog).setImageBitmap(BitmapFactory.decodeResource(activity.resources, R.mipmap.dialog_logo_permission))
         // Set TextView
-        value.findViewById<TextView>(R.id.text_dialog).text = activity.getString(R.string.dialog_permission_text)
+        dialog.findViewById<TextView>(R.id.text_dialog).text = activity.getString(R.string.dialog_permission_text)
         // Set Button
-        val button = value.findViewById<Button>(R.id.btn_dialog)
+        val button = dialog.findViewById<Button>(R.id.btn_dialog)
         button.text = activity.getString(R.string.dialog_permission_button)
         button.setOnClickListener {
-            value.dismiss()
+            dialog.dismiss()
             val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
                 .setData(Uri.parse("package:" + activity.packageName))
                 .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
@@ -121,90 +121,90 @@ class ActivityUtils(private val activity: AppCompatActivity) {
             activity.startActivity(intent)
         }
         // Set background transparent
-        value.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
+        dialog.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
 
         // Adjust width
-        adjustDialogWidth(value)
+        adjustDialogWidth(dialog)
 
         // Add LifecycleObserver
-        addDialogLifecycleObserver(value)
-    }
-    private val mMissingSettingsDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
-        value.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        value.setContentView(R.layout.dialog_custom)
-        value.setCancelable(true)
+        addDialogLifecycleObserver(dialog)
+    } }
+    private val mMissingSettingsDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle).also { dialog ->
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_custom)
+        dialog.setCancelable(true)
 
         // Set ImageView
-        value.findViewById<ImageView>(R.id.image_dialog).setImageBitmap(BitmapFactory.decodeResource(activity.resources, R.mipmap.dialog_logo_missing))
+        dialog.findViewById<ImageView>(R.id.image_dialog).setImageBitmap(BitmapFactory.decodeResource(activity.resources, R.mipmap.dialog_logo_missing))
         // Set TextView
-        value.findViewById<TextView>(R.id.text_dialog).text = activity.getString(R.string.dialog_missing_settings_text)
+        dialog.findViewById<TextView>(R.id.text_dialog).text = activity.getString(R.string.dialog_missing_settings_text)
         // Set Button
-        val button = value.findViewById<Button>(R.id.btn_dialog)
+        val button = dialog.findViewById<Button>(R.id.btn_dialog)
         button.text = activity.getString(R.string.dialog_missing_settings_button)
         button.setOnClickListener {
-            value.dismiss()
+            dialog.dismiss()
         }
         // Set background transparent
-        value.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
+        dialog.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
 
         // Adjust width
-        adjustDialogWidth(value)
+        adjustDialogWidth(dialog)
 
         // Add LifecycleObserver
-        addDialogLifecycleObserver(value)
-    }
-    private val mDefaultTimeoutDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
-        value.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        value.setContentView(R.layout.dialog_custom)
-        value.setCancelable(true)
+        addDialogLifecycleObserver(dialog)
+    } }
+    private val mDefaultTimeoutDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle).also { dialog ->
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_custom)
+        dialog.setCancelable(true)
 
         // Set Image
-        value.findViewById<ImageView>(R.id.image_dialog).setImageBitmap(BitmapFactory.decodeResource(activity.resources, R.mipmap.dialog_logo_default))
+        dialog.findViewById<ImageView>(R.id.image_dialog).setImageBitmap(BitmapFactory.decodeResource(activity.resources, R.mipmap.dialog_logo_default))
         // Set Button text
-        value.findViewById<Button>(R.id.btn_dialog).text = activity.getString(R.string.dialog_default_timeout_button)
+        dialog.findViewById<Button>(R.id.btn_dialog).text = activity.getString(R.string.dialog_default_timeout_button)
 
         // Adjust width
-        adjustDialogWidth(value)
+        adjustDialogWidth(dialog)
 
         // Add LifecycleObserver
-        addDialogLifecycleObserver(value)
-    }
-    private val mCreditsDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
-        value.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        value.setContentView(R.layout.dialog_credits)
-        value.setCancelable(true)
+        addDialogLifecycleObserver(dialog)
+    } }
+    private val mCreditsDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle).also { dialog ->
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_credits)
+        dialog.setCancelable(true)
 
         // Set Button action
-        value.findViewById<Button>(R.id.btn_close).setOnClickListener {
-            value.dismiss()
+        dialog.findViewById<Button>(R.id.btn_close).setOnClickListener {
+            dialog.dismiss()
         }
         // Set background transparent
-        value.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
+        dialog.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
 
         // Adjust width
-        adjustDialogWidth(value)
+        adjustDialogWidth(dialog)
 
         // Add LifecycleObserver
-        addDialogLifecycleObserver(value)
-    }
-    private val mAddQSTileDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
-        value.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        value.setContentView(R.layout.dialog_add_qstile)
-        value.setCancelable(true)
+        addDialogLifecycleObserver(dialog)
+    } }
+    private val mAddQSTileDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle).also { dialog ->
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_add_qstile)
+        dialog.setCancelable(true)
 
         // Set Button action
-        value.findViewById<Button>(R.id.btn_close).setOnClickListener {
-            value.dismiss()
+        dialog.findViewById<Button>(R.id.btn_close).setOnClickListener {
+            dialog.dismiss()
         }
         // Set background transparent
-        value.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
+        dialog.window?.setBackgroundDrawable((ColorDrawable(Color.TRANSPARENT)))
 
         // Adjust width
-        adjustDialogWidth(value)
+        adjustDialogWidth(dialog)
 
         // Add LifecycleObserver
-        addDialogLifecycleObserver(value)
-    }
+        addDialogLifecycleObserver(dialog)
+    } }
     private var checkPermissionJob: Job? = null
     private var checkNotificationJob: Job? = null
 
