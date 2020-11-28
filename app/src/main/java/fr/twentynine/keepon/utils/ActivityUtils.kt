@@ -48,6 +48,9 @@ class ActivityUtils(private val activity: AppCompatActivity) {
 
     private val preferences: Preferences by lazy()
 
+    private val maxScreenSizeDpWidth by lazy { 620 }
+    private val snackbarMaxSizePxWidth by lazy { 585.px }
+    private val dialogMaxSizePxWidth by lazy { 580.px }
     private val mNotificationDialog: Dialog by lazy { Dialog(activity, R.style.DialogStyle) }.apply {
         value.requestWindowFeature(Window.FEATURE_NO_TITLE)
         value.setContentView(R.layout.dialog_custom)
@@ -310,14 +313,27 @@ class ActivityUtils(private val activity: AppCompatActivity) {
         activity.window.navigationBarColor = color
     }
 
-    fun getSnackbarCoordinatorLayoutParams(snackbar: Snackbar, anchorView: View): CoordinatorLayout.LayoutParams {
+    fun getSnackbarLayoutParams(snackbar: Snackbar, anchorView: View): ViewGroup.MarginLayoutParams {
         snackbar.anchorView = anchorView
         val layout = snackbar.view as Snackbar.SnackbarLayout
-        val layoutParams = layout.layoutParams as CoordinatorLayout.LayoutParams
+        return when (layout.layoutParams) {
+            is CoordinatorLayout.LayoutParams -> {
+                manageSnackbarCoordinatorLayoutParams(layout.layoutParams as CoordinatorLayout.LayoutParams, anchorView)
+            }
+            is FrameLayout.LayoutParams -> {
+                manageSnackbarFrameLayoutParams(layout.layoutParams as FrameLayout.LayoutParams)
+            }
+            else -> {
+                layout.layoutParams as ViewGroup.MarginLayoutParams
+            }
+        }
+    }
+
+    private fun manageSnackbarCoordinatorLayoutParams(layoutParams: CoordinatorLayout.LayoutParams, anchorView: View): CoordinatorLayout.LayoutParams {
         val displayMetrics: DisplayMetrics = activity.resources.displayMetrics
         val dpWidth = displayMetrics.widthPixels / displayMetrics.density
-        if (dpWidth >= 620) {
-            layoutParams.width = 585.px
+        if (dpWidth >= maxScreenSizeDpWidth) {
+            layoutParams.width = snackbarMaxSizePxWidth
             layoutParams.anchorId = anchorView.id
             layoutParams.anchorGravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
             layoutParams.gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
@@ -327,14 +343,11 @@ class ActivityUtils(private val activity: AppCompatActivity) {
         return layoutParams
     }
 
-    fun getSnackbarFrameLayoutParams(snackbar: Snackbar, anchorView: View): FrameLayout.LayoutParams {
-        snackbar.anchorView = anchorView
-        val layout = snackbar.view as Snackbar.SnackbarLayout
-        val layoutParams = layout.layoutParams as FrameLayout.LayoutParams
+    private fun manageSnackbarFrameLayoutParams(layoutParams: FrameLayout.LayoutParams): FrameLayout.LayoutParams {
         val displayMetrics: DisplayMetrics = activity.resources.displayMetrics
         val dpWidth = displayMetrics.widthPixels / displayMetrics.density
-        if (dpWidth >= 620) {
-            layoutParams.width = 585.px
+        if (dpWidth >= maxScreenSizeDpWidth) {
+            layoutParams.width = snackbarMaxSizePxWidth
             layoutParams.gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
         } else {
             layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
@@ -347,8 +360,8 @@ class ActivityUtils(private val activity: AppCompatActivity) {
             val layoutParams = it.attributes
             val displayMetrics: DisplayMetrics = activity.resources.displayMetrics
             val dpWidth = displayMetrics.widthPixels / displayMetrics.density
-            if (dpWidth >= 620) {
-                layoutParams.width = 580.px
+            if (dpWidth >= maxScreenSizeDpWidth) {
+                layoutParams.width = dialogMaxSizePxWidth
                 layoutParams.gravity = Gravity.CENTER
             } else {
                 layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT

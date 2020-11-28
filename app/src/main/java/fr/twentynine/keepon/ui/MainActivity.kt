@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity(), LifecycleObserver {
 
     private val snackbar: Snackbar by lazy {
         val snackbar = Snackbar.make(binding.root, getString(R.string.settings_save), Snackbar.LENGTH_LONG)
-        snackbar.view.layoutParams = activityUtils.getSnackbarCoordinatorLayoutParams(snackbar, binding.includeBottomSheet.bottomSheet)
+        snackbar.view.layoutParams = activityUtils.getSnackbarLayoutParams(snackbar, binding.includeBottomSheet.bottomSheet)
         snackbar
     }
 
