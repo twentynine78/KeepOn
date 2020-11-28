@@ -21,6 +21,7 @@ import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.ui.MainActivity
 import fr.twentynine.keepon.utils.BundleScrubber
 import fr.twentynine.keepon.utils.CommonUtils
+import fr.twentynine.keepon.utils.glide.TimeoutIconData
 import fr.twentynine.keepon.utils.preferences.Preferences
 import fr.twentynine.keepon.utils.px
 import toothpick.ktp.delegate.lazy
@@ -66,9 +67,9 @@ class KeepOnTileService : TileService(), LifecycleOwner {
 
     private val dispatcher = ServiceLifecycleDispatcher(this)
 
-    private var lastSetTimeout: Int
-        get() = globalLastSetTimeout
-        set(value) { globalLastSetTimeout = value }
+    private var lastSetTimeoutIconData: TimeoutIconData?
+        get() = globalLastSetTimeoutIconData
+        set(value) { globalLastSetTimeoutIconData = value }
 
     override fun onCreate() {
         dispatcher.onServicePreSuperOnCreate()
@@ -117,18 +118,19 @@ class KeepOnTileService : TileService(), LifecycleOwner {
         if (qsTile != null) {
             if (preferences.getAppIsLaunched()) {
                 val newTimeout = preferences.getCurrentTimeout()
+                val newTimeoutIconData = commonUtils.getTimeoutIconData(newTimeout, 2)
 
-                if (lastSetTimeout != newTimeout || qsTile.state == Tile.STATE_UNAVAILABLE) {
+                if (lastSetTimeoutIconData != newTimeoutIconData || qsTile.state == Tile.STATE_UNAVAILABLE) {
                     // Create bitmap and load to tile icon
                     glideApp
                         .asBitmap()
                         .priority(Priority.HIGH)
-                        .load(commonUtils.getTimeoutIconData(newTimeout, 2))
+                        .load(newTimeoutIconData)
                         .into(qsGlideTarget)
                 } else {
                     qsTile.updateTile()
                 }
-                lastSetTimeout = newTimeout
+                lastSetTimeoutIconData = newTimeoutIconData
             } else {
                 qsTile.label = qsTileLoadingLabel
                 qsTile.icon = Icon.createWithResource(this, R.mipmap.ic_loading)
@@ -177,6 +179,6 @@ class KeepOnTileService : TileService(), LifecycleOwner {
     }
 
     companion object {
-        private var globalLastSetTimeout = -1
+        private var globalLastSetTimeoutIconData: TimeoutIconData? = null
     }
 }
