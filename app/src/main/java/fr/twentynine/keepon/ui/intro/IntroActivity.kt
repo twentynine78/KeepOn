@@ -163,8 +163,8 @@ class IntroActivity : AppIntro2() {
     }
 
     companion object {
-        const val SLIDE_PERM_SHOWED = "SLIDE_PERM_SHOWED"
-        const val SLIDE_NOTIF_SHOWED = "SLIDE_NOTIF_SHOWED"
+        internal const val SLIDE_PERM_SHOWED = "SLIDE_PERM_SHOWED"
+        internal const val SLIDE_NOTIF_SHOWED = "SLIDE_NOTIF_SHOWED"
 
         val COLOR_SLIDE_PERM = Color.parseColor("#ffd800")
         val COLOR_SLIDE_NOTIF = Color.parseColor("#00c3ff")

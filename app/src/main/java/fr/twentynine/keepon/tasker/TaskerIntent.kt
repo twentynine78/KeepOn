@@ -45,7 +45,7 @@ class TaskerIntent private constructor() {
          *
          * @see TaskerIntent.EXTRA_STRING_BREADCRUMB
          */
-        const val ACTION_EDIT_CONDITION =
+        internal const val ACTION_EDIT_CONDITION =
             "com.twofortyfouram.locale.intent.action.EDIT_CONDITION"
 
         /**
@@ -79,7 +79,7 @@ class TaskerIntent private constructor() {
          *
          * @see TaskerIntent.RESULT_CONDITION_UNKNOWN
          */
-        const val ACTION_QUERY_CONDITION =
+        internal const val ACTION_QUERY_CONDITION =
             "com.twofortyfouram.locale.intent.action.QUERY_CONDITION"
 
         /**
@@ -110,7 +110,7 @@ class TaskerIntent private constructor() {
          *
          * @see TaskerIntent.EXTRA_STRING_BREADCRUMB
          */
-        const val ACTION_EDIT_SETTING =
+        internal const val ACTION_EDIT_SETTING =
             "com.twofortyfouram.locale.intent.action.EDIT_SETTING"
 
         /**
@@ -131,7 +131,7 @@ class TaskerIntent private constructor() {
          *
          * @see TaskerIntent.EXTRA_BUNDLE
          */
-        const val ACTION_FIRE_SETTING =
+        internal const val ACTION_FIRE_SETTING =
             "com.twofortyfouram.locale.intent.action.FIRE_SETTING"
 
         /**
@@ -166,7 +166,7 @@ class TaskerIntent private constructor() {
          *
          * @see TaskerIntent.EXTRA_STRING_ACTIVITY_CLASS_NAME
          */
-        const val ACTION_REQUEST_QUERY =
+        internal const val ACTION_REQUEST_QUERY =
             "com.twofortyfouram.locale.intent.action.REQUEST_QUERY"
 
         /**
@@ -180,7 +180,7 @@ class TaskerIntent private constructor() {
          * path.
          *
          */
-        const val EXTRA_STRING_BREADCRUMB =
+        internal const val EXTRA_STRING_BREADCRUMB =
             "com.twofortyfouram.locale.intent.extra.BREADCRUMB"
 
         /**
@@ -201,7 +201,7 @@ class TaskerIntent private constructor() {
          * plug-in is configured to do.
          *
          */
-        const val EXTRA_STRING_BLURB = "com.twofortyfouram.locale.intent.extra.BLURB"
+        internal const val EXTRA_STRING_BLURB = "com.twofortyfouram.locale.intent.extra.BLURB"
 
         /**
          *
@@ -240,7 +240,7 @@ class TaskerIntent private constructor() {
          * implementing its own internal storage mechanism.  The Bundle can then contain a small token
          * that the plug-in uses as a lookup key in its own internal storage mechanism.
          */
-        const val EXTRA_BUNDLE = "com.twofortyfouram.locale.intent.extra.BUNDLE"
+        internal const val EXTRA_BUNDLE = "com.twofortyfouram.locale.intent.extra.BUNDLE"
 
         /**
          *
@@ -255,7 +255,7 @@ class TaskerIntent private constructor() {
          *
          * @see TaskerIntent.ACTION_REQUEST_QUERY
          */
-        const val EXTRA_STRING_ACTIVITY_CLASS_NAME =
+        internal const val EXTRA_STRING_ACTIVITY_CLASS_NAME =
             "com.twofortyfouram.locale.intent.extra.ACTIVITY"
 
         /**
@@ -265,7 +265,7 @@ class TaskerIntent private constructor() {
          *
          * @see TaskerIntent.ACTION_QUERY_CONDITION
          */
-        const val RESULT_CONDITION_SATISFIED = 16
+        internal const val RESULT_CONDITION_SATISFIED = 16
 
         /**
          * Ordered broadcast result code indicating that a plug-in condition's state
@@ -273,7 +273,7 @@ class TaskerIntent private constructor() {
          *
          * @see TaskerIntent.ACTION_QUERY_CONDITION
          */
-        const val RESULT_CONDITION_UNSATISFIED = 17
+        internal const val RESULT_CONDITION_UNSATISFIED = 17
 
         /**
          *
@@ -303,7 +303,7 @@ class TaskerIntent private constructor() {
          *
          * @see TaskerIntent.ACTION_QUERY_CONDITION
          */
-        const val RESULT_CONDITION_UNKNOWN = 18
+        internal const val RESULT_CONDITION_UNKNOWN = 18
     }
 
     /**

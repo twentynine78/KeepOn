@@ -29,14 +29,14 @@ class MultiProvider : ContentProvider() {
 
         // Special URL just for clearing preferences
         private const val URL_PREFERENCES = "content://$PROVIDER_NAME/prefs/"
-        const val CODE_STRING = 1
-        const val CODE_INTEGER = 2
-        const val CODE_LONG = 3
-        const val CODE_BOOLEAN = 4
-        const val CODE_PREFS = 5
-        const val CODE_REMOVE_KEY = 6
-        const val KEY = "key"
-        const val VALUE = "value"
+        internal const val CODE_STRING = 1
+        internal const val CODE_INTEGER = 2
+        internal const val CODE_LONG = 3
+        internal const val CODE_BOOLEAN = 4
+        internal const val CODE_PREFS = 5
+        internal const val CODE_REMOVE_KEY = 6
+        internal const val KEY = "key"
+        internal const val VALUE = "value"
 
         /**
          * Create UriMatcher to match all requests

@@ -712,14 +712,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val ANIMATION_DURATION: Long = 300
+        private const val ANIMATION_DURATION: Long = 300
 
-        const val MAIN_BROADCAST_PERMISSION = "fr.twentynine.keepon.MAIN_BROADCAST_PERMISSION"
+        private const val MAIN_BROADCAST_PERMISSION = "fr.twentynine.keepon.MAIN_BROADCAST_PERMISSION"
 
-        const val DIALOG_SET_ORIGINAL_TIMEOUT_SHOWED = "DIALOG_SET_ORIGINAL_TIMEOUT_SHOWED"
-        const val DIALOG_SET_ORIGINAL_TIMEOUT_VALUE = "DIALOG_SET_ORIGINAL_TIMEOUT_VALUE"
-        const val DIALOG_CREDITS_SHOWED = "DIALOG_CREDITS_SHOWED"
-        const val BOTTOM_SHEET_STATE_EXPANDED = "BOTTOM_SHEET_STATE"
+        private const val DIALOG_SET_ORIGINAL_TIMEOUT_SHOWED = "DIALOG_SET_ORIGINAL_TIMEOUT_SHOWED"
+        private const val DIALOG_SET_ORIGINAL_TIMEOUT_VALUE = "DIALOG_SET_ORIGINAL_TIMEOUT_VALUE"
+        private const val DIALOG_CREDITS_SHOWED = "DIALOG_CREDITS_SHOWED"
+        private const val BOTTOM_SHEET_STATE_EXPANDED = "BOTTOM_SHEET_STATE"
 
         fun newIntent(context: Context): Intent {
             return Intent(context, MainActivity::class.java)
