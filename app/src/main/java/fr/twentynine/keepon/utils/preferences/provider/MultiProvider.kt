@@ -26,9 +26,10 @@ class MultiProvider : ContentProvider() {
         private const val URL_INT = "content://$PROVIDER_NAME/integer/"
         private const val URL_LONG = "content://$PROVIDER_NAME/long/"
         private const val URL_BOOLEAN = "content://$PROVIDER_NAME/boolean/"
-
         // Special URL just for clearing preferences
+        private const val URL_DELETE = "content://$PROVIDER_NAME/remove/"
         private const val URL_PREFERENCES = "content://$PROVIDER_NAME/prefs/"
+
         internal const val CODE_STRING = 1
         internal const val CODE_INTEGER = 2
         internal const val CODE_LONG = 3
@@ -47,6 +48,7 @@ class MultiProvider : ContentProvider() {
             this.addURI(PROVIDER_NAME, "integer/*/*", CODE_INTEGER)
             this.addURI(PROVIDER_NAME, "long/*/*", CODE_LONG)
             this.addURI(PROVIDER_NAME, "boolean/*/*", CODE_BOOLEAN)
+            this.addURI(PROVIDER_NAME, "remove/*/", CODE_REMOVE_KEY)
             this.addURI(PROVIDER_NAME, "prefs/*/", CODE_PREFS)
         }
 
@@ -100,8 +102,8 @@ class MultiProvider : ContentProvider() {
                 CODE_INTEGER -> Uri.parse("$URL_INT$prefFileName/$key")
                 CODE_LONG -> Uri.parse("$URL_LONG$prefFileName/$key")
                 CODE_BOOLEAN -> Uri.parse("$URL_BOOLEAN$prefFileName/$key")
+                CODE_REMOVE_KEY -> Uri.parse("$URL_DELETE$prefFileName/$key")
                 CODE_PREFS -> Uri.parse("$URL_PREFERENCES$prefFileName/$key")
-                CODE_REMOVE_KEY -> Uri.parse("$URL_PREFERENCES$prefFileName/$key")
                 else -> throw IllegalArgumentException("Not Supported Type : $prefType")
             }
         }
@@ -165,20 +167,36 @@ class MultiProvider : ContentProvider() {
         val interactor: PreferenceInteractor? = getPreferenceInteractor(uri.pathSegments[1])
         when (mUriMatcher.match(uri)) {
             CODE_STRING -> {
-                val s: String = uri.pathSegments[2]
-                return if (interactor!!.hasKey(s)) preferenceToCursor(interactor.getString(s)) else null
+                return try {
+                    val s: String = uri.pathSegments[2]
+                    if (interactor!!.hasKey(s)) preferenceToCursor(interactor.getString(s)) else null
+                } catch (e: Exception) {
+                    null
+                }
             }
             CODE_INTEGER -> {
-                val i: String = uri.pathSegments[2]
-                return if (interactor!!.hasKey(i)) preferenceToCursor(interactor.getInt(i)) else null
+                return try {
+                    val i: String = uri.pathSegments[2]
+                    if (interactor!!.hasKey(i)) preferenceToCursor(interactor.getInt(i)) else null
+                } catch (e: Exception) {
+                    null
+                }
             }
             CODE_LONG -> {
-                val l: String = uri.pathSegments[2]
-                return if (interactor!!.hasKey(l)) preferenceToCursor(interactor.getLong(l)) else null
+                return try {
+                    val l: String = uri.pathSegments[2]
+                    if (interactor!!.hasKey(l)) preferenceToCursor(interactor.getLong(l)) else null
+                } catch (e: Exception) {
+                    null
+                }
             }
             CODE_BOOLEAN -> {
-                val b: String = uri.pathSegments[2]
-                return if (interactor!!.hasKey(b)) preferenceToCursor(if (interactor.getBoolean(b)) 1 else 0) else null
+                return try {
+                    val b: String = uri.pathSegments[2]
+                    if (interactor!!.hasKey(b)) preferenceToCursor(if (interactor.getBoolean(b)) 1 else 0) else null
+                } catch (e: Exception) {
+                    null
+                }
             }
         }
         return null
@@ -215,12 +233,9 @@ class MultiProvider : ContentProvider() {
         selection: String?,
         selectionArgs: Array<String?>?
     ): Int {
-        val interactor: PreferenceInteractor? =
-            getPreferenceInteractor(uri.pathSegments[1])
+        val interactor: PreferenceInteractor? = getPreferenceInteractor(uri.pathSegments[1])
         when (mUriMatcher.match(uri)) {
-            CODE_REMOVE_KEY -> interactor!!.removePref(
-                uri.pathSegments[2]
-            )
+            CODE_REMOVE_KEY -> interactor!!.removePref(uri.pathSegments[2])
             CODE_PREFS -> interactor!!.clearPreference()
             else -> return 0
         }
