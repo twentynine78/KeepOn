@@ -10,8 +10,7 @@ import android.content.SharedPreferences
  * - Accesses Shared Preferences and returns a (Matrix) Cursor Object
  */
 class PreferenceInteractor(context: Context, preferenceName: String?) {
-    private val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
+    private val sharedPreferences: SharedPreferences = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
 
     fun hasKey(key: String?): Boolean {
         return sharedPreferences.contains(key)
@@ -26,12 +25,7 @@ class PreferenceInteractor(context: Context, preferenceName: String?) {
     }
 
     fun getInt(key: String?): Int {
-        return (
-            if (sharedPreferences.contains(key)) sharedPreferences.getInt(
-                key,
-                DEFAULT_INT
-            ) else DEFAULT_INT
-            )
+        return sharedPreferences.getInt(key, DEFAULT_INT)
     }
 
     fun setInt(key: String?, value: Int) {
