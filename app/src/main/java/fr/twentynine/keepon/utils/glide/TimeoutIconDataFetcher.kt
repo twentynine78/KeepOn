@@ -65,27 +65,27 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
             else -> 60f.px / scaleRatio
         }
         // Set text size from saved preference
-        textSize += (model.iconStyleFontSize * 2).px / scaleRatio
+        textSize += (model.iconStyle.iconStyleFontSize * 2).px / scaleRatio
         paint.textSize = textSize
 
         // Set typeface from saved preference
-        val bold = model.iconStyleFontBold
+        val bold = model.iconStyle.iconStyleFontBold
         paint.typeface = when {
-            model.iconStyleTypefaceSansSerif -> {
+            model.iconStyle.iconStyleTypefaceSansSerif -> {
                 if (bold) {
                     sansSerifBold
                 } else {
                     sansSerifNormal
                 }
             }
-            model.iconStyleTypefaceSerif -> {
+            model.iconStyle.iconStyleTypefaceSerif -> {
                 if (bold) {
                     serifBold
                 } else {
                     serifNormal
                 }
             }
-            model.iconStyleTypefaceMonospace -> {
+            model.iconStyle.iconStyleTypefaceMonospace -> {
                 if (bold) {
                     monospaceBold
                 } else {
@@ -97,14 +97,14 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
 
         // Set text style from saved preference
         val paintStyle = when {
-            model.iconStyleTextFill -> {
+            model.iconStyle.iconStyleTextFill -> {
                 paintStyleFill
             }
-            model.iconStyleTextFillStroke -> {
+            model.iconStyle.iconStyleTextFillStroke -> {
                 paint.strokeWidth = 3f.px / scaleRatio
                 paintStyleFillAndStroke
             }
-            model.iconStyleTextStroke -> {
+            model.iconStyle.iconStyleTextStroke -> {
                 paint.strokeWidth = 3f.px / scaleRatio
                 paintStyleStroke
             }
@@ -113,15 +113,15 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
         paint.style = paintStyle
 
         // Set text skew from preference
-        paint.textSkewX = (-(model.iconStyleFontSkew / 1.7).toFloat())
+        paint.textSkewX = (-(model.iconStyle.iconStyleFontSkew / 1.7).toFloat())
 
         // Set font SMCP from preference
-        if (model.iconStyleFontSMCP) {
+        if (model.iconStyle.iconStyleFontSMCP) {
             paint.fontFeatureSettings = "smcp"
         }
 
         // Set font underline from preference
-        paint.isUnderlineText = model.iconStyleFontUnderline
+        paint.isUnderlineText = model.iconStyle.iconStyleFontUnderline
 
         paint.textAlign = paintAlignLeft
         paint.isAntiAlias = true
@@ -139,7 +139,7 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
         // Draw text
         canvas.drawText(
             displayTimeout,
-            x + ((model.iconStyleFontSpacing * 7).px / scaleRatio),
+            x + ((model.iconStyle.iconStyleFontSpacing * 7).px / scaleRatio),
             y,
             paint
         )
@@ -189,27 +189,27 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
             else -> 5f.px
         }
         // Set text size from saved preference
-        textSize += (model.iconStyleFontSize / 2).px
+        textSize += (model.iconStyle.iconStyleFontSize / 2).px
         paint.textSize = textSize
 
         // Set typeface from saved preference
-        val bold = model.iconStyleFontBold
+        val bold = model.iconStyle.iconStyleFontBold
         paint.typeface = when {
-            model.iconStyleTypefaceSansSerif -> {
+            model.iconStyle.iconStyleTypefaceSansSerif -> {
                 if (bold) {
                     sansSerifBold
                 } else {
                     sansSerifNormal
                 }
             }
-            model.iconStyleTypefaceSerif -> {
+            model.iconStyle.iconStyleTypefaceSerif -> {
                 if (bold) {
                     serifBold
                 } else {
                     serifNormal
                 }
             }
-            model.iconStyleTypefaceMonospace -> {
+            model.iconStyle.iconStyleTypefaceMonospace -> {
                 if (bold) {
                     monospaceBold
                 } else {
@@ -221,14 +221,14 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
 
         // Set text style from saved preference
         val paintStyle = when {
-            model.iconStyleTextFill -> {
+            model.iconStyle.iconStyleTextFill -> {
                 paintStyleFill
             }
-            model.iconStyleTextFillStroke -> {
+            model.iconStyle.iconStyleTextFillStroke -> {
                 paint.strokeWidth = 1f.px
                 paintStyleFillAndStroke
             }
-            model.iconStyleTextStroke -> {
+            model.iconStyle.iconStyleTextStroke -> {
                 paint.strokeWidth = 1f.px
                 paintStyleStroke
             }
@@ -238,15 +238,15 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
         paint.strokeCap = paintCapRound
 
         // Set text skew from preference
-        paint.textSkewX = (-(model.iconStyleFontSkew / 1.7).toFloat())
+        paint.textSkewX = (-(model.iconStyle.iconStyleFontSkew / 1.7).toFloat())
 
         // Set font SMCP from preference
-        if (model.iconStyleFontSMCP) {
+        if (model.iconStyle.iconStyleFontSMCP) {
             paint.fontFeatureSettings = "smcp"
         }
 
         // Set font underline from preference
-        paint.isUnderlineText = model.iconStyleFontUnderline
+        paint.isUnderlineText = model.iconStyle.iconStyleFontUnderline
 
         paint.textAlign = paintAlignLeft
         paint.isAntiAlias = true
@@ -270,7 +270,7 @@ class TimeoutIconDataFetcher(private val model: TimeoutIconData) : DataFetcher<B
         // Draw text
         canvas.drawText(
             displayTimeout,
-            x + (model.iconStyleFontSpacing / 2).px,
+            x + (model.iconStyle.iconStyleFontSpacing / 2).px,
             y,
             paint
         )

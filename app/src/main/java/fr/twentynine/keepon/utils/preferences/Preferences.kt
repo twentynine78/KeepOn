@@ -5,8 +5,11 @@ import android.app.admin.DevicePolicyManager
 import android.content.ContentResolver
 import android.content.Context
 import android.provider.Settings
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.di.annotation.ApplicationScope
+import fr.twentynine.keepon.utils.glide.TimeoutIconStyle
 import fr.twentynine.keepon.utils.preferences.provider.MultiPreferences
 import toothpick.InjectConstructor
 import toothpick.ktp.delegate.lazy
@@ -22,6 +25,8 @@ import kotlin.collections.ArrayList
 class Preferences(application: Application, private val contentResolver: ContentResolver) {
 
     private val multiPreferences: MultiPreferences by lazy()
+
+    private val timeoutIconStyleJsonAdapter: JsonAdapter<TimeoutIconStyle> by lazy { Moshi.Builder().build().adapter(TimeoutIconStyle::class.java) }
 
     private val mDPM = application.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
     private val timeoutValueArray = arrayListOf(
@@ -227,126 +232,6 @@ class Preferences(application: Application, private val contentResolver: Content
             .setBoolean(PREFS_FILENAME, DARK_THEME, value)
     }
 
-    fun getQSStyleFontSize(): Int {
-        return multiPreferences
-            .getInt(PREFS_BACKUP_FILENAME, QS_STYLE_FONT_SIZE, 0)
-    }
-
-    fun setQSStyleFontSize(value: Int) {
-        multiPreferences
-            .setInt(PREFS_BACKUP_FILENAME, QS_STYLE_FONT_SIZE, value)
-    }
-
-    fun getQSStyleFontSkew(): Int {
-        return multiPreferences
-            .getInt(PREFS_BACKUP_FILENAME, QS_STYLE_FONT_SKEW, 0)
-    }
-
-    fun setQSStyleFontSkew(value: Int) {
-        multiPreferences
-            .setInt(PREFS_BACKUP_FILENAME, QS_STYLE_FONT_SKEW, value)
-    }
-
-    fun getQSStyleFontSpacing(): Int {
-        return multiPreferences
-            .getInt(PREFS_BACKUP_FILENAME, QS_STYLE_FONT_SPACING, 0)
-    }
-
-    fun setQSStyleFontSpacing(value: Int) {
-        multiPreferences
-            .setInt(PREFS_BACKUP_FILENAME, QS_STYLE_FONT_SPACING, value)
-    }
-
-    fun getQSStyleFontBold(): Boolean {
-        return multiPreferences
-            .getBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_FONT_BOLD, true)
-    }
-
-    fun setQSStyleFontBold(value: Boolean) {
-        multiPreferences
-            .setBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_FONT_BOLD, value)
-    }
-
-    fun getQSStyleFontUnderline(): Boolean {
-        return multiPreferences
-            .getBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_FONT_UNDERLINE, false)
-    }
-
-    fun setQSStyleFontUnderline(value: Boolean) {
-        multiPreferences
-            .setBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_FONT_UNDERLINE, value)
-    }
-
-    fun getQSStyleFontSMCP(): Boolean {
-        return multiPreferences
-            .getBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_FONT_SMCP, false)
-    }
-
-    fun setQSStyleFontSMCP(value: Boolean) {
-        multiPreferences
-            .setBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_FONT_SMCP, value)
-    }
-
-    fun getQSStyleTypefaceSansSerif(): Boolean {
-        return multiPreferences
-            .getBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_TYPEFACE_SANS_SERIF, true)
-    }
-
-    fun setQSStyleTypefaceSansSerif(value: Boolean) {
-        multiPreferences
-            .setBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_TYPEFACE_SANS_SERIF, value)
-    }
-
-    fun getQSStyleTypefaceSerif(): Boolean {
-        return multiPreferences
-            .getBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_TYPEFACE_SERIF, false)
-    }
-
-    fun setQSStyleTypefaceSerif(value: Boolean) {
-        multiPreferences
-            .setBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_TYPEFACE_SERIF, value)
-    }
-
-    fun getQSStyleTypefaceMonospace(): Boolean {
-        return multiPreferences
-            .getBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_TYPEFACE_MONOSPACE, false)
-    }
-
-    fun setQSStyleTypefaceMonospace(value: Boolean) {
-        multiPreferences
-            .setBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_TYPEFACE_MONOSPACE, value)
-    }
-
-    fun getQSStyleTextFill(): Boolean {
-        return multiPreferences
-            .getBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_TEXT_FILL, true)
-    }
-
-    fun setQSStyleTextFill(value: Boolean) {
-        multiPreferences
-            .setBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_TEXT_FILL, value)
-    }
-
-    fun getQSStyleTextFillStroke(): Boolean {
-        return multiPreferences
-            .getBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_TEXT_FILL_STROKE, false)
-    }
-
-    fun setQSStyleTextFillStroke(value: Boolean) {
-        multiPreferences
-            .setBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_TEXT_FILL_STROKE, value)
-    }
-
-    fun getQSStyleTextStroke(): Boolean {
-        return multiPreferences
-            .getBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_TEXT_STROKE, false)
-    }
-
-    fun setQSStyleTextStroke(value: Boolean) {
-        multiPreferences
-            .setBoolean(PREFS_BACKUP_FILENAME, QS_STYLE_TEXT_STROKE, value)
-    }
-
     fun getAppReviewAsked(): Boolean {
         return multiPreferences
             .getBoolean(PREFS_BACKUP_FILENAME, APP_REVIEW_ASKED, false)
@@ -377,6 +262,83 @@ class Preferences(application: Application, private val contentResolver: Content
             .setBoolean(PREFS_FILENAME, APP_IS_LAUNCHED, value)
     }
 
+    fun getTimeoutIconStyle(): TimeoutIconStyle {
+        val timeoutIconStyleJson = multiPreferences.getString(PREFS_BACKUP_FILENAME, TIMEOUT_ICON_STYLE, "")
+        if (timeoutIconStyleJson != "") {
+            val timeoutIconStyle = timeoutIconStyleJsonAdapter.fromJson(timeoutIconStyleJson)
+            if (timeoutIconStyle != null) {
+                return timeoutIconStyle
+            }
+        }
+        return if (multiPreferences.getBoolean(PREFS_BACKUP_FILENAME, TIMEOUT_ICON_STYLE_CONVERTED, false)) {
+            TimeoutIconStyle()
+        } else {
+            convertOldTimeoutIconStyle()
+        }
+    }
+
+    fun setTimeoutIconStyle(value: TimeoutIconStyle) {
+        val timeoutIconStyleJson = timeoutIconStyleJsonAdapter.toJson(value)
+        if (timeoutIconStyleJson != null) {
+            multiPreferences.setString(PREFS_BACKUP_FILENAME, TIMEOUT_ICON_STYLE, timeoutIconStyleJson)
+        } else {
+            multiPreferences.setString(PREFS_BACKUP_FILENAME, TIMEOUT_ICON_STYLE, "")
+        }
+    }
+
+    fun convertOldTimeoutIconStyle(): TimeoutIconStyle {
+        val qsStyleFontSize = "qsStyleFontSize"
+        val qsStyleFontSkew = "qsStyleFontSkew"
+        val qsStyleFontSpacing = "qsStyleFontSpacing"
+        val qsStyleTypefaceSansSerif = "qsStyleTypefaceSansSerif"
+        val qsStyleTypefaceSerif = "qsStyleTypefaceSerif"
+        val qsStyleTypefaceMonospace = "qsStyleTypefaceMonospace"
+        val qsStyleTextFill = "qsStyleTextFill"
+        val qsStyleTextFillStroke = "qsStyleTextFillStroke"
+        val qsStyleTextStroke = "qsStyleTextStroke"
+        val qsStyleFontBold = "qsStyleFontBold"
+        val qsStyleFontUnderline = "qsStyleFontUnderline"
+        val qsStyleFontSMCP = "qsStyleFontSMCP"
+
+        // Define new timeout icon style
+        val newTimeoutIconStyle = TimeoutIconStyle(
+            multiPreferences.getInt(PREFS_BACKUP_FILENAME, qsStyleFontSize, 0),
+            multiPreferences.getInt(PREFS_BACKUP_FILENAME, qsStyleFontSkew, 0),
+            multiPreferences.getInt(PREFS_BACKUP_FILENAME, qsStyleFontSpacing, 0),
+            multiPreferences.getBoolean(PREFS_BACKUP_FILENAME, qsStyleTypefaceSansSerif, true),
+            multiPreferences.getBoolean(PREFS_BACKUP_FILENAME, qsStyleTypefaceSerif, false),
+            multiPreferences.getBoolean(PREFS_BACKUP_FILENAME, qsStyleTypefaceMonospace, false),
+            multiPreferences.getBoolean(PREFS_BACKUP_FILENAME, qsStyleFontBold, true),
+            multiPreferences.getBoolean(PREFS_BACKUP_FILENAME, qsStyleFontUnderline, false),
+            multiPreferences.getBoolean(PREFS_BACKUP_FILENAME, qsStyleFontSMCP, false),
+            multiPreferences.getBoolean(PREFS_BACKUP_FILENAME, qsStyleTextFill, true),
+            multiPreferences.getBoolean(PREFS_BACKUP_FILENAME, qsStyleTextFillStroke, false),
+            multiPreferences.getBoolean(PREFS_BACKUP_FILENAME, qsStyleTextStroke, false)
+        )
+
+        // Set new timeout style preference
+        setTimeoutIconStyle(newTimeoutIconStyle)
+
+        // Clear previous style preferences
+        multiPreferences.removePreference(PREFS_BACKUP_FILENAME, qsStyleFontSize)
+        multiPreferences.removePreference(PREFS_BACKUP_FILENAME, qsStyleFontSkew)
+        multiPreferences.removePreference(PREFS_BACKUP_FILENAME, qsStyleFontSpacing)
+        multiPreferences.removePreference(PREFS_BACKUP_FILENAME, qsStyleTypefaceSansSerif)
+        multiPreferences.removePreference(PREFS_BACKUP_FILENAME, qsStyleTypefaceSerif)
+        multiPreferences.removePreference(PREFS_BACKUP_FILENAME, qsStyleTypefaceMonospace)
+        multiPreferences.removePreference(PREFS_BACKUP_FILENAME, qsStyleFontBold)
+        multiPreferences.removePreference(PREFS_BACKUP_FILENAME, qsStyleFontUnderline)
+        multiPreferences.removePreference(PREFS_BACKUP_FILENAME, qsStyleFontSMCP)
+        multiPreferences.removePreference(PREFS_BACKUP_FILENAME, qsStyleTextFill)
+        multiPreferences.removePreference(PREFS_BACKUP_FILENAME, qsStyleTextFillStroke)
+        multiPreferences.removePreference(PREFS_BACKUP_FILENAME, qsStyleTextStroke)
+
+        // Set timeout icon style converted
+        multiPreferences.setBoolean(PREFS_BACKUP_FILENAME, TIMEOUT_ICON_STYLE_CONVERTED, true)
+
+        return newTimeoutIconStyle
+    }
+
     companion object {
         private const val PREFS_FILENAME = "keepon_prefs"
         private const val PREFS_BACKUP_FILENAME = "keepon_prefs_backup"
@@ -391,18 +353,8 @@ class Preferences(application: Application, private val contentResolver: Content
         private const val NEW_VALUE = "newValue"
         private const val PREVIOUS_VALUE = "previousValue"
         private const val DARK_THEME = "darkTheme"
-        private const val QS_STYLE_FONT_SIZE = "qsStyleFontSize"
-        private const val QS_STYLE_FONT_SKEW = "qsStyleFontSkew"
-        private const val QS_STYLE_FONT_SPACING = "qsStyleFontSpacing"
-        private const val QS_STYLE_TYPEFACE_SANS_SERIF = "qsStyleTypefaceSansSerif"
-        private const val QS_STYLE_TYPEFACE_SERIF = "qsStyleTypefaceSerif"
-        private const val QS_STYLE_TYPEFACE_MONOSPACE = "qsStyleTypefaceMonospace"
-        private const val QS_STYLE_TEXT_FILL = "qsStyleTextFill"
-        private const val QS_STYLE_TEXT_FILL_STROKE = "qsStyleTextFillStroke"
-        private const val QS_STYLE_TEXT_STROKE = "qsStyleTextStroke"
-        private const val QS_STYLE_FONT_BOLD = "qsStyleFontBold"
-        private const val QS_STYLE_FONT_UNDERLINE = "qsStyleFontUnderline"
-        private const val QS_STYLE_FONT_SMCP = "qsStyleFontSMCP"
+        private const val TIMEOUT_ICON_STYLE = "timeoutIconStyle"
+        private const val TIMEOUT_ICON_STYLE_CONVERTED = "timeoutIconStyle"
         private const val APP_REVIEW_ASKED = "appReviewAsked"
         private const val APP_LAUNCH_COUNT = "appLaunchCount"
         private const val APP_IS_LAUNCHED = "appIsLaunched"

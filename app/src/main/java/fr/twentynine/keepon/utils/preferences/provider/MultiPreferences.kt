@@ -6,6 +6,7 @@ import fr.twentynine.keepon.di.annotation.ApplicationScope
 import fr.twentynine.keepon.utils.preferences.provider.MultiProvider.Companion.CODE_BOOLEAN
 import fr.twentynine.keepon.utils.preferences.provider.MultiProvider.Companion.CODE_INTEGER
 import fr.twentynine.keepon.utils.preferences.provider.MultiProvider.Companion.CODE_LONG
+import fr.twentynine.keepon.utils.preferences.provider.MultiProvider.Companion.CODE_REMOVE_KEY
 import fr.twentynine.keepon.utils.preferences.provider.MultiProvider.Companion.CODE_STRING
 import fr.twentynine.keepon.utils.preferences.provider.MultiProvider.Companion.createContentValues
 import fr.twentynine.keepon.utils.preferences.provider.MultiProvider.Companion.createQueryUri
@@ -106,11 +107,11 @@ class MultiPreferences(private val resolver: ContentResolver) {
         )
     }
 
-    /* Unused functions
-    fun removePreference(key: String) {
+    fun removePreference(mName: String, key: String) {
         resolver.delete(createQueryUri(mName, key, CODE_REMOVE_KEY), null, null)
     }
 
+    /* Unused functions
     fun clearPreferences() {
         resolver.delete(createQueryUri(mName, "", CODE_PREFS), null, null)
     } */

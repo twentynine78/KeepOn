@@ -51,6 +51,7 @@ import fr.twentynine.keepon.ui.intro.IntroActivity
 import fr.twentynine.keepon.utils.ActivityUtils
 import fr.twentynine.keepon.utils.CommonUtils
 import fr.twentynine.keepon.utils.Rate
+import fr.twentynine.keepon.utils.glide.TimeoutIconStyle
 import fr.twentynine.keepon.utils.preferences.Preferences
 import fr.twentynine.keepon.utils.px
 import fr.twentynine.keepon.utils.viewBinding
@@ -65,7 +66,6 @@ import kotlin.collections.ArrayList
 import kotlin.math.hypot
 import kotlin.math.roundToInt
 
-@Suppress("TooManyFunctions")
 class MainActivity : AppCompatActivity() {
 
     private data class TimeoutSwitch(val switch: SwitchMaterial, val timeoutValue: Int)
@@ -519,34 +519,35 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadQSStylePreferences() {
         // Load value from activityUtils
-        binding.includeBottomSheet.sliderSize.value = preferences.getQSStyleFontSize().toFloat()
-        binding.includeBottomSheet.seekSkew.value = preferences.getQSStyleFontSkew().toFloat()
-        binding.includeBottomSheet.seekSpace.value = preferences.getQSStyleFontSpacing().toFloat()
+        val timeoutIconStyle = preferences.getTimeoutIconStyle()
+        binding.includeBottomSheet.sliderSize.value = timeoutIconStyle.iconStyleFontSize.toFloat()
+        binding.includeBottomSheet.seekSkew.value = timeoutIconStyle.iconStyleFontSkew.toFloat()
+        binding.includeBottomSheet.seekSpace.value = timeoutIconStyle.iconStyleFontSpacing.toFloat()
 
-        binding.includeBottomSheet.radioTypefaceSanSerif.isChecked = preferences.getQSStyleTypefaceSansSerif()
-        binding.includeBottomSheet.radioTypefaceSerif.isChecked = preferences.getQSStyleTypefaceSerif()
-        binding.includeBottomSheet.radioTypefaceMonospace.isChecked = preferences.getQSStyleTypefaceMonospace()
+        binding.includeBottomSheet.radioTypefaceSanSerif.isChecked = timeoutIconStyle.iconStyleTypefaceSansSerif
+        binding.includeBottomSheet.radioTypefaceSerif.isChecked = timeoutIconStyle.iconStyleTypefaceSerif
+        binding.includeBottomSheet.radioTypefaceMonospace.isChecked = timeoutIconStyle.iconStyleTypefaceMonospace
 
-        binding.includeBottomSheet.radioStyleFill.isChecked = preferences.getQSStyleTextFill()
-        binding.includeBottomSheet.radioStyleFillStroke.isChecked = preferences.getQSStyleTextFillStroke()
-        binding.includeBottomSheet.radioStyleStroke.isChecked = preferences.getQSStyleTextStroke()
+        binding.includeBottomSheet.radioStyleFill.isChecked = timeoutIconStyle.iconStyleTextFill
+        binding.includeBottomSheet.radioStyleFillStroke.isChecked = timeoutIconStyle.iconStyleTextFillStroke
+        binding.includeBottomSheet.radioStyleStroke.isChecked = timeoutIconStyle.iconStyleTextStroke
 
-        binding.includeBottomSheet.switchFakeBold.isChecked = preferences.getQSStyleFontBold()
-        binding.includeBottomSheet.switchUnderline.isChecked = preferences.getQSStyleFontUnderline()
-        binding.includeBottomSheet.switchSmcp.isChecked = preferences.getQSStyleFontSMCP()
+        binding.includeBottomSheet.switchFakeBold.isChecked = timeoutIconStyle.iconStyleFontBold
+        binding.includeBottomSheet.switchUnderline.isChecked = timeoutIconStyle.iconStyleFontUnderline
+        binding.includeBottomSheet.switchSmcp.isChecked = timeoutIconStyle.iconStyleFontSMCP
 
         // Set OnClickListener and OnSeekBarChangeListener for QS Style controls
-        val qsStyleOnChangeListener = Slider.OnChangeListener { _, _, _ -> saveQSStyleSlidePreferences() }
-        val qsStyleOnclickListener = View.OnClickListener { saveQSStyleClickPreferences() }
+        val qsStyleOnChangeListener = Slider.OnChangeListener { _, _, _ -> saveTimeoutIconStyle() }
+        val qsStyleOnclickListener = View.OnClickListener { saveTimeoutIconStyle() }
         val qsStyleOnclickListenerTypeface = View.OnClickListener {
             if (binding.includeBottomSheet.radioTypefaceSanSerif.isChecked) {
                 binding.includeBottomSheet.switchSmcp.isEnabled = true
-                binding.includeBottomSheet.switchSmcp.isChecked = preferences.getQSStyleFontSMCP()
+                binding.includeBottomSheet.switchSmcp.isChecked = timeoutIconStyle.iconStyleFontSMCP
             } else {
                 binding.includeBottomSheet.switchSmcp.isEnabled = false
                 binding.includeBottomSheet.switchSmcp.isChecked = false
             }
-            saveQSStyleClickPreferences()
+            saveTimeoutIconStyle()
         }
 
         binding.includeBottomSheet.sliderSize.addOnChangeListener(qsStyleOnChangeListener)
@@ -566,41 +567,22 @@ class MainActivity : AppCompatActivity() {
         binding.includeBottomSheet.radioTypefaceMonospace.setOnClickListener(qsStyleOnclickListenerTypeface)
     }
 
-    private fun saveQSStyleSlidePreferences() {
+    private fun saveTimeoutIconStyle() {
         lifecycleScope.launch(Dispatchers.Default) {
-            preferences.setQSStyleFontSize(binding.includeBottomSheet.sliderSize.value.toInt())
-            preferences.setQSStyleFontSkew(binding.includeBottomSheet.seekSkew.value.toInt())
-            preferences.setQSStyleFontSpacing(binding.includeBottomSheet.seekSpace.value.toInt())
-
-            withContext(Dispatchers.Main) {
-                // Update Tile Preview
-                updateTilePreview()
-            }
-
-            // Update QS Tile
-            commonUtils.updateQSTile()
-
-            // Update App shortcuts
-            commonUtils.manageAppShortcuts()
-        }
-    }
-
-    private fun saveQSStyleClickPreferences() {
-        lifecycleScope.launch(Dispatchers.Default) {
-            // Save all values to Preferences
-            preferences.setQSStyleTextFill(binding.includeBottomSheet.radioStyleFill.isChecked)
-            preferences.setQSStyleTextFillStroke(binding.includeBottomSheet.radioStyleFillStroke.isChecked)
-            preferences.setQSStyleTextStroke(binding.includeBottomSheet.radioStyleStroke.isChecked)
-
-            preferences.setQSStyleFontBold(binding.includeBottomSheet.switchFakeBold.isChecked)
-            preferences.setQSStyleFontUnderline(binding.includeBottomSheet.switchUnderline.isChecked)
-            if (binding.includeBottomSheet.switchSmcp.isEnabled) {
-                preferences.setQSStyleFontSMCP(binding.includeBottomSheet.switchSmcp.isChecked)
-            }
-
-            preferences.setQSStyleTypefaceSansSerif(binding.includeBottomSheet.radioTypefaceSanSerif.isChecked)
-            preferences.setQSStyleTypefaceSerif(binding.includeBottomSheet.radioTypefaceSerif.isChecked)
-            preferences.setQSStyleTypefaceMonospace(binding.includeBottomSheet.radioTypefaceMonospace.isChecked)
+            preferences.setTimeoutIconStyle(TimeoutIconStyle(
+                binding.includeBottomSheet.sliderSize.value.toInt(),
+                binding.includeBottomSheet.seekSkew.value.toInt(),
+                binding.includeBottomSheet.seekSpace.value.toInt(),
+                binding.includeBottomSheet.radioTypefaceSanSerif.isChecked,
+                binding.includeBottomSheet.radioTypefaceSerif.isChecked,
+                binding.includeBottomSheet.radioTypefaceMonospace.isChecked,
+                binding.includeBottomSheet.switchFakeBold.isChecked,
+                binding.includeBottomSheet.switchUnderline.isChecked,
+                binding.includeBottomSheet.switchSmcp.isChecked,
+                binding.includeBottomSheet.radioStyleFill.isChecked,
+                binding.includeBottomSheet.radioStyleFillStroke.isChecked,
+                binding.includeBottomSheet.radioStyleStroke.isChecked
+            ))
 
             withContext(Dispatchers.Main) {
                 // Update Tile Preview

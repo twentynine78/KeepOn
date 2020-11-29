@@ -178,18 +178,7 @@ class CommonUtils(private val application: Application) {
         return TimeoutIconData(
             iconTimeout,
             iconSize,
-            preferences.getQSStyleFontSize(),
-            preferences.getQSStyleFontSkew(),
-            preferences.getQSStyleFontSpacing(),
-            preferences.getQSStyleTypefaceSansSerif(),
-            preferences.getQSStyleTypefaceSerif(),
-            preferences.getQSStyleTypefaceMonospace(),
-            preferences.getQSStyleFontBold(),
-            preferences.getQSStyleFontUnderline(),
-            preferences.getQSStyleFontSMCP(),
-            preferences.getQSStyleTextFill(),
-            preferences.getQSStyleTextFillStroke(),
-            preferences.getQSStyleTextStroke()
+            preferences.getTimeoutIconStyle()
         )
     }
 
@@ -219,6 +208,14 @@ class CommonUtils(private val application: Application) {
 
     fun getDisplayTimeoutArray(): ArrayMap<Int, Int> {
         return timeoutMap
+    }
+
+    fun convertOldTimeoutIconStyle() {
+        preferences.convertOldTimeoutIconStyle()
+
+        updateQSTile()
+        manageAppShortcuts()
+        sendBroadcastUpdateMainUI()
     }
 
     private fun setShortcutsIconWithGlide(timeout: Int, shortcutInfo: ShortcutInfo.Builder) {
