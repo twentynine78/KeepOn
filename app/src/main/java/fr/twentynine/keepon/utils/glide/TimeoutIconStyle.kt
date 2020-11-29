@@ -1,5 +1,8 @@
 package fr.twentynine.keepon.utils.glide
 
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
 data class TimeoutIconStyle(
     val iconStyleFontSize: Int = 0,
     val iconStyleFontSkew: Int = 0,
