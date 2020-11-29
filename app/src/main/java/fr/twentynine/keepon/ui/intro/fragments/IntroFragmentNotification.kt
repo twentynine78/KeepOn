@@ -6,7 +6,9 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.github.appintro.SlideBackgroundColorHolder
 import com.github.appintro.SlideSelectionListener
@@ -28,11 +30,11 @@ class IntroFragmentNotification : Fragment(R.layout.fragment_intro_button), Slid
     override val defaultBackgroundColor: Int
         get() = COLOR_SLIDE_NOTIF
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inject dependencies with Toothpick
         ToothpickHelper.scopedInjection(this)
+
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, bundle: Bundle?) {

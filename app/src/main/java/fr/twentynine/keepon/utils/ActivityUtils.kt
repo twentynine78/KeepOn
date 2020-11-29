@@ -46,7 +46,7 @@ import java.util.Locale
 
 @ActivityScope
 @InjectConstructor
-class ActivityUtils(private val activity: AppCompatActivity) {
+class ActivityUtils(private val activity: AppCompatActivity, private val lifecycleOwner: LifecycleOwner) {
 
     private val preferences: Preferences by lazy()
 
@@ -287,7 +287,7 @@ class ActivityUtils(private val activity: AppCompatActivity) {
 
     fun checkNotification() {
         checkNotificationJob?.cancel()
-        checkNotificationJob = activity.lifecycleScope.launch(Dispatchers.Default) {
+        checkNotificationJob = lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
             delay(500)
             repeat(300) {
                 if (!isNotificationEnabled()) {
@@ -305,7 +305,7 @@ class ActivityUtils(private val activity: AppCompatActivity) {
     }
     fun checkPermission() {
         checkPermissionJob?.cancel()
-        checkPermissionJob = activity.lifecycleScope.launch(Dispatchers.Default) {
+        checkPermissionJob = lifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
             delay(500)
             repeat(300) {
                 if (Settings.System.canWrite(activity)) {
@@ -393,10 +393,10 @@ class ActivityUtils(private val activity: AppCompatActivity) {
         val dialogObserver = DialogLifeCycleObserver(dialog)
 
         dialog.setOnShowListener {
-            activity.lifecycle.addObserver(dialogObserver)
+            lifecycleOwner.lifecycle.addObserver(dialogObserver)
         }
         dialog.setOnDismissListener {
-            activity.lifecycle.removeObserver(dialogObserver)
+            lifecycleOwner.lifecycle.removeObserver(dialogObserver)
         }
     }
 

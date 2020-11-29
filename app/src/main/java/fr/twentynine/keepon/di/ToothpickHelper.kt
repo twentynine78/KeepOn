@@ -5,6 +5,7 @@ import android.app.Service
 import android.content.ContentResolver
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.bumptech.glide.RequestManager
@@ -43,6 +44,7 @@ object ToothpickHelper {
                     .supportScopeAnnotation(ActivityScope::class.java)
                     .installModules(module {
                         bind<AppCompatActivity>().toInstance(component)
+                        bind<LifecycleOwner>().toInstance(component)
                         bind<RequestManager>().toInstance(GlideApp.with(component))
                     })
                     .closeOnDestroy(component)
@@ -53,6 +55,12 @@ object ToothpickHelper {
                 KTP.openScope(ApplicationScope::class.java)
                     .openSubScope(ActivityScope::class.java)
                     .openSubScope(component.activity)
+                    .openSubScope(component)
+                    .supportScopeAnnotation(ActivityScope::class.java)
+                    .installModules(module {
+                        bind<LifecycleOwner>().toInstance(component.viewLifecycleOwner)
+                    })
+                    .closeOnDestroy(component.viewLifecycleOwner)
                     .inject(component)
             }
             is KeepOnTileService -> {

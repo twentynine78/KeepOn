@@ -4,7 +4,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.github.appintro.SlideBackgroundColorHolder
 import com.github.appintro.SlidePolicy
@@ -27,11 +29,11 @@ class IntroFragmentPermission : Fragment(R.layout.fragment_intro_button), SlideS
     override val defaultBackgroundColor: Int
         get() = COLOR_SLIDE_PERM
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inject dependencies with Toothpick
         ToothpickHelper.scopedInjection(this)
+
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, bundle: Bundle?) {
