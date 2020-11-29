@@ -101,6 +101,7 @@ class MultiProvider : ContentProvider() {
                 CODE_LONG -> Uri.parse("$URL_LONG$prefFileName/$key")
                 CODE_BOOLEAN -> Uri.parse("$URL_BOOLEAN$prefFileName/$key")
                 CODE_PREFS -> Uri.parse("$URL_PREFERENCES$prefFileName/$key")
+                CODE_REMOVE_KEY -> Uri.parse("$URL_PREFERENCES$prefFileName/$key")
                 else -> throw IllegalArgumentException("Not Supported Type : $prefType")
             }
         }
