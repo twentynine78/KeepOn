@@ -6,6 +6,10 @@ import fr.twentynine.keepon.di.ToothpickHelper
 import fr.twentynine.keepon.di.annotation.ServiceScope
 import fr.twentynine.keepon.utils.CommonUtils
 import fr.twentynine.keepon.utils.preferences.Preferences
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import toothpick.ktp.delegate.lazy
 import java.util.Calendar
 import java.util.TimeZone
@@ -33,9 +37,15 @@ class ScreenTimeoutObserver : ContentObserver(null) {
 
     private fun processChange(selfChange: Boolean) {
         if (selfChange) {
-            preferences.setAppIsLaunched(true)
+            GlobalScope.launch(Dispatchers.Default) {
+                delay(5000)
+                preferences.setAppIsLaunched(true)
+                commonUtils.updateQSTile()
+            }
         } else {
-            if (!preferences.getValueChange() || (Calendar.getInstance(TimeZone.getTimeZone("utc")).timeInMillis >= preferences.getValueChangeTime() + 3000L)) {
+            if ((!preferences.getValueChange() || (Calendar.getInstance(TimeZone.getTimeZone("utc")).timeInMillis >= preferences.getValueChangeTime() + 3000L)) &&
+                preferences.getAppIsLaunched()
+            ) {
                 preferences.setOriginalTimeout(preferences.getCurrentTimeout())
             }
             preferences.setValueChange(false)
@@ -62,9 +72,5 @@ class ScreenTimeoutObserver : ContentObserver(null) {
 
         // Manage dynamics shortcut
         commonUtils.manageAppShortcuts()
-    }
-
-    companion object {
-        var isRegistered = false
     }
 }

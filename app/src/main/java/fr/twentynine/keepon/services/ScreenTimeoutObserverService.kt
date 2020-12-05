@@ -1,6 +1,7 @@
 package fr.twentynine.keepon.services
 
 import android.content.ContentResolver
+import android.os.RemoteException
 import android.provider.Settings
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -26,18 +27,20 @@ class ScreenTimeoutObserverService : LifecycleService() {
     }
 
     private fun registerScreenTimeoutObserver(screenTimeoutObserver: ScreenTimeoutObserver) {
-        if (!ScreenTimeoutObserver.isRegistered) {
-            ScreenTimeoutObserver.isRegistered = true
-
-            val setting = Settings.System.getUriFor(Settings.System.SCREEN_OFF_TIMEOUT)
+        val setting = Settings.System.getUriFor(Settings.System.SCREEN_OFF_TIMEOUT)
+        try {
             mContentResolver.registerContentObserver(setting, false, screenTimeoutObserver)
+        } catch (e: RemoteException) {
+            return
         }
     }
 
     private fun unregisterScreenTimeoutObserver(screenTimeoutObserver: ScreenTimeoutObserver) {
-        ScreenTimeoutObserver.isRegistered = false
-
-        mContentResolver.unregisterContentObserver(screenTimeoutObserver)
+        try {
+            mContentResolver.unregisterContentObserver(screenTimeoutObserver)
+        } catch (e: RemoteException) {
+            return
+        }
     }
 
     companion object {

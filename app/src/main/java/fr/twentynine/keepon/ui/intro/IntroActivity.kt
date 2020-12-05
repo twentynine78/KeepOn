@@ -144,14 +144,17 @@ class IntroActivity : AppIntro2() {
         if (Settings.System.canWrite(this)) {
             super.onDonePressed(currentFragment)
 
-            preferences.setSkipIntro(true)
-            startActivity(Intent(this, MainActivity::class.java))
+            if (!isWizardMode) {
+                preferences.setSkipIntro(true)
+                startActivity(MainActivity.newIntent(this))
+            }
             finish()
         }
     }
 
     public override fun onSkipPressed(currentFragment: Fragment?) {
         super.onSkipPressed(currentFragment)
+
         finish()
     }
 

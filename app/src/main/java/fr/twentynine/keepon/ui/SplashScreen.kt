@@ -99,8 +99,10 @@ class SplashScreen : AppCompatActivity() {
             // Start Intro on first launch
             lifecycleScope.launch(Dispatchers.Default) {
                 delay(SPLASH_TIME_OUT)
-                startActivity(IntroActivity.newIntent(this@SplashScreen.applicationContext))
-                finish()
+                withContext(Dispatchers.Main) {
+                    startActivity(IntroActivity.newIntent(this@SplashScreen.applicationContext))
+                    finish()
+                }
             }
         } else {
             // Launch MainActivity or show animated loading text
@@ -109,8 +111,12 @@ class SplashScreen : AppCompatActivity() {
                 delay(SPLASH_TIME_OUT)
                 repeat(150) {
                     if (preferences.getAppIsLaunched()) {
-                        startActivity(MainActivity.newIntent(this@SplashScreen.applicationContext))
-                        finish()
+                        withContext(Dispatchers.Main) {
+                            startActivity(
+                                MainActivity.newIntent(this@SplashScreen.applicationContext)
+                            )
+                            finish()
+                        }
                         return@launch
                     } else {
                         animateCount++

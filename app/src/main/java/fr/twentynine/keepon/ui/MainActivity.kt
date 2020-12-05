@@ -733,11 +733,19 @@ class MainActivity : AppCompatActivity() {
             val intentFiler = IntentFilter()
             intentFiler.addAction(CommonUtils.ACTION_MAIN_ACTIVITY_UPDATE_UI)
             intentFiler.addAction(CommonUtils.ACTION_MAIN_ACTIVITY_MISSING_SETTINGS)
-            registerReceiver(receiver, intentFiler, MAIN_BROADCAST_PERMISSION, null)
+            try {
+                registerReceiver(receiver, intentFiler, MAIN_BROADCAST_PERMISSION, null)
+            } catch (e: IllegalArgumentException) {
+                return
+            }
         }
 
         override fun onDestroy(owner: LifecycleOwner) {
-            unregisterReceiver(receiver)
+            try {
+                unregisterReceiver(receiver)
+            } catch (e: IllegalArgumentException) {
+                return
+            }
         }
     }
 }
