@@ -10,17 +10,15 @@
     tools:showIn="@layout/activity_main"
     tools:context=".ui.MainActivity">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cardViewContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="20dp"
-        android:paddingBottom="?attr/actionBarSize"
-        android:orientation="vertical">
+        android:paddingBottom="80dp">
 
         <include android:id="@+id/includeCardSettings" layout="@layout/card_main_settings" />
 
         <include android:id="@+id/includeCardAbout" layout="@layout/card_main_about" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

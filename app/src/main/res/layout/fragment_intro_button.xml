@@ -15,54 +15,49 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
-        app:layout_constraintVertical_weight="2"
         app:layout_constraintBottom_toTopOf="@+id/image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="spread"
+        app:layout_constraintVertical_weight="2"
         tools:text="Welcome" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:scaleType="centerInside"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintVertical_weight="5"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         android:contentDescription="@string/app_intro_image_content_description"
-        app:layout_constraintBottom_toTopOf="@+id/bottomView"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title"
-        tools:src="@mipmap/img_intro_perm"/>
+        app:layout_constraintVertical_weight="5"
+        tools:src="@mipmap/img_intro_perm" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image2"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:scaleType="centerInside"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintVertical_weight="5"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         android:contentDescription="@string/app_intro_image_content_description"
-        app:layout_constraintBottom_toTopOf="@+id/bottomView"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title"
-        tools:src="@mipmap/img_intro_perm"/>
+        app:layout_constraintVertical_weight="5"
+        tools:src="@mipmap/img_intro_perm" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/bottomView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintVertical_weight="3"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image"
-        android:orientation="vertical">
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.7" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/description"
@@ -70,26 +65,26 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="10dp"
-        app:autoSizeTextType="uniform"
-        app:autoSizeMinTextSize="12sp"
         app:autoSizeMaxTextSize="@dimen/appintro_desctext_size"
+        app:autoSizeMinTextSize="12sp"
         app:autoSizeStepGranularity="2sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toTopOf="@id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guideline"
         tools:text="This is a demo of the AppIntro Library" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button"
-        android:layout_height="50dp"
         android:layout_width="150dp"
+        android:layout_height="50dp"
         android:textColor="@android:color/white"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/description"
         tools:text="Button" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,100 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/bottomSheet"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottomSheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="7dp"
-    android:outlineProvider="none"
     android:layout_gravity="center_horizontal"
+    android:elevation="7dp"
     android:maxWidth="620dp"
-    app:cardUseCompatPadding="true"
-    app:layout_constrainedHeight="true"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    android:outlineProvider="none"
     app:behavior_hideable="false"
     app:behavior_peekHeight="80dp"
+    app:cardUseCompatPadding="true"
     app:gestureInsetBottomIgnored="true"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    app:layout_constrainedHeight="true"
+    app:layout_constraintBottom_toBottomOf="parent"
     tools:context=".ui.MainActivity">
 
     <View
         android:id="@+id/guideline"
         android:layout_width="1px"
         android:layout_height="1px"
-        android:background="#00000000"
         android:layout_marginBottom="10dp"
-        app:layout_constraintStart_toStartOf="@id/tilePreview"
+        android:background="#00000000"
+        app:layout_constraintBottom_toBottomOf="@+id/tilePreview"
         app:layout_constraintEnd_toEndOf="@id/tilePreview"
-        app:layout_constraintTop_toTopOf="@+id/tilePreview"
-        app:layout_constraintBottom_toBottomOf="@+id/tilePreview"/>
+        app:layout_constraintStart_toStartOf="@id/tilePreview"
+        app:layout_constraintTop_toTopOf="@+id/tilePreview" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/tilePreviewBorder"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/colorBorder"
+        android:contentDescription="@string/bottom_sheet_preview_desc"
         android:elevation="3dp"
         android:padding="2dp"
         android:scaleType="centerCrop"
-        android:contentDescription="@string/bottom_sheet_preview_desc"
-        android:background="@color/colorBorder"
-        app:strokeWidth="2dp"
-        app:strokeColor="@color/colorBorder"
-        app:shapeAppearanceOverlay="@style/CircleImageViewStyle"
+        app:layout_constraintBottom_toBottomOf="@+id/tilePreview"
+        app:layout_constraintEnd_toEndOf="@+id/tilePreview"
         app:layout_constraintStart_toStartOf="@+id/tilePreview"
         app:layout_constraintTop_toTopOf="@+id/tilePreview"
-        app:layout_constraintEnd_toEndOf="@+id/tilePreview"
-        app:layout_constraintBottom_toBottomOf="@+id/tilePreview" />
+        app:shapeAppearanceOverlay="@style/CircleImageViewStyle"
+        app:strokeColor="@color/colorBorder"
+        app:strokeWidth="2dp" />
 
     <ImageView
         android:id="@+id/tilePreviewBackground"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/bottom_sheet_preview_desc"
         android:elevation="7dp"
         android:outlineProvider="none"
-        android:paddingTop="2dp"
         android:paddingStart="2dp"
+        android:paddingTop="2dp"
         android:paddingEnd="2dp"
         android:paddingBottom="2dp"
-        android:contentDescription="@string/bottom_sheet_preview_desc"
-        app:srcCompat="@drawable/circle_background"
+        app:layout_constraintBottom_toBottomOf="@+id/tilePreview"
+        app:layout_constraintEnd_toEndOf="@+id/tilePreview"
         app:layout_constraintStart_toStartOf="@+id/tilePreview"
         app:layout_constraintTop_toTopOf="@+id/tilePreview"
-        app:layout_constraintEnd_toEndOf="@+id/tilePreview"
-        app:layout_constraintBottom_toBottomOf="@+id/tilePreview"/>
+        app:srcCompat="@drawable/circle_background" />
 
     <ImageView
         android:id="@+id/tilePreview"
         android:layout_width="62dp"
         android:layout_height="62dp"
-        android:layout_marginTop="2dp"
         android:layout_marginStart="22dp"
+        android:layout_marginTop="2dp"
+        android:contentDescription="@string/bottom_sheet_preview_desc"
         android:elevation="8dp"
         android:outlineProvider="none"
-        android:scaleType="centerInside"
         android:padding="14dp"
-        android:contentDescription="@string/bottom_sheet_preview_desc"
+        android:scaleType="centerInside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@mipmap/ic_qs_keepon"/>
+        tools:src="@mipmap/ic_qs_keepon" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottomSheetCardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:elevation="3dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/colorBorder"
-        app:cardElevation="3dp"
-        app:cardCornerRadius="6dp"
-        app:cardUseCompatPadding="true"
         app:cardBackgroundColor="@color/colorBottomSheet"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="3dp"
+        app:cardUseCompatPadding="true"
         app:layout_constrainedHeight="true"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomMarginView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline"
-        app:layout_constraintBottom_toTopOf="@id/bottomMarginView">
+        app:strokeColor="@color/colorBorder"
+        app:strokeWidth="1dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottomSheetBackground"
@@ -105,350 +104,374 @@
                 android:id="@+id/bottomSheetPeekTextView"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:textColor="@color/colorText"
-                android:textAlignment="gravity"
+                android:ellipsize="end"
                 android:gravity="center"
                 android:paddingStart="85dp"
                 android:paddingEnd="65dp"
                 android:paddingBottom="7dp"
-                android:ellipsize="end"
                 android:singleLine="true"
-                android:textStyle="bold"
                 android:text="@string/bottom_sheet_peek_text"
-                app:autoSizeTextType="uniform"
-                app:autoSizeMinTextSize="12sp"
+                android:textAlignment="gravity"
+                android:textColor="@color/colorText"
+                android:textStyle="bold"
                 app:autoSizeMaxTextSize="14sp"
+                app:autoSizeMinTextSize="12sp"
                 app:autoSizeStepGranularity="2sp"
-                app:layout_constraintStart_toStartOf="parent"
+                app:autoSizeTextType="uniform"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/bottomSheetPeekArrow"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginEnd="30dp"
                 android:layout_marginTop="8dp"
-                android:scaleType="fitCenter"
+                android:layout_marginEnd="30dp"
                 android:contentDescription="@string/bottom_sheet_arrow_desc"
-                app:srcCompat="@drawable/ic_arrow_up"
+                android:scaleType="fitCenter"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:srcCompat="@drawable/ic_arrow_up" />
 
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/bottomSheetScrollView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
+                android:fadeScrollbars="false"
+                android:orientation="vertical"
                 android:paddingStart="5dp"
+                android:paddingTop="10dp"
                 android:paddingEnd="5dp"
                 android:paddingBottom="0dp"
-                android:orientation="vertical"
-                android:scrollbars="vertical"
-                android:fadeScrollbars="false"
                 android:scrollbarSize="1dp"
+                android:scrollbars="vertical"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layout_constrainedHeight="true"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/bottomSheetPeekTextView"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/bottomSheetPeekTextView">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="15dp"
+                    android:orientation="vertical"
                     android:paddingStart="2dp"
-                    android:paddingEnd="2dp"
-                    android:orientation="vertical">
+                    android:paddingEnd="2dp">
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/verticalGuideline1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.3333" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/verticalGuideline2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.6666" />
 
                     <com.google.android.material.textview.MaterialTextView
-                        android:layout_width="match_parent"
+                        android:id="@+id/materialTextView"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
                         android:text="@string/bottom_sheet_font_options_label"
                         android:textAlignment="center"
                         android:textColor="@color/colorText"
                         android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="20dp"
-                        android:baselineAligned="false"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <com.google.android.material.textview.MaterialTextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/bottom_sheet_size_label"
-                                android:textAlignment="center"
-                                android:textColor="@color/colorText" />
-
-                            <com.google.android.material.slider.Slider
-                                android:id="@+id/slider_size"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:layout_marginBottom="10dp"
-                                android:stepSize="1.0"
-                                android:value="0"
-                                android:valueFrom="-5.0"
-                                android:valueTo="5.0" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <com.google.android.material.textview.MaterialTextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/bottom_sheet_skew_label"
-                                android:textAlignment="center"
-                                android:textColor="@color/colorText" />
-
-                            <com.google.android.material.slider.Slider
-                                android:id="@+id/seek_skew"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:layout_marginBottom="10dp"
-                                android:stepSize="1.0"
-                                android:value="0"
-                                android:valueFrom="-1.0"
-                                android:valueTo="1.0" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <com.google.android.material.textview.MaterialTextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/bottom_sheet_position_label"
-                                android:textAlignment="center"
-                                android:textColor="@color/colorText" />
-
-                            <com.google.android.material.slider.Slider
-                                android:id="@+id/seek_space"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:layout_marginBottom="10dp"
-                                android:max="10"
-                                android:stepSize="1.0"
-                                android:value="0"
-                                android:valueFrom="-5.0"
-                                android:valueTo="5.0" />
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal">
+                        android:textStyle="bold"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/materialTextView3"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/bottom_sheet_size_label"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constraintBottom_toTopOf="@+id/slider_size"
+                        app:layout_constraintEnd_toStartOf="@id/verticalGuideline1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/materialTextView" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/materialTextView4"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/bottom_sheet_skew_label"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constraintBottom_toTopOf="@+id/seek_skew"
+                        app:layout_constraintEnd_toStartOf="@+id/verticalGuideline2"
+                        app:layout_constraintStart_toEndOf="@+id/verticalGuideline1"
+                        app:layout_constraintTop_toBottomOf="@id/materialTextView" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/materialTextView5"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/bottom_sheet_position_label"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorText"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constraintBottom_toTopOf="@+id/seek_space"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/verticalGuideline2"
+                        app:layout_constraintTop_toBottomOf="@id/materialTextView" />
+
+                    <androidx.constraintlayout.widget.Barrier
+                        android:id="@+id/barrier1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:barrierDirection="bottom"
+                        app:constraint_referenced_ids="materialTextView3,materialTextView4,materialTextView5" />
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/slider_size"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:stepSize="1.0"
+                        android:value="0"
+                        android:valueFrom="-5.0"
+                        android:valueTo="5.0"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constraintEnd_toStartOf="@id/verticalGuideline1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/barrier1" />
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/seek_skew"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:stepSize="1.0"
+                        android:value="0"
+                        android:valueFrom="-1.0"
+                        android:valueTo="1.0"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constraintEnd_toStartOf="@+id/verticalGuideline2"
+                        app:layout_constraintStart_toEndOf="@+id/verticalGuideline1"
+                        app:layout_constraintTop_toBottomOf="@id/barrier1" />
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/seek_space"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:max="10"
+                        android:stepSize="1.0"
+                        android:value="0"
+                        android:valueFrom="-5.0"
+                        android:valueTo="5.0"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/verticalGuideline2"
+                        app:layout_constraintTop_toBottomOf="@+id/barrier1" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/materialTextView6"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="35dp"
                         android:layout_weight="1"
-                        android:layout_marginBottom="10dp"
                         android:paddingStart="2dp"
                         android:paddingEnd="2dp"
                         android:text="@string/bottom_sheet_typeface_label"
                         android:textAlignment="center"
                         android:textColor="@color/colorText"
                         android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@id/barrier2"
+                        app:layout_constraintEnd_toStartOf="@id/verticalGuideline1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/slider_size" />
 
                     <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/materialTextView7"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="35dp"
                         android:layout_weight="1"
-                        android:layout_marginBottom="10dp"
                         android:paddingStart="2dp"
                         android:paddingEnd="2dp"
                         android:text="@string/bottom_sheet_font_styles_label"
                         android:textAlignment="center"
                         android:textColor="@color/colorText"
                         android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@id/barrier2"
+                        app:layout_constraintEnd_toStartOf="@id/verticalGuideline2"
+                        app:layout_constraintStart_toEndOf="@id/verticalGuideline1"
+                        app:layout_constraintTop_toBottomOf="@id/slider_size" />
 
                     <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/materialTextView8"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="35dp"
                         android:layout_weight="1"
-                        android:layout_marginBottom="10dp"
                         android:paddingStart="2dp"
                         android:paddingEnd="2dp"
                         android:text="@string/bottom_sheet_text_style_label"
                         android:textAlignment="center"
                         android:textColor="@color/colorText"
                         android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@id/barrier2"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/verticalGuideline2"
+                        app:layout_constraintTop_toBottomOf="@id/slider_size" />
 
-                </LinearLayout>
+                    <androidx.constraintlayout.widget.Barrier
+                        android:id="@+id/barrier2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:barrierDirection="bottom"
+                        app:constraint_referenced_ids="materialTextView6,materialTextView7,materialTextView8" />
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="15dp"
+                        android:paddingBottom="10dp"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:gravity="center|start"
+                        android:orientation="vertical"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintEnd_toStartOf="@id/verticalGuideline1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/barrier2">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radio_typeface_san_serif"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/bottom_sheet_typeface_san_serif"
+                            android:textColor="@color/colorText"
+                            android:textAlignment="viewStart" />
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radio_typeface_serif"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/bottom_sheet_typeface_serif"
+                            android:textColor="@color/colorText"
+                            android:textAlignment="viewStart" />
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radio_typeface_monospace"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/bottom_sheet_typeface_monospace"
+                            android:textColor="@color/colorText"
+                            android:textAlignment="viewStart" />
+
+                    </RadioGroup>
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:baselineAligned="false"
-                        android:layout_marginBottom="10dp"
-                        android:orientation="horizontal">
+                        android:orientation="vertical"
+                        android:layout_marginTop="15dp"
+                        android:paddingBottom="10dp"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintEnd_toStartOf="@id/verticalGuideline2"
+                        app:layout_constraintStart_toEndOf="@id/verticalGuideline1"
+                        app:layout_constraintTop_toBottomOf="@id/barrier2">
 
-                        <LinearLayout
-                            android:layout_width="0dp"
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/switch_fake_bold"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:paddingStart="8dp"
-                            android:paddingEnd="8dp"
-                            android:paddingTop="2dp"
-                            android:paddingBottom="2dp"
-                            android:orientation="vertical">
+                            android:paddingTop="9dp"
+                            android:paddingBottom="9dp"
+                            android:text="@string/bottom_sheet_style_bold"
+                            android:textColor="@color/colorText"
+                            android:textAlignment="viewStart" />
 
-                            <RadioGroup
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:orientation="vertical"
-                                android:layout_gravity="center"
-                                tools:ignore="UselessParent">
-
-                                <com.google.android.material.radiobutton.MaterialRadioButton
-                                    android:id="@+id/radio_typeface_san_serif"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/bottom_sheet_typeface_san_serif"
-                                    android:textColor="@color/colorText" />
-
-                                <com.google.android.material.radiobutton.MaterialRadioButton
-                                    android:id="@+id/radio_typeface_serif"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/bottom_sheet_typeface_serif"
-                                    android:textColor="@color/colorText" />
-
-                                <com.google.android.material.radiobutton.MaterialRadioButton
-                                    android:id="@+id/radio_typeface_monospace"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/bottom_sheet_typeface_monospace"
-                                    android:textColor="@color/colorText" />
-
-                            </RadioGroup>
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/switch_underline"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:paddingStart="8dp"
-                            android:paddingEnd="8dp"
-                            android:paddingTop="2dp"
-                            android:paddingBottom="2dp"
-                            android:orientation="vertical">
+                            android:paddingTop="9dp"
+                            android:paddingBottom="9dp"
+                            android:text="@string/bottom_sheet_style_underline"
+                            android:textColor="@color/colorText"
+                            android:textAlignment="viewStart" />
 
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:orientation="vertical"
-                                android:layout_gravity="center"
-                                tools:ignore="UselessParent">
-
-                                <com.google.android.material.checkbox.MaterialCheckBox
-                                    android:id="@+id/switch_fake_bold"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="start"
-                                    android:gravity="center|start"
-                                    android:paddingTop="9dp"
-                                    android:paddingBottom="9dp"
-                                    android:text="@string/bottom_sheet_style_bold"
-                                    android:textColor="@color/colorText" />
-
-                                <com.google.android.material.checkbox.MaterialCheckBox
-                                    android:id="@+id/switch_underline"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="start"
-                                    android:gravity="center|start"
-                                    android:paddingTop="9dp"
-                                    android:paddingBottom="9dp"
-                                    android:text="@string/bottom_sheet_style_underline"
-                                    android:textColor="@color/colorText" />
-
-                                <com.google.android.material.checkbox.MaterialCheckBox
-                                    android:id="@+id/switch_smcp"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="start"
-                                    android:gravity="center|start"
-                                    android:paddingTop="9dp"
-                                    android:paddingBottom="9dp"
-                                    android:text="@string/bottom_sheet_style_smcp"
-                                    android:textColor="@color/colorText" />
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/switch_smcp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:paddingStart="8dp"
-                            android:paddingEnd="8dp"
-                            android:paddingTop="2dp"
-                            android:paddingBottom="2dp"
-                            android:orientation="vertical"
-                            android:layout_gravity="center">
-
-                            <RadioGroup
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:orientation="vertical"
-                                android:layout_gravity="center"
-                                tools:ignore="UselessParent">
-
-                                <com.google.android.material.radiobutton.MaterialRadioButton
-                                    android:id="@+id/radio_style_fill"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/bottom_sheet_style_fill"
-                                    android:textColor="@color/colorText" />
-
-                                <com.google.android.material.radiobutton.MaterialRadioButton
-                                    android:id="@+id/radio_style_fill_stroke"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/bottom_sheet_style_fill_and_stroke"
-                                    android:textColor="@color/colorText" />
-
-                                <com.google.android.material.radiobutton.MaterialRadioButton
-                                    android:id="@+id/radio_style_stroke"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/bottom_sheet_style_stroke"
-                                    android:textColor="@color/colorText" />
-                            </RadioGroup>
-                        </LinearLayout>
+                            android:paddingTop="9dp"
+                            android:paddingBottom="9dp"
+                            android:text="@string/bottom_sheet_style_smcp"
+                            android:textColor="@color/colorText"
+                            android:textAlignment="viewStart" />
                     </LinearLayout>
-                </LinearLayout>
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="15dp"
+                        android:paddingBottom="10dp"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:layout_gravity="center"
+                        android:gravity="center|start"
+                        android:orientation="vertical"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_weight="1"
+                        app:layout_constraintStart_toEndOf="@id/verticalGuideline2"
+                        app:layout_constraintTop_toBottomOf="@id/barrier2"
+                        tools:ignore="UselessParent">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radio_style_fill"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/bottom_sheet_style_fill"
+                            android:textColor="@color/colorText"
+                            android:textAlignment="viewStart" />
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radio_style_fill_stroke"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/bottom_sheet_style_fill_and_stroke"
+                            android:textColor="@color/colorText"
+                            android:textAlignment="viewStart" />
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/radio_style_stroke"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/bottom_sheet_style_stroke"
+                            android:textColor="@color/colorText"
+                            android:textAlignment="viewStart" />
+                    </RadioGroup>
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.core.widget.NestedScrollView>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -458,8 +481,8 @@
         android:layout_width="match_parent"
         android:layout_height="12dp"
         app:layout_constrainedHeight="true"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bottomSheetCardView"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bottomSheetCardView" />
 </androidx.constraintlayout.widget.ConstraintLayout>
