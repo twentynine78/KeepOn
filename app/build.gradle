@@ -10,6 +10,7 @@ android {
         targetSdkVersion 30
         versionCode 15
         versionName "1.2.4"
+        resConfigs "en", "fr"
     }
     buildTypes {
         debug {
@@ -23,6 +24,10 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+            pseudoLocalesEnabled false
+            zipAlignEnabled true
         }
     }
     buildFeatures {
