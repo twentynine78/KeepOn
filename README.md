@@ -33,6 +33,8 @@ You can read / audit code and compile your own apk if you want!
 - Glide: *https://github.com/bumptech/glide*
 - Gene-rate: *https://github.com/Pixplicity/gene-rate*
 - PageIndicatorView: *https://github.com/romandanylyk/PageIndicatorView*
+- Toothpick: *https://github.com/stephanenicolas/toothpick*
+- Moshi: *https://github.com/square/moshi*
 
 ## Screenshots
 
