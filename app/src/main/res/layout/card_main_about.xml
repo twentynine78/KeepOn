@@ -10,7 +10,8 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/includeCardSettings"
     app:layout_constraintWidth_max="580dp"
-    tools:context=".ui.MainActivity">
+    tools:context=".ui.MainActivity"
+    tools:ignore="MergeRootFrame">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/aboutCard"
@@ -86,7 +87,7 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/card_about_credits_label"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:autoLink="web"
@@ -97,7 +98,7 @@
                 android:text="@string/about_card_credits_label"
                 android:textAlignment="viewStart"
                 android:textColor="@color/colorText"
-                app:layout_constraintWidth_default="wrap"
+                app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toStartOf="@+id/card_about_credits"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
@@ -117,9 +118,7 @@
                 android:text="@string/about_card_credits"
                 android:textAlignment="viewStart"
                 android:textColor="@color/colorTextLink"
-                app:layout_constraintWidth_default="spread"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toEndOf="@+id/card_about_credits_label"
                 app:layout_constraintTop_toBottomOf="@id/about_card_author" />
 

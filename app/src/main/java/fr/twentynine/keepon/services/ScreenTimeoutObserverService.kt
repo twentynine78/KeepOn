@@ -57,7 +57,11 @@ class ScreenTimeoutObserverService : LifecycleService() {
 
             registerScreenTimeoutObserver(screenTimeoutObserver)
 
-            startForeground(SERVICE_ID, serviceUtils.buildNotification(getString(R.string.notification_timeout_service)))
+            try {
+                startForeground(SERVICE_ID, serviceUtils.buildNotification(getString(R.string.notification_timeout_service)))
+            } catch (e: Exception) {
+                return
+            }
         }
 
         override fun onStart(owner: LifecycleOwner) {

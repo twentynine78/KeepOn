@@ -34,6 +34,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import toothpick.InjectConstructor
 import toothpick.ktp.delegate.lazy
+import java.lang.Exception
 import javax.inject.Singleton
 
 @ApplicationScope
@@ -96,19 +97,31 @@ class CommonUtils(private val application: Application) {
 
     fun startScreenOffReceiverService() {
         if (!ScreenOffReceiverService.isRunning) {
-            ContextCompat.startForegroundService(application.applicationContext, startScreenOffReceiverServiceIntent)
+            try {
+                ContextCompat.startForegroundService(application.applicationContext, startScreenOffReceiverServiceIntent)
+            } catch (e: Exception) {
+                return
+            }
         }
     }
 
     fun stopScreenOffReceiverService() {
         if (ScreenOffReceiverService.isRunning) {
-            ContextCompat.startForegroundService(application.applicationContext, stopScreenOffReceiverServiceIntent)
+            try {
+                ContextCompat.startForegroundService(application.applicationContext, stopScreenOffReceiverServiceIntent)
+            } catch (e: Exception) {
+                return
+            }
         }
     }
 
     fun startScreenTimeoutObserverService() {
         if (!ScreenTimeoutObserverService.isRunning) {
-            ContextCompat.startForegroundService(application.applicationContext, startScreenTimeoutObserverServiceIntent)
+            try {
+                ContextCompat.startForegroundService(application.applicationContext, startScreenTimeoutObserverServiceIntent)
+            } catch (e: Exception) {
+                return
+            }
         }
     }
 
@@ -208,14 +221,6 @@ class CommonUtils(private val application: Application) {
 
     fun getDisplayTimeoutArray(): ArrayMap<Int, Int> {
         return timeoutMap
-    }
-
-    fun convertOldTimeoutIconStyle() {
-        preferences.convertOldTimeoutIconStyle()
-
-        updateQSTile()
-        manageAppShortcuts()
-        sendBroadcastUpdateMainUI()
     }
 
     private fun setShortcutsIconWithGlide(timeout: Int, shortcutInfo: ShortcutInfo.Builder) {

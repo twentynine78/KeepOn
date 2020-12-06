@@ -76,7 +76,11 @@ class ScreenOffReceiverService : LifecycleService() {
 
             registerScreenOffReceiver()
 
-            startForeground(SERVICE_ID, serviceUtils.buildNotification(getString(R.string.notification_screen_off_service)))
+            try {
+                startForeground(SERVICE_ID, serviceUtils.buildNotification(getString(R.string.notification_screen_off_service)))
+            } catch (e: Exception) {
+                return
+            }
         }
 
         override fun onStart(owner: LifecycleOwner) {

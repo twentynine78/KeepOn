@@ -10,7 +10,8 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintWidth_max="580dp"
-    tools:context=".ui.MainActivity">
+    tools:context=".ui.MainActivity"
+    tools:ignore="MergeRootFrame">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/selectionCard"

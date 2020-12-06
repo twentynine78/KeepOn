@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <bool name="leak_canary_watcher_auto_install">false</bool>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <bool name="leak_canary_watcher_auto_install" tools:keep="@bool/leak_canary_watcher_auto_install">false</bool>
 </resources>

@@ -286,7 +286,7 @@ class Preferences(application: Application, private val contentResolver: Content
         }
     }
 
-    fun convertOldTimeoutIconStyle(): TimeoutIconStyle {
+    private fun convertOldTimeoutIconStyle(): TimeoutIconStyle {
         val qsStyleFontSize = "qsStyleFontSize"
         val qsStyleFontSkew = "qsStyleFontSkew"
         val qsStyleFontSpacing = "qsStyleFontSpacing"
