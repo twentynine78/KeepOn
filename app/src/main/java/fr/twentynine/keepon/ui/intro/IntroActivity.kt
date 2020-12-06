@@ -144,7 +144,7 @@ class IntroActivity : AppIntro2() {
         if (Settings.System.canWrite(this)) {
             super.onDonePressed(currentFragment)
 
-            if (!isWizardMode) {
+            if (isWizardMode) {
                 preferences.setSkipIntro(true)
                 startActivity(MainActivity.newIntent(this))
             }
