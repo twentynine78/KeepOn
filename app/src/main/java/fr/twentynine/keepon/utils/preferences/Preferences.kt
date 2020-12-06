@@ -270,11 +270,7 @@ class Preferences(application: Application, private val contentResolver: Content
                 return timeoutIconStyle
             }
         }
-        return if (multiPreferences.getBoolean(PREFS_BACKUP_FILENAME, TIMEOUT_ICON_STYLE_CONVERTED, false)) {
-            TimeoutIconStyle()
-        } else {
-            convertOldTimeoutIconStyle()
-        }
+        return convertOldTimeoutIconStyle()
     }
 
     fun setTimeoutIconStyle(value: TimeoutIconStyle) {
@@ -333,9 +329,6 @@ class Preferences(application: Application, private val contentResolver: Content
         multiPreferences.removePreference(PREFS_BACKUP_FILENAME, qsStyleTextFillStroke)
         multiPreferences.removePreference(PREFS_BACKUP_FILENAME, qsStyleTextStroke)
 
-        // Set timeout icon style converted
-        multiPreferences.setBoolean(PREFS_BACKUP_FILENAME, TIMEOUT_ICON_STYLE_CONVERTED, true)
-
         return newTimeoutIconStyle
     }
 
@@ -354,7 +347,6 @@ class Preferences(application: Application, private val contentResolver: Content
         private const val PREVIOUS_VALUE = "previousValue"
         private const val DARK_THEME = "darkTheme"
         private const val TIMEOUT_ICON_STYLE = "timeoutIconStyle"
-        private const val TIMEOUT_ICON_STYLE_CONVERTED = "timeoutIconStyle"
         private const val APP_REVIEW_ASKED = "appReviewAsked"
         private const val APP_LAUNCH_COUNT = "appLaunchCount"
         private const val APP_IS_LAUNCHED = "appIsLaunched"
