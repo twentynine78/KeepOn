@@ -8,7 +8,7 @@ android {
         applicationId "fr.twentynine.keepon"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 16
+        versionCode 17
         versionName "1.3.0"
         resConfigs "en", "fr"
     }
