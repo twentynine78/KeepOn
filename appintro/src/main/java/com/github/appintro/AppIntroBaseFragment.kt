@@ -1,5 +1,6 @@
 package com.github.appintro
 
+import android.graphics.drawable.Animatable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -131,9 +132,38 @@ abstract class AppIntroBaseFragment : Fragment(), SlideSelectionListener, SlideB
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        view?.findViewById<ImageView>(R.id.image).let {
+            if (it is Animatable) {
+                it.start()
+            }
+        }
+        view?.findViewById<ImageView>(R.id.image2).let {
+            if (it is Animatable) {
+                it.start()
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        view?.findViewById<ImageView>(R.id.image).let {
+            if (it is Animatable) {
+                it.start()
+            }
+        }
+        view?.findViewById<ImageView>(R.id.image2).let {
+            if (it is Animatable) {
+                it.start()
+            }
+        }
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(ARG_DRAWABLE, drawable)
-        outState.putInt(ARG_DRAWABLE2, drawable2)
         outState.putInt(ARG_BG_DRAWABLE, bgDrawable)
         outState.putString(ARG_TITLE, title)
         outState.putString(ARG_DESC, description)
