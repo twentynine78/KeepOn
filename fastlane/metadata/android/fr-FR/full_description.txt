@@ -1,0 +1,25 @@
+Caractéristique :
+
+KeepOn est gratuit et open-source (FOSS), sans publicités/trackers et sans utilisation d'Internet.
+KeepOn te permet de garder l'écran de ton appareil allumé pendant la durée souhaitée et te permet également de revenir automatiquement aux paramètres par défaut lorsque l'écran s'éteint.
+KeepOn s'adapte à la configuration de ton appareil pour une utilisation facile !
+Une extension Tasker/Locale est intégrée et permet d'utiliser les fonctions de KeepOn depuis une autre application compatible !
+
+Permissions :
+
+ - android.permission.WRITE_SETTINGS : Nécessaire à Android pour modifier les paramètres de délai d'expiration d'écran
+ - android.permission.FOREGROUND_SERVICE : Nécessaire pour détecter les événements de désactivation de l'écran et d'autres modifications de délai d'expiration de l'écran
+
+
+Crédits :
+
+ - AppIntro : https://github.com/AppIntro/AppIntro
+ - MultiProcessPreferences : https://github.com/TreeFrogApps/MultiProcessPreferences
+ - Glide : https://github.com/bumptech/glide
+ - Gene-rate : https://github.com/Pixplicity/gene-rate
+ - PageIndicatorView : https://github.com/romandanylyk/PageIndicatorView
+ - Toothpick : https://github.com/stephanenicolas/toothpick
+ - Moshi : https://github.com/square/moshi
+
+
+Code source : https://github.com/twentynine78/KeepOn

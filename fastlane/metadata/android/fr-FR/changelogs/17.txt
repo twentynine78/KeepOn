@@ -1,0 +1,5 @@
+- Amélioration des performances et de la stabilité
+- Corrections de bugs
+- Mise à jour des dépendances
+- Intégration de la bibliothèque Toothpick 
+- Intégration de la bibliothèque Moshi
