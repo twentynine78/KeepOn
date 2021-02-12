@@ -38,22 +38,8 @@ class ServiceUtils(private val service: Service) {
         PendingIntent.getActivity(service, 0, hideIntent, 0)
     }
 
-    init {
-        // Create the NotificationChannel if needed
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = service.getString(R.string.notification_channel_name)
-            val importance = NotificationManager.IMPORTANCE_MIN
-            val notificationManager = service.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val channel = notificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_ID)
-            if (channel == null) {
-                val chan = NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance)
-                chan.lockscreenVisibility = NotificationCompat.VISIBILITY_SECRET
-                notificationManager.createNotificationChannel(chan)
-            }
-        }
-    }
-
     fun buildNotification(contentText: String): Notification {
+        createNotificationChannel()
         // Return notification
         return NotificationCompat.Builder(service, NOTIFICATION_CHANNEL_ID)
             .setOngoing(true)
@@ -63,6 +49,18 @@ class ServiceUtils(private val service: Service) {
             .setVisibility(NotificationCompat.VISIBILITY_SECRET)
             .setContentIntent(pendingIntent)
             .build()
+    }
+
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel if needed
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = service.getString(R.string.notification_channel_name)
+            val importance = NotificationManager.IMPORTANCE_MIN
+            val chan = NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance)
+            chan.lockscreenVisibility = NotificationCompat.VISIBILITY_SECRET
+            val notificationManager = service.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(chan)
+        }
     }
 
     companion object {

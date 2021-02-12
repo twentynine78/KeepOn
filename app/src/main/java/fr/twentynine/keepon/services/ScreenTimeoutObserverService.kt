@@ -55,13 +55,13 @@ class ScreenTimeoutObserverService : LifecycleService() {
             // Inject dependencies with Toothpick
             ToothpickHelper.scopedInjection(this@ScreenTimeoutObserverService)
 
-            registerScreenTimeoutObserver(screenTimeoutObserver)
-
             try {
                 startForeground(SERVICE_ID, serviceUtils.buildNotification(getString(R.string.notification_timeout_service)))
             } catch (e: Exception) {
                 return
             }
+
+            registerScreenTimeoutObserver(screenTimeoutObserver)
         }
 
         override fun onStart(owner: LifecycleOwner) {

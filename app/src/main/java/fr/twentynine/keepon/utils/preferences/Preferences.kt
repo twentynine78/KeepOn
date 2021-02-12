@@ -106,7 +106,7 @@ class Preferences(application: Application, private val contentResolver: Content
     }
 
     fun setTimeout(timeout: Int) {
-        if (!getValueChange() || (Calendar.getInstance(TimeZone.getTimeZone("utc")).timeInMillis - getValueChangeTime()) >= 3000L) {
+        if (!getValueChange() || (Calendar.getInstance(TimeZone.getTimeZone("utc")).timeInMillis - getValueChangeTime()) >= 7000L) {
             try {
                 setValueChange(true)
                 Settings.System.putInt(

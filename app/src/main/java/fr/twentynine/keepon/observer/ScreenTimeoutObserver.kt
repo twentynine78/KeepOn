@@ -38,12 +38,12 @@ class ScreenTimeoutObserver : ContentObserver(null) {
     private fun processChange(selfChange: Boolean) {
         if (selfChange) {
             GlobalScope.launch(Dispatchers.Default) {
-                delay(5000)
+                delay(7000)
                 preferences.setAppIsLaunched(true)
                 commonUtils.updateQSTile()
             }
         } else {
-            if ((!preferences.getValueChange() || (Calendar.getInstance(TimeZone.getTimeZone("utc")).timeInMillis >= preferences.getValueChangeTime() + 3000L)) &&
+            if ((!preferences.getValueChange() || (Calendar.getInstance(TimeZone.getTimeZone("utc")).timeInMillis >= preferences.getValueChangeTime() + 7000L)) &&
                 preferences.getAppIsLaunched()
             ) {
                 preferences.setOriginalTimeout(preferences.getCurrentTimeout())

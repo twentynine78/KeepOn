@@ -157,8 +157,8 @@ class CommonUtils(private val application: Application) {
                 // Create dynamic list of timeout values
                 val availableTimeout: ArrayList<Int> = ArrayList()
                 availableTimeout.addAll(preferences.getSelectedTimeout())
-                availableTimeout.remove(preferences.getOriginalTimeout())
-                availableTimeout.remove(preferences.getCurrentTimeout())
+                availableTimeout.removeIf { it == preferences.getOriginalTimeout() }
+                availableTimeout.removeIf { it == preferences.getCurrentTimeout() }
                 availableTimeout.add(-42)
                 if (preferences.getPreviousValue() != 0) availableTimeout.add(-43)
                 availableTimeout.sort()

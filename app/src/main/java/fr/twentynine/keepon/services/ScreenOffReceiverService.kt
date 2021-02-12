@@ -1,5 +1,6 @@
 package fr.twentynine.keepon.services
 
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -74,13 +75,13 @@ class ScreenOffReceiverService : LifecycleService() {
             // Inject dependencies with Toothpick
             ToothpickHelper.scopedInjection(this@ScreenOffReceiverService)
 
-            registerScreenOffReceiver()
-
             try {
                 startForeground(SERVICE_ID, serviceUtils.buildNotification(getString(R.string.notification_screen_off_service)))
             } catch (e: Exception) {
                 return
             }
+
+            registerScreenOffReceiver()
         }
 
         override fun onStart(owner: LifecycleOwner) {
