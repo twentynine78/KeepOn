@@ -24,6 +24,7 @@ You can read / audit code and compile your own apk if you want!
 ## Download
 
 - Play Store: *https://play.google.com/store/apps/details?id=fr.twentynine.keepon*
+- F-Droid: *https://f-droid.org/packages/fr.twentynine.keepon/*
 - KeepOn Releases: *https://github.com/twentynine78/KeepOn/releases*
 
 ## Credit
