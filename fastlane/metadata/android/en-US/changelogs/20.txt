@@ -1,0 +1,1 @@
+- Application completely rewritten for better support and improved performance

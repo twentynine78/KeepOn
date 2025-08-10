@@ -1,0 +1,67 @@
+[versions]
+# Plugins versions
+androidGradlePlugin = "8.11.1"
+kotlin = "2.2.0"
+hilt = "2.57"
+ksp = "2.2.0-2.0.2"
+# Libraries versions
+coreKtxVersion = "1.16.0"
+lifecycleVersion = "2.9.2"
+navigationComposeVersion = "2.9.3"
+workVersion = "2.10.3"
+datastorePrefVersion = "1.1.7"
+splashscreenVersion = "1.0.1"
+activityVersion = "1.10.1"
+composeBomVersion = "2025.07.00"
+androidMaterialVersion = "1.12.0"
+androidXHiltVersion = "1.2.0"
+coilVersion = "3.3.0"
+kotlinXCollectionsImmutableVersion = "0.4.0"
+kotlinXSerializationJsonVersion = "1.9.0"
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+com-google-dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize",  version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
+[libraries]
+# Jetpack Core and SplashScreen Libraries
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtxVersion" }
+androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreenVersion" }
+# Jetpack Activity Libraries
+androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityVersion" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityVersion" }
+# Jetpack Lifecycle Libraries
+androidx-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleVersion" }
+androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleVersion" }
+androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycleVersion" }
+# Jetpack Compose Libraries
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBomVersion" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-material3 = { module = "androidx.compose.material3:material3" }
+compose-material3-window-size = { module = "androidx.compose.material3:material3-window-size-class" }
+compose-material3-adaptive-navigation = { module = "androidx.compose.material3:material3-adaptive-navigation-suite" }
+# Jetpack Navigation
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationComposeVersion" }
+# Jetpack Data & Storage
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePrefVersion" }
+androidx-work-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workVersion" }
+# Android Material
+com-google-android-material = { group = "com.google.android.material", name = "material", version.ref = "androidMaterialVersion" }
+# Dependency Injection (Hilt)
+com-google-dagger-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+com-google-dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "androidXHiltVersion" }
+androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "androidXHiltVersion" }
+# Image Loading (Coil)
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose-android", version.ref = "coilVersion" }
+coil-core = { group = "io.coil-kt.coil3", name = "coil-core", version.ref = "coilVersion" }
+# KotlinX Libraries
+org-jetbrains-kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinXCollectionsImmutableVersion" }
+org-jetbrains-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinXSerializationJsonVersion" }

@@ -1,0 +1,134 @@
+<resources>
+    <string name="qs_service_name">Maintenir l\'écran allumé</string>
+    <string name="screen_off_monitoring_service_name">Service de surveillance de l\'état de l\'écran</string>
+
+    <string name="screen_home">Accueil</string>
+    <string name="screen_style">Style</string>
+    <string name="screen_about">À propos</string>
+
+    <string name="qs_short_second">s</string>
+    <string name="qs_short_minute">m</string>
+    <string name="qs_short_hour">h</string>
+
+    <string name="qs_long_infinite">Indéfiniment</string>
+
+    <plurals name="qs_long_second">
+        <item quantity="one">%d seconde</item>
+        <item quantity="other">%d secondes</item>
+        <item quantity="many">%d secondes</item>
+    </plurals>
+    <plurals name="qs_long_minute">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+        <item quantity="many">%d minutes</item>
+    </plurals>
+    <plurals name="qs_long_hour">
+        <item quantity="one">%d heure</item>
+        <item quantity="other">%d heures</item>
+        <item quantity="many">%d heures</item>
+    </plurals>
+
+    <string name="timeout_restore_long">Restaurer la valeur par défaut</string>
+    <string name="timeout_previous_long">Restaurer la valeur précédente</string>
+
+    <string name="tasker_activity_name">Modifier le délai d\'expiration de l\'écran</string>
+    <string name="tasker_save_button">Enregistrer la configuration</string>
+
+    <string name="dialog_default_timeout_title">Modifier le délai d\'expiration de l\'écran par défaut</string>
+    <string name="dialog_default_timeout_text">Êtes-vous sûr de vouloir définir le délai d\'expiration de l\'écran par défaut à %s ?</string>
+    <string name="dialog_default_timeout_confirm_button_text">Oui</string>
+    <string name="dialog_default_timeout_dismiss_button_text">Annuler</string>
+
+    <string name="more_info_icon_desc">Plus d\'informations</string>
+
+    <string name="general_behavior_title">Comportement</string>
+    <string name="general_behavior_short_text">Réinitialiser le délai d\'expiration de l\'écran à %s lorsqu\'il s\'éteint</string>
+    <string name="general_behavior_text">Sélectionnez si le délai d\'expiration de l\'écran doit être réinitialisé par défaut lorsque l\'écran s\'éteint.</string>
+
+    <string name="select_timeouts_title">Délais d\'expiration de l\'écran</string>
+    <string name="select_timeouts_text">Sélectionnez les délais d\'expiration de l\'écran qui seront disponibles dans les paramètres rapides.</string>
+
+    <string name="font_options_title">Placement de l\'icône</string>
+    <string name="font_options_text">Modifiez la taille de la police d\'écriture et l\'emplacement de l\'icône.</string>
+    <string name="font_options_size_subtitle">Taille</string>
+    <string name="font_options_horizontal_position_subtitle">Position horizontale</string>
+    <string name="font_options_vertical_position_subtitle">Position verticale</string>
+
+    <string name="font_selection_tile">Police de l\'icône</string>
+    <string name="font_selection_text">Sélectionnez la police d\'écriture utilisée pour générer les icônes.</string>
+
+    <string name="font_style_tile">Style de l\'icône</string>
+    <string name="font_style_text">Choisissez le style de la police d\'écriture des icônes générées.</string>
+    <string name="font_style_parameters_subtitle">Paramètres de la police</string>
+    <string name="font_style_parameters_bold">Gras</string>
+    <string name="font_style_parameters_italic">Italique</string>
+    <string name="font_style_parameters_underline">Souligner</string>
+    <string name="font_style_parameters_appearance_subtitle">Apparence de la police</string>
+    <string name="font_style_parameters_appearance_outlined">Contour uniquement</string>
+
+    <string name="select_tasker_timeouts_title">Délai d\'expiration de l\'écran</string>
+    <string name="select_tasker_timeouts_text">Sélectionnez la valeur du délai d\'expiration de l\'écran qui sera utilisée pour l\'action d\'automatisation.</string>
+    <string name="tasker_dynamic_value_text">Valeurs dynamiques</string>
+    <string name="tasker_static_value_text">Valeurs statiques</string>
+
+    <string name="timeout_locked_icon_desc">Indisponible</string>
+    <string name="timeout_locked_tooltips_text">Non disponible en raison de restrictions sur l\'appareil !</string>
+
+    <string name="tip_general_notification_title">Rester notifié</string>
+    <string name="tip_general_notification_text">Autoriser l\'affichage de notifications lorsque KeepOn est actif et gère le délai d\'extension de l\'écran.</string>
+    <string name="tip_general_notification_action_button_text">Autoriser</string>
+    <string name="tip_general_notification_dismiss_button_text">Ne plus afficher</string>
+
+    <string name="tip_qstile_title">Ajouter un paramètre rapide</string>
+    <string name="tip_qstile_text">KeepOn utilise les « Réglages rapides » d\'Android pour faciliter son utilisation lorsque vous en avez besoin.</string>
+    <string name="tip_qstile_action_button_text">Ajouter</string>
+    <string name="tip_qstile_dismiss_button_text">Ne plus afficher</string>
+
+    <string name="tip_rateapp_title">Notez KeepOn</string>
+    <string name="tip_rateapp_text">Aimez-vous utiliser KeepOn ? Si oui, prenez une minute pour évaluer l\'application :)</string>
+    <string name="tip_rateapp_action_button_text">Évaluer</string>
+    <string name="tip_rateapp_dismiss_button_text">Ne plus afficher</string>
+
+    <string name="app_info_title">Informations</string>
+    <string name="credit_info_title">Crédits</string>
+
+    <string name="about_open_link_text">Ouvrir le site Web</string>
+
+    <string name="app_info_version_text">Version :</string>
+    <string name="app_info_author_text">Auteur :</string>
+    <string name="app_info_source_code_text">Code source :</string>
+
+    <string name="credit_info_type_library">Bibliothèques logicielles</string>
+    <string name="credit_info_type_font">Polices de caractères</string>
+
+    <string name="credit_info_name_text">Nom :</string>
+    <string name="credit_info_author_text">Auteur :</string>
+    <string name="credit_info_source_text">Source :</string>
+
+    <string name="error_view_title">Erreur rencontrée</string>
+    <string name="error_view_text">Il semble qu\'une erreur se soit produite ! Essayez de relancer l\'application.\nDésolé pour la gêne occasionnée.</string>
+    <string name="error_view_message_prefix">Erreur :</string>
+
+    <string name="notification_channel_screen_monitor_name">Contrôle d\'écran KeepOn</string>
+    <string name="notification_screen_monitor_title">KeepOn est en cours d\'exécution</string>
+    <string name="notification_screen_monitor_text">KeepOn s\'exécute en arrière-plan pour surveiller l\'état de l\'écran.</string>
+    <string name="notification_screen_monitor_action_open_keepon">Ouvrir KeepOn</string>
+
+    <string name="permissions_screen_title">Autorisations requises</string>
+    <string name="permissions_screen_subtitle">Aucune donnée ne sera collectée, stockée ou transmise de quelque manière que ce soit.</string>
+
+    <string name="permissions_screen_notification_title">Autoriser les notifications</string>
+    <string name="permissions_screen_notification_subtitle">Cette notification vous informe que KeepOn est actif et surveille l\'état de l\'écran.</string>
+
+    <string name="permissions_screen_battery_optimization_title">Autoriser KeepOn à fonctionner en arrière-plan</string>
+    <string name="permissions_screen_battery_optimization_subtitle">Cette permission empêche le système de fermer KeepOn et lui permet de fonctionner en arrière-plan. Cela n\'affectera pas la batterie.</string>
+
+    <string name="permissions_screen_write_setting_title">Autoriser la modification des paramètres système</string>
+    <string name="permissions_screen_write_setting_subtitle">Cette permission permet à KeepOn de modifier le délai d\'expiration de l\'écran en fonction de vos préférences..</string>
+
+    <string name="permission_screen_request_icon_desc">Requête d\'autorisation</string>
+    <string name="permission_screen_check_icon_desc">Permission validée</string>
+
+    <string name="toast_missing_permission">Erreur, permission requise manquante !</string>
+    <string name="toast_invalid_screen_timeout">Erreur, délai d\'expiration de l\'écran invalide !</string>
+</resources>

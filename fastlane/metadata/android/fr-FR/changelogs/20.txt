@@ -1,0 +1,1 @@
+- Application entièrement réécrite pour une meilleure prise en charge et des performances améliorées

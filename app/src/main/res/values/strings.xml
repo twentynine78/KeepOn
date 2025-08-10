@@ -1,0 +1,134 @@
+<resources>
+    <string name="app_name" translatable="false">KeepOn</string>
+
+    <string name="qs_service_name">Keep screen on</string>
+    <string name="screen_off_monitoring_service_name">Screen status monitoring service</string>
+
+    <string name="screen_home">Home</string>
+    <string name="screen_style">Style</string>
+    <string name="screen_about">About</string>
+
+    <string name="qs_short_second">s</string>
+    <string name="qs_short_minute">m</string>
+    <string name="qs_short_hour">h</string>
+    <string name="qs_short_infinite" translatable="false">∞</string>
+
+    <string name="qs_long_infinite">Indefinitely</string>
+
+    <plurals name="qs_long_second">
+        <item quantity="one">%d second</item>
+        <item quantity="other">%d seconds</item>
+    </plurals>
+    <plurals name="qs_long_minute">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="qs_long_hour">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+
+    <string name="timeout_restore_long">Restore the default value</string>
+    <string name="timeout_previous_long">Restore the previous value</string>
+
+    <string name="tasker_activity_name">Change the screen timeout</string>
+    <string name="tasker_save_button">Save Tasker configuration</string>
+
+    <string name="dialog_default_timeout_title">Change default screen timeout</string>
+    <string name="dialog_default_timeout_text">Are you sur you want to set default screen timeout to %s?</string>
+    <string name="dialog_default_timeout_confirm_button_text">Yes</string>
+    <string name="dialog_default_timeout_dismiss_button_text">Cancel</string>
+
+    <string name="more_info_icon_desc">More information</string>
+
+    <string name="general_behavior_title">Behavior</string>
+    <string name="general_behavior_short_text">Reset the screen timeout to %s when it switches off</string>
+    <string name="general_behavior_text">Select if the screen timeout will be reset to default when screen goes off.</string>
+
+    <string name="select_timeouts_title">Screen timeouts</string>
+    <string name="select_timeouts_text">Select screen timeouts that will be available in the quick settings.</string>
+
+    <string name="font_options_title">Icon placement</string>
+    <string name="font_options_text">Change the size of the font and the location of the icon.</string>
+    <string name="font_options_size_subtitle">Size</string>
+    <string name="font_options_horizontal_position_subtitle">Horizontal position</string>
+    <string name="font_options_vertical_position_subtitle">Vertical position</string>
+
+    <string name="font_selection_tile">Icon font</string>
+    <string name="font_selection_text">Select the font used to generate icons.</string>
+
+    <string name="font_style_tile">Icon style</string>
+    <string name="font_style_text">Choose the font style for the generated icons.</string>
+    <string name="font_style_parameters_subtitle">Font parameters</string>
+    <string name="font_style_parameters_bold">Bold</string>
+    <string name="font_style_parameters_italic">Italic</string>
+    <string name="font_style_parameters_underline">Underline</string>
+    <string name="font_style_parameters_appearance_subtitle">Font appearance</string>
+    <string name="font_style_parameters_appearance_outlined">Outline only</string>
+
+    <string name="select_tasker_timeouts_title">Select timeout</string>
+    <string name="select_tasker_timeouts_text">Select the timeout value that will be use for the automation action.</string>
+    <string name="tasker_dynamic_value_text">Dynamic values</string>
+    <string name="tasker_static_value_text">Static values</string>
+
+    <string name="timeout_locked_icon_desc">Unavailable</string>
+    <string name="timeout_locked_tooltips_text">Not available due to device restrictions!</string>
+
+    <string name="tip_general_notification_title">Get notified</string>
+    <string name="tip_general_notification_text">Allow notifications to be displayed when KeepOn is active and manage the screen extension delay.</string>
+    <string name="tip_general_notification_action_button_text">Allow</string>
+    <string name="tip_general_notification_dismiss_button_text">Do not display again</string>
+
+    <string name="tip_qstile_title">Add Quick Setting</string>
+    <string name="tip_qstile_text">KeepOn uses Android\'s \"Quick Settings\" to make it easy to use when you need it.</string>
+    <string name="tip_qstile_action_button_text">Add</string>
+    <string name="tip_qstile_dismiss_button_text">Do not display again</string>
+
+    <string name="tip_rateapp_title">Rate KeepOn</string>
+    <string name="tip_rateapp_text">Do you enjoy using KeepOn? If so, please take a minute to rate the app :)</string>
+    <string name="tip_rateapp_action_button_text">Rate</string>
+    <string name="tip_rateapp_dismiss_button_text">Do not display again</string>
+
+    <string name="app_info_title">Information</string>
+    <string name="credit_info_title">Credits</string>
+
+    <string name="about_open_link_text">Open website</string>
+
+    <string name="app_info_version_text">Version:</string>
+    <string name="app_info_author_text">Author:</string>
+    <string name="app_info_source_code_text">Source code:</string>
+
+    <string name="credit_info_type_library">Software libraries</string>
+    <string name="credit_info_type_font">Typefaces</string>
+
+    <string name="credit_info_name_text">Name:</string>
+    <string name="credit_info_author_text">Author:</string>
+    <string name="credit_info_source_text">Source:</string>
+
+    <string name="error_view_title">Error encountered</string>
+    <string name="error_view_text">It seems that an error has occurred! Try relaunching the application.\nSorry for the inconvenience.</string>
+    <string name="error_view_message_prefix">Error:</string>
+
+    <string name="notification_channel_screen_monitor_name">KeepOn Screen Control</string>
+    <string name="notification_screen_monitor_title">KeepOn is running</string>
+    <string name="notification_screen_monitor_text">KeepOn is running in background to monitor screen state.</string>
+    <string name="notification_screen_monitor_action_open_keepon">Open KeepOn</string>
+
+    <string name="permissions_screen_title">Required permissions</string>
+    <string name="permissions_screen_subtitle">No data will be collected, stored or transmitted in any way.</string>
+
+    <string name="permissions_screen_notification_title">Allow notifications</string>
+    <string name="permissions_screen_notification_subtitle">This notification reminds you that KeepOn is active and monitor the screen state.</string>
+
+    <string name="permissions_screen_battery_optimization_title">Allow KeepOn to run in the background</string>
+    <string name="permissions_screen_battery_optimization_subtitle">This prevents the system from stopping KeepOn and allows it to run in background. This won\'t affect the battery.</string>
+
+    <string name="permissions_screen_write_setting_title">Allow modification of system parameters</string>
+    <string name="permissions_screen_write_setting_subtitle">This allows KeepOn to modifying screen timeout according to your preference.</string>
+
+    <string name="permission_screen_request_icon_desc">Request permission</string>
+    <string name="permission_screen_check_icon_desc">Permission validated</string>
+
+    <string name="toast_missing_permission">Error, required permission missing!</string>
+    <string name="toast_invalid_screen_timeout">Error, invalid screen timeout!</string>
+</resources>

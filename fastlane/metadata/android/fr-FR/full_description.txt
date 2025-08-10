@@ -1,0 +1,30 @@
+Caractéristique :
+
+KeepOn est gratuit et open-source (FOSS), sans publicités/trackers et sans utilisation d'Internet.
+KeepOn te permet de garder l'écran de ton appareil allumé pendant la durée souhaitée et te permet également de revenir automatiquement aux paramètres par défaut lorsque l'écran s'éteint.
+KeepOn s'adapte à la configuration de ton appareil pour une utilisation facile !
+Une extension Tasker/Locale est intégrée et permet d'utiliser les fonctions de KeepOn depuis une autre application compatible !
+
+Permissions :
+
+ - android.permission.WRITE_SETTINGS : Nécessaire à Android pour modifier les paramètres de délai d'expiration d'écran
+ - android.permission.FOREGROUND_SERVICE : Nécessaire pour détecter les événements de désactivation de l'écran et d'autres modifications de délai d'expiration de l'écran
+ - android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS: Nécessaire pour empêcher Android de fermer KeepOn pendant son exécution
+ - android.permission.POST_NOTIFICATIONS: Nécessaire pour permettre à KeepOn d'afficher des notifications pendant son exécution
+
+
+Crédits :
+
+ Bibliothèques:
+  - Coil: https://github.com/coil-kt/coil
+
+ Police de caractères:
+  - Roboto: https://fonts.google.com/specimen/Roboto?query=roboto
+  - Bitter: https://fonts.google.com/specimen/Bitter?query=bitter
+  - Open Sans: https://fonts.google.com/specimen/Open+Sans?query=open+sans
+  - Caudex: https://fonts.google.com/specimen/Caudex?query=Caudex
+  - Poppins: https://fonts.google.com/specimen/Poppins?query=Poppins
+  - Lora: https://fonts.google.com/specimen/Lora?query=Lora
+
+
+Code source : https://github.com/twentynine78/KeepOn
