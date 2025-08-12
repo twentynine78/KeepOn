@@ -50,6 +50,9 @@ android {
         compose = true
     }
 }
+kotlin {
+    jvmToolchain(JavaVersion.VERSION_21.majorVersion.toInt())
+}
 
 dependencies {
     implementation(libs.androidx.core.ktx)
