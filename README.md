@@ -14,6 +14,18 @@ KeepOn adapts to your device's configuration to easy use and allow you to custom
 
 A Tasker/Locale plugin is integrated and allows you to use KeepOn functions from another compatible application!
 
+## Download
+
+[<img src=".github/GetItOnGooglePlay_Badge.png?raw=true"
+alt="Get it on PlayStore"
+height="80">](https://play.google.com/store/apps/details?id=fr.twentynine.keepon)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+alt="Get it on F-Droid"
+height="80">](https://f-droid.org/packages/fr.twentynine.keepon/)
+[<img src="https://raw.githubusercontent.com/Kunzisoft/Github-badge/main/get-it-on-github.png"
+alt="Get it on GitHub"
+height="80">](https://github.com/twentynine78/KeepOn/releases/latest)
+
 ## Permissions
 
 - android.permission.WRITE_SETTINGS: Needed by Android to modify screen timeout settings
@@ -22,19 +34,6 @@ A Tasker/Locale plugin is integrated and allows you to use KeepOn functions from
 - android.permission.POST_NOTIFICATIONS: Needed to allow KeepOn to display notification while it is running
 
 You can read / audit code and compile your own apk if you want!
-
-## Download
-
-[<img src=".github/GetItOnGooglePlay_Badge.png?raw=true"
-alt="Get it on PlayStore"
-style="float:left; padding:13px; margin-right:6px; margin-bottom:6px"
-height="54">](https://play.google.com/store/apps/details?id=fr.twentynine.keepon)
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-alt="Get it on F-Droid"
-height="80">](https://f-droid.org/packages/fr.twentynine.keepon/)
-[<img src="https://raw.githubusercontent.com/Kunzisoft/Github-badge/main/get-it-on-github.png"
-alt="Get it on GitHub"
-height="80">](https://github.com/twentynine78/KeepOn/releases/latest)
 
 ## Credit
 
