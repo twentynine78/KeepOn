@@ -377,7 +377,7 @@ fun ScreenTimeoutRow(
                     enabled = !item.isDefault,
                     onCheckedChange = null,
                     modifier = Modifier
-                        .padding(end = 12.dp)
+                        .padding(end = 8.dp)
                         .align(Alignment.CenterEnd)
                 )
             }

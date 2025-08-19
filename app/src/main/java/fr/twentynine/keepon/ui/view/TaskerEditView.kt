@@ -298,7 +298,7 @@ fun TaskerScreenTimeoutList(
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                     modifier = Modifier
-                        .padding(start = 32.dp, end = 32.dp, top = 4.dp, bottom = 8.dp),
+                        .padding(start = 32.dp, end = 32.dp, top = 8.dp, bottom = 8.dp),
                 )
             }
         }
@@ -330,7 +330,7 @@ fun TaskerScreenTimeoutList(
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                     modifier = Modifier
-                        .padding(start = 32.dp, end = 32.dp, top = 4.dp, bottom = 8.dp),
+                        .padding(start = 32.dp, end = 32.dp, top = 8.dp, bottom = 8.dp),
                 )
             }
         }
@@ -500,6 +500,7 @@ fun TaskerScreenTimeoutRow(
                 }
             } else {
                 RadioButton(
+                    modifier = Modifier.padding(end = 4.dp),
                     selected = isSelected,
                     onClick = null,
                 )
