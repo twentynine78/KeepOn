@@ -43,10 +43,10 @@
 
     <string name="general_behavior_title">Behavior</string>
     <string name="general_behavior_short_text">Reset the screen timeout to %s when it switches off</string>
-    <string name="general_behavior_text">Select if the screen timeout will be reset to default when screen goes off.</string>
+    <string name="general_behavior_text">Choose if the screen timeout should be reset to its default value when the screen turns off.</string>
 
     <string name="select_timeouts_title">Screen timeouts</string>
-    <string name="select_timeouts_text">Select screen timeouts that will be available in the quick settings.</string>
+    <string name="select_timeouts_text">Select screen timeouts that will be available in the quick settings.\nIt is also possible to change the current screen timeout by long pressing the desired value.</string>
 
     <string name="font_options_title">Icon placement</string>
     <string name="font_options_text">Change the size of the font and the location of the icon.</string>
