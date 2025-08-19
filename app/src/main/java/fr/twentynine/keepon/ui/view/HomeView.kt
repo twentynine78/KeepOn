@@ -45,7 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,8 +52,6 @@ import androidx.compose.ui.text.font.lerp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.size.Size
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.data.enums.ItemPosition
 import fr.twentynine.keepon.data.enums.TimeoutIconSize
@@ -248,6 +245,14 @@ fun ScreenTimeoutRow(
     val coroutineScope = rememberCoroutineScope()
     val tooltipState = rememberTooltipState(isPersistent = true)
 
+    val imageData = remember(timeoutIconStyle) {
+        TimeoutIconData(
+            ScreenTimeoutUIToScreenTimeoutMapper.map(item),
+            TimeoutIconSize.MEDIUM,
+            timeoutIconStyle
+        )
+    }
+
     ItemCardView(
         modifier = modifier,
         itemPosition = itemPosition,
@@ -292,24 +297,11 @@ fun ScreenTimeoutRow(
                     .align(Alignment.CenterStart),
                 contentAlignment = Alignment.Center
             ) {
-                val context = LocalContext.current
-                val imageRequest = remember(item.value, timeoutIconStyle, item.isDefault, item.isSelected) {
-                    ImageRequest.Builder(context)
-                        .data(
-                            TimeoutIconData(
-                                ScreenTimeoutUIToScreenTimeoutMapper.map(item),
-                                TimeoutIconSize.MEDIUM,
-                                timeoutIconStyle
-                            )
-                        )
-                        .size(Size.ORIGINAL)
-                        .build()
-                }
                 AsyncImage(
-                    model = imageRequest,
-                    contentDescription = item.displayName,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
                     modifier = Modifier.size(20.dp, 20.dp),
+                    model = imageData,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
+                    contentDescription = item.displayName,
                 )
             }
 

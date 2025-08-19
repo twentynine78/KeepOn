@@ -48,7 +48,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
@@ -59,8 +58,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.size.Size
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.data.enums.ItemPosition
 import fr.twentynine.keepon.data.enums.SpecialScreenTimeoutType
@@ -417,10 +414,13 @@ fun TaskerScreenTimeoutRow(
                 }
             }
 
-            val iconModel by remember(itemValue, timeoutIconStyle) {
-                derivedStateOf { TimeoutIconData(itemValue, TimeoutIconSize.MEDIUM, timeoutIconStyle) }
+            val imageData = remember(timeoutIconStyle) {
+                TimeoutIconData(
+                    itemValue,
+                    TimeoutIconSize.MEDIUM,
+                    timeoutIconStyle
+                )
             }
-            val context = LocalContext.current
 
             Box(
                 modifier = Modifier
@@ -441,15 +441,10 @@ fun TaskerScreenTimeoutRow(
                 contentAlignment = Alignment.Center
             ) {
                 AsyncImage(
-                    model = remember(context, iconModel) {
-                        ImageRequest.Builder(context)
-                            .data(iconModel)
-                            .size(Size.ORIGINAL)
-                            .build()
-                    },
-                    contentDescription = item.displayName,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
                     modifier = Modifier.size(20.dp, 20.dp),
+                    model = imageData,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
+                    contentDescription = item.displayName,
                 )
             }
 

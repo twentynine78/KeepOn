@@ -46,8 +46,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.size.Size
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.data.enums.TimeoutIconSize
 import fr.twentynine.keepon.data.model.MainUIEvent
@@ -61,6 +59,7 @@ import fr.twentynine.keepon.ui.navigation.TOP_LEVEL_DESTINATIONS
 import fr.twentynine.keepon.ui.navigation.withBadge
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
+import fr.twentynine.keepon.util.StringResourceProviderImpl
 
 private fun NavigationSuiteType.toKeepOnNavType() = when (this) {
     NavigationSuiteType.NavigationBar -> KeepOnNavigationType.BOTTOM_NAVIGATION
@@ -204,9 +203,16 @@ private fun KeepOnView(
                         label = "fabContentColor"
                     )
 
-                    val fabContentDescription = remember(uiState.currentScreenTimeout, uiState.screenTimeouts) {
-                        uiState.screenTimeouts.firstOrNull { it.value == uiState.currentScreenTimeout.value }?.displayName
-                            ?: "Timeout Icon"
+                    val stringResourceProvider = StringResourceProviderImpl(LocalContext.current)
+                    val imageDescription = remember(uiState.currentScreenTimeout) {
+                        uiState.currentScreenTimeout.getFullDisplayTimeout(stringResourceProvider)
+                    }
+                    val imageData = remember(uiState.currentScreenTimeout, uiState.timeoutIconStyle) {
+                        TimeoutIconData(
+                            uiState.currentScreenTimeout,
+                            TimeoutIconSize.LARGE,
+                            uiState.timeoutIconStyle
+                        )
                     }
 
                     FloatingActionButton(
@@ -222,23 +228,11 @@ private fun KeepOnView(
                         contentColor = fabContentColor,
                         shape = RoundedCornerShape(24.dp),
                     ) {
-                        val timeoutIconData = remember(uiState.currentScreenTimeout, uiState.timeoutIconStyle) {
-                            TimeoutIconData(
-                                uiState.currentScreenTimeout,
-                                TimeoutIconSize.LARGE,
-                                uiState.timeoutIconStyle
-                            )
-                        }
                         AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(timeoutIconData)
-                                .size(
-                                    Size.ORIGINAL
-                                )
-                                .build(),
-                            contentDescription = fabContentDescription,
-                            colorFilter = ColorFilter.tint(fabContentColor),
                             modifier = Modifier.size(40.dp, 40.dp).padding(bottom = 2.dp),
+                            model = imageData,
+                            colorFilter = ColorFilter.tint(fabContentColor),
+                            contentDescription = imageDescription,
                         )
                     }
                 }

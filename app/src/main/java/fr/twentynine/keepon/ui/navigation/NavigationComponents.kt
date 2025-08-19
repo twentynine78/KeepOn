@@ -55,14 +55,13 @@ import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.size.Size
 import fr.twentynine.keepon.data.enums.TimeoutIconSize
 import fr.twentynine.keepon.data.model.ScreenTimeout
 import fr.twentynine.keepon.data.model.ScreenTimeoutUI
 import fr.twentynine.keepon.data.model.TimeoutIconData
 import fr.twentynine.keepon.data.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.util.KeepOnNavigationContentPosition
+import fr.twentynine.keepon.util.StringResourceProviderImpl
 
 private fun WindowSizeClass.isCompact() = windowWidthSizeClass == WindowWidthSizeClass.COMPACT
 
@@ -254,6 +253,19 @@ fun NavigationRailView(
                     },
                     tween(animationDuration)
                 )
+
+                val stringResourceProvider = StringResourceProviderImpl(LocalContext.current)
+                val imageDescription = remember(currentScreenTimeout) {
+                    currentScreenTimeout.getFullDisplayTimeout(stringResourceProvider)
+                }
+                val imageData = remember(currentScreenTimeout, timeoutIconStyle) {
+                    TimeoutIconData(
+                        currentScreenTimeout,
+                        TimeoutIconSize.LARGE,
+                        timeoutIconStyle
+                    )
+                }
+
                 FloatingActionButton(
                     modifier = Modifier
                         .border(
@@ -269,23 +281,10 @@ fun NavigationRailView(
                     shape = RoundedCornerShape(24.dp),
                 ) {
                     AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(
-                                remember(currentScreenTimeout, timeoutIconStyle) {
-                                    TimeoutIconData(
-                                        currentScreenTimeout,
-                                        TimeoutIconSize.LARGE,
-                                        timeoutIconStyle
-                                    )
-                                }
-                            )
-                            .size(Size.ORIGINAL)
-                            .build(),
-                        contentDescription = remember(currentScreenTimeout) {
-                            screenTimeouts.first { screenTimeout -> screenTimeout.value == currentScreenTimeout.value }.displayName
-                        },
-                        colorFilter = ColorFilter.tint(fabContentColor),
                         modifier = Modifier.size(40.dp, 40.dp).padding(bottom = 2.dp),
+                        model = imageData,
+                        colorFilter = ColorFilter.tint(fabContentColor),
+                        contentDescription = imageDescription,
                     )
                 }
             }
