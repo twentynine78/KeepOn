@@ -106,7 +106,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun getKeepOnIsActiveFlow(): Flow<Boolean> =
         withContext(ioDispatcher) {
-            return@withContext combine(
+            combine(
                 getCurrentScreenTimeoutFlow(),
                 getDefaultScreenTimeoutFlow(),
                 getResetTimeoutWhenScreenOffFlow(),
@@ -130,7 +130,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
                 initDefaultScreenTimeout(systemScreenTimeoutController.get())
             }
 
-            return@withContext defaultScreenTimeoutFlow
+            defaultScreenTimeoutFlow
         }
 
     override suspend fun getDefaultScreenTimeout(): ScreenTimeout =
@@ -149,7 +149,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
                 defaultScreenTimeout = initDefaultScreenTimeout(systemScreenTimeoutController.get())
             }
 
-            return@withContext defaultScreenTimeout
+            defaultScreenTimeout
         }
 
     override suspend fun setDefaultScreenTimeout(timeout: ScreenTimeout, checkService: Boolean) =
@@ -167,19 +167,18 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun getCurrentScreenTimeoutFlow(): Flow<ScreenTimeout> =
         withContext(ioDispatcher) {
             val defaultValue = systemScreenTimeoutController.get().getSystemScreenTimeout()
-            return@withContext preferenceDataStoreHelper.getPreference(
+            preferenceDataStoreHelper.getPreference(
                 CURRENT_SCREEN_TIMEOUT,
                 defaultValue.value,
                 DataStoreSourceType.DATA_SOURCE
-            )
-                .map { ScreenTimeout(it) }
+            ).map { ScreenTimeout(it) }
         }
 
     override suspend fun getCurrentScreenTimeout(): ScreenTimeout =
         withContext(ioDispatcher) {
             val defaultValue = systemScreenTimeoutController.get().getSystemScreenTimeout()
 
-            return@withContext ScreenTimeout(
+            ScreenTimeout(
                 preferenceDataStoreHelper.getLastPreference(
                     CURRENT_SCREEN_TIMEOUT,
                     defaultValue.value,
@@ -211,7 +210,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun getSelectedScreenTimeoutFlow(): Flow<List<ScreenTimeout>> =
         withContext(ioDispatcher) {
-            return@withContext preferenceDataStoreHelper.getPreference(
+            preferenceDataStoreHelper.getPreference(
                 SELECTED_SCREEN_TIMEOUT,
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
             ).map { strList ->
@@ -234,7 +233,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
             )
             // Manage migration from the older icon style model
-            return@withContext devicePolicyManagerHelper.get().removeNotAllowedScreenTimeout(
+            devicePolicyManagerHelper.get().removeNotAllowedScreenTimeout(
                 if (strList.isNullOrEmpty()) {
                     DataMigrationHelper.getDefaultSelectedScreenTimeoutOrMigrateFromOld(
                         this@UserPreferencesRepositoryImpl
@@ -256,7 +255,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun getResetTimeoutWhenScreenOffFlow(): Flow<Boolean> =
         withContext(ioDispatcher) {
-            return@withContext preferenceDataStoreHelper.getPreference(
+            preferenceDataStoreHelper.getPreference(
                 RESET_TIMEOUT_WHEN_SCREEN_OFF,
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
             ).map { resetWhenScreenOff ->
@@ -272,7 +271,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
             )
             // Manage migration from the older icon style model
-            return@withContext resetWhenScreenOff ?: DataMigrationHelper.getResetTimeoutWhenScreenOffOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
+            resetWhenScreenOff ?: DataMigrationHelper.getResetTimeoutWhenScreenOffOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
         }
 
     override suspend fun setResetTimeoutWhenScreenOff(resetWhenScreenOff: Boolean) =
@@ -293,7 +292,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun getOldResetTimeoutWhenScreenOff(): Boolean? =
         withContext(ioDispatcher) {
-            return@withContext preferenceDataStoreHelper.getLastPreference(
+            preferenceDataStoreHelper.getLastPreference(
                 OLD_RESET_TIMEOUT_WHEN_SCREEN_OFF,
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
             )
@@ -309,7 +308,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun getTimeoutIconStyleFlow(): Flow<TimeoutIconStyle> =
         withContext(ioDispatcher) {
-            return@withContext preferenceDataStoreHelper.getPreference(
+            preferenceDataStoreHelper.getPreference(
                 TIMEOUT_ICON_STYLE,
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
             ).map { timeoutIconStyleJson ->
@@ -329,7 +328,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
             )
             // Manage migration from the older icon style model
-            return@withContext if (timeoutIconStyleJson.isNullOrEmpty()) {
+            if (timeoutIconStyleJson.isNullOrEmpty()) {
                 DataMigrationHelper.getDefaultTimeoutIconStyleOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
             } else {
                 Json.decodeFromString<TimeoutIconStyle>(timeoutIconStyleJson)
@@ -353,10 +352,10 @@ class UserPreferencesRepositoryImpl @Inject constructor(
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
             )
 
-            return@withContext if (oldValue.isNotEmpty()) {
+            if (oldValue.isNotEmpty()) {
                 Json.decodeFromString<OldTimeoutIconStyle>(oldValue)
             } else {
-                return@withContext null
+                null
             }
         }
 
@@ -371,7 +370,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun getQSTileAddedFlow(): Flow<Boolean> =
         withContext(ioDispatcher) {
             val defaultValue = false
-            return@withContext preferenceDataStoreHelper.getPreference(
+            preferenceDataStoreHelper.getPreference(
                 QSTILE_ADDED,
                 defaultValue,
                 DataStoreSourceType.DATA_SOURCE
@@ -390,7 +389,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun getPreviousScreenTimeoutFlow(): Flow<ScreenTimeout> =
         withContext(ioDispatcher) {
             val defaultValue = -1
-            return@withContext preferenceDataStoreHelper.getPreference(
+            preferenceDataStoreHelper.getPreference(
                 PREVIOUS_SCREEN_TIMEOUT,
                 defaultValue,
                 DataStoreSourceType.DATA_SOURCE
@@ -484,7 +483,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun getDismissedTipsFlow(): Flow<List<DismissedTips>> =
         withContext(ioDispatcher) {
-            return@withContext preferenceDataStoreHelper.getPreference(
+            preferenceDataStoreHelper.getPreference(
                 DISMISSED_TIPS,
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
             ).map { dismissedTipsStr ->
@@ -504,7 +503,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
             )
             // Manage migration from the older value
-            return@withContext if (dismissedTipsStr.isNullOrEmpty()) {
+            if (dismissedTipsStr.isNullOrEmpty()) {
                 DataMigrationHelper.getDefaultDismissedTipsListOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
             } else {
                 Json.decodeFromString<List<DismissedTips>>(dismissedTipsStr)
@@ -530,7 +529,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun getOldSelectedScreenTimeouts(): String =
         withContext(ioDispatcher) {
             val defaultValue = ""
-            return@withContext preferenceDataStoreHelper.getLastPreference(
+            preferenceDataStoreHelper.getLastPreference(
                 OLD_SELECTED_SCREEN_TIMEOUT,
                 defaultValue,
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
@@ -548,7 +547,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun getOldAppReviewAsked(): Boolean =
         withContext(ioDispatcher) {
             val defaultValue = false
-            return@withContext preferenceDataStoreHelper.getLastPreference(
+            preferenceDataStoreHelper.getLastPreference(
                 OLD_APP_REVIEW_ASKED,
                 defaultValue,
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
@@ -566,7 +565,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun getOldSkipIntro(): Boolean =
         withContext(ioDispatcher) {
             val defaultValue = false
-            return@withContext preferenceDataStoreHelper.getLastPreference(
+            preferenceDataStoreHelper.getLastPreference(
                 OLD_SKIP_INTRO,
                 defaultValue,
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
@@ -583,7 +582,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun getIsFirstLaunchFlow(): Flow<Boolean> =
         withContext(ioDispatcher) {
-            return@withContext preferenceDataStoreHelper.getPreference(
+            preferenceDataStoreHelper.getPreference(
                 IS_FIRST_LAUNCH,
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
             ).map { isFirstLaunch ->
@@ -605,7 +604,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun getAppLaunchCountFlow(): Flow<Long> =
         withContext(ioDispatcher) {
             val defaultValue = 0L
-            return@withContext preferenceDataStoreHelper.getPreference(
+            preferenceDataStoreHelper.getPreference(
                 APP_LAUNCH_COUNT,
                 defaultValue,
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
@@ -615,7 +614,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun getAppLaunchCount(): Long =
         withContext(ioDispatcher) {
             val defaultValue = 0L
-            return@withContext preferenceDataStoreHelper.getLastPreference(
+            preferenceDataStoreHelper.getLastPreference(
                 APP_LAUNCH_COUNT,
                 defaultValue,
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
@@ -644,7 +643,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         withContext(ioDispatcher) {
             val initialValue = systemScreenTimeoutController.getSystemScreenTimeout()
             setDefaultScreenTimeout(initialValue)
-            return@withContext initialValue
+            initialValue
         }
 
     private suspend fun getNextSelectedScreenTimeout(): ScreenTimeout =
@@ -661,12 +660,12 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
             val sortedScreenTimeouts = screenTimeouts.sortedBy { it.value }.distinct()
             if (sortedScreenTimeouts.isEmpty()) {
-                return@withContext currentTimeout
+                currentTimeout
             }
             val nextIndex = sortedScreenTimeouts.indexOfFirst { it.value == currentTimeout.value }.let { currentIndex ->
                 if (currentIndex == -1 || currentIndex == sortedScreenTimeouts.size - 1) 0 else currentIndex + 1
             }
-            return@withContext sortedScreenTimeouts[nextIndex]
+            sortedScreenTimeouts[nextIndex]
         }
 
     override suspend fun getLastRunVersionCode(): Long {
