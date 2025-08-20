@@ -35,7 +35,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -70,7 +69,7 @@ fun MainPermissionScreen(
     val permissionScreenNotificationTitle = stringResource(R.string.permissions_screen_notification_title)
     val permissionScreenNotificationSubtitle = stringResource(R.string.permissions_screen_notification_subtitle)
 
-    val neededPermissionList by remember(
+    val neededPermissionList = remember(
         uiState.batteryIsNotOptimized,
         uiState.canWriteSystemSettings,
         uiState.canPostNotification
@@ -100,7 +99,8 @@ fun MainPermissionScreen(
                 ),
             )
         }
-        derivedStateOf { mutableNeededPermissionList.toList() }
+
+        mutableNeededPermissionList.toList()
     }
 
     RequestPermissionsView(
@@ -125,7 +125,7 @@ fun TaskerPermissionScreen(
     val permissionScreenNotificationTitle = stringResource(R.string.permissions_screen_notification_title)
     val permissionScreenNotificationSubtitle = stringResource(R.string.permissions_screen_notification_subtitle)
 
-    val neededPermissionList by remember(
+    val neededPermissionList = remember(
         uiState.batteryIsNotOptimized,
         uiState.canWriteSystemSettings,
         uiState.canPostNotification
@@ -156,7 +156,8 @@ fun TaskerPermissionScreen(
                 ),
             )
         }
-        derivedStateOf { mutableNeededPermissionList.toList() }
+
+        mutableNeededPermissionList.toList()
     }
 
     RequestPermissionsView(
@@ -170,11 +171,11 @@ fun RequestPermissionsView(
     neededPermissionList: List<NeededPermission>,
     updateIsFirstLaunch: () -> Unit,
 ) {
-    val firstNeededPermissionIndex by remember(neededPermissionList) {
-        derivedStateOf { neededPermissionList.indexOfFirst { it.requestNeeded } }
+    val firstNeededPermissionIndex = remember(neededPermissionList) {
+        neededPermissionList.indexOfFirst { it.requestNeeded }
     }
-    val lastNeededPermissionIndex by remember(neededPermissionList) {
-        derivedStateOf { neededPermissionList.indexOfLast { it.requestNeeded } }
+    val lastNeededPermissionIndex = remember(neededPermissionList) {
+        neededPermissionList.indexOfLast { it.requestNeeded }
     }
 
     LaunchedEffect(key1 = firstNeededPermissionIndex) {

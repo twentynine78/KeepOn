@@ -34,11 +34,6 @@
     <string name="tasker_activity_name">Change the screen timeout</string>
     <string name="tasker_save_button">Save Tasker configuration</string>
 
-    <string name="dialog_default_timeout_title">Change default screen timeout</string>
-    <string name="dialog_default_timeout_text">Are you sur you want to set default screen timeout to %s?</string>
-    <string name="dialog_default_timeout_confirm_button_text">Yes</string>
-    <string name="dialog_default_timeout_dismiss_button_text">Cancel</string>
-
     <string name="more_info_icon_desc">More information</string>
 
     <string name="general_behavior_title">Behavior</string>
@@ -46,7 +41,10 @@
     <string name="general_behavior_text">Choose if the screen timeout should be reset to its default value when the screen turns off.</string>
 
     <string name="select_timeouts_title">Screen timeouts</string>
-    <string name="select_timeouts_text">Select screen timeouts that will be available in the quick settings.\nIt is also possible to change the current screen timeout by long pressing the desired value.</string>
+    <string name="select_timeouts_text">Select screen timeouts that will be available in the quick settings. To set a default value, swipe it left or right.</string>
+
+    <string name="select_timeouts_swipe_set_default_text">Set as default</string>
+    <string name="select_timeouts_swipe_already_default_text">Already default</string>
 
     <string name="font_options_title">Icon placement</string>
     <string name="font_options_text">Change the size of the font and the location of the icon.</string>

@@ -34,11 +34,6 @@
     <string name="tasker_activity_name">Modifier le délai d\'expiration de l\'écran</string>
     <string name="tasker_save_button">Enregistrer la configuration</string>
 
-    <string name="dialog_default_timeout_title">Modifier le délai d\'expiration de l\'écran par défaut</string>
-    <string name="dialog_default_timeout_text">Êtes-vous sûr de vouloir définir le délai d\'expiration de l\'écran par défaut à %s ?</string>
-    <string name="dialog_default_timeout_confirm_button_text">Oui</string>
-    <string name="dialog_default_timeout_dismiss_button_text">Annuler</string>
-
     <string name="more_info_icon_desc">Plus d\'informations</string>
 
     <string name="general_behavior_title">Comportement</string>
@@ -46,7 +41,10 @@
     <string name="general_behavior_text">Choisissez si le délai d\'extinction de l\'écran doit être réinitialisé à sa valeur par défaut lorsque l\'écran s\'éteint.</string>
 
     <string name="select_timeouts_title">Délais d\'expiration de l\'écran</string>
-    <string name="select_timeouts_text">Sélectionnez les délais d\'expiration de l\'écran qui seront disponibles dans les paramètres rapides.\nIl est également possible de modifier le délai d\'expiration actuel de l\'écran en appuyant longuement sur la valeur souhaitée.</string>
+    <string name="select_timeouts_text">Sélectionnez les délais d\'expiration de l\'écran qui seront disponibles dans les paramètres rapides. Pour définir une valeur par défaut, balayez-la vers la gauche ou vers la droite.</string>
+
+    <string name="select_timeouts_swipe_set_default_text">Définir par défaut</string>
+    <string name="select_timeouts_swipe_already_default_text">Déjà par défaut</string>
 
     <string name="font_options_title">Placement de l\'icône</string>
     <string name="font_options_text">Modifiez la taille de la police d\'écriture et l\'emplacement de l\'icône.</string>

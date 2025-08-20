@@ -36,7 +36,6 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -89,23 +88,13 @@ fun TaskerEditView(
             val exitUntilCollapsedScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
             val scrollBehavior = remember { exitUntilCollapsedScrollBehavior }
 
-            val localDensity = LocalDensity.current
             var scaffoldWidthDp by remember { mutableStateOf(0.dp) }
+            val localDensity = LocalDensity.current
+            val layoutDirection = LocalLayoutDirection.current
 
-            val startPaddingForDisplayCutout =
-                getStartPaddingForDisplayCutout(scaffoldWidthDp, localDensity, LocalLayoutDirection.current)
-            val startPadding by remember(scaffoldWidthDp) {
-                derivedStateOf { startPaddingForDisplayCutout }
-            }
-            val endPaddingForDisplayCutout =
-                getEndPaddingForDisplayCutout(scaffoldWidthDp, localDensity, LocalLayoutDirection.current)
-            val endPadding by remember(scaffoldWidthDp) {
-                derivedStateOf { endPaddingForDisplayCutout }
-            }
-            val bottomPaddingForDisplayCutout = getBottomPadding(localDensity)
-            val bottomPadding by remember {
-                derivedStateOf { bottomPaddingForDisplayCutout }
-            }
+            val startPadding = getStartPaddingForDisplayCutout(scaffoldWidthDp, localDensity, layoutDirection)
+            val endPadding = getEndPaddingForDisplayCutout(scaffoldWidthDp, localDensity, layoutDirection)
+            val bottomPadding = getBottomPadding(localDensity)
 
             Scaffold(
                 modifier = Modifier
@@ -400,17 +389,15 @@ fun TaskerScreenTimeoutRow(
             val backgroundColorAlpha = 0.65f
             val borderColorAlpha = 0.35f
 
-            val fontWeight by remember(isSelected) {
-                derivedStateOf { if (isSelected) FontWeight.ExtraBold else FontWeight.Normal }
+            val fontWeight = remember(isSelected) {
+                if (isSelected) FontWeight.ExtraBold else FontWeight.Normal
             }
 
-            val itemValue by remember(item, defaultScreenTimeout, previousScreenTimeout) {
-                derivedStateOf {
-                    when (item.value) {
-                        SpecialScreenTimeoutType.DEFAULT_SCREEN_TIMEOUT_TYPE.value -> defaultScreenTimeout
-                        SpecialScreenTimeoutType.PREVIOUS_SCREEN_TIMEOUT_TYPE.value -> previousScreenTimeout
-                        else -> ScreenTimeoutUIToScreenTimeoutMapper.map(item)
-                    }
+            val itemValue = remember(item, defaultScreenTimeout, previousScreenTimeout) {
+                when (item.value) {
+                    SpecialScreenTimeoutType.DEFAULT_SCREEN_TIMEOUT_TYPE.value -> defaultScreenTimeout
+                    SpecialScreenTimeoutType.PREVIOUS_SCREEN_TIMEOUT_TYPE.value -> previousScreenTimeout
+                    else -> ScreenTimeoutUIToScreenTimeoutMapper.map(item)
                 }
             }
 

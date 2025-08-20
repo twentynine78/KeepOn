@@ -16,49 +16,52 @@ import androidx.compose.ui.unit.Dp // Added for Dp type
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.data.enums.ItemPosition
 
+private val defaultRoundedCornerSize = 24.dp
+private val defaultBorderWidth = 1.dp
+private val defaultBoxVerticalPadding = 16.dp
+private val ItemPaddingTopFirst = 8.dp
+private val ItemPaddingBottomLast = 12.dp
+private val ItemPaddingDefault = 0.dp
+
 @Composable
 fun ItemCardView(
     itemPosition: ItemPosition,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-    val roundedCornerSize: Dp = remember { 24.dp }
-    val borderWidth: Dp = remember { 1.dp }
-    val boxVerticalPadding: Dp = remember { 16.dp }
-
     val topPadding: Dp = remember(itemPosition) {
         when (itemPosition) {
-            ItemPosition.FIRST, ItemPosition.FIRST_AND_LAST -> 8.dp
-            else -> 0.dp
+            ItemPosition.FIRST, ItemPosition.FIRST_AND_LAST -> ItemPaddingTopFirst
+            else -> ItemPaddingDefault
         }
     }
 
     val bottomPadding: Dp = remember(itemPosition) {
         when (itemPosition) {
-            ItemPosition.LAST, ItemPosition.FIRST_AND_LAST -> 12.dp
-            else -> 0.dp
+            ItemPosition.LAST, ItemPosition.FIRST_AND_LAST -> ItemPaddingBottomLast
+            else -> ItemPaddingDefault
         }
     }
 
-    val itemBottomBorderPadding: Dp = remember(itemPosition, borderWidth) { // Added borderWidth as a key
+    val itemBottomBorderPadding: Dp = remember(itemPosition) {
         when (itemPosition) {
-            ItemPosition.LAST, ItemPosition.FIRST_AND_LAST -> 0.dp
-            else -> borderWidth
+            ItemPosition.LAST, ItemPosition.FIRST_AND_LAST -> ItemPaddingDefault
+            else -> defaultBorderWidth
         }
     }
 
-    val shape: RoundedCornerShape = remember(itemPosition, roundedCornerSize) { // Added roundedCornerSize as a key
+    val shape: RoundedCornerShape = remember(itemPosition) {
         when (itemPosition) {
             ItemPosition.FIRST -> RoundedCornerShape(
-                topStart = roundedCornerSize,
-                topEnd = roundedCornerSize,
+                topStart = defaultRoundedCornerSize,
+                topEnd = defaultRoundedCornerSize,
             )
             ItemPosition.LAST -> RoundedCornerShape(
-                bottomStart = roundedCornerSize,
-                bottomEnd = roundedCornerSize,
+                bottomStart = defaultRoundedCornerSize,
+                bottomEnd = defaultRoundedCornerSize,
             )
             ItemPosition.FIRST_AND_LAST -> RoundedCornerShape(
-                size = roundedCornerSize
+                size = defaultRoundedCornerSize
             )
             else -> RoundedCornerShape(0.dp)
         }
@@ -69,8 +72,8 @@ fun ItemCardView(
     Box(
         modifier = modifier
             .padding(
-                start = boxVerticalPadding,
-                end = boxVerticalPadding,
+                start = defaultBoxVerticalPadding,
+                end = defaultBoxVerticalPadding,
                 top = topPadding,
                 bottom = bottomPadding
             )

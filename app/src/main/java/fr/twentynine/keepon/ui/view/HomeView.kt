@@ -6,7 +6,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,12 +34,9 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -95,15 +91,6 @@ fun HomeScreen(
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
 ) {
-    val openDefaultTimeoutDialog = rememberSaveable { mutableStateOf(false) }
-    val defaultTimeoutDialogItem = rememberSaveable { mutableStateOf<ScreenTimeoutUI?>(null) }
-
-    DefaultTimeoutDialogView(
-        openDialog = openDefaultTimeoutDialog,
-        onConfirmation = { onEvent(MainUIEvent.SetDefaultScreenTimeout(it)) },
-        screenTimeoutUI = defaultTimeoutDialogItem
-    )
-
     val baseMaxWidthModifier = remember {
         Modifier
             .fillMaxHeight()
@@ -160,8 +147,6 @@ fun HomeScreen(
                 item = screenTimeout,
                 itemPosition = itemPosition,
                 timeoutIconStyle = timeoutIconStyle,
-                defaultTimeoutDialogItem = defaultTimeoutDialogItem,
-                openDefaultTimeoutDialog = openDefaultTimeoutDialog,
                 resetTimeoutWhenScreenOff = resetTimeoutWhenScreenOff,
                 onEvent = onEvent,
                 modifier = baseMaxWidthModifier,
@@ -236,8 +221,6 @@ fun ScreenTimeoutRow(
     item: ScreenTimeoutUI,
     itemPosition: ItemPosition,
     timeoutIconStyle: TimeoutIconStyle,
-    defaultTimeoutDialogItem: MutableState<ScreenTimeoutUI?>,
-    openDefaultTimeoutDialog: MutableState<Boolean>,
     resetTimeoutWhenScreenOff: Boolean,
     onEvent: (MainUIEvent) -> Unit,
     modifier: Modifier,
@@ -253,30 +236,34 @@ fun ScreenTimeoutRow(
         )
     }
 
-    ItemCardView(
-        modifier = modifier,
+    SwipeableScreenTimeoutUICardView(
+        modifier = modifier
+            .fillMaxSize(),
+        item = item,
         itemPosition = itemPosition,
+        swipeEnabled = resetTimeoutWhenScreenOff,
+        onClickAction = { clickedItem ->
+            if (clickedItem.isLocked) {
+                coroutineScope.launch { tooltipState.show() }
+            } else {
+                onEvent(MainUIEvent.ToggleScreenTimeoutSelection(clickedItem))
+            }
+        },
+        onSwipeAction = { dismissedValue, dismissedItem ->
+            onEvent(
+                MainUIEvent.SetDefaultScreenTimeout(
+                    ScreenTimeoutUIToScreenTimeoutMapper.map(
+                        dismissedItem
+                    )
+                )
+            )
+        },
     ) {
         Box(
             modifier = Modifier
-                .combinedClickable(
-                    onClick = {
-                        if (item.isLocked) {
-                            coroutineScope.launch { tooltipState.show() }
-                        } else {
-                            onEvent(MainUIEvent.ToggleScreenTimeoutSelection(item))
-                        }
-                    },
-                    onLongClick = {
-                        if (!item.isDefault && resetTimeoutWhenScreenOff) {
-                            defaultTimeoutDialogItem.value = item
-                            openDefaultTimeoutDialog.value = true
-                        }
-                    }
-                )
                 .fillMaxSize()
                 .padding(12.dp),
-            contentAlignment = Alignment.CenterStart,
+            contentAlignment = Alignment.CenterStart
         ) {
             Box(
                 modifier = Modifier
