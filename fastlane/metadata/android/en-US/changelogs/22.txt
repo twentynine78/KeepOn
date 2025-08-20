@@ -1,0 +1,3 @@
+- Behavior change to set the default screen timeout value by swiping
+- Bug fixes and optimizations
+- Dependency updates

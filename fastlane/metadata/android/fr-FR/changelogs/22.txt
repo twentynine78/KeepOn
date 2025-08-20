@@ -1,0 +1,3 @@
+- Modification du comportement pour définir la valeur par défaut du délai d'expiration de l'écran en balayant l'écran
+- Corrections de bogues et optimisations
+- Mises à jour des dépendances
