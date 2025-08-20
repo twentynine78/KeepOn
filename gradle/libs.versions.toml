@@ -1,18 +1,18 @@
 [versions]
 # Plugins versions
-androidGradlePlugin = "8.12.0"
-kotlin = "2.2.0"
+androidGradlePlugin = "8.12.1"
+kotlin = "2.2.10"
 hilt = "2.57"
-ksp = "2.2.0-2.0.2"
+ksp = "2.2.10-2.0.2"
 # Libraries versions
-coreKtxVersion = "1.16.0"
+coreKtxVersion = "1.17.0"
 lifecycleVersion = "2.9.2"
 navigationComposeVersion = "2.9.3"
 workVersion = "2.10.3"
 datastorePrefVersion = "1.1.7"
 splashscreenVersion = "1.0.1"
 activityVersion = "1.10.1"
-composeBomVersion = "2025.07.00"
+composeBomVersion = "2025.08.00"
 androidMaterialVersion = "1.12.0"
 androidXHiltVersion = "1.2.0"
 coilVersion = "3.3.0"
