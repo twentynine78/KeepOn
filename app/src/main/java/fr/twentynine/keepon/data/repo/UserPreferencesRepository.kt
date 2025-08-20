@@ -45,7 +45,7 @@ interface UserPreferencesRepository {
     suspend fun getKeepOnIsActiveFlow(): Flow<Boolean>
     suspend fun getDefaultScreenTimeoutFlow(): Flow<ScreenTimeout>
     suspend fun getDefaultScreenTimeout(): ScreenTimeout
-    suspend fun setDefaultScreenTimeout(timeout: ScreenTimeout)
+    suspend fun setDefaultScreenTimeout(timeout: ScreenTimeout, checkService: Boolean = false)
     suspend fun getCurrentScreenTimeoutFlow(): Flow<ScreenTimeout>
     suspend fun getCurrentScreenTimeout(): ScreenTimeout
     suspend fun setCurrentScreenTimeout(timeout: ScreenTimeout, forceUpdatePreviousTimeout: Boolean = false)
@@ -152,8 +152,11 @@ class UserPreferencesRepositoryImpl @Inject constructor(
             return@withContext defaultScreenTimeout
         }
 
-    override suspend fun setDefaultScreenTimeout(timeout: ScreenTimeout) =
+    override suspend fun setDefaultScreenTimeout(timeout: ScreenTimeout, checkService: Boolean) =
         withContext(ioDispatcher) {
+            if (checkService && timeout == getCurrentScreenTimeout()) {
+                screenOffReceiverServiceManager.get().stopService()
+            }
             preferenceDataStoreHelper.putPreference(
                 DEFAULT_SCREEN_TIMEOUT,
                 timeout.value,

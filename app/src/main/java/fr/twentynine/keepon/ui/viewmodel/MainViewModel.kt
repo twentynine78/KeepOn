@@ -264,7 +264,10 @@ class MainViewModel @Inject constructor(
             val currentScreenTimeout = userPreferencesRepository.getCurrentScreenTimeout()
 
             if (newScreenTimeout != defaultTimeout) {
-                userPreferencesRepository.setDefaultScreenTimeout(newScreenTimeout)
+                userPreferencesRepository.setDefaultScreenTimeout(newScreenTimeout, true)
+                if (newScreenTimeout == currentScreenTimeout) {
+                    qsTileUpdater.requestUpdate()
+                }
 
                 if (defaultTimeout == currentScreenTimeout) {
                     userPreferencesRepository.setCurrentScreenTimeout(newScreenTimeout)
