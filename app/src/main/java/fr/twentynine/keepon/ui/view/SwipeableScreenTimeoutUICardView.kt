@@ -41,10 +41,10 @@ private const val BACKGROUND_COLOR_ANIMATION_DURATION_MS = 400
 
 private val defaultRoundedCornerSize = 24.dp
 private val defaultBorderWidth = 1.dp
-private val defaultBoxVerticalPadding = 16.dp
-private val ItemPaddingTopFirst = 8.dp
-private val ItemPaddingBottomLast = 12.dp
-private val ItemPaddingDefault = 0.dp
+private val defaultBoxHorizontalPadding = 16.dp
+private val itemPaddingTopFirst = 8.dp
+private val itemPaddingBottomLast = 12.dp
+private val itemPaddingDefault = 0.dp
 
 @Composable
 fun SwipeableScreenTimeoutUICardView(
@@ -58,21 +58,21 @@ fun SwipeableScreenTimeoutUICardView(
 ) {
     val topPadding: Dp = remember(itemPosition) {
         when (itemPosition) {
-            ItemPosition.FIRST, ItemPosition.FIRST_AND_LAST -> ItemPaddingTopFirst
-            else -> ItemPaddingDefault
+            ItemPosition.FIRST, ItemPosition.FIRST_AND_LAST -> itemPaddingTopFirst
+            else -> itemPaddingDefault
         }
     }
 
     val bottomPadding: Dp = remember(itemPosition) {
         when (itemPosition) {
-            ItemPosition.LAST, ItemPosition.FIRST_AND_LAST -> ItemPaddingBottomLast
-            else -> ItemPaddingDefault
+            ItemPosition.LAST, ItemPosition.FIRST_AND_LAST -> itemPaddingBottomLast
+            else -> itemPaddingDefault
         }
     }
 
     val itemBottomBorderPadding: Dp = remember(itemPosition) {
         when (itemPosition) {
-            ItemPosition.LAST, ItemPosition.FIRST_AND_LAST -> ItemPaddingDefault
+            ItemPosition.LAST, ItemPosition.FIRST_AND_LAST -> itemPaddingDefault
             else -> defaultBorderWidth
         }
     }
@@ -142,8 +142,8 @@ fun SwipeableScreenTimeoutUICardView(
     Box(
         modifier = modifier
             .padding(
-                start = defaultBoxVerticalPadding,
-                end = defaultBoxVerticalPadding,
+                start = defaultBoxHorizontalPadding,
+                end = defaultBoxHorizontalPadding,
                 top = topPadding,
                 bottom = bottomPadding
             )
