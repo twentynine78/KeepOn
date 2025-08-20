@@ -35,7 +35,7 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.data.enums.ItemPosition
 import fr.twentynine.keepon.data.model.ScreenTimeoutUI
 
-private const val SWIPE_THRESHOLD_FRACTION = 0.25f
+private const val SWIPE_THRESHOLD_FRACTION = 0.30f
 private const val CONTENT_COLOR_ANIMATION_DURATION_MS = 200
 private const val BACKGROUND_COLOR_ANIMATION_DURATION_MS = 400
 
@@ -108,6 +108,7 @@ fun SwipeableScreenTimeoutUICardView(
     val backgroundDisabledColor = MaterialTheme.colorScheme.outlineVariant
     val contentEnabledTint = MaterialTheme.colorScheme.onPrimaryContainer
     val contentDisabledTint = MaterialTheme.colorScheme.outline
+
     val enabledText = stringResource(R.string.select_timeouts_swipe_set_default_text)
     val disabledText = stringResource(R.string.select_timeouts_swipe_already_default_text)
 
@@ -119,10 +120,9 @@ fun SwipeableScreenTimeoutUICardView(
         if (!item.isDefault) Icons.Rounded.Build else Icons.Rounded.Done
     }
     val contentTint = remember(item.isDefault) {
-        val finalColor = if (!item.isDefault) contentEnabledTint else contentDisabledTint
-        finalColor.copy(alpha = 0.5f)
+        if (!item.isDefault) contentEnabledTint else contentDisabledTint
     }
-    val backgroundColor = remember(item.isDefault, state.progress) {
+    val backgroundColor = remember(item.isDefault) {
         if (!item.isDefault) backgroundEnabledColor else backgroundDisabledColor
     }
     val animatedBackgroundColor by animateColorAsState(
@@ -138,6 +138,8 @@ fun SwipeableScreenTimeoutUICardView(
         animationSpec = tween(durationMillis = CONTENT_COLOR_ANIMATION_DURATION_MS),
         label = "contentColorAnimation"
     )
+
+    val cardContainerColor = CardDefaults.cardColors().containerColor
 
     Box(
         modifier = modifier
@@ -175,7 +177,7 @@ fun SwipeableScreenTimeoutUICardView(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(CardDefaults.cardColors().containerColor, shape),
+                            .background(cardContainerColor, shape),
                         contentAlignment = Alignment.CenterStart
                     ) {
                         content(item)
