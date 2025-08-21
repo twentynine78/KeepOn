@@ -26,7 +26,7 @@ object DataMigrationHelper {
 
                 newList
             } else {
-                emptyList<ScreenTimeout>()
+                emptyList()
             }
         }
 

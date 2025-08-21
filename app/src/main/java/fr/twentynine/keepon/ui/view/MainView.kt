@@ -140,7 +140,6 @@ private fun KeepOnView(
         selectedDestination = selectedDestination,
         keepOnIsActive = uiState.keepOnIsActive,
         currentScreenTimeout = uiState.currentScreenTimeout,
-        screenTimeouts = uiState.screenTimeouts,
         timeoutIconStyle = uiState.timeoutIconStyle,
         fabOnClick = { onEvent(MainUIEvent.SetNextSelectedSystemScreenTimeout) },
         scrollBehavior = bottomBarScrollBehavior,

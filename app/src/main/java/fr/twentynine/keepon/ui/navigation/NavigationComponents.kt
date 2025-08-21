@@ -57,7 +57,6 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import coil3.compose.AsyncImage
 import fr.twentynine.keepon.data.enums.TimeoutIconSize
 import fr.twentynine.keepon.data.model.ScreenTimeout
-import fr.twentynine.keepon.data.model.ScreenTimeoutUI
 import fr.twentynine.keepon.data.model.TimeoutIconData
 import fr.twentynine.keepon.data.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.util.KeepOnNavigationContentPosition
@@ -77,7 +76,6 @@ fun KeepOnNavigationWrapper(
     navigateToTopLevelDestination: (NavigationDestination) -> Unit,
     keepOnIsActive: Boolean,
     currentScreenTimeout: ScreenTimeout,
-    screenTimeouts: List<ScreenTimeoutUI>,
     timeoutIconStyle: TimeoutIconStyle,
     fabOnClick: () -> Unit,
     scrollBehavior: BottomAppBarScrollBehavior,
@@ -119,7 +117,6 @@ fun KeepOnNavigationWrapper(
                     navigateToTopLevelDestination = navigateToTopLevelDestination,
                     keepOnIsActive = keepOnIsActive,
                     currentScreenTimeout = currentScreenTimeout,
-                    screenTimeouts = screenTimeouts,
                     timeoutIconStyle = timeoutIconStyle,
                     fabOnClick = fabOnClick,
                     navigationContentPosition = navContentPosition,
@@ -193,7 +190,6 @@ fun NavigationRailView(
     navigateToTopLevelDestination: (NavigationDestination) -> Unit,
     keepOnIsActive: Boolean,
     currentScreenTimeout: ScreenTimeout,
-    screenTimeouts: List<ScreenTimeoutUI>,
     timeoutIconStyle: TimeoutIconStyle,
     fabOnClick: () -> Unit,
     navigationContentPosition: KeepOnNavigationContentPosition,

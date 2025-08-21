@@ -22,4 +22,3 @@ fun ItemCardView(
         content = { content() }
     )
 }
-
