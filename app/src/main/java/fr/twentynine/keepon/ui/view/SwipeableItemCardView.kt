@@ -2,6 +2,7 @@ package fr.twentynine.keepon.ui.view
 
 import android.os.Parcelable
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -40,8 +41,8 @@ import kotlinx.coroutines.delay
 
 const val DEFAULT_SWIPE_THRESHOLD_FRACTION = 0.30f
 
-private const val INITIAL_ANIMATION_DURATION = 250
-private const val INITIAL_ANIMATION_DELAY = 200L
+private const val INITIAL_ANIMATION_DURATION = 400
+private const val INITIAL_ANIMATION_DELAY = 450L
 private const val SWIPE_ANIMATION_DELAY = 150L
 private const val INITIAL_ANIMATION_OFFSET_DP = 64
 
@@ -66,13 +67,100 @@ private fun rememberNoFlingSwipeToDismissBoxState(
 }
 
 @Composable
+private fun <T : Parcelable> AnimateSwipeableItemCardEffect(
+    item: T?,
+    animateSwipeCondition: Boolean = false,
+    animateFirstDisplayCondition: Boolean = false,
+    swipeToDismissDirection: SwipeToDismissBoxValue,
+    animatedTranslationX: Animatable<Float, AnimationVector1D>,
+) {
+    val density = LocalDensity.current
+
+    var isFirstEverAnimationCycleForThisItem by rememberSaveable(item) {
+        mutableStateOf(true)
+    }
+    var animationTriggerHandled by rememberSaveable(animateSwipeCondition, animateFirstDisplayCondition) {
+        mutableStateOf(false)
+    }
+    var originalFirstDisplayCondition by rememberSaveable {
+        mutableStateOf(animateSwipeCondition || animateFirstDisplayCondition)
+    }
+
+    LaunchedEffect(item, animateSwipeCondition, animateFirstDisplayCondition) {
+        if (item == null) {
+            return@LaunchedEffect
+        }
+
+        if ((!animateSwipeCondition && !animateFirstDisplayCondition)) {
+            return@LaunchedEffect
+        }
+
+        if (animationTriggerHandled) {
+            return@LaunchedEffect
+        }
+
+        val initialTranslationPx = with(density) { INITIAL_ANIMATION_OFFSET_DP.dp.toPx() }
+        var playSnapBackAnimation = true
+        var snapBackDampingRatio = Spring.DampingRatioMediumBouncy
+        val springStiffness = Spring.StiffnessMediumLow
+
+        if (isFirstEverAnimationCycleForThisItem) {
+            isFirstEverAnimationCycleForThisItem = false
+
+            if (animateFirstDisplayCondition && originalFirstDisplayCondition) {
+                originalFirstDisplayCondition = false
+                // First display animation sequence
+                animatedTranslationX.snapTo(0f)
+                animatedTranslationX.animateTo(
+                    targetValue = initialTranslationPx + (initialTranslationPx / 2),
+                    animationSpec = tween(INITIAL_ANIMATION_DURATION)
+                )
+                delay(INITIAL_ANIMATION_DELAY)
+                snapBackDampingRatio = Spring.DampingRatioHighBouncy
+            } else {
+                if (animateSwipeCondition && !originalFirstDisplayCondition) {
+                    originalFirstDisplayCondition = false
+                    // Swipe animation sequence.
+                    val offset = if (swipeToDismissDirection == SwipeToDismissBoxValue.EndToStart) {
+                        initialTranslationPx * -1
+                    } else {
+                        initialTranslationPx
+                    }
+                    animatedTranslationX.snapTo(offset)
+                    delay(SWIPE_ANIMATION_DELAY)
+                } else {
+                    originalFirstDisplayCondition = false
+                    // No animation at all (neither first display nor swipe-in).
+                    animatedTranslationX.snapTo(0f)
+                    playSnapBackAnimation = false
+                }
+            }
+
+            // Subsequent "Snap Back" or "Return" animation
+            if (playSnapBackAnimation) {
+                animatedTranslationX.animateTo(
+                    targetValue = 0f,
+                    animationSpec = spring(
+                        dampingRatio = snapBackDampingRatio,
+                        stiffness = springStiffness
+                    )
+                )
+            } else {
+                animatedTranslationX.snapTo(0f)
+            }
+            animationTriggerHandled = true
+        }
+    }
+}
+
+@Composable
 fun <T : Parcelable> SwipeableItemCardView(
     item: T?,
     itemPosition: ItemPosition,
     modifier: Modifier = Modifier,
     swipeEnabled: Boolean = true,
-    animateCondition: Boolean = false,
-    animateOnFirstDisplay: Boolean = false,
+    animateSwipeCondition: Boolean = false,
+    animateFirstDisplayCondition: Boolean = false,
     onClickAction: ((T) -> Unit)?,
     onSwipeAction: ((SwipeToDismissBoxValue, T) -> Unit)?,
     swipeThresholdFraction: Float = DEFAULT_SWIPE_THRESHOLD_FRACTION,
@@ -97,64 +185,25 @@ fun <T : Parcelable> SwipeableItemCardView(
 
     val cardContainerColor = CardDefaults.cardColors().containerColor
 
-    val cardModifier = if (onClickAction != null && item != null) {
-        Modifier.clickable { onClickAction(item) }
-    } else {
-        Modifier
+    val cardModifier = remember(onClickAction, item) {
+        if (onClickAction != null && item != null) {
+            Modifier.clickable { onClickAction(item) }
+        } else {
+            Modifier
+        }
     }
 
-    var hasPlayedInitialDisplayAnimation by rememberSaveable(item) { mutableStateOf(false) }
-    var firstAnimateValue by rememberSaveable { mutableStateOf(animateCondition) }
-    var doAnimation by rememberSaveable(animateCondition) { mutableStateOf(animateCondition) }
-
     val animatedTranslationX = remember { Animatable(0f) }
-    val density = LocalDensity.current
+    val playAnimation = remember(swipeEnabled, backgroundContent) { swipeEnabled && backgroundContent != null }
 
-    LaunchedEffect(animateCondition, item) {
-        if (item == null || !animateCondition || !doAnimation) {
-            animatedTranslationX.snapTo(0f)
-            hasPlayedInitialDisplayAnimation = false
-            return@LaunchedEffect
-        }
-
-        if (!hasPlayedInitialDisplayAnimation) {
-            if (firstAnimateValue && !animateOnFirstDisplay) {
-                firstAnimateValue = false
-                return@LaunchedEffect
-            }
-
-            val initialTranslationPx = with(density) { INITIAL_ANIMATION_OFFSET_DP.dp.toPx() }
-            var springDampingRatio = Spring.DampingRatioMediumBouncy
-            val springStiffness = Spring.StiffnessMediumLow
-
-            if (animateOnFirstDisplay && firstAnimateValue) {
-                firstAnimateValue = false
-                springDampingRatio = Spring.DampingRatioHighBouncy
-
-                // --- Initial Display Animation Sequence ---
-                animatedTranslationX.snapTo(0f)
-                animatedTranslationX.animateTo(
-                    targetValue = (initialTranslationPx / 2),
-                    animationSpec = tween(INITIAL_ANIMATION_DURATION)
-                )
-                delay(INITIAL_ANIMATION_DELAY)
-            } else {
-                // --- Swipe Animation Sequence ---
-                animatedTranslationX.snapTo(initialTranslationPx)
-                delay(SWIPE_ANIMATION_DELAY)
-            }
-            doAnimation = false
-            hasPlayedInitialDisplayAnimation = true
-
-            // --- Subsequent "Snap Back" or "Return" Animation ---
-            animatedTranslationX.animateTo(
-                targetValue = 0f,
-                animationSpec = spring(
-                    dampingRatio = springDampingRatio,
-                    stiffness = springStiffness
-                )
-            )
-        }
+    if (playAnimation) {
+        AnimateSwipeableItemCardEffect(
+            item = item,
+            animateSwipeCondition = animateSwipeCondition,
+            animateFirstDisplayCondition = animateFirstDisplayCondition,
+            swipeToDismissDirection = swipeToDismissState.dismissDirection,
+            animatedTranslationX = animatedTranslationX,
+        )
     }
 
     Box(

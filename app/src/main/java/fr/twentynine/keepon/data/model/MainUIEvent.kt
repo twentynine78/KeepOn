@@ -8,6 +8,8 @@ sealed interface MainUIEvent {
     data object RequestPostNotification : MainUIEvent
     data object RequestAddTileService : MainUIEvent
     data object RequestAppRate : MainUIEvent
+    data object CheckNeededPermissions : MainUIEvent
+    data object IncrementAppLaunchCount : MainUIEvent
     data class SetResetTimeoutWhenScreenOff(val resetTimeoutWhenScreenOff: Boolean) : MainUIEvent
     data class ToggleScreenTimeoutSelection(val screenTimeoutUI: ScreenTimeoutUI) : MainUIEvent
     data class SetDefaultScreenTimeout(val timeout: ScreenTimeout) : MainUIEvent

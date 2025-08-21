@@ -2,6 +2,7 @@ package fr.twentynine.keepon.ui.view
 
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import fr.twentynine.keepon.data.enums.ItemPosition
 import fr.twentynine.keepon.data.model.ScreenTimeoutUI
@@ -14,17 +15,21 @@ fun SwipeableScreenTimeoutUICardView(
     itemPosition: ItemPosition,
     modifier: Modifier = Modifier,
     swipeEnabled: Boolean = true,
+    isFirstLaunch: Boolean,
     onClickAction: ((ScreenTimeoutUI) -> Unit)?,
-    onSwipeAction: (SwipeToDismissBoxValue, ScreenTimeoutUI) -> Unit,
+    onSwipeAction: ((SwipeToDismissBoxValue, ScreenTimeoutUI) -> Unit)?,
     content: @Composable (ScreenTimeoutUI?) -> Unit
 ) {
+    val isDefault = remember(item.isDefault) { item.isDefault }
+    val isFirst = remember(itemPosition) { itemPosition == ItemPosition.FIRST }
+
     SwipeableItemCardView(
         item = item,
         itemPosition = itemPosition,
         modifier = modifier,
         swipeEnabled = swipeEnabled,
-        animateCondition = item.isDefault,
-        animateOnFirstDisplay = true,
+        animateSwipeCondition = isDefault,
+        animateFirstDisplayCondition = isFirst && isFirstLaunch,
         onClickAction = onClickAction,
         onSwipeAction = onSwipeAction,
         swipeThresholdFraction = SCREEN_TIMEOUT_CARD_SWIPE_THRESHOLD,

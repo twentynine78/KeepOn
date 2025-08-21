@@ -20,13 +20,13 @@ import javax.inject.Inject
 
 interface SystemSettingPermissionManager {
     val canWriteSystemSetting: Flow<Boolean>
-
     fun checkWriteSystemSettingsPermission()
     fun requestWriteSystemSettingsPermission()
+    fun canWriteSystemSettings(): Boolean
 
     companion object {
         fun canWriteSystemSettings(context: Context): Boolean {
-            return Settings.System.canWrite(context.applicationContext)
+            return SystemSettingPermissionManagerImpl(context).canWriteSystemSettings()
         }
     }
 }
@@ -42,7 +42,7 @@ class SystemSettingPermissionManagerImpl @Inject constructor(@param:ActivityCont
     private val maxCheckRepeat = 300
 
     override fun checkWriteSystemSettingsPermission() {
-        _canWriteSystemSetting.update { SystemSettingPermissionManager.canWriteSystemSettings(context) }
+        _canWriteSystemSetting.update { canWriteSystemSettings() }
     }
 
     override fun requestWriteSystemSettingsPermission() {
@@ -53,6 +53,10 @@ class SystemSettingPermissionManagerImpl @Inject constructor(@param:ActivityCont
 
         context.startActivity(permissionIntent)
         checkPermission()
+    }
+
+    override fun canWriteSystemSettings(): Boolean {
+        return Settings.System.canWrite(context.applicationContext)
     }
 
     private fun checkPermission() {

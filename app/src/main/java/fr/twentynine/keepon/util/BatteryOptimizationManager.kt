@@ -17,14 +17,11 @@ interface BatteryOptimizationManager {
     val batteryIsNotOptimized: Flow<Boolean>
     fun checkBatteryOptimizationState()
     fun requestDisableBatteryOptimization()
+    fun isBatteryNotOptimized(): Boolean
 
     companion object {
         fun isBatteryNotOptimized(context: Context): Boolean {
-            return (
-                context.getSystemService(
-                    PowerManager::class.java
-                ) as PowerManager
-                ).isIgnoringBatteryOptimizations(context.packageName)
+            return BatteryOptimizationManagerImpl(context).isBatteryNotOptimized()
         }
     }
 }
@@ -44,7 +41,7 @@ class BatteryOptimizationManagerImpl @Inject constructor(
         _batteryIsNotOptimized.update { isBatteryNotOptimized() }
     }
 
-    private fun isBatteryNotOptimized(): Boolean {
+    override fun isBatteryNotOptimized(): Boolean {
         return packageManager.isIgnoringBatteryOptimizations(packageName)
     }
 

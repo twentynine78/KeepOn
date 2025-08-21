@@ -76,13 +76,13 @@ class MainActivity : ComponentActivity() {
         )
 
         lifecycleScope.launch(Dispatchers.IO) {
+            mainViewModel.incrementAppLaunchCount(true)
+
             mainViewModel.getUiState()
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .collectLatest { newUIState ->
                     uiState.value = newUIState
                 }
-
-            mainViewModel.incrementAppLaunchCount()
         }
 
         val onEvent: (MainUIEvent) -> Unit = { event -> mainViewModel.onEvent(event) }

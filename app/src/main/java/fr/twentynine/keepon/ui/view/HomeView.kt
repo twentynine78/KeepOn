@@ -34,6 +34,7 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -72,11 +73,16 @@ fun HomeView(
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
 ) {
+    LaunchedEffect(Unit) {
+        onEvent(MainUIEvent.IncrementAppLaunchCount)
+    }
+
     HomeScreen(
         tipsList = uiState.tipsList,
         resetTimeoutWhenScreenOff = uiState.resetTimeoutWhenScreenOff,
         screenTimeouts = uiState.screenTimeouts,
         timeoutIconStyle = uiState.timeoutIconStyle,
+        isFirstLaunch = uiState.isFirstLaunch,
         onEvent = onEvent,
         navType = navType,
     )
@@ -88,12 +94,12 @@ fun HomeScreen(
     resetTimeoutWhenScreenOff: Boolean,
     screenTimeouts: List<ScreenTimeoutUI>,
     timeoutIconStyle: TimeoutIconStyle,
+    isFirstLaunch: Boolean,
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
 ) {
     val baseMaxWidthModifier = remember {
         Modifier
-            .fillMaxHeight()
             .width(MAX_SCREEN_CONTENT_WIDTH_IN_DP.dp)
     }
 
@@ -117,7 +123,7 @@ fun HomeScreen(
                     screenTimeouts.firstOrNull { it.isDefault } ?: screenTimeouts.first()
                 },
                 onEvent = onEvent,
-                modifier = baseMaxWidthModifier,
+                modifier = baseMaxWidthModifier.fillMaxHeight(),
             )
         }
 
@@ -148,6 +154,7 @@ fun HomeScreen(
                 itemPosition = itemPosition,
                 timeoutIconStyle = timeoutIconStyle,
                 resetTimeoutWhenScreenOff = resetTimeoutWhenScreenOff,
+                isFirstLaunch = isFirstLaunch,
                 onEvent = onEvent,
                 modifier = baseMaxWidthModifier,
             )
@@ -222,6 +229,7 @@ fun ScreenTimeoutRow(
     itemPosition: ItemPosition,
     timeoutIconStyle: TimeoutIconStyle,
     resetTimeoutWhenScreenOff: Boolean,
+    isFirstLaunch: Boolean,
     onEvent: (MainUIEvent) -> Unit,
     modifier: Modifier,
 ) {
@@ -236,12 +244,15 @@ fun ScreenTimeoutRow(
         )
     }
 
+    val swipeEnable = remember(item.isLocked, resetTimeoutWhenScreenOff) { !item.isLocked && resetTimeoutWhenScreenOff }
+
     SwipeableScreenTimeoutUICardView(
         modifier = modifier
             .fillMaxSize(),
         item = item,
         itemPosition = itemPosition,
-        swipeEnabled = resetTimeoutWhenScreenOff,
+        swipeEnabled = swipeEnable,
+        isFirstLaunch = isFirstLaunch,
         onClickAction = { clickedItem ->
             if (clickedItem.isLocked) {
                 coroutineScope.launch { tooltipState.show() }

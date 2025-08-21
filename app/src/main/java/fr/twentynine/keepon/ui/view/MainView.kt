@@ -77,7 +77,7 @@ fun MainView(
 ) {
     when {
         uiState is MainViewUIState.Error -> ErrorView(errorMessage = uiState.error)
-        uiState is MainViewUIState.Success && (uiState.isFirstLaunch || !uiState.canWriteSystemSettings || !uiState.batteryIsNotOptimized) -> {
+        uiState is MainViewUIState.Success && (!uiState.canWriteSystemSettings || !uiState.batteryIsNotOptimized) -> {
             MainPermissionScreen(
                 uiState = uiState,
                 onEvent = onEvent,

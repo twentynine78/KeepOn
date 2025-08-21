@@ -25,6 +25,8 @@ import fr.twentynine.keepon.util.StringResourceProvider
 import fr.twentynine.keepon.util.SystemSettingPermissionManager
 import fr.twentynine.keepon.util.coil.MemoryCacheManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -35,6 +37,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -57,6 +60,8 @@ class MainViewModel @Inject constructor(
     private lateinit var batteryOptimizationManager: BatteryOptimizationManager
 
     private lateinit var managedActivityResultLauncher: ManagedActivityResultLauncher<String, Boolean>
+
+    private var appLaunchIncremented = false
 
     fun setManagedActivityResultLauncher(activityResultLauncher: ManagedActivityResultLauncher<String, Boolean>) {
         managedActivityResultLauncher = activityResultLauncher
@@ -177,6 +182,11 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    private fun isPermissionsGranted(): Boolean {
+        return batteryOptimizationManager.isBatteryNotOptimized() &&
+            systemSettingPermissionManager.canWriteSystemSettings()
+    }
+
     fun onEvent(event: MainUIEvent) {
         when (event) {
             MainUIEvent.RequestWriteSystemSettingPermission -> requestWriteSystemSettingsPermission()
@@ -186,6 +196,8 @@ class MainViewModel @Inject constructor(
             MainUIEvent.RequestPostNotification -> requestPostNotificationPermission()
             MainUIEvent.RequestAddTileService -> requestAddTileService()
             MainUIEvent.RequestAppRate -> requestAppRate()
+            MainUIEvent.CheckNeededPermissions -> checkNeededPermissions()
+            MainUIEvent.IncrementAppLaunchCount -> incrementAppLaunchCount()
             is MainUIEvent.SetResetTimeoutWhenScreenOff -> setResetTimeoutWhenScreenOff(event.resetTimeoutWhenScreenOff)
             is MainUIEvent.ToggleScreenTimeoutSelection -> toggleScreenTimeoutSelection(event.screenTimeoutUI)
             is MainUIEvent.SetDefaultScreenTimeout -> setDefaultScreenTimeout(event.timeout)
@@ -198,9 +210,30 @@ class MainViewModel @Inject constructor(
         postNotificationPermissionManager.updatePostNotificationPermission(canPostNotification)
     }
 
-    fun incrementAppLaunchCount() {
+    fun incrementAppLaunchCount(runBlocking: Boolean = false) {
+        val action = suspend {
+            if (!appLaunchIncremented && isPermissionsGranted()) {
+                appRateHelper.incrementAppLaunchCount(userPreferencesRepository)
+                appLaunchIncremented = true
+
+                if (userPreferencesRepository.getAppLaunchCount() > 1L) {
+                    updateIsFirstLaunch()
+                }
+            }
+        }
+        if (runBlocking) {
+            runBlocking { action() }
+        } else {
+            viewModelScope.launch { action() }
+        }
+    }
+
+    fun checkNeededPermissions() {
         viewModelScope.launch {
-            appRateHelper.incrementAppLaunchCount(userPreferencesRepository)
+            awaitAll(
+                async { checkWriteSystemSettingsPermission() },
+                async { checkBatteryOptimizationState() }
+            )
         }
     }
 

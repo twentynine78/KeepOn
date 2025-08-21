@@ -16,6 +16,8 @@ import fr.twentynine.keepon.util.PostNotificationPermissionManager
 import fr.twentynine.keepon.util.StringResourceProvider
 import fr.twentynine.keepon.util.SystemSettingPermissionManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -121,6 +123,7 @@ class TaskerEditViewModel @Inject constructor(
             TaskerUIEvent.RequestDisableBatteryOptimization -> requestDisableBatteryOptimization()
             TaskerUIEvent.RequestPostNotification -> requestPostNotificationPermission()
             TaskerUIEvent.UpdateIsFirstLaunch -> updateIsFirstLaunch()
+            TaskerUIEvent.CheckNeededPermissions -> checkNeededPermissions()
             is TaskerUIEvent.SetSelectedScreenTimeout -> setSelectedScreenTimeout(event.screenTimeoutUI)
         }
     }
@@ -157,6 +160,15 @@ class TaskerEditViewModel @Inject constructor(
     }
 
     fun getMaxAllowedScreenTimeout() = userPreferencesRepository.getMaxAllowedScreenTimeout()
+
+    fun checkNeededPermissions() {
+        viewModelScope.launch {
+            awaitAll(
+                async { checkWriteSystemSettingsPermission() },
+                async { checkBatteryOptimizationState() }
+            )
+        }
+    }
 
     fun checkWriteSystemSettingsPermission() {
         systemSettingPermissionManager.checkWriteSystemSettingsPermission()

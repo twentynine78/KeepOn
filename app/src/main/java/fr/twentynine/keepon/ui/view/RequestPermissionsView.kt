@@ -105,7 +105,7 @@ fun MainPermissionScreen(
 
     RequestPermissionsView(
         neededPermissionList = neededPermissionList,
-        updateIsFirstLaunch = { onEvent(MainUIEvent.UpdateIsFirstLaunch) },
+        updatePermissions = { onEvent(MainUIEvent.IncrementAppLaunchCount) },
     )
 }
 
@@ -162,14 +162,14 @@ fun TaskerPermissionScreen(
 
     RequestPermissionsView(
         neededPermissionList = neededPermissionList,
-        updateIsFirstLaunch = { onEvent(TaskerUIEvent.UpdateIsFirstLaunch) },
+        updatePermissions = { onEvent(TaskerUIEvent.CheckNeededPermissions) },
     )
 }
 
 @Composable
 fun RequestPermissionsView(
     neededPermissionList: List<NeededPermission>,
-    updateIsFirstLaunch: () -> Unit,
+    updatePermissions: () -> Unit,
 ) {
     val firstNeededPermissionIndex = remember(neededPermissionList) {
         neededPermissionList.indexOfFirst { it.requestNeeded }
@@ -180,7 +180,7 @@ fun RequestPermissionsView(
 
     LaunchedEffect(key1 = firstNeededPermissionIndex) {
         if (firstNeededPermissionIndex == -1) {
-            updateIsFirstLaunch()
+            updatePermissions()
         }
     }
 
@@ -235,7 +235,7 @@ fun RequestPermissionsView(
                             neededPermission.requestAction()
                             if (index == lastNeededPermissionIndex) {
                                 if (firstNeededPermissionIndex != -1) {
-                                    updateIsFirstLaunch()
+                                    updatePermissions()
                                 }
                             }
                         }

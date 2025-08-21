@@ -1,7 +1,6 @@
 package fr.twentynine.keepon.worker
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkManager
@@ -49,8 +48,7 @@ class MonitorSystemScreenTimeoutWork @AssistedInject constructor(
                 )
 
                 Result.success()
-            } catch (e: Exception) {
-                Log.e("MonitorSystemScreenTimeoutWork", "Error monitoring system screen timeout", e)
+            } catch (_: Exception) {
                 Result.failure()
             }
         }
