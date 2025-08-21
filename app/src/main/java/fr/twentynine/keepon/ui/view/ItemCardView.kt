@@ -12,7 +12,7 @@ fun ItemCardView(
     content: @Composable () -> Unit
 ) {
     SwipeableItemCardView(
-        item = Unit,
+        item = null,
         itemPosition = itemPosition,
         modifier = modifier,
         swipeEnabled = false,
