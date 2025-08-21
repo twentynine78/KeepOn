@@ -151,9 +151,16 @@ class KeepOnTileService : TileService(), LifecycleOwner {
 
         serviceScope.launch(coroutineDispatcher) {
             val selectedTimeouts = userPreferencesRepository.getSelectedScreenTimeouts()
+            val defaultTimeout = userPreferencesRepository.getDefaultScreenTimeout()
+            val currentTimeout = userPreferencesRepository.getCurrentScreenTimeout()
 
-            val filteredSelectedScreenTimeouts = selectedTimeouts
-                .filter { screenTimeout -> screenTimeout != userPreferencesRepository.getCurrentScreenTimeout() }
+            val timeoutsWithDefault = if (selectedTimeouts.contains(defaultTimeout)) {
+                selectedTimeouts
+            } else {
+                listOf(defaultTimeout) + selectedTimeouts
+            }
+            val filteredSelectedScreenTimeouts = timeoutsWithDefault
+                .filter { screenTimeout -> screenTimeout != currentTimeout }
 
             if (filteredSelectedScreenTimeouts.isEmpty() || !RequiredPermissionsManager.isPermissionsGranted(this@KeepOnTileService)) {
                 withContext(Dispatchers.Main.immediate) {
