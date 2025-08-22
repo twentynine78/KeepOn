@@ -1,5 +1,6 @@
 package fr.twentynine.keepon.ui.view
 
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,12 +21,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.RadioButton
@@ -96,6 +99,8 @@ fun TaskerEditView(
             val endPadding = getEndPaddingForDisplayCutout(scaffoldWidthDp, localDensity, layoutDirection)
             val bottomPadding = getBottomPadding(localDensity)
 
+            val backPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+
             Scaffold(
                 modifier = Modifier
                     .fillMaxSize()
@@ -124,6 +129,14 @@ fun TaskerEditView(
                             titleContentColor = MaterialTheme.colorScheme.onBackground,
                             actionIconContentColor = MaterialTheme.colorScheme.onBackground
                         ),
+                        navigationIcon = {
+                            IconButton(onClick = { backPressedDispatcher?.onBackPressed() }) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                                    contentDescription = null
+                                )
+                            }
+                        },
                         scrollBehavior = scrollBehavior
                     )
                 },
