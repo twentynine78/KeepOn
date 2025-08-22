@@ -26,8 +26,9 @@ import fr.twentynine.keepon.util.BundleScrubber
 import fr.twentynine.keepon.util.PostNotificationPermissionManager
 import fr.twentynine.keepon.util.SystemSettingPermissionManager
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -138,11 +139,10 @@ class MainActivity : ComponentActivity() {
 
     private fun startScreenOffReceiverServiceIfNeeded() {
         lifecycleScope.launch(Dispatchers.Default) {
-            while (uiState.value !is MainViewUIState.Success) {
-                delay(200)
-            }
-
-            val successUIState = uiState.value as MainViewUIState.Success
+            val successUIState = mainViewModel.getUiState()
+                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                .filter { state -> state is MainViewUIState.Success }
+                .first() as MainViewUIState.Success
 
             if (successUIState.keepOnIsActive && successUIState.resetTimeoutWhenScreenOff) {
                 screenOffReceiverServiceManager.startService()

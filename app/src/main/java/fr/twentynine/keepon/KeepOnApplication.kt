@@ -37,12 +37,9 @@ class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configura
     @Inject
     lateinit var appVersionManager: AppVersionManager
 
-    private val supervisedJob = SupervisorJob()
-
-    override val coroutineContext: CoroutineContext
-        get() = supervisedJob + Dispatchers.IO
-
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    override val coroutineContext: CoroutineContext by lazy { applicationScope.coroutineContext }
 
     override fun onCreate() {
         super.onCreate()
@@ -58,7 +55,7 @@ class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configura
     override fun onTerminate() {
         super.onTerminate()
 
-        coroutineContext.cancel()
+        applicationScope.cancel("Application is terminating")
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader = ImageLoader.Builder(this.applicationContext)

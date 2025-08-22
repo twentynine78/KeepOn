@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,19 +55,19 @@ fun TipsSectionView(
     modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val currentPagerList = remember { mutableStateOf(tipsList) }
-    val pagerState = rememberPagerState(pageCount = { currentPagerList.value.size })
+    var currentPagerList by remember { mutableStateOf(tipsList) }
+    val pagerState = rememberPagerState(pageCount = { currentPagerList.size })
     val pagerPadding = remember(pagerState.pageCount) {
         if (pagerState.pageCount > 1) 4.dp else 12.dp
     }
 
     LaunchedEffect(tipsList, pagerState.settledPage) {
         val newIncomingList = tipsList
-        val currentlyDisplayedList = currentPagerList.value
+        val currentlyDisplayedList = currentPagerList
         val currentPageInDisplayedList = pagerState.currentPage
 
         if (newIncomingList.isEmpty()) {
-            currentPagerList.value = emptyList()
+            currentPagerList = emptyList()
         } else {
             if (newIncomingList != currentlyDisplayedList) {
                 val oldPageCount = currentlyDisplayedList.size
@@ -91,11 +92,11 @@ fun TipsSectionView(
                         targetPage = (newPageCount - 1).coerceAtLeast(0)
                     }
                 }
-                currentPagerList.value = newIncomingList
+                currentPagerList = newIncomingList
 
                 if (targetPage != pagerState.currentPage && targetPage < newIncomingList.size && !pagerState.isScrollInProgress) {
                     if (pagerState.currentPage != targetPage) {
-                        if (targetPage < currentPagerList.value.size) {
+                        if (targetPage < currentPagerList.size) {
                             pagerState.animateScrollToPage(targetPage)
                         }
                     }
@@ -105,7 +106,7 @@ fun TipsSectionView(
     }
 
     AnimatedVisibility(
-        visible = currentPagerList.value.isNotEmpty(),
+        visible = currentPagerList.isNotEmpty(),
         enter = expandVertically(),
         exit = shrinkVertically(),
     ) {
@@ -118,14 +119,14 @@ fun TipsSectionView(
         ) {
             HorizontalPager(
                 state = pagerState,
-                key = { index -> currentPagerList.value[index].id },
+                key = { index -> currentPagerList[index].id },
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .wrapContentHeight()
                     .padding(top = 8.dp, bottom = 4.dp),
             ) { currentPageIndex ->
-                val tipsInfo = remember(currentPageIndex, currentPagerList.value) {
-                    currentPagerList.value.getOrNull(currentPageIndex)
+                val tipsInfo = remember(currentPageIndex, currentPagerList) {
+                    currentPagerList.getOrNull(currentPageIndex)
                 }
 
                 tipsInfo?.let { tip ->

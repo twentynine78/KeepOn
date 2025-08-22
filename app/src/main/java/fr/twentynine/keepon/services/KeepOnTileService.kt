@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ServiceLifecycleDispatcher
 import coil3.Image
+import coil3.executeBlocking
 import coil3.imageLoader
 import coil3.request.ImageRequest
 import coil3.request.lifecycle
@@ -51,85 +52,22 @@ class KeepOnTileService : TileService(), LifecycleOwner {
 
     private val serviceJob = SupervisorJob()
 
-    private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
+    private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
 
     override val lifecycle: Lifecycle
         get() = lifecycleDispatcher.lifecycle
 
-    private lateinit var newQSTimeoutData: QSTimeoutData
-
     private val lifecycleDispatcher = ServiceLifecycleDispatcher(this)
-
-    private val coroutineDispatcher = Dispatchers.IO
 
     private val iconSize = TimeoutIconSize.MEDIUM
 
-    private var currentJob: LockableJob = LockableJob()
-
-    private val qsCoilTarget: Target = object : Target {
-        override fun onSuccess(result: Image) {
-            val tile = qsTile ?: return
-
-            // Perform image processing and preference fetching in a background coroutine
-            serviceScope.launch(coroutineDispatcher) {
-                // Get the new QSTile icon with coil
-                val newQsTileBitmap = result.toBitmap()
-
-                // Get the previous QSTile data
-                val previousQsTileState = tile.state
-                val previousQsTileLabel = tile.label
-
-                // Get the new KeepOn state
-                val keepOnIsActive = userPreferencesRepository.getKeepOnIsActive()
-
-                // Set the new QSTile data
-                tile.icon = newQsTileBitmap.toIcon()
-                tile.state = if (keepOnIsActive) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
-
-                // Build the new QSTile label
-                val timeoutDisplay = newQSTimeoutData.iconData.iconTimeout.getFullDisplayTimeout(
-                    stringResourceProvider
-                )
-                val newQsTileLabel = "${getString(R.string.qs_service_name)} - $timeoutDisplay"
-
-                // Force update icon if only icon is changed
-                if (previousQsTileState == tile.state && previousQsTileLabel == newQsTileLabel) {
-                    tile.label = "$newQsTileLabel "
-                    withContext(Dispatchers.Main.immediate) {
-                        tile.updateTile()
-                    }
-                }
-
-                // Set the new label and update the QSTile
-                tile.label = newQsTileLabel
-                withContext(Dispatchers.Main.immediate) {
-                    tile.updateTile()
-                }
-            }
-        }
-
-        override fun onError(error: Image?) {
-            qsTile?.let { tile ->
-                serviceScope.launch(Dispatchers.Main.immediate) {
-                    tile.icon = Icon.createWithResource(this@KeepOnTileService, R.drawable.ic_keepon)
-                    tile.label = getString(R.string.qs_service_name)
-                    tile.state = Tile.STATE_UNAVAILABLE
-                    tile.updateTile()
-                }
-
-                serviceScope.launch(coroutineDispatcher) {
-                    delay(DELAY_BEFORE_RETRY_UPDATE)
-                    requestQSTileUpdate()
-                }
-            }
-        }
-    }
+    private var currentUpdateJob: LockableJob = LockableJob()
 
     override fun onCreate() {
         lifecycleDispatcher.onServicePreSuperOnCreate()
         super.onCreate()
 
-        serviceScope.launch(coroutineDispatcher) {
+        serviceScope.launch {
             userPreferencesRepository.setQSTileAdded(true)
         }
     }
@@ -138,9 +76,9 @@ class KeepOnTileService : TileService(), LifecycleOwner {
         super.onStartListening()
 
         // Launch update task
-        serviceScope.launch(coroutineDispatcher) {
-            currentJob.cancelOrJoin()
-            currentJob.job = launch(coroutineDispatcher) {
+        serviceScope.launch {
+            currentUpdateJob.cancelOrJoin()
+            currentUpdateJob.job = launch {
                 updateQSTile()
             }
         }
@@ -149,7 +87,11 @@ class KeepOnTileService : TileService(), LifecycleOwner {
     override fun onClick() {
         super.onClick()
 
-        serviceScope.launch(coroutineDispatcher) {
+        if (isLocked) {
+            return
+        }
+
+        serviceScope.launch {
             val selectedTimeouts = userPreferencesRepository.getSelectedScreenTimeouts()
             val defaultTimeout = userPreferencesRepository.getDefaultScreenTimeout()
             val currentTimeout = userPreferencesRepository.getCurrentScreenTimeout()
@@ -167,13 +109,11 @@ class KeepOnTileService : TileService(), LifecycleOwner {
                     startMainActivityAndCollapse()
                 }
             } else {
-                if (!isLocked) {
-                    userPreferencesRepository.setNextSelectedSystemScreenTimeout {
-                        currentJob.cancelOrJoin()
-                        currentJob.lock()
-                        currentJob.job = launch(coroutineDispatcher) {
-                            updateQSTile()
-                        }
+                userPreferencesRepository.setNextSelectedSystemScreenTimeout {
+                    currentUpdateJob.cancelOrJoin()
+                    currentUpdateJob.lock()
+                    currentUpdateJob.job = launch {
+                        updateQSTile()
                     }
                 }
             }
@@ -210,8 +150,8 @@ class KeepOnTileService : TileService(), LifecycleOwner {
         super.onDestroy()
 
         serviceJob.cancel()
-        serviceScope.launch(coroutineDispatcher) {
-            currentJob.cancelOrJoin()
+        serviceScope.launch {
+            currentUpdateJob.cancelOrJoin()
         }
     }
 
@@ -227,10 +167,65 @@ class KeepOnTileService : TileService(), LifecycleOwner {
             timeoutIconStyle
         )
 
-        newQSTimeoutData = QSTimeoutData(
+        val newQSTimeoutData = QSTimeoutData(
             keepOnState = keepOnState,
             iconData = newTimeoutIconData
         )
+
+        // Create Coil target
+        val qsCoilTarget: Target = object : Target {
+            override fun onSuccess(result: Image) {
+                val tile = qsTile ?: return
+
+                // Perform image processing and preference fetching in a background coroutine
+                serviceScope.launch {
+                    // Get the new QSTile icon with coil
+                    val newQsTileBitmap = result.toBitmap()
+
+                    // Get the previous QSTile data
+                    val previousQsTileState = tile.state
+                    val previousQsTileLabel = tile.label
+
+                    // Get the new KeepOn state
+                    val keepOnIsActive = userPreferencesRepository.getKeepOnIsActive()
+
+                    // Set the new QSTile data
+                    tile.icon = newQsTileBitmap.toIcon()
+                    tile.state = if (keepOnIsActive) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
+
+                    // Build the new QSTile label
+                    val timeoutDisplay =
+                        newQSTimeoutData.iconData.iconTimeout.getFullDisplayTimeout(
+                            stringResourceProvider
+                        )
+                    val newQsTileLabel = "${getString(R.string.qs_service_name)} - $timeoutDisplay"
+
+                    // Force update icon if only icon is changed
+                    if (previousQsTileState == tile.state && previousQsTileLabel == newQsTileLabel) {
+                        tile.label = "$newQsTileLabel "
+                        tile.updateTile()
+                    }
+
+                    // Set the new label and update the QSTile
+                    tile.label = newQsTileLabel
+                    tile.updateTile()
+                }
+            }
+
+            override fun onError(error: Image?) {
+                qsTile?.let { tile ->
+                    tile.icon = Icon.createWithResource(this@KeepOnTileService, R.drawable.ic_keepon)
+                    tile.label = getString(R.string.qs_service_name)
+                    tile.state = Tile.STATE_UNAVAILABLE
+                    tile.updateTile()
+
+                    serviceScope.launch {
+                        delay(DELAY_BEFORE_RETRY_UPDATE)
+                        requestQSTileUpdate()
+                    }
+                }
+            }
+        }
 
         // Apply the new QSTile data with coil
         val request = ImageRequest.Builder(this@KeepOnTileService)
@@ -240,7 +235,7 @@ class KeepOnTileService : TileService(), LifecycleOwner {
             .lifecycle(lifecycle)
             .build()
 
-        imageLoader.execute(request)
+        imageLoader.executeBlocking(request)
     }
 
     private fun requestQSTileUpdate() {

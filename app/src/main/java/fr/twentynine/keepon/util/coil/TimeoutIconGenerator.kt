@@ -17,6 +17,16 @@ import fr.twentynine.keepon.util.extensions.px
 
 class TimeoutIconGenerator {
 
+    private val textBounds = Rect()
+    private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+        isAntiAlias = true
+    }
+    private val backgroundRect = Rect()
+    private val backgroundPaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = Color.TRANSPARENT
+    }
+
     fun getBitmapFromText(
         context: Context,
         model: TimeoutIconData,
@@ -28,7 +38,7 @@ class TimeoutIconGenerator {
         val iconFontFamily = IconFontFamilyRepository.iconFontFamilies.getValue(iconStyle.iconFontFamilyName)
         val boldFont = iconStyle.iconStyleFontBold
         val italicFont = iconStyle.iconStyleFontItalic
-        val iconTypeface = getIconTypeface(iconFontFamily, boldFont, italicFont)
+        val iconTypeface = getIconTypefaceId(iconFontFamily, boldFont, italicFont)
         val underlineFont = iconStyle.iconStyleFontUnderline
         val outlinedFont = iconStyle.iconStyleTextOutlined
         val fontSize = iconStyle.iconStyleFontSize
@@ -42,44 +52,30 @@ class TimeoutIconGenerator {
         val imageHeight = iconSize.size.px
 
         val displayTimeout = timeout.getShortDisplayTimeout(stringResourceProvider)
+
         val bitmap = createBitmap(imageWidth, imageHeight, Bitmap.Config.ALPHA_8)
         val canvas = Canvas(bitmap)
 
-        val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
-
         // Set background
-        val backgroundRect = Rect()
-        val backgroundPaint = Paint()
-
         backgroundRect.set(0, 0, imageWidth, imageHeight)
-
-        backgroundPaint.style = Paint.Style.FILL_AND_STROKE
-        backgroundPaint.color = Color.TRANSPARENT
-
         canvas.drawRect(backgroundRect, backgroundPaint)
 
         // Set typeface from user preference
         textPaint.typeface = context.resources.getFont(iconTypeface)
 
         // Set text style from user preference
-        if (outlinedFont) {
-            textPaint.strokeWidth = STROKE_WIDTH.px / scaleRatio
-            textPaint.style = Paint.Style.STROKE
-        }
-
-        // Set font underline from user preference
+        textPaint.style = if (outlinedFont) Paint.Style.STROKE else Paint.Style.FILL_AND_STROKE
+        textPaint.strokeWidth = if (outlinedFont) (STROKE_WIDTH.px / scaleRatio) else 0f
         textPaint.isUnderlineText = underlineFont
 
-        // Set TextPaint properties
-        textPaint.isAntiAlias = true
-
-        val textBounds = setTextSizeAndGetBounds(
+        setTextSizeAndGetBounds(
             textPaint,
             displayTimeout,
             imageWidth,
             imageHeight,
             fontSize,
             scaleRatio,
+            textBounds,
         )
 
         // Calculate Text Position
@@ -99,7 +95,7 @@ class TimeoutIconGenerator {
         return bitmap
     }
 
-    private fun getIconTypeface(iconFontFamily: IconFontFamily, boldFont: Boolean, italicFont: Boolean): Int {
+    private fun getIconTypefaceId(iconFontFamily: IconFontFamily, boldFont: Boolean, italicFont: Boolean): Int {
         return when {
             boldFont && italicFont -> iconFontFamily.boldItalicTypefaceId
             boldFont -> iconFontFamily.boldTypefaceId
@@ -114,35 +110,32 @@ class TimeoutIconGenerator {
         imageWidth: Int,
         imageHeight: Int,
         fontSize: Int,
-        scaleRatio: Int
-    ): Rect {
-        val bounds = Rect()
-
+        scaleRatio: Int,
+        outBounds: Rect
+    ) {
         // Calculate text size with a default text size
         val textSize = DEFAULT_TEXT_SIZE.px
         textPaint.textSize = textSize
 
-        textPaint.getTextBounds(text, 0, text.length, bounds)
+        textPaint.getTextBounds(text, 0, text.length, outBounds)
 
-        var desiredTextSize = textSize * imageWidth / bounds.width().toFloat()
+        var desiredTextSize = textSize * imageWidth / outBounds.width().toFloat()
 
         // Add font size value from user preference
         desiredTextSize += (fontSize * FONT_SIZE_STEP_COEF) / scaleRatio
         textPaint.textSize = desiredTextSize - textPaint.strokeWidth
 
         // Get text bounds
-        textPaint.getTextBounds(text, 0, text.length, bounds)
+        textPaint.getTextBounds(text, 0, text.length, outBounds)
 
         // If the text is too height, reduce text size
-        if (bounds.height().toFloat() / imageHeight > MAX_IMAGE_HEIGHT_PERCENT) {
+        if (outBounds.height().toFloat() / imageHeight > MAX_IMAGE_HEIGHT_PERCENT) {
             val maxImageHeight = imageHeight * MAX_IMAGE_HEIGHT_PERCENT
-            val newTextSize = desiredTextSize * maxImageHeight / bounds.height().toFloat()
+            val newTextSize = desiredTextSize * maxImageHeight / textBounds.height().toFloat()
 
             textPaint.textSize = newTextSize
-            textPaint.getTextBounds(text, 0, text.length, bounds)
+            textPaint.getTextBounds(text, 0, text.length, outBounds)
         }
-
-        return bounds
     }
 
     companion object {
