@@ -2,7 +2,7 @@
 # Plugins versions
 androidGradlePlugin = "8.12.1"
 kotlin = "2.2.10"
-hilt = "2.57"
+hilt = "2.57.1"
 ksp = "2.2.10-2.0.2"
 # Libraries versions
 coreKtxVersion = "1.17.0"
