@@ -33,6 +33,29 @@ val IconStyleFilled: ImageVector
             viewportHeight = 24f
         ).apply {
             path(
+                fill = null,
+                fillAlpha = 1.0f,
+                stroke = SolidColor(Color(0xFFFFFFFF)),
+                strokeAlpha = 1.0f,
+                strokeLineWidth = 2.0f,
+                strokeLineCap = StrokeCap.Butt,
+                strokeLineJoin = StrokeJoin.Miter,
+                strokeLineMiter = 1.0f,
+                pathFillType = PathFillType.NonZero
+            ) {
+                moveTo(12f, 3f)
+                curveToRelative(-4.97f, 0f, -9f, 4.03f, -9f, 9f)
+                reflectiveCurveToRelative(4.03f, 9f, 9f, 9f)
+                curveToRelative(0.83f, 0f, 1.5f, -0.67f, 1.5f, -1.5f)
+                curveToRelative(0f, -0.39f, -0.15f, -0.74f, -0.39f, -1.01f)
+                curveToRelative(-0.23f, -0.26f, -0.38f, -0.61f, -0.38f, -0.99f)
+                curveToRelative(0f, -0.83f, 0.67f, -1.5f, 1.5f, -1.5f)
+                lineTo(16f, 16f)
+                curveToRelative(2.76f, 0f, 5f, -2.24f, 5f, -5f)
+                curveToRelative(0f, -4.42f, -4.03f, -8f, -9f, -8f)
+                close()
+            }
+            path(
                 fill = SolidColor(Color(0xFFFFFFFF)),
                 fillAlpha = 1.0f,
                 stroke = null,
