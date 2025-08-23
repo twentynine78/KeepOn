@@ -88,14 +88,17 @@ private fun <T : Parcelable> AnimateSwipeableItemCardEffect(
 
     LaunchedEffect(item, animateSwipeCondition, animateFirstDisplayCondition) {
         if (item == null) {
+            animatedTranslationX.snapTo(0f)
             return@LaunchedEffect
         }
 
         if ((!animateSwipeCondition && !animateFirstDisplayCondition)) {
+            animatedTranslationX.snapTo(0f)
             return@LaunchedEffect
         }
 
         if (animationTriggerHandled) {
+            animatedTranslationX.snapTo(0f)
             return@LaunchedEffect
         }
 
