@@ -132,7 +132,7 @@ fun HomeScreen(
                 modifier = baseMaxWidthModifier
                     .padding(top = 24.dp),
             ) {
-                CardWithHeaderView(
+                CardHeaderView(
                     icon = painterResource(R.drawable.ic_list_add),
                     iconSize = 22,
                     title = stringResource(R.string.select_timeouts_title),
@@ -183,7 +183,7 @@ fun KeepOnBehaviorCard(
         modifier = modifier
             .padding(top = 28.dp, bottom = 12.dp),
     ) {
-        CardWithHeaderView(
+        CardHeaderView(
             icon = painterResource(R.drawable.ic_keepon),
             title = stringResource(R.string.general_behavior_title),
             descText = stringResource(R.string.general_behavior_text),

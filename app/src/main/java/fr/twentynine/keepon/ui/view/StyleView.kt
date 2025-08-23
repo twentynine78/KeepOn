@@ -90,7 +90,7 @@ fun StyleScreen(
                 modifier = maxWidthModifier
                     .padding(top = 28.dp),
             ) {
-                CardWithHeaderView(
+                CardHeaderView(
                     icon = painterResource(R.drawable.ic_font),
                     title = stringResource(R.string.font_selection_tile),
                     descText = stringResource(R.string.font_selection_text),
@@ -234,7 +234,7 @@ fun FontStyleCard(
         modifier = modifier
             .padding(top = 28.dp, bottom = 12.dp),
     ) {
-        CardWithHeaderView(
+        CardHeaderView(
             icon = painterResource(R.drawable.ic_font_style),
             title = stringResource(R.string.font_style_tile),
             descText = stringResource(R.string.font_style_text),
@@ -345,7 +345,7 @@ fun FontOptionsCard(
         modifier = modifier
             .padding(top = 28.dp, bottom = 12.dp),
     ) {
-        CardWithHeaderView(
+        CardHeaderView(
             icon = painterResource(R.drawable.ic_location),
             title = stringResource(R.string.font_options_title),
             descText = stringResource(R.string.font_options_text),

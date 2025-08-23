@@ -88,7 +88,7 @@ fun AboutScreen(
                 modifier = maxWidthModifier
                     .padding(top = 28.dp),
             ) {
-                CardWithHeaderView(
+                CardHeaderView(
                     iconVector = Icons.Rounded.FavoriteBorder,
                     title = stringResource(R.string.credit_info_title),
                 )
@@ -152,7 +152,7 @@ fun AppInfoCard(
         modifier = modifier
             .padding(top = 24.dp, bottom = 12.dp),
     ) {
-        CardWithHeaderView(
+        CardHeaderView(
             iconVector = Icons.Outlined.Info,
             title = stringResource(R.string.app_info_title),
         )

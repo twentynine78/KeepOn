@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
 
 @Composable
-fun CardWithHeaderView(
+fun CardHeaderView(
     modifier: Modifier = Modifier,
     icon: Painter? = null,
     iconVector: ImageVector? = null,

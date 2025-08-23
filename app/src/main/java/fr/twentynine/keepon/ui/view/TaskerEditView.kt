@@ -282,7 +282,7 @@ fun TaskerScreenTimeoutList(
                 modifier = maxWidthModifier
                     .padding(top = 28.dp)
             ) {
-                CardWithHeaderView(
+                CardHeaderView(
                     title = stringResource(R.string.select_tasker_timeouts_title),
                     iconVector = Icons.Rounded.Build,
                     descText = stringResource(R.string.select_tasker_timeouts_text),
