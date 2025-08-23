@@ -150,7 +150,7 @@ fun AppInfoCard(
 ) {
     Column(
         modifier = modifier
-            .padding(top = 24.dp, bottom = 12.dp),
+            .padding(top = 28.dp, bottom = 12.dp),
     ) {
         CardHeaderView(
             iconVector = Icons.Outlined.Info,

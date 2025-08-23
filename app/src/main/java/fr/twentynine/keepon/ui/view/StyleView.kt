@@ -241,7 +241,7 @@ fun FontStyleCard(
         )
         Card(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 6.dp)
+                .padding(horizontal = 16.dp)
                 .align(alignment = Alignment.Start),
             shape = RoundedCornerShape(24.dp),
         ) {
@@ -352,7 +352,7 @@ fun FontOptionsCard(
         )
         Card(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 6.dp)
+                .padding(start = 16.dp, end = 16.dp, bottom = 6.dp)
                 .align(alignment = Alignment.Start),
             shape = RoundedCornerShape(24.dp),
         ) {

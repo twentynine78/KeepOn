@@ -10,7 +10,7 @@ import fr.twentynine.keepon.data.enums.ItemPosition
 val defaultRoundedCornerSize = 24.dp
 val defaultBorderWidth = 1.dp
 val defaultCardHorizontalPadding = 16.dp
-val itemPaddingTopFirst = 8.dp
+val itemPaddingTopFirst = 0.dp
 val itemPaddingBottomLast = 12.dp
 val itemPaddingDefault = 0.dp
 

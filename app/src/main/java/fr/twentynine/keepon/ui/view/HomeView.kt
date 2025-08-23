@@ -130,7 +130,7 @@ fun HomeScreen(
         item {
             Column(
                 modifier = baseMaxWidthModifier
-                    .padding(top = 24.dp),
+                    .padding(top = 20.dp),
             ) {
                 CardHeaderView(
                     icon = painterResource(R.drawable.ic_list_add),
@@ -190,7 +190,7 @@ fun KeepOnBehaviorCard(
         )
         Card(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
                 .align(alignment = Alignment.Start),
             shape = RoundedCornerShape(24.dp),
         ) {

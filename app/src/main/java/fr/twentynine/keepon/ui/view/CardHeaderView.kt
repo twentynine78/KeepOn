@@ -41,7 +41,7 @@ fun CardHeaderView(
     Column(modifier = modifier) {
         Row(
             modifier = Modifier
-                .padding(bottom = 12.dp, start = 20.dp, end = 20.dp),
+                .padding(bottom = 20.dp, start = 20.dp, end = 20.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -90,7 +90,7 @@ fun CardHeaderView(
                 text = descText!!,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
-                    .padding(bottom = 14.dp, start = 24.dp, end = 24.dp),
+                    .padding(bottom = 16.dp, start = 24.dp, end = 24.dp),
                 color = MaterialTheme.colorScheme.outline
             )
         }
