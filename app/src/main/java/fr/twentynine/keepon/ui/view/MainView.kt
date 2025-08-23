@@ -1,9 +1,13 @@
 package fr.twentynine.keepon.ui.view
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -24,6 +28,7 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,27 +72,97 @@ private fun NavigationSuiteType.toKeepOnNavType() = when (this) {
     else -> KeepOnNavigationType.BOTTOM_NAVIGATION
 }
 
-private val enterTransitionSpec = tween<Float>(300)
-private val exitTransitionSpec = tween<Float>(300)
+private const val SLIDE_ANIMATION_DURATION_MS = 300
+
+private val enterPageTransitionSpec = tween<Float>(SLIDE_ANIMATION_DURATION_MS)
+private val exitPageTransitionSpec = tween<Float>(SLIDE_ANIMATION_DURATION_MS)
+
+private val slideInFromRight = slideInHorizontally(
+    initialOffsetX = { fullWidth -> fullWidth },
+    animationSpec = tween(SLIDE_ANIMATION_DURATION_MS)
+)
+private val slideOutToLeft = slideOutHorizontally(
+    targetOffsetX = { fullWidth -> -fullWidth },
+    animationSpec = tween(SLIDE_ANIMATION_DURATION_MS)
+)
+private val slideInFromLeft = slideInHorizontally(
+    initialOffsetX = { fullWidth -> -fullWidth },
+    animationSpec = tween(SLIDE_ANIMATION_DURATION_MS)
+)
+private val slideOutToRight = slideOutHorizontally(
+    targetOffsetX = { fullWidth -> fullWidth },
+    animationSpec = tween(SLIDE_ANIMATION_DURATION_MS)
+)
+private val defaultFade = fadeIn(
+    animationSpec = tween(SLIDE_ANIMATION_DURATION_MS)
+).togetherWith(fadeOut(animationSpec = tween(SLIDE_ANIMATION_DURATION_MS)))
+
+private enum class MainScreenState {
+    EMPTY,
+    ERROR,
+    PERMISSION,
+    KEEP_ON
+}
 
 @Composable
 fun MainView(
     uiState: MainViewUIState,
     onEvent: (MainUIEvent) -> Unit,
 ) {
-    when {
-        uiState is MainViewUIState.Error -> ErrorView(errorMessage = uiState.error)
-        uiState is MainViewUIState.Success && (!uiState.canWriteSystemSettings || !uiState.batteryIsNotOptimized) -> {
-            MainPermissionScreen(
-                uiState = uiState,
-                onEvent = onEvent,
-            )
+    val targetScreenState by remember(uiState) {
+        derivedStateOf { // Use derivedStateOf
+            when (uiState) {
+                is MainViewUIState.Error -> MainScreenState.ERROR
+                is MainViewUIState.Success -> {
+                    if (!uiState.canWriteSystemSettings || !uiState.batteryIsNotOptimized) {
+                        MainScreenState.PERMISSION
+                    } else {
+                        MainScreenState.KEEP_ON
+                    }
+                }
+                else -> MainScreenState.EMPTY
+            }
         }
-        uiState is MainViewUIState.Success -> {
-            KeepOnView(
-                uiState = uiState,
-                onEvent = onEvent,
-            )
+    }
+
+    AnimatedContent(
+        modifier = Modifier.fillMaxSize(),
+        targetState = targetScreenState,
+        transitionSpec = {
+            when {
+                targetState == MainScreenState.KEEP_ON && initialState == MainScreenState.PERMISSION ->
+                    slideInFromRight togetherWith slideOutToLeft
+                targetState == MainScreenState.PERMISSION && initialState == MainScreenState.KEEP_ON ->
+                    slideInFromLeft togetherWith slideOutToRight
+                else -> defaultFade
+            }
+        },
+        contentKey = { targetScreenState -> targetScreenState.toString() },
+        label = "MainScreenAnimation"
+    ) { screenStateTarget ->
+        when (screenStateTarget) {
+            MainScreenState.ERROR -> {
+                if (uiState is MainViewUIState.Error) {
+                    ErrorView(errorMessage = uiState.error)
+                }
+            }
+            MainScreenState.PERMISSION -> {
+                if (uiState is MainViewUIState.Success) {
+                    MainPermissionScreen(
+                        uiState = uiState,
+                        onEvent = onEvent,
+                    )
+                }
+            }
+            MainScreenState.KEEP_ON -> {
+                if (uiState is MainViewUIState.Success) {
+                    KeepOnView(
+                        uiState = uiState,
+                        onEvent = onEvent,
+                    )
+                }
+            }
+            MainScreenState.EMPTY -> {}
         }
     }
 }
@@ -228,7 +303,9 @@ private fun KeepOnView(
                         shape = RoundedCornerShape(24.dp),
                     ) {
                         AsyncImage(
-                            modifier = Modifier.size(40.dp, 40.dp).padding(bottom = 2.dp),
+                            modifier = Modifier
+                                .size(40.dp, 40.dp)
+                                .padding(bottom = 2.dp),
                             model = imageData,
                             colorFilter = ColorFilter.tint(fabContentColor),
                             contentDescription = imageDescription,
@@ -332,8 +409,8 @@ private fun KeepOnNavHost(
     ) {
         composable(
             route = NavigationDestination.Home.route,
-            enterTransition = { fadeIn(animationSpec = enterTransitionSpec) },
-            exitTransition = { fadeOut(animationSpec = exitTransitionSpec) },
+            enterTransition = { fadeIn(animationSpec = enterPageTransitionSpec) },
+            exitTransition = { fadeOut(animationSpec = exitPageTransitionSpec) },
         ) {
             HomeView(
                 uiState = uiState,
@@ -343,8 +420,8 @@ private fun KeepOnNavHost(
         }
         composable(
             route = NavigationDestination.Style.route,
-            enterTransition = { fadeIn(animationSpec = enterTransitionSpec) },
-            exitTransition = { fadeOut(animationSpec = exitTransitionSpec) },
+            enterTransition = { fadeIn(animationSpec = enterPageTransitionSpec) },
+            exitTransition = { fadeOut(animationSpec = exitPageTransitionSpec) },
         ) {
             StyleView(
                 uiState = uiState,
@@ -354,8 +431,8 @@ private fun KeepOnNavHost(
         }
         composable(
             route = NavigationDestination.About.route,
-            enterTransition = { fadeIn(animationSpec = enterTransitionSpec) },
-            exitTransition = { fadeOut(animationSpec = exitTransitionSpec) },
+            enterTransition = { fadeIn(animationSpec = enterPageTransitionSpec) },
+            exitTransition = { fadeOut(animationSpec = exitPageTransitionSpec) },
         ) {
             AboutView(navType = navType)
         }
