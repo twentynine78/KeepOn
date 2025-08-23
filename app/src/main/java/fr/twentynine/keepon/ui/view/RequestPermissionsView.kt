@@ -74,38 +74,42 @@ fun MainPermissionScreen(
         uiState.canWriteSystemSettings,
         uiState.canPostNotification
     ) {
-        val mutableNeededPermissionList = mutableListOf(
-            NeededPermission(
-                title = permissionScreenBatteryOptimizationTitle,
-                description = permissionScreenBatteryOptimizationSubtitle,
-                requestNeeded = !uiState.batteryIsNotOptimized,
-                requestAction = { onEvent(MainUIEvent.RequestDisableBatteryOptimization) },
-            ),
-            NeededPermission(
-                title = permissionScreenWriteSettingTitle,
-                description = permissionScreenWriteSettingSubtitle,
-                requestNeeded = !uiState.canWriteSystemSettings,
-                requestAction = { onEvent(MainUIEvent.RequestWriteSystemSettingPermission) },
-            )
-        )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            mutableNeededPermissionList.add(
-                0,
+        buildList {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                add(
+                    NeededPermission(
+                        title = permissionScreenNotificationTitle,
+                        description = permissionScreenNotificationSubtitle,
+                        requestNeeded = !uiState.canPostNotification,
+                        requestAction = { onEvent(MainUIEvent.RequestPostNotification) },
+                    )
+                )
+            }
+            add(
                 NeededPermission(
-                    title = permissionScreenNotificationTitle,
-                    description = permissionScreenNotificationSubtitle,
-                    requestNeeded = !uiState.canPostNotification,
-                    requestAction = { onEvent(MainUIEvent.RequestPostNotification) },
-                ),
+                    title = permissionScreenBatteryOptimizationTitle,
+                    description = permissionScreenBatteryOptimizationSubtitle,
+                    requestNeeded = !uiState.batteryIsNotOptimized,
+                    requestAction = { onEvent(MainUIEvent.RequestDisableBatteryOptimization) },
+                )
+            )
+            add(
+                NeededPermission(
+                    title = permissionScreenWriteSettingTitle,
+                    description = permissionScreenWriteSettingSubtitle,
+                    requestNeeded = !uiState.canWriteSystemSettings,
+                    requestAction = { onEvent(MainUIEvent.RequestWriteSystemSettingPermission) },
+                )
             )
         }
-
-        mutableNeededPermissionList.toList()
     }
 
     RequestPermissionsView(
         neededPermissionList = neededPermissionList,
-        updatePermissions = { onEvent(MainUIEvent.IncrementAppLaunchCount) },
+        updatePermissions = {
+            onEvent(MainUIEvent.CheckNeededPermissions)
+            onEvent(MainUIEvent.IncrementAppLaunchCount)
+        },
     )
 }
 
