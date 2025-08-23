@@ -83,7 +83,7 @@ fun AboutScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item {
+        item(key = "headerCard") {
             Column(
                 modifier = maxWidthModifier
                     .padding(top = 28.dp),
@@ -95,22 +95,24 @@ fun AboutScreen(
             }
         }
 
-        creditInfoMap.forEach { (creditInfoType, creditInfoForType) ->
-            item(key = creditInfoType) {
+        creditInfoMap.entries.forEachIndexed { mapIndex, (creditInfoType, creditInfoForType) ->
+            val topPadding = if (mapIndex == 0) 0.dp else 12.dp
+
+            item(key = "section_${creditInfoType.name}") {
                 Column(modifier = maxWidthModifier) {
                     Text(
                         text = stringResource(creditInfoType.typeNameId),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                         modifier = Modifier
-                            .padding(start = 32.dp, end = 32.dp, top = 8.dp, bottom = 8.dp),
+                            .padding(start = 32.dp, end = 32.dp, top = topPadding, bottom = 8.dp),
                     )
                 }
             }
 
             itemsIndexed(
                 items = creditInfoForType,
-                key = { _, creditInfo -> creditInfo.url }
+                key = { _, creditInfo -> "credit_${creditInfoType.name}_${creditInfo.url}" }
             ) { index, creditInfo ->
                 val itemPosition = remember(index, creditInfoForType.size) {
                     ItemPosition.getItemPosition(index, creditInfoForType.size)
@@ -158,7 +160,7 @@ fun AppInfoCard(
         )
         Card(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 6.dp)
+                .padding(start = 16.dp, end = 16.dp, bottom = 6.dp)
                 .align(alignment = Alignment.Start),
             shape = RoundedCornerShape(24.dp),
         ) {
