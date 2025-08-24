@@ -1,0 +1,3 @@
+- Corrections de bugs
+- Interface utilisateur améliorée
+- Performances et stabilité améliorées
