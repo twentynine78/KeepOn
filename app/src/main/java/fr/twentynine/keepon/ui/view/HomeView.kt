@@ -109,11 +109,11 @@ fun HomeScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item {
+        item(key = "tipsCard") {
             TipsSectionView(tipsList = tipsList, onEvent = onEvent, modifier = baseMaxWidthModifier.padding(top = 8.dp))
         }
 
-        item {
+        item(key = "behaviorCard") {
             KeepOnBehaviorCard(
                 resetTimeoutWhenScreenOff = resetTimeoutWhenScreenOff,
                 defaultScreenTimeoutUI = remember(
@@ -127,7 +127,7 @@ fun HomeScreen(
             )
         }
 
-        item {
+        item(key = "timeoutsCardHeader") {
             Column(
                 modifier = baseMaxWidthModifier
                     .padding(top = 20.dp),
@@ -143,7 +143,7 @@ fun HomeScreen(
 
         itemsIndexed(
             items = screenTimeouts,
-            key = { _, item -> item.value }
+            key = { _, item -> "timeout_${item.value}" }
         ) { index, screenTimeout ->
             val itemPosition = remember(index, screenTimeouts.size) {
                 ItemPosition.getItemPosition(index, screenTimeouts.size)
@@ -160,7 +160,7 @@ fun HomeScreen(
             )
         }
 
-        item {
+        item(key = "bottomSpacer") {
             val spacerBottomHeight = remember(navType) {
                 when (navType) {
                     KeepOnNavigationType.BOTTOM_NAVIGATION -> 118.dp

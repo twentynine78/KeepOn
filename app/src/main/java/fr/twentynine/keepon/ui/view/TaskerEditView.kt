@@ -277,7 +277,7 @@ fun TaskerScreenTimeoutList(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item {
+        item(key = "headerCard") {
             Column(
                 modifier = maxWidthModifier
                     .padding(top = 28.dp)
@@ -290,7 +290,7 @@ fun TaskerScreenTimeoutList(
             }
         }
 
-        item {
+        item(key = "dynamicTitle") {
             Column(modifier = maxWidthModifier) {
                 Text(
                     text = stringResource(R.string.tasker_dynamic_value_text),
@@ -304,7 +304,7 @@ fun TaskerScreenTimeoutList(
 
         itemsIndexed(
             items = specialScreenTimeouts,
-            key = { _, item -> item.value }
+            key = { _, item -> "special_${item.value}" }
         ) { index, screenTimeout ->
             val itemPosition = remember(index, specialScreenTimeouts.size) {
                 ItemPosition.getItemPosition(index, specialScreenTimeouts.size)
@@ -322,7 +322,7 @@ fun TaskerScreenTimeoutList(
             )
         }
 
-        item {
+        item(key = "staticTitle") {
             Column(modifier = maxWidthModifier) {
                 Text(
                     text = stringResource(R.string.tasker_static_value_text),
@@ -336,7 +336,7 @@ fun TaskerScreenTimeoutList(
 
         itemsIndexed(
             items = screenTimeouts,
-            key = { _, item -> item.value }
+            key = { _, item -> "static_${item.value}" }
         ) { index, screenTimeout ->
             val itemPosition = remember(index, screenTimeouts.size) {
                 ItemPosition.getItemPosition(index, screenTimeouts.size)
@@ -354,7 +354,7 @@ fun TaskerScreenTimeoutList(
             )
         }
 
-        item {
+        item(key = "bottomSpacer") {
             if (selectedScreenTimeout != null) {
                 Spacer(modifier = Modifier.padding(bottom = 96.dp))
             } else {

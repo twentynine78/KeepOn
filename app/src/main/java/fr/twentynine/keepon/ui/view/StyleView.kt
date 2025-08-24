@@ -85,7 +85,7 @@ fun StyleScreen(
             .fillMaxHeight()
             .width(MAX_SCREEN_CONTENT_WIDTH_IN_DP.dp)
 
-        item {
+        item(key = "headerCard") {
             Column(
                 modifier = maxWidthModifier
                     .padding(top = 28.dp),
@@ -100,7 +100,7 @@ fun StyleScreen(
 
         itemsIndexed(
             items = fontFamilies,
-            key = { _, iconFontFamily -> iconFontFamily.name }
+            key = { _, iconFontFamily -> "font_${iconFontFamily.name}" }
         ) { index, iconFontFamily ->
             val itemPosition = remember(index, fontFamilies.size) {
                 ItemPosition.getItemPosition(index, fontFamilies.size)
@@ -115,7 +115,7 @@ fun StyleScreen(
             )
         }
 
-        item {
+        item(key = "styleCard") {
             FontStyleCard(
                 timeoutIconStyle = timeoutIconStyle,
                 onEvent = onEvent,
@@ -123,7 +123,7 @@ fun StyleScreen(
             )
         }
 
-        item {
+        item(key = "optionsCard") {
             FontOptionsCard(
                 timeoutIconStyle = timeoutIconStyle,
                 onEvent = onEvent,
@@ -131,7 +131,7 @@ fun StyleScreen(
             )
         }
 
-        item {
+        item(key = "bottomSpacer") {
             val spacerBottomHeight = remember(navType) {
                 when (navType) {
                     KeepOnNavigationType.BOTTOM_NAVIGATION -> 112.dp
