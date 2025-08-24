@@ -153,8 +153,13 @@ class TaskerEditViewModel @Inject constructor(
                     screenTimeoutUI.value == screenTimeout
                 }
 
-            if (initialScreenTimeout != null && !initialScreenTimeout.isLocked) {
-                setSelectedScreenTimeout(initialScreenTimeout)
+            initialScreenTimeout?.let { currentInitialTimeout ->
+                val timeoutToSet = if (currentInitialTimeout.isLocked) {
+                    allScreenTimeoutList.lastOrNull { !it.isLocked }
+                } else {
+                    currentInitialTimeout
+                }
+                timeoutToSet?.let { setSelectedScreenTimeout(it) }
             }
         }
     }
