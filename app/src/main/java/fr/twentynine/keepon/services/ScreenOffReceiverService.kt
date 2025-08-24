@@ -6,13 +6,18 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ServiceInfo
 import android.os.Build
+import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.data.enums.SpecialScreenTimeoutType
 import fr.twentynine.keepon.receiver.ScreenOffReceiver
+import fr.twentynine.keepon.tasker.FireReceiver
+import fr.twentynine.keepon.tasker.PluginBundleManager
+import fr.twentynine.keepon.tasker.TaskerIntent
 import fr.twentynine.keepon.util.PostNotificationPermissionManager
 import fr.twentynine.keepon.util.PostNotificationPermissionManager.Companion.NOTIFICATION_CHANNEL_SCREEN_MONITOR_ID
 
@@ -27,6 +32,23 @@ class ScreenOffReceiverService : LifecycleService() {
     }
     private val pendingLaunchKeepOnIntent: PendingIntent by lazy {
         PendingIntent.getActivity(this, 0, launchKeepOnIntent, PendingIntent.FLAG_IMMUTABLE)
+    }
+
+    private val stopKeepOnIntent: Intent by lazy {
+        Intent(this, FireReceiver::class.java)
+            .setAction(TaskerIntent.ACTION_FIRE_SETTING)
+            .putExtra(
+                TaskerIntent.EXTRA_BUNDLE,
+                Bundle().apply {
+                    putInt(
+                        PluginBundleManager.BUNDLE_EXTRA_TIMEOUT_VALUE,
+                        SpecialScreenTimeoutType.DEFAULT_SCREEN_TIMEOUT_TYPE.value
+                    )
+                }
+            )
+    }
+    private val pendingStopKeepOnIntent: PendingIntent by lazy {
+        PendingIntent.getBroadcast(this, 0, stopKeepOnIntent, PendingIntent.FLAG_IMMUTABLE)
     }
 
     override fun onCreate() {
@@ -86,6 +108,11 @@ class ScreenOffReceiverService : LifecycleService() {
                 R.drawable.ic_launch,
                 getString(R.string.notification_screen_monitor_action_open_keepon),
                 pendingLaunchKeepOnIntent
+            )
+            .addAction(
+                R.drawable.ic_close,
+                getString(R.string.notification_screen_monitor_action_stop_keepon),
+                pendingStopKeepOnIntent
             )
             .setGroup(PostNotificationPermissionManager.NOTIFICATION_GROUP_KEY)
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)

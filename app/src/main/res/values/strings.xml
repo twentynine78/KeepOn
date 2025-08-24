@@ -111,6 +111,7 @@
     <string name="notification_screen_monitor_title">KeepOn is running</string>
     <string name="notification_screen_monitor_text">KeepOn is running in background to monitor screen state.</string>
     <string name="notification_screen_monitor_action_open_keepon">Open KeepOn</string>
+    <string name="notification_screen_monitor_action_stop_keepon">Stop KeepOn</string>
 
     <string name="permissions_screen_title">Required permissions</string>
     <string name="permissions_screen_subtitle">No data will be collected, stored or transmitted in any way.</string>

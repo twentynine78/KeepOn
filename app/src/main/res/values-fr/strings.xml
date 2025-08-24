@@ -111,6 +111,7 @@
     <string name="notification_screen_monitor_title">KeepOn est en cours d\'exécution</string>
     <string name="notification_screen_monitor_text">KeepOn s\'exécute en arrière-plan pour surveiller l\'état de l\'écran.</string>
     <string name="notification_screen_monitor_action_open_keepon">Ouvrir KeepOn</string>
+    <string name="notification_screen_monitor_action_stop_keepon">Arrêter KeepOn</string>
 
     <string name="permissions_screen_title">Autorisations requises</string>
     <string name="permissions_screen_subtitle">Aucune donnée ne sera collectée, stockée ou transmise de quelque manière que ce soit.</string>
