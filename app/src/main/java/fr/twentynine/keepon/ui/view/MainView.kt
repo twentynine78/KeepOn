@@ -110,7 +110,7 @@ fun MainView(
     onEvent: (MainUIEvent) -> Unit,
 ) {
     val targetScreenState by remember(uiState) {
-        derivedStateOf { // Use derivedStateOf
+        derivedStateOf {
             when (uiState) {
                 is MainViewUIState.Error -> MainScreenState.ERROR
                 is MainViewUIState.Success -> {

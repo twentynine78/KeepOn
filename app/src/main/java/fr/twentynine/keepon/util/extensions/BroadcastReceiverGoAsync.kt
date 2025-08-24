@@ -14,7 +14,7 @@ fun BroadcastReceiver.goAsync(
     block: suspend CoroutineScope.() -> Unit
 ) {
     val pendingResult = goAsync()
-    @OptIn(DelicateCoroutinesApi::class) // Must run globally; there's no teardown callback.
+    @OptIn(DelicateCoroutinesApi::class)
     GlobalScope.launch(context) { withTimeout(5000) { block() } }
         .invokeOnCompletion { pendingResult.finish() }
 }
