@@ -258,9 +258,9 @@ class MainViewModel @Inject constructor(
 
     private fun toggleScreenTimeoutSelection(screenTimeoutUI: ScreenTimeoutUI) {
         viewModelScope.launch {
-            val currentScreenTimeout = userPreferencesRepository.getCurrentScreenTimeout()
+            val defaultScreenTimeout = userPreferencesRepository.getDefaultScreenTimeout()
 
-            if (screenTimeoutUI.value == currentScreenTimeout.value) {
+            if (screenTimeoutUI.value == defaultScreenTimeout.value) {
                 return@launch
             }
 
