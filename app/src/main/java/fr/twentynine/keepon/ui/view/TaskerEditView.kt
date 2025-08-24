@@ -355,7 +355,11 @@ fun TaskerScreenTimeoutList(
         }
 
         item {
-            Spacer(modifier = Modifier.padding(bottom = 96.dp))
+            if (selectedScreenTimeout != null) {
+                Spacer(modifier = Modifier.padding(bottom = 96.dp))
+            } else {
+                Spacer(modifier = Modifier.padding(bottom = 18.dp))
+            }
         }
     }
 }
