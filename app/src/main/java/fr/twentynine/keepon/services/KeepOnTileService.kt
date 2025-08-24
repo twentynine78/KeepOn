@@ -63,6 +63,14 @@ class KeepOnTileService : TileService(), LifecycleOwner {
 
     private var currentUpdateJob: LockableJob = LockableJob()
 
+    private val imageRequestBuilder by lazy {
+        ImageRequest.Builder(this)
+            .size(Size.ORIGINAL)
+            .lifecycle(lifecycle)
+    }
+
+    private lateinit var qsCoilTarget: Target
+
     override fun onCreate() {
         lifecycleDispatcher.onServicePreSuperOnCreate()
         super.onCreate()
@@ -173,7 +181,7 @@ class KeepOnTileService : TileService(), LifecycleOwner {
         )
 
         // Create Coil target
-        val qsCoilTarget: Target = object : Target {
+        qsCoilTarget = object : Target {
             override fun onSuccess(result: Image) {
                 val tile = qsTile ?: return
 
@@ -228,11 +236,9 @@ class KeepOnTileService : TileService(), LifecycleOwner {
         }
 
         // Apply the new QSTile data with coil
-        val request = ImageRequest.Builder(this@KeepOnTileService)
+        val request = imageRequestBuilder
             .data(newTimeoutIconData)
             .target(qsCoilTarget)
-            .size(Size.ORIGINAL)
-            .lifecycle(lifecycle)
             .build()
 
         imageLoader.executeBlocking(request)
