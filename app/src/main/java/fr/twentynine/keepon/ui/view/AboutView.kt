@@ -39,7 +39,7 @@ import androidx.core.net.toUri
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.data.enums.CreditInfoType
 import fr.twentynine.keepon.data.enums.ItemPosition
-import fr.twentynine.keepon.data.local.CreditInfo // Assuming CreditInfo has a stable 'id' or unique property
+import fr.twentynine.keepon.data.local.CreditInfo
 import fr.twentynine.keepon.data.model.AppInfo
 import fr.twentynine.keepon.data.repo.AppInfoRepository
 import fr.twentynine.keepon.data.repo.CreditInfoRepository
@@ -280,6 +280,14 @@ fun CreditInfoCardRow(
                     fontWeight = FontWeight.SemiBold,
                 )
 
+                creditInfo.versionResId?.let {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        text = stringResource(R.string.app_info_version_text),
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
+
                 Text(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     text = stringResource(R.string.credit_info_author_text),
@@ -304,6 +312,13 @@ fun CreditInfoCardRow(
                     text = creditInfo.name,
                     fontWeight = FontWeight.SemiBold,
                 )
+
+                creditInfo.versionResId?.let {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        text = stringResource(creditInfo.versionResId),
+                    )
+                }
 
                 Text(
                     modifier = Modifier.padding(horizontal = 8.dp),

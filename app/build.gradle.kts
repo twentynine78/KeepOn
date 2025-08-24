@@ -22,6 +22,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val coilVersionFromToml: String = libs.versions.coilVersion.get()
+        resValue("string", "coil_version", coilVersionFromToml)
     }
 
     buildTypes {
