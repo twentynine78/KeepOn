@@ -26,7 +26,10 @@ object DataMigrationHelper {
 
                 newList
             } else {
-                emptyList()
+                val currentTimeout = userPreferencesRepository.getCurrentScreenTimeout()
+                val allTimeout = userPreferencesRepository.screenTimeouts
+                val defaultSelectedTimeout = allTimeout.filter { it.value >= currentTimeout.value }
+                defaultSelectedTimeout
             }
         }
 
