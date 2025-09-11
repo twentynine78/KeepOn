@@ -71,6 +71,7 @@ import fr.twentynine.keepon.data.model.TaskerEditUIState
 import fr.twentynine.keepon.data.model.TaskerUIEvent
 import fr.twentynine.keepon.data.model.TimeoutIconData
 import fr.twentynine.keepon.data.model.TimeoutIconStyle
+import fr.twentynine.keepon.ui.util.GlowingText
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
 import kotlinx.coroutines.launch
 
@@ -406,10 +407,6 @@ fun TaskerScreenTimeoutRow(
             val backgroundColorAlpha = 0.65f
             val borderColorAlpha = 0.35f
 
-            val fontWeight = remember(isSelected) {
-                if (isSelected) FontWeight.ExtraBold else FontWeight.Normal
-            }
-
             val itemValue = remember(item, defaultScreenTimeout, previousScreenTimeout) {
                 when (item.value) {
                     SpecialScreenTimeoutType.DEFAULT_SCREEN_TIMEOUT_TYPE.value -> defaultScreenTimeout
@@ -452,12 +449,16 @@ fun TaskerScreenTimeoutRow(
                 )
             }
 
-            Text(
+            GlowingText(
                 modifier = Modifier.padding(start = 24.dp),
                 style = MaterialTheme.typography.labelMedium,
                 text = item.displayName,
                 fontSize = 17.sp,
-                fontWeight = fontWeight,
+                fontWeight = FontWeight.SemiBold,
+                showGlow = isSelected,
+                glowColor = MaterialTheme.colorScheme.onSurface,
+                glowRadius = 10.dp,
+                glowSpread = 2.dp,
             )
 
             Spacer(Modifier.weight(1f))

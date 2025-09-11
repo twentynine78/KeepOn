@@ -1,7 +1,5 @@
 package fr.twentynine.keepon.ui.view
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,7 +33,6 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -45,7 +42,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.lerp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -59,6 +55,7 @@ import fr.twentynine.keepon.data.model.MainViewUIState
 import fr.twentynine.keepon.data.model.ScreenTimeoutUI
 import fr.twentynine.keepon.data.model.TimeoutIconData
 import fr.twentynine.keepon.data.model.TimeoutIconStyle
+import fr.twentynine.keepon.ui.util.GlowingText
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
 import kotlinx.coroutines.launch
@@ -303,24 +300,18 @@ fun ScreenTimeoutRow(
                 )
             }
 
-            val animatedFontWeightValue by animateFloatAsState(
-                targetValue = if (item.isCurrent) 1f else 0f,
-                animationSpec = tween(600),
-                label = "FontWeightAnimation"
-            )
-
-            Text(
+            GlowingText(
                 modifier = Modifier
-                    .padding(start = 72.dp)
+                    .padding(start = 70.dp)
                     .align(Alignment.CenterStart),
                 style = MaterialTheme.typography.labelMedium,
                 text = item.displayName,
                 fontSize = 17.sp,
-                fontWeight = lerp(
-                    start = FontWeight.Normal,
-                    stop = FontWeight.ExtraBold,
-                    fraction = animatedFontWeightValue
-                ),
+                fontWeight = FontWeight.SemiBold,
+                showGlow = item.isCurrent,
+                glowColor = MaterialTheme.colorScheme.onSurface,
+                glowRadius = 10.dp,
+                glowSpread = 2.dp,
             )
 
             if (item.isLocked) {
