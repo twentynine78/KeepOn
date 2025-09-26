@@ -11,8 +11,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -33,7 +31,6 @@ import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.compose.material3.adaptive.currentWindowSize
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
@@ -45,15 +42,9 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.toSize
-import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowSizeClass
-import androidx.window.core.layout.WindowWidthSizeClass
 import coil3.compose.AsyncImage
 import fr.twentynine.keepon.data.enums.TimeoutIconSize
 import fr.twentynine.keepon.data.model.ScreenTimeout
@@ -61,8 +52,6 @@ import fr.twentynine.keepon.data.model.TimeoutIconData
 import fr.twentynine.keepon.data.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.util.KeepOnNavigationContentPosition
 import fr.twentynine.keepon.util.StringResourceProviderImpl
-
-private fun WindowSizeClass.isCompact() = windowWidthSizeClass == WindowWidthSizeClass.COMPACT
 
 class KeepOnNavSuiteScope(
     val navSuiteType: NavigationSuiteType
@@ -83,21 +72,24 @@ fun KeepOnNavigationWrapper(
 ) {
     // Get adaptive screen info
     val adaptiveInfo = currentWindowAdaptiveInfo()
-    val windowSize = with(LocalDensity.current) {
-        currentWindowSize().toSize().toDpSize()
-    }
 
     val navLayoutType = when {
         adaptiveInfo.windowPosture.isTabletop -> NavigationSuiteType.NavigationBar
-        adaptiveInfo.windowSizeClass.isCompact() -> NavigationSuiteType.NavigationBar
-        adaptiveInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED &&
-            windowSize.width >= 1200.dp -> NavigationSuiteType.NavigationRail
-        else -> NavigationSuiteType.NavigationRail
+        adaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(
+            WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
+        ) -> NavigationSuiteType.NavigationRail
+        adaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(
+            WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND
+        ) -> NavigationSuiteType.NavigationRail
+        else -> NavigationSuiteType.NavigationBar
     }
-    val navContentPosition = when (adaptiveInfo.windowSizeClass.windowHeightSizeClass) {
-        WindowHeightSizeClass.COMPACT -> KeepOnNavigationContentPosition.TOP
-        WindowHeightSizeClass.MEDIUM,
-        WindowHeightSizeClass.EXPANDED -> KeepOnNavigationContentPosition.CENTER
+    val navContentPosition = when {
+        adaptiveInfo.windowSizeClass.isHeightAtLeastBreakpoint(
+            WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND
+        ) -> KeepOnNavigationContentPosition.CENTER
+        adaptiveInfo.windowSizeClass.isHeightAtLeastBreakpoint(
+            WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND
+        ) -> KeepOnNavigationContentPosition.CENTER
         else -> KeepOnNavigationContentPosition.TOP
     }
 
@@ -199,15 +191,7 @@ fun NavigationRailView(
         containerColor = MaterialTheme.colorScheme.inverseOnSurface,
     ) {
         Column(
-            modifier = Modifier.fillMaxHeight().padding(
-                start = LocalDensity.current.run {
-                    if (LocalLayoutDirection.current == LayoutDirection.Ltr) {
-                        WindowInsets.displayCutout.getLeft(this, LocalLayoutDirection.current).toDp()
-                    } else {
-                        WindowInsets.displayCutout.getRight(this, LocalLayoutDirection.current).toDp()
-                    }
-                }
-            )
+            modifier = Modifier.fillMaxHeight()
                 .statusBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

@@ -7,8 +7,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -72,6 +76,7 @@ fun HomeView(
     uiState: MainViewUIState.Success,
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
+    paddingValue: PaddingValues,
 ) {
     LaunchedEffect(Unit) {
         onEvent(MainUIEvent.IncrementAppLaunchCount)
@@ -85,6 +90,7 @@ fun HomeView(
         isFirstLaunch = uiState.isFirstLaunch,
         onEvent = onEvent,
         navType = navType,
+        paddingValue = paddingValue,
     )
 }
 
@@ -97,6 +103,7 @@ fun HomeScreen(
     isFirstLaunch: Boolean,
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
+    paddingValue: PaddingValues,
 ) {
     val baseMaxWidthModifier = remember {
         Modifier
@@ -105,7 +112,12 @@ fun HomeScreen(
 
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(
+                top = paddingValue.calculateTopPadding(),
+                start = paddingValue.calculateStartPadding(LocalLayoutDirection.current),
+                end = paddingValue.calculateEndPadding(LocalLayoutDirection.current),
+            ),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

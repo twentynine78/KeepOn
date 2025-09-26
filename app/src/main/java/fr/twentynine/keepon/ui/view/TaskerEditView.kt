@@ -7,10 +7,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -41,24 +41,15 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -96,28 +87,13 @@ fun TaskerEditView(
             val exitUntilCollapsedScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
             val scrollBehavior = remember { exitUntilCollapsedScrollBehavior }
 
-            var scaffoldWidthDp by remember { mutableStateOf(0.dp) }
-            val localDensity = LocalDensity.current
-            val layoutDirection = LocalLayoutDirection.current
-
-            val startPadding = getStartPaddingForDisplayCutout(scaffoldWidthDp, localDensity, layoutDirection)
-            val endPadding = getEndPaddingForDisplayCutout(scaffoldWidthDp, localDensity, layoutDirection)
-            val bottomPadding = getBottomPadding(localDensity)
-
             val backPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
             Scaffold(
                 modifier = Modifier
                     .fillMaxSize()
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
-                    .onGloballyPositioned { coordinates ->
-                        scaffoldWidthDp = with(localDensity) { coordinates.size.width.toDp() }
-                    }
-                    .padding(
-                        start = startPadding,
-                        end = endPadding,
-                        bottom = bottomPadding,
-                    ),
+                    .nestedScroll(scrollBehavior.nestedScrollConnection),
+                contentWindowInsets = WindowInsets.safeDrawing,
                 containerColor = MaterialTheme.colorScheme.background,
                 topBar = {
                     CenterAlignedTopAppBar(
@@ -165,8 +141,7 @@ fun TaskerEditView(
             ) { paddingValue ->
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValue),
+                        .fillMaxSize(),
                     contentAlignment = Alignment.TopCenter,
                 ) {
                     TaskerEditScreen(
@@ -177,58 +152,12 @@ fun TaskerEditView(
                         selectedScreenTimeout = uiState.selectedScreenTimeout,
                         timeoutIconStyle = uiState.timeoutIconStyle,
                         onEvent = onEvent,
+                        paddingValue = paddingValue,
                     )
                 }
             }
         }
     }
-}
-
-@Composable
-private fun getStartPaddingForDisplayCutout(
-    boxWidthDp: Dp,
-    density: androidx.compose.ui.unit.Density,
-    layoutDirection: LayoutDirection
-): Dp {
-    return density.run {
-        val safeDrawingInsets = WindowInsets.safeDrawing
-        val startPadding = if (layoutDirection == LayoutDirection.Ltr) {
-            safeDrawingInsets.getLeft(this, layoutDirection).toDp()
-        } else {
-            safeDrawingInsets.getRight(this, layoutDirection).toDp()
-        }
-        if (boxWidthDp <= MAX_SCREEN_CONTENT_WIDTH_IN_DP.dp + (startPadding * 2)) {
-            startPadding
-        } else {
-            0.dp
-        }
-    }
-}
-
-@Composable
-private fun getEndPaddingForDisplayCutout(
-    boxWidthDp: Dp,
-    density: androidx.compose.ui.unit.Density,
-    layoutDirection: LayoutDirection
-): Dp {
-    return density.run {
-        val safeDrawingInsets = WindowInsets.safeDrawing
-        val endPadding = if (layoutDirection == LayoutDirection.Ltr) {
-            safeDrawingInsets.getRight(this, layoutDirection).toDp()
-        } else {
-            safeDrawingInsets.getLeft(this, layoutDirection).toDp()
-        }
-        if (boxWidthDp <= MAX_SCREEN_CONTENT_WIDTH_IN_DP.dp + (endPadding * 2)) {
-            endPadding
-        } else {
-            0.dp
-        }
-    }
-}
-
-@Composable
-private fun getBottomPadding(density: androidx.compose.ui.unit.Density): Dp {
-    return density.run { WindowInsets.displayCutout.getBottom(this).toDp() }
 }
 
 @Composable
@@ -240,6 +169,7 @@ fun TaskerEditScreen(
     selectedScreenTimeout: ScreenTimeoutUI?,
     timeoutIconStyle: TimeoutIconStyle,
     onEvent: (TaskerUIEvent) -> Unit,
+    paddingValue: PaddingValues,
 ) {
     Column(
         modifier = Modifier
@@ -255,6 +185,7 @@ fun TaskerEditScreen(
             selectedScreenTimeout = selectedScreenTimeout,
             timeoutIconStyle = timeoutIconStyle,
             onEvent = onEvent,
+            paddingValue = paddingValue,
         )
     }
 }
@@ -269,6 +200,7 @@ fun TaskerScreenTimeoutList(
     timeoutIconStyle: TimeoutIconStyle,
     onEvent: (TaskerUIEvent) -> Unit,
     modifier: Modifier = Modifier,
+    paddingValue: PaddingValues,
 ) {
     val maxWidthModifier = remember {
         Modifier
@@ -278,7 +210,8 @@ fun TaskerScreenTimeoutList(
 
     LazyColumn(
         modifier = modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(paddingValue),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

@@ -7,9 +7,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -32,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -49,6 +54,7 @@ import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
 @Composable
 fun AboutView(
     navType: KeepOnNavigationType,
+    paddingValue: PaddingValues,
 ) {
     val context = LocalContext.current
     val appInfo = remember {
@@ -62,6 +68,7 @@ fun AboutView(
         appInfo = appInfo,
         creditInfoMap = creditInfoMap,
         navType = navType,
+        paddingValue = paddingValue,
     )
 }
 
@@ -70,6 +77,7 @@ fun AboutScreen(
     appInfo: AppInfo,
     creditInfoMap: Map<CreditInfoType, List<CreditInfo>>,
     navType: KeepOnNavigationType,
+    paddingValue: PaddingValues,
 ) {
     val maxWidthModifier = remember {
         Modifier
@@ -79,7 +87,12 @@ fun AboutScreen(
 
     LazyColumn(
         modifier = Modifier
-            .fillMaxHeight(),
+            .fillMaxSize()
+            .padding(
+                top = paddingValue.calculateTopPadding(),
+                start = paddingValue.calculateStartPadding(LocalLayoutDirection.current),
+                end = paddingValue.calculateEndPadding(LocalLayoutDirection.current),
+            ),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

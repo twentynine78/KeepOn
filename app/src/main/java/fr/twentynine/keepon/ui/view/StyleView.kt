@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -63,11 +67,13 @@ fun StyleView(
     uiState: MainViewUIState.Success,
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
+    paddingValue: PaddingValues,
 ) {
     StyleScreen(
         timeoutIconStyle = uiState.timeoutIconStyle,
         onEvent = onEvent,
         navType = navType,
+        paddingValue = paddingValue,
     )
 }
 
@@ -76,6 +82,7 @@ fun StyleScreen(
     timeoutIconStyle: TimeoutIconStyle,
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
+    paddingValue: PaddingValues,
 ) {
     val fontFamilies = remember {
         IconFontFamilyRepository.iconFontFamilies.values.toList()
@@ -83,7 +90,12 @@ fun StyleScreen(
 
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(
+                top = paddingValue.calculateTopPadding(),
+                start = paddingValue.calculateStartPadding(LocalLayoutDirection.current),
+                end = paddingValue.calculateEndPadding(LocalLayoutDirection.current),
+            ),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

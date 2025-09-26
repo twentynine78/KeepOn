@@ -15,14 +15,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBarDefaults
-import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -36,22 +34,14 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
@@ -73,7 +63,6 @@ import fr.twentynine.keepon.ui.navigation.NavigationDestinationWithBadge
 import fr.twentynine.keepon.ui.navigation.TOP_LEVEL_DESTINATIONS
 import fr.twentynine.keepon.ui.navigation.withBadge
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
-import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
 import fr.twentynine.keepon.util.StringResourceProviderImpl
 
 private fun NavigationSuiteType.toKeepOnNavType() = when (this) {
@@ -223,9 +212,6 @@ private fun KeepOnView(
     ) {
         val navType = navSuiteType.toKeepOnNavType()
 
-        val localDensity = LocalDensity.current
-        var scaffoldWidthDp by remember { mutableStateOf(0.dp) }
-
         val animationDuration = remember { FAB_ANIMATION_DURATION_MS }
 
         val fabBackgroundColor by animateColorAsState(
@@ -244,17 +230,11 @@ private fun KeepOnView(
             label = "fabContentColor"
         )
 
-        val scaffoldModifier = Modifier.getScaffoldModifier(
-            localDensity = localDensity,
-            scaffoldWidthDp = scaffoldWidthDp,
-            onScaffoldWidthChanged = { scaffoldWidthDp = it },
-            navType = navType,
-            topBarScrollBehavior = topBarScrollBehavior,
-            bottomBarScrollBehavior = bottomBarScrollBehavior
-        )
-
         Scaffold(
-            modifier = scaffoldModifier,
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(topBarScrollBehavior.nestedScrollConnection)
+                .nestedScroll(bottomBarScrollBehavior.nestedScrollConnection),
             contentWindowInsets = WindowInsets.safeDrawing,
             containerColor = backgroundColor,
             topBar = {
@@ -301,33 +281,6 @@ private fun rememberTopLevelDestinations(tipsList: List<TipsInfo>): List<Navigat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun Modifier.getScaffoldModifier(
-    localDensity: Density,
-    scaffoldWidthDp: Dp,
-    onScaffoldWidthChanged: (Dp) -> Unit,
-    navType: KeepOnNavigationType,
-    topBarScrollBehavior: TopAppBarScrollBehavior,
-    bottomBarScrollBehavior: BottomAppBarScrollBehavior
-): Modifier {
-    return this
-        .fillMaxSize()
-        .onGloballyPositioned { coordinates ->
-            val newWidthDp = with(localDensity) { coordinates.size.width.toDp() }
-            if (scaffoldWidthDp != newWidthDp) {
-                onScaffoldWidthChanged(newWidthDp)
-            }
-        }
-        .padding(
-            start = getStartPaddingForDisplayCutout(scaffoldWidthDp, navType),
-            end = getEndPaddingForDisplayCutout(scaffoldWidthDp),
-            bottom = getBottomPadding(navType),
-        )
-        .nestedScroll(topBarScrollBehavior.nestedScrollConnection)
-        .nestedScroll(bottomBarScrollBehavior.nestedScrollConnection)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
 private fun KeepOnTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior,
     backgroundColor: Color,
@@ -350,6 +303,7 @@ private fun KeepOnTopAppBar(
                 style = MaterialTheme.typography.headlineLarge,
             )
         },
+
         colors = topAppBarColors,
         scrollBehavior = scrollBehavior
     )
@@ -410,20 +364,8 @@ private fun KeepOnContent(
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType
 ) {
-    val screenPaddingModifier = remember(navType, paddingValue) {
-        when (navType) {
-            KeepOnNavigationType.BOTTOM_NAVIGATION -> Modifier.padding(
-                top = paddingValue.calculateTopPadding()
-            )
-            KeepOnNavigationType.NAVIGATION_RAIL -> Modifier.padding(
-                top = paddingValue.calculateTopPadding(),
-                bottom = paddingValue.calculateBottomPadding()
-            )
-        }
-    }
-
     Box(
-        modifier = screenPaddingModifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter,
     ) {
         KeepOnNavHost(
@@ -431,74 +373,8 @@ private fun KeepOnContent(
             uiState = uiState,
             onEvent = onEvent,
             navType = navType,
+            paddingValue = paddingValue,
         )
-    }
-}
-
-@Composable
-private fun getStartPaddingForDisplayCutout(
-    boxWidthDp: Dp,
-    navType: KeepOnNavigationType,
-): Dp {
-    val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
-
-    val rawDevicePadding = with(density) {
-        val safeDrawingInsets = WindowInsets.safeDrawing
-        when (layoutDirection) {
-            LayoutDirection.Ltr -> safeDrawingInsets.getLeft(this, layoutDirection).toDp()
-            LayoutDirection.Rtl -> safeDrawingInsets.getRight(this, layoutDirection).toDp()
-        }
-    }
-
-    return if (navType == KeepOnNavigationType.BOTTOM_NAVIGATION) {
-        val maxContentWidthWithPadding = MAX_SCREEN_CONTENT_WIDTH_IN_DP.dp + (rawDevicePadding * 2)
-        if (boxWidthDp <= maxContentWidthWithPadding) {
-            rawDevicePadding
-        } else {
-            0.dp
-        }
-    } else {
-        0.dp
-    }
-}
-
-@Composable
-private fun getEndPaddingForDisplayCutout(
-    boxWidthDp: Dp,
-): Dp {
-    val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
-
-    val rawDevicePadding = with(density) {
-        val safeDrawingInsets = WindowInsets.safeDrawing
-        when (layoutDirection) {
-            LayoutDirection.Ltr -> safeDrawingInsets.getRight(this, layoutDirection).toDp()
-            LayoutDirection.Rtl -> safeDrawingInsets.getLeft(this, layoutDirection).toDp()
-        }
-    }
-
-    return if (boxWidthDp <= MAX_SCREEN_CONTENT_WIDTH_IN_DP.dp + (rawDevicePadding * 2)) {
-        rawDevicePadding
-    } else {
-        0.dp
-    }
-}
-
-@Composable
-private fun getBottomPadding(
-    navType: KeepOnNavigationType
-): Dp {
-    val density = LocalDensity.current
-
-    val rawDevicePadding = with(density) {
-        WindowInsets.displayCutout.getBottom(this).toDp()
-    }
-
-    return if (navType == KeepOnNavigationType.BOTTOM_NAVIGATION) {
-        0.dp
-    } else {
-        rawDevicePadding
     }
 }
 
@@ -508,6 +384,7 @@ private fun KeepOnNavHost(
     uiState: MainViewUIState.Success,
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
+    paddingValue: PaddingValues,
 ) {
     NavHost(
         modifier = Modifier
@@ -524,6 +401,7 @@ private fun KeepOnNavHost(
                 uiState = uiState,
                 onEvent = onEvent,
                 navType = navType,
+                paddingValue = paddingValue,
             )
         }
         composable(
@@ -535,6 +413,7 @@ private fun KeepOnNavHost(
                 uiState = uiState,
                 onEvent = onEvent,
                 navType = navType,
+                paddingValue = paddingValue,
             )
         }
         composable(
@@ -542,7 +421,10 @@ private fun KeepOnNavHost(
             enterTransition = defaultEnterTransition,
             exitTransition = defaultExitTransition,
         ) {
-            AboutView(navType = navType)
+            AboutView(
+                navType = navType,
+                paddingValue = paddingValue,
+            )
         }
     }
 }
