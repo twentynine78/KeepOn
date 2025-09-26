@@ -9,13 +9,15 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager.Companion.ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager.Companion.getIsRunning
 import fr.twentynine.keepon.util.RequiredPermissionsManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.time.delay
+import kotlinx.coroutines.withContext
 import java.time.Duration
 import javax.inject.Inject
 
 interface ScreenOffReceiverServiceManager {
-    fun startService()
-    fun stopService()
+    suspend fun startService()
+    suspend fun stopService()
     suspend fun restartService()
 
     companion object {
@@ -38,7 +40,7 @@ interface ScreenOffReceiverServiceManager {
 }
 
 class ScreenOffReceiverServiceManagerImpl @Inject constructor(@param:ApplicationContext private val context: Context) : ScreenOffReceiverServiceManager {
-    override fun startService() {
+    override suspend fun startService() {
         if (!getIsRunning()) {
             if (RequiredPermissionsManager.isPermissionsGranted(context)) {
                 try {
@@ -55,7 +57,7 @@ class ScreenOffReceiverServiceManagerImpl @Inject constructor(@param:Application
         }
     }
 
-    override fun stopService() {
+    override suspend fun stopService() {
         if (getIsRunning()) {
             try {
                 context.startService(
@@ -82,11 +84,13 @@ class ScreenOffReceiverServiceManagerImpl @Inject constructor(@param:Application
         startService()
     }
 
-    private fun showMissingPermissionToast() {
-        Toast.makeText(
-            context.applicationContext,
-            context.getString(R.string.toast_missing_permission),
-            Toast.LENGTH_SHORT
-        ).show()
+    private suspend fun showMissingPermissionToast() {
+        withContext(Dispatchers.Main) {
+            Toast.makeText(
+                context.applicationContext,
+                context.getString(R.string.toast_missing_permission),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 }
