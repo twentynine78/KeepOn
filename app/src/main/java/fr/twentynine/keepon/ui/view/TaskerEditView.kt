@@ -31,8 +31,8 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -50,6 +50,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -68,7 +69,9 @@ import fr.twentynine.keepon.ui.util.GlowingText
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
 import kotlinx.coroutines.launch
 
-private val SpacingBetweenTooltipAndAnchor = 4.dp
+@OptIn(ExperimentalMaterial3Api::class)
+private val ToolTipCaretShape = TooltipDefaults.caretShape(DpSize(16.dp, 12.dp))
+private val SpacingBetweenTooltipAndAnchor = 22.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -403,16 +406,21 @@ fun TaskerScreenTimeoutRow(
             if (item.isLocked) {
                 TooltipBox(
                     positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                        positioning = TooltipAnchorPosition.Above,
+                        positioning = TooltipAnchorPosition.Left,
                         spacingBetweenTooltipAndAnchor = SpacingBetweenTooltipAndAnchor,
                     ),
                     tooltip = {
-                        PlainTooltip(
-                            modifier = Modifier
-                                .padding(8.dp),
-                            contentColor = MaterialTheme.colorScheme.inverseOnSurface,
-                            containerColor = MaterialTheme.colorScheme.inverseSurface,
-                            shadowElevation = 2.dp,
+                        RichTooltip(
+                            modifier = Modifier,
+                            maxWidth = TooltipDefaults.plainTooltipMaxWidth,
+                            shape = TooltipDefaults.richTooltipContainerShape,
+                            caretShape = ToolTipCaretShape,
+                            colors = TooltipDefaults.richTooltipColors(
+                                containerColor = MaterialTheme.colorScheme.inverseSurface,
+                                contentColor = MaterialTheme.colorScheme.inverseOnSurface,
+                                titleContentColor = MaterialTheme.colorScheme.inverseOnSurface,
+                                actionContentColor = MaterialTheme.colorScheme.inverseOnSurface,
+                            ),
                         ) {
                             Text(
                                 modifier = Modifier

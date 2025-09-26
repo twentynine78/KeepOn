@@ -29,7 +29,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -48,6 +48,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -66,8 +67,10 @@ import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
+private val ToolTipCaretShape = TooltipDefaults.caretShape(DpSize(16.dp, 12.dp))
 private val ItemCardRoundedCornerShape = RoundedCornerShape(14.dp)
-private val SpacingBetweenTooltipAndAnchor = 4.dp
+private val SpacingBetweenTooltipAndAnchor = 22.dp
 private const val ITEM_CARD_BACKGROUND_COLOR_ALPHA = 0.65f
 private const val ITEM_CARD_BORDER_COLOR_ALPHA = 0.35f
 
@@ -337,18 +340,22 @@ fun ScreenTimeoutRow(
                     contentAlignment = Alignment.CenterEnd
                 ) {
                     TooltipBox(
-                        modifier = Modifier,
                         positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                            positioning = TooltipAnchorPosition.Above,
+                            positioning = TooltipAnchorPosition.Left,
                             spacingBetweenTooltipAndAnchor = SpacingBetweenTooltipAndAnchor,
                         ),
                         tooltip = {
-                            PlainTooltip(
-                                modifier = Modifier
-                                    .padding(8.dp),
-                                contentColor = MaterialTheme.colorScheme.inverseOnSurface,
-                                containerColor = MaterialTheme.colorScheme.inverseSurface,
-                                shadowElevation = 2.dp,
+                            RichTooltip(
+                                modifier = Modifier,
+                                maxWidth = TooltipDefaults.plainTooltipMaxWidth,
+                                shape = TooltipDefaults.richTooltipContainerShape,
+                                caretShape = ToolTipCaretShape,
+                                colors = TooltipDefaults.richTooltipColors(
+                                    containerColor = MaterialTheme.colorScheme.inverseSurface,
+                                    contentColor = MaterialTheme.colorScheme.inverseOnSurface,
+                                    titleContentColor = MaterialTheme.colorScheme.inverseOnSurface,
+                                    actionContentColor = MaterialTheme.colorScheme.inverseOnSurface,
+                                ),
                             ) {
                                 Text(
                                     modifier = Modifier
