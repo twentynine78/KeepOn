@@ -1,6 +1,11 @@
 package fr.twentynine.keepon.data.local
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AddCircleOutline
+import androidx.compose.material.icons.rounded.NotificationsActive
+import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.vector.ImageVector
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.data.model.MainUIEvent
 import fr.twentynine.keepon.data.model.TipsConstraintState
@@ -13,7 +18,7 @@ sealed class TipsInfo(
     val buttonAction: MainUIEvent,
     val buttonTextId: Int,
     val buttonDismissTextId: Int,
-    val iconResourceId: Int,
+    val iconImageVector: ImageVector,
     val constraint: (tipsConstraintState: TipsConstraintState) -> Boolean,
 ) {
     data object PostNotification : TipsInfo(
@@ -22,7 +27,7 @@ sealed class TipsInfo(
         textId = R.string.tip_general_notification_text,
         buttonTextId = R.string.tip_general_notification_action_button_text,
         buttonDismissTextId = R.string.tip_general_notification_dismiss_button_text,
-        iconResourceId = R.drawable.ic_notifications_active,
+        iconImageVector = Icons.Rounded.NotificationsActive,
         buttonAction = MainUIEvent.RequestPostNotification,
         constraint = { uiState -> !uiState.canPostNotification }
     )
@@ -32,7 +37,7 @@ sealed class TipsInfo(
         textId = R.string.tip_qstile_text,
         buttonTextId = R.string.tip_qstile_action_button_text,
         buttonDismissTextId = R.string.tip_qstile_dismiss_button_text,
-        iconResourceId = R.drawable.ic_add,
+        iconImageVector = Icons.Rounded.AddCircleOutline,
         buttonAction = MainUIEvent.RequestAddTileService,
         constraint = { uiState -> !uiState.tileServiceIsAdded }
     )
@@ -42,7 +47,7 @@ sealed class TipsInfo(
         textId = R.string.tip_rateapp_text,
         buttonTextId = R.string.tip_rateapp_action_button_text,
         buttonDismissTextId = R.string.tip_rateapp_dismiss_button_text,
-        iconResourceId = R.drawable.ic_rate,
+        iconImageVector = Icons.Rounded.StarOutline,
         buttonAction = MainUIEvent.RequestAppRate,
         constraint = { uiState -> uiState.showRateApp }
     )

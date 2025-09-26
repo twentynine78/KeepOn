@@ -15,6 +15,7 @@ activityVersion = "1.10.1"
 composeBomVersion = "2025.08.00"
 androidMaterialVersion = "1.12.0"
 androidXHiltVersion = "1.2.0"
+androidMaterialIconsVersion = "1.7.8"
 coilVersion = "3.3.0"
 kotlinXCollectionsImmutableVersion = "0.4.0"
 kotlinXSerializationJsonVersion = "1.9.0"
@@ -44,6 +45,7 @@ compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = 
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "androidMaterialIconsVersion" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
 compose-material3-window-size = { module = "androidx.compose.material3:material3-window-size-class" }
 compose-material3-adaptive-navigation = { module = "androidx.compose.material3:material3-adaptive-navigation-suite" }

@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.PlaylistAddCheck
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
@@ -130,7 +131,7 @@ fun HomeScreen(
                     .padding(top = 20.dp),
             ) {
                 CardHeaderView(
-                    icon = painterResource(R.drawable.ic_list_add),
+                    iconVector = Icons.AutoMirrored.Rounded.PlaylistAddCheck,
                     iconSize = 22,
                     title = stringResource(R.string.select_timeouts_title),
                     descText = stringResource(R.string.select_timeouts_text),

@@ -20,6 +20,12 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FontDownload
+import androidx.compose.material.icons.rounded.FontDownload
+import androidx.compose.material.icons.rounded.FormatColorText
+import androidx.compose.material.icons.rounded.LocationSearching
+import androidx.compose.material.icons.rounded.TextFormat
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -91,7 +97,7 @@ fun StyleScreen(
                     .padding(top = 28.dp),
             ) {
                 CardHeaderView(
-                    icon = painterResource(R.drawable.ic_font),
+                    iconVector = Icons.Outlined.FontDownload, //(R.drawable.ic_font),
                     title = stringResource(R.string.font_selection_tile),
                     descText = stringResource(R.string.font_selection_text),
                 )
@@ -235,7 +241,7 @@ fun FontStyleCard(
             .padding(top = 28.dp, bottom = 12.dp),
     ) {
         CardHeaderView(
-            icon = painterResource(R.drawable.ic_font_style),
+            iconVector = Icons.Rounded.FormatColorText,
             title = stringResource(R.string.font_style_tile),
             descText = stringResource(R.string.font_style_text),
         )
@@ -346,7 +352,7 @@ fun FontOptionsCard(
             .padding(top = 28.dp, bottom = 12.dp),
     ) {
         CardHeaderView(
-            icon = painterResource(R.drawable.ic_location),
+            iconVector = Icons.Rounded.LocationSearching,
             title = stringResource(R.string.font_options_title),
             descText = stringResource(R.string.font_options_text),
         )

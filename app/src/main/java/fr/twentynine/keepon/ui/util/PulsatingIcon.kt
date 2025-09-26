@@ -13,14 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun PulsatingIcon(
     infiniteTransition: InfiniteTransition,
     initialSize: Float,
-    painter: Painter,
+    imageVector: ImageVector,
     contentDescription: String?,
     modifier: Modifier = Modifier,
 ) {
@@ -36,7 +36,7 @@ fun PulsatingIcon(
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            painter = painter,
+            imageVector = imageVector,
             contentDescription = contentDescription,
             modifier = modifier
                 .size(pulsate.dp)

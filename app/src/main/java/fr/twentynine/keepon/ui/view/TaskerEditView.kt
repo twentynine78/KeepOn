@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.rounded.Build
+import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -151,7 +152,7 @@ fun TaskerEditView(
                             shape = RoundedCornerShape(24.dp),
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_save),
+                                imageVector = Icons.Rounded.Save,
                                 contentDescription = stringResource(R.string.tasker_save_button),
                                 modifier = Modifier.size(40.dp, 40.dp),
                             )
