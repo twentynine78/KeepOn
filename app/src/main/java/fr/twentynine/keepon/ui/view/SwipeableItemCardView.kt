@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,12 +39,13 @@ import fr.twentynine.keepon.ui.util.rememberCardShape
 import fr.twentynine.keepon.ui.util.rememberItemBottomBorderPadding
 import fr.twentynine.keepon.ui.util.rememberTopPadding
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.with
 
 const val DEFAULT_SWIPE_THRESHOLD_FRACTION = 0.30f
 
 private const val INITIAL_ANIMATION_DURATION = 400
 private const val INITIAL_ANIMATION_DELAY = 450L
-private const val SWIPE_ANIMATION_DELAY = 150L
 private const val INITIAL_ANIMATION_OFFSET_DP = 64
 
 private val infiniteDensity = Density(Float.POSITIVE_INFINITY)
@@ -55,6 +57,8 @@ private fun rememberNoFlingSwipeToDismissBoxState(
     positionalThreshold: (totalDistance: Float) -> Float =
         SwipeToDismissBoxDefaults.positionalThreshold,
 ): SwipeToDismissBoxState {
+    // Keep the deprecated version that allows you to configure the density to prevent accidental scrolling.
+    @Suppress("DEPRECATION")
     return rememberSaveable(
         saver = SwipeToDismissBoxState.Saver(
             confirmValueChange = confirmValueChange,
@@ -62,7 +66,12 @@ private fun rememberNoFlingSwipeToDismissBoxState(
             positionalThreshold = positionalThreshold
         )
     ) {
-        SwipeToDismissBoxState(initialValue, infiniteDensity, confirmValueChange, positionalThreshold)
+        SwipeToDismissBoxState(
+            initialValue,
+            infiniteDensity,
+            confirmValueChange,
+            positionalThreshold
+        )
     }
 }
 
@@ -130,7 +139,6 @@ private fun <T : Parcelable> AnimateSwipeableItemCardEffect(
                         initialTranslationPx
                     }
                     animatedTranslationX.snapTo(offset)
-                    delay(SWIPE_ANIMATION_DELAY)
                 } else {
                     originalFirstDisplayCondition = false
                     // No animation at all (neither first display nor swipe-in).
@@ -176,13 +184,9 @@ fun <T : Parcelable> SwipeableItemCardView(
     val itemBottomBorderPadding = rememberItemBottomBorderPadding(itemPosition = itemPosition)
     val shape = rememberCardShape(itemPosition = itemPosition)
 
+    val scope = rememberCoroutineScope()
+
     val swipeToDismissState = rememberNoFlingSwipeToDismissBoxState(
-        confirmValueChange = { dismissValue ->
-            if (dismissValue != SwipeToDismissBoxValue.Settled && onSwipeAction != null && item != null) {
-                onSwipeAction(dismissValue, item)
-            }
-            false
-        },
         positionalThreshold = { it * swipeThresholdFraction }
     )
 
@@ -232,6 +236,12 @@ fun <T : Parcelable> SwipeableItemCardView(
                 enableDismissFromStartToEnd = swipeEnabled && onSwipeAction != null && backgroundContent != null,
                 backgroundContent = {
                     backgroundContent?.invoke(swipeToDismissState.dismissDirection, swipeToDismissState.progress, item)
+                },
+                onDismiss = { dismissValue ->
+                    if (dismissValue != SwipeToDismissBoxValue.Settled && onSwipeAction != null && item != null) {
+                        onSwipeAction(dismissValue, item)
+                    }
+                    scope.launch { swipeToDismissState.reset() }
                 },
                 content = {
                     Box(
