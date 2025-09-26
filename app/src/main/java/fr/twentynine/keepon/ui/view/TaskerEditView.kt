@@ -35,6 +35,7 @@ import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
@@ -75,6 +76,8 @@ import fr.twentynine.keepon.data.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.util.GlowingText
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
 import kotlinx.coroutines.launch
+
+private val SpacingBetweenTooltipAndAnchor = 4.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -124,7 +127,7 @@ fun TaskerEditView(
                                 style = MaterialTheme.typography.headlineLarge,
                             )
                         },
-                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = MaterialTheme.colorScheme.background,
                             scrolledContainerColor = MaterialTheme.colorScheme.background,
                             navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
@@ -466,7 +469,10 @@ fun TaskerScreenTimeoutRow(
 
             if (item.isLocked) {
                 TooltipBox(
-                    positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                        positioning = TooltipAnchorPosition.Above,
+                        spacingBetweenTooltipAndAnchor = SpacingBetweenTooltipAndAnchor,
+                    ),
                     tooltip = {
                         PlainTooltip(
                             modifier = Modifier

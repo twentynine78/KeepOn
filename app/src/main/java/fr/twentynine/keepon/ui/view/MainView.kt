@@ -339,7 +339,8 @@ private fun KeepOnTopAppBar(
             scrolledContainerColor = backgroundColor,
             navigationIconContentColor = onBackgroundColor,
             titleContentColor = onBackgroundColor,
-            actionIconContentColor = onBackgroundColor
+            actionIconContentColor = onBackgroundColor,
+            subtitleContentColor = onBackgroundColor,
         )
     }
     CenterAlignedTopAppBar(

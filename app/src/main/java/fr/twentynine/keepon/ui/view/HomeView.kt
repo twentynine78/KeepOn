@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
@@ -62,6 +63,7 @@ import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
 import kotlinx.coroutines.launch
 
 private val ItemCardRoundedCornerShape = RoundedCornerShape(14.dp)
+private val SpacingBetweenTooltipAndAnchor = 4.dp
 private const val ITEM_CARD_BACKGROUND_COLOR_ALPHA = 0.65f
 private const val ITEM_CARD_BORDER_COLOR_ALPHA = 0.35f
 
@@ -324,7 +326,10 @@ fun ScreenTimeoutRow(
                 ) {
                     TooltipBox(
                         modifier = Modifier,
-                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                            positioning = TooltipAnchorPosition.Above,
+                            spacingBetweenTooltipAndAnchor = SpacingBetweenTooltipAndAnchor,
+                        ),
                         tooltip = {
                             PlainTooltip(
                                 modifier = Modifier
