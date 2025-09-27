@@ -31,6 +31,8 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
+import androidx.compose.material3.rememberBottomAppBarState
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -63,6 +65,7 @@ import fr.twentynine.keepon.ui.navigation.NavigationDestinationWithBadge
 import fr.twentynine.keepon.ui.navigation.TOP_LEVEL_DESTINATIONS
 import fr.twentynine.keepon.ui.navigation.withBadge
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
+import fr.twentynine.keepon.ui.util.plus
 import fr.twentynine.keepon.util.StringResourceProviderImpl
 
 private fun NavigationSuiteType.toKeepOnNavType() = when (this) {
@@ -191,8 +194,16 @@ private fun KeepOnView(
 
     val topLevelDestinations = rememberTopLevelDestinations(uiState.tipsList)
 
-    val topBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    val bottomBarScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
+    val topAppBarState = rememberTopAppBarState()
+    val bottomAppBarScrollState = rememberBottomAppBarState()
+
+    val topBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(state = topAppBarState)
+    val bottomBarScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior(
+        state = bottomAppBarScrollState
+    )
+    val combinedNestedScrollConnection = remember(topBarScrollBehavior, bottomBarScrollBehavior) {
+        topBarScrollBehavior.nestedScrollConnection + bottomBarScrollBehavior.nestedScrollConnection
+    }
 
     val colorScheme = MaterialTheme.colorScheme
     val primaryContainerColor = colorScheme.primaryContainer
@@ -232,9 +243,8 @@ private fun KeepOnView(
 
         Scaffold(
             modifier = Modifier
-                .fillMaxSize()
-                .nestedScroll(topBarScrollBehavior.nestedScrollConnection)
-                .nestedScroll(bottomBarScrollBehavior.nestedScrollConnection),
+                .nestedScroll(combinedNestedScrollConnection)
+                .fillMaxSize(),
             contentWindowInsets = WindowInsets.safeDrawing,
             containerColor = backgroundColor,
             topBar = {
