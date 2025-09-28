@@ -15,10 +15,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.captionBar
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -43,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
@@ -241,11 +246,13 @@ private fun KeepOnView(
             label = "fabContentColor"
         )
 
+        val combinedInsets = WindowInsets.safeDrawing.union(WindowInsets.captionBar)
+
         Scaffold(
             modifier = Modifier
-                .nestedScroll(combinedNestedScrollConnection)
-                .fillMaxSize(),
-            contentWindowInsets = WindowInsets.safeDrawing,
+                .fillMaxSize()
+                .nestedScroll(combinedNestedScrollConnection),
+            contentWindowInsets = combinedInsets,
             containerColor = backgroundColor,
             topBar = {
                 KeepOnTopAppBar(
@@ -265,7 +272,29 @@ private fun KeepOnView(
                     )
                 }
             },
-        ) { paddingValue ->
+        ) { scaffoldPaddingValue ->
+            val layoutDirection = LocalLayoutDirection.current
+            val bottomPadding = remember(navType, scaffoldPaddingValue) {
+                if (navType == KeepOnNavigationType.BOTTOM_NAVIGATION) {
+                    0.dp
+                } else {
+                    scaffoldPaddingValue.calculateBottomPadding()
+                }
+            }
+            val startPadding = remember(navType, scaffoldPaddingValue) {
+                if (navType == KeepOnNavigationType.NAVIGATION_RAIL) {
+                    0.dp
+                } else {
+                    scaffoldPaddingValue.calculateStartPadding(layoutDirection)
+                }
+            }
+            val paddingValue = PaddingValues(
+                top = scaffoldPaddingValue.calculateTopPadding(),
+                start = startPadding,
+                end = scaffoldPaddingValue.calculateEndPadding(layoutDirection),
+                bottom = bottomPadding
+            )
+
             KeepOnContent(
                 paddingValue = paddingValue,
                 navController = navController,

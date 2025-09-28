@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,10 +23,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FontDownload
-import androidx.compose.material.icons.rounded.FontDownload
 import androidx.compose.material.icons.rounded.FormatColorText
 import androidx.compose.material.icons.rounded.LocationSearching
-import androidx.compose.material.icons.rounded.TextFormat
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,8 +40,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -90,12 +84,8 @@ fun StyleScreen(
 
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                top = paddingValue.calculateTopPadding(),
-                start = paddingValue.calculateStartPadding(LocalLayoutDirection.current),
-                end = paddingValue.calculateEndPadding(LocalLayoutDirection.current),
-            ),
+            .padding(paddingValue)
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -109,7 +99,7 @@ fun StyleScreen(
                     .padding(top = 28.dp),
             ) {
                 CardHeaderView(
-                    iconVector = Icons.Outlined.FontDownload, //(R.drawable.ic_font),
+                    iconVector = Icons.Outlined.FontDownload,
                     title = stringResource(R.string.font_selection_tile),
                     descText = stringResource(R.string.font_selection_text),
                 )

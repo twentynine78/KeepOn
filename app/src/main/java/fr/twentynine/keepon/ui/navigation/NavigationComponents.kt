@@ -278,7 +278,7 @@ fun NavigationRailView(
             Column(
                 modifier = Modifier,
                 horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 topLevelDestinations.forEach { topLevelDestination ->
                     val isSelected = remember(selectedDestination) {

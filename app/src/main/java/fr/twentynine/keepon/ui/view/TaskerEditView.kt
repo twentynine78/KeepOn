@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.captionBar
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -90,13 +92,15 @@ fun TaskerEditView(
             val exitUntilCollapsedScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
             val scrollBehavior = remember { exitUntilCollapsedScrollBehavior }
 
+            val combinedInsets = WindowInsets.safeDrawing.union(WindowInsets.captionBar)
+
             val backPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
             Scaffold(
                 modifier = Modifier
                     .fillMaxSize()
                     .nestedScroll(scrollBehavior.nestedScrollConnection),
-                contentWindowInsets = WindowInsets.safeDrawing,
+                contentWindowInsets = combinedInsets,
                 containerColor = MaterialTheme.colorScheme.background,
                 topBar = {
                     CenterAlignedTopAppBar(
@@ -213,8 +217,8 @@ fun TaskerScreenTimeoutList(
 
     LazyColumn(
         modifier = modifier
-            .fillMaxSize()
-            .padding(paddingValue),
+            .padding(paddingValue)
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

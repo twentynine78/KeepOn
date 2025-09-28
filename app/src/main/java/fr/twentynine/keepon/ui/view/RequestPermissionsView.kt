@@ -16,12 +16,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.captionBar
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -182,6 +184,8 @@ fun RequestPermissionsView(
         neededPermissionList.indexOfLast { it.requestNeeded }
     }
 
+    val combinedInsets = WindowInsets.safeDrawing.union(WindowInsets.captionBar)
+
     LaunchedEffect(key1 = firstNeededPermissionIndex) {
         if (firstNeededPermissionIndex == -1) {
             updatePermissions()
@@ -189,13 +193,13 @@ fun RequestPermissionsView(
     }
 
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing,
+        contentWindowInsets = combinedInsets,
         containerColor = MaterialTheme.colorScheme.background,
     ) { paddingValue ->
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValue),
+                .padding(paddingValue)
+                .fillMaxSize(),
         ) {
             Image(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_perm_request),
