@@ -1,0 +1,4 @@
+- Bug fixes
+- Enhanced user interface
+- Improved performance and stability
+- Dependency updates
