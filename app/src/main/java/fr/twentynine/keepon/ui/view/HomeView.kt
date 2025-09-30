@@ -242,7 +242,7 @@ fun ScreenTimeoutRow(
     modifier: Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val tooltipState = rememberTooltipState(isPersistent = true)
+    val tooltipState = rememberTooltipState()
 
     val imageData = remember(timeoutIconStyle) {
         TimeoutIconData(
@@ -339,15 +339,20 @@ fun ScreenTimeoutRow(
                         ),
                         tooltip = {
                             RichTooltip(
-                                modifier = Modifier,
+                                modifier = Modifier
+                                    .border(
+                                        width = 1.dp,
+                                        color = MaterialTheme.colorScheme.outline,
+                                        shape = TooltipDefaults.richTooltipContainerShape
+                                    ),
                                 maxWidth = TooltipDefaults.plainTooltipMaxWidth,
                                 shape = TooltipDefaults.richTooltipContainerShape,
                                 caretShape = ToolTipCaretShape,
                                 colors = TooltipDefaults.richTooltipColors(
-                                    containerColor = MaterialTheme.colorScheme.inverseSurface,
-                                    contentColor = MaterialTheme.colorScheme.inverseOnSurface,
-                                    titleContentColor = MaterialTheme.colorScheme.inverseOnSurface,
-                                    actionContentColor = MaterialTheme.colorScheme.inverseOnSurface,
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    contentColor = MaterialTheme.colorScheme.onBackground,
+                                    titleContentColor = MaterialTheme.colorScheme.onBackground,
+                                    actionContentColor = MaterialTheme.colorScheme.onBackground,
                                 ),
                             ) {
                                 Text(
