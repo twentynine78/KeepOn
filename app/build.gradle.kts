@@ -16,8 +16,8 @@ android {
         applicationId = "fr.twentynine.keepon"
         minSdk = 28
         targetSdk = 36
-        versionCode = 25
-        versionName = "2.0.5"
+        versionCode = 26
+        versionName = "2.0.6"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -45,10 +45,12 @@ android {
             isPseudoLocalesEnabled = false
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+
     buildFeatures {
         compose = true
     }
