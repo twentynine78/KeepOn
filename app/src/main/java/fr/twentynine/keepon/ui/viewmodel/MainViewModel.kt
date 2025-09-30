@@ -213,10 +213,12 @@ class MainViewModel @Inject constructor(
     fun incrementAppLaunchCount(runBlocking: Boolean = false) {
         val action = suspend {
             if (!appLaunchIncremented && isPermissionsGranted()) {
-                appRateHelper.incrementAppLaunchCount(userPreferencesRepository)
+                val currentCount = userPreferencesRepository.getAppLaunchCount()
+
+                userPreferencesRepository.setAppLaunchCount(currentCount + 1)
                 appLaunchIncremented = true
 
-                if (userPreferencesRepository.getAppLaunchCount() > 1L) {
+                if (currentCount > 1L) {
                     updateIsFirstLaunch()
                 }
             }

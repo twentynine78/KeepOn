@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
-import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import java.util.Calendar
 import java.util.TimeZone
 import javax.inject.Inject
@@ -19,7 +18,6 @@ interface AppRateHelper {
         firstInstallTime: Long,
         canRateApp: Boolean,
     ): Boolean
-    suspend fun incrementAppLaunchCount(userPreferencesRepository: UserPreferencesRepository)
 }
 
 class AppRateHelperImpl @Inject constructor(@param:ApplicationContext private val context: Context) : AppRateHelper {
@@ -52,11 +50,6 @@ class AppRateHelperImpl @Inject constructor(@param:ApplicationContext private va
         } else {
             0
         }
-    }
-
-    override suspend fun incrementAppLaunchCount(userPreferencesRepository: UserPreferencesRepository) {
-        val currentCount = userPreferencesRepository.getAppLaunchCount()
-        userPreferencesRepository.setAppLaunchCount(currentCount + 1)
     }
 
     override fun needShowRateTip(
