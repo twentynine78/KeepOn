@@ -19,6 +19,7 @@ import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -201,7 +202,9 @@ fun <T : Parcelable> SwipeableItemCardView(
     }
 
     val animatedTranslationX = remember { Animatable(0f) }
-    val playAnimation = remember(swipeEnabled, backgroundContent) { swipeEnabled && backgroundContent != null }
+    val playAnimation by remember(swipeEnabled, backgroundContent) {
+        derivedStateOf { swipeEnabled && backgroundContent != null }
+    }
 
     if (playAnimation) {
         AnimateSwipeableItemCardEffect(
@@ -232,8 +235,7 @@ fun <T : Parcelable> SwipeableItemCardView(
             SwipeToDismissBox(
                 modifier = cardModifier,
                 state = swipeToDismissState,
-                enableDismissFromEndToStart = swipeEnabled && onSwipeAction != null && backgroundContent != null,
-                enableDismissFromStartToEnd = swipeEnabled && onSwipeAction != null && backgroundContent != null,
+                gesturesEnabled = swipeEnabled && onSwipeAction != null && backgroundContent != null,
                 backgroundContent = {
                     backgroundContent?.invoke(swipeToDismissState.dismissDirection, swipeToDismissState.progress, item)
                 },

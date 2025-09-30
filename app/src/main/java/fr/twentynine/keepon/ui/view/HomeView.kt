@@ -244,7 +244,7 @@ fun ScreenTimeoutRow(
     val coroutineScope = rememberCoroutineScope()
     val tooltipState = rememberTooltipState()
 
-    val imageData = remember(timeoutIconStyle) {
+    val imageData = remember(item, timeoutIconStyle) {
         TimeoutIconData(
             ScreenTimeoutUIToScreenTimeoutMapper.map(item),
             TimeoutIconSize.MEDIUM,
@@ -254,21 +254,20 @@ fun ScreenTimeoutRow(
 
     val swipeEnable = remember(item.isLocked, resetTimeoutWhenScreenOff) { !item.isLocked && resetTimeoutWhenScreenOff }
 
-    SwipeableScreenTimeoutUICardView(
-        modifier = modifier
-            .fillMaxSize(),
-        item = item,
-        itemPosition = itemPosition,
-        swipeEnabled = swipeEnable,
-        isFirstLaunch = isFirstLaunch,
-        onClickAction = { clickedItem ->
+    val onClickAction = remember<(ScreenTimeoutUI) -> Unit>(item, tooltipState, onEvent) {
+        {
+                clickedItem ->
             if (clickedItem.isLocked || clickedItem.isDefault) {
+                // Ensure coroutineScope is stable or also part of the remember key if it can change
                 coroutineScope.launch { tooltipState.show() }
             } else {
                 onEvent(MainUIEvent.ToggleScreenTimeoutSelection(clickedItem))
             }
-        },
-        onSwipeAction = { dismissedValue, dismissedItem ->
+        }
+    }
+    val onSwipeAction = remember<(Any, ScreenTimeoutUI) -> Unit>(onEvent) {
+        {
+                _, dismissedItem ->
             onEvent(
                 MainUIEvent.SetDefaultScreenTimeout(
                     ScreenTimeoutUIToScreenTimeoutMapper.map(
@@ -276,7 +275,21 @@ fun ScreenTimeoutRow(
                     )
                 )
             )
-        },
+        }
+    }
+
+    val itemCardBackgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = ITEM_CARD_BACKGROUND_COLOR_ALPHA)
+    val itemCardBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = ITEM_CARD_BORDER_COLOR_ALPHA)
+
+    SwipeableScreenTimeoutUICardView(
+        modifier = modifier
+            .fillMaxSize(),
+        item = item,
+        itemPosition = itemPosition,
+        swipeEnabled = swipeEnable,
+        isFirstLaunch = isFirstLaunch,
+        onClickAction = onClickAction,
+        onSwipeAction = onSwipeAction,
     ) {
         Box(
             modifier = Modifier
@@ -287,16 +300,10 @@ fun ScreenTimeoutRow(
             Box(
                 modifier = Modifier
                     .clip(ItemCardRoundedCornerShape)
-                    .background(
-                        MaterialTheme.colorScheme.surface.copy(
-                            alpha = ITEM_CARD_BACKGROUND_COLOR_ALPHA
-                        )
-                    )
+                    .background(itemCardBackgroundColor)
                     .border(
                         width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline.copy(
-                            alpha = ITEM_CARD_BORDER_COLOR_ALPHA
-                        ),
+                        color = itemCardBorderColor,
                         shape = ItemCardRoundedCornerShape
                     )
                     .size(38.dp)
@@ -325,123 +332,127 @@ fun ScreenTimeoutRow(
                 glowSpread = 2.dp,
             )
 
-            if (item.isLocked) {
-                Box(
-                    modifier = Modifier
-                        .padding(end = 12.dp)
-                        .align(Alignment.CenterEnd),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                            positioning = TooltipAnchorPosition.Left,
-                            spacingBetweenTooltipAndAnchor = SpacingBetweenTooltipAndAnchor,
-                        ),
-                        tooltip = {
-                            RichTooltip(
-                                modifier = Modifier
-                                    .border(
-                                        width = 1.dp,
-                                        color = MaterialTheme.colorScheme.outline,
-                                        shape = TooltipDefaults.richTooltipContainerShape
+            when {
+                item.isLocked -> {
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 12.dp)
+                            .align(Alignment.CenterEnd),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
+                        TooltipBox(
+                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                                positioning = TooltipAnchorPosition.Left,
+                                spacingBetweenTooltipAndAnchor = SpacingBetweenTooltipAndAnchor,
+                            ),
+                            tooltip = {
+                                RichTooltip(
+                                    modifier = Modifier
+                                        .border(
+                                            width = 1.dp,
+                                            color = MaterialTheme.colorScheme.outline,
+                                            shape = TooltipDefaults.richTooltipContainerShape
+                                        ),
+                                    maxWidth = TooltipDefaults.plainTooltipMaxWidth,
+                                    shape = TooltipDefaults.richTooltipContainerShape,
+                                    caretShape = ToolTipCaretShape,
+                                    colors = TooltipDefaults.richTooltipColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                        contentColor = MaterialTheme.colorScheme.onBackground,
+                                        titleContentColor = MaterialTheme.colorScheme.onBackground,
+                                        actionContentColor = MaterialTheme.colorScheme.onBackground,
                                     ),
-                                maxWidth = TooltipDefaults.plainTooltipMaxWidth,
-                                shape = TooltipDefaults.richTooltipContainerShape,
-                                caretShape = ToolTipCaretShape,
-                                colors = TooltipDefaults.richTooltipColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                    contentColor = MaterialTheme.colorScheme.onBackground,
-                                    titleContentColor = MaterialTheme.colorScheme.onBackground,
-                                    actionContentColor = MaterialTheme.colorScheme.onBackground,
-                                ),
-                            ) {
-                                Text(
-                                    modifier = Modifier
-                                        .padding(4.dp),
-                                    text = stringResource(R.string.timeout_locked_tooltips_text),
-                                    style = MaterialTheme.typography.bodyLarge,
-                                )
-                            }
-                        },
-                        state = tooltipState
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Lock,
-                            contentDescription = stringResource(R.string.timeout_locked_icon_desc),
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .size(20.dp, 20.dp)
-                                .clickable { coroutineScope.launch { tooltipState.show() } },
-                        )
-                    }
-                }
-            } else if (item.isDefault) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    TooltipBox(
-                        modifier = Modifier,
-                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                            positioning = TooltipAnchorPosition.Left,
-                            spacingBetweenTooltipAndAnchor = SpacingBetweenTooltipAndAnchor,
-                        ),
-                        tooltip = {
-                            RichTooltip(
-                                modifier = Modifier
-                                    .border(
-                                        width = 1.dp,
-                                        color = MaterialTheme.colorScheme.outline,
-                                        shape = TooltipDefaults.richTooltipContainerShape
+                                ) {
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(4.dp),
+                                        text = stringResource(R.string.timeout_locked_tooltips_text),
+                                        style = MaterialTheme.typography.bodyLarge,
                                     )
-                                    .align(Alignment.CenterEnd),
-                                maxWidth = TooltipDefaults.plainTooltipMaxWidth,
-                                shape = TooltipDefaults.richTooltipContainerShape,
-                                caretShape = ToolTipCaretShape,
-                                colors = TooltipDefaults.richTooltipColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                    contentColor = MaterialTheme.colorScheme.onBackground,
-                                    titleContentColor = MaterialTheme.colorScheme.onBackground,
-                                    actionContentColor = MaterialTheme.colorScheme.onBackground,
-                                ),
-                            ) {
-                                val tooltipTextId = remember(resetTimeoutWhenScreenOff) {
-                                    if (resetTimeoutWhenScreenOff) {
-                                        R.string.default_screen_timeout_tooltip_when_active
-                                    } else {
-                                        R.string.default_screen_timeout_tooltip_when_inactive
-                                    }
                                 }
-                                Text(
-                                    modifier = Modifier
-                                        .padding(4.dp)
-                                        .align(Alignment.CenterEnd),
-                                    text = stringResource(tooltipTextId),
-                                    style = MaterialTheme.typography.bodyLarge,
-                                )
-                            }
-                        },
-                        state = tooltipState
-                    ) {
-                        Checkbox(
-                            checked = item.isSelected,
-                            enabled = false,
-                            onCheckedChange = null,
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                        )
+                            },
+                            state = tooltipState
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Lock,
+                                contentDescription = stringResource(R.string.timeout_locked_icon_desc),
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier
+                                    .size(20.dp, 20.dp)
+                                    .clickable { coroutineScope.launch { tooltipState.show() } },
+                            )
+                        }
                     }
                 }
-            } else {
-                Checkbox(
-                    checked = item.isSelected,
-                    enabled = true,
-                    onCheckedChange = null,
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .align(Alignment.CenterEnd)
-                )
+                item.isDefault -> {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
+                        TooltipBox(
+                            modifier = Modifier,
+                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                                positioning = TooltipAnchorPosition.Left,
+                                spacingBetweenTooltipAndAnchor = SpacingBetweenTooltipAndAnchor,
+                            ),
+                            tooltip = {
+                                RichTooltip(
+                                    modifier = Modifier
+                                        .border(
+                                            width = 1.dp,
+                                            color = MaterialTheme.colorScheme.outline,
+                                            shape = TooltipDefaults.richTooltipContainerShape
+                                        )
+                                        .align(Alignment.CenterEnd),
+                                    maxWidth = TooltipDefaults.plainTooltipMaxWidth,
+                                    shape = TooltipDefaults.richTooltipContainerShape,
+                                    caretShape = ToolTipCaretShape,
+                                    colors = TooltipDefaults.richTooltipColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                        contentColor = MaterialTheme.colorScheme.onBackground,
+                                        titleContentColor = MaterialTheme.colorScheme.onBackground,
+                                        actionContentColor = MaterialTheme.colorScheme.onBackground,
+                                    ),
+                                ) {
+                                    val tooltipTextId = remember(resetTimeoutWhenScreenOff) {
+                                        if (resetTimeoutWhenScreenOff) {
+                                            R.string.default_screen_timeout_tooltip_when_active
+                                        } else {
+                                            R.string.default_screen_timeout_tooltip_when_inactive
+                                        }
+                                    }
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(4.dp)
+                                            .align(Alignment.CenterEnd),
+                                        text = stringResource(tooltipTextId),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                    )
+                                }
+                            },
+                            state = tooltipState
+                        ) {
+                            Checkbox(
+                                checked = item.isSelected,
+                                enabled = false,
+                                onCheckedChange = null,
+                                modifier = Modifier
+                                    .padding(end = 8.dp)
+                            )
+                        }
+                    }
+                }
+                else -> {
+                    Checkbox(
+                        checked = item.isSelected,
+                        enabled = true,
+                        onCheckedChange = null,
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .align(Alignment.CenterEnd)
+                    )
+                }
             }
         }
     }

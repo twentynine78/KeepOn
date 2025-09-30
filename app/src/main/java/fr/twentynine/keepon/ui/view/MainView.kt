@@ -137,7 +137,7 @@ fun MainView(
                         MainScreenState.KEEP_ON
                     }
                 }
-                else -> MainScreenState.EMPTY
+                is MainViewUIState.Loading -> MainScreenState.EMPTY
             }
         }
     }
@@ -210,11 +210,14 @@ private fun KeepOnView(
         topBarScrollBehavior.nestedScrollConnection + bottomBarScrollBehavior.nestedScrollConnection
     }
 
-    val colorScheme = MaterialTheme.colorScheme
-    val primaryContainerColor = colorScheme.primaryContainer
-    val backgroundColor = colorScheme.background
-    val onBackgroundColor = colorScheme.onBackground
-    val onPrimaryContainerColor = colorScheme.onPrimaryContainer
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+
+    val fabOnClick = remember(onEvent) {
+        {
+            onEvent(MainUIEvent.SetNextSelectedSystemScreenTimeout)
+        }
+    }
 
     KeepOnNavigationWrapper(
         topLevelDestinations = topLevelDestinations,
@@ -222,29 +225,11 @@ private fun KeepOnView(
         keepOnIsActive = uiState.keepOnIsActive,
         currentScreenTimeout = uiState.currentScreenTimeout,
         timeoutIconStyle = uiState.timeoutIconStyle,
-        fabOnClick = { onEvent(MainUIEvent.SetNextSelectedSystemScreenTimeout) },
+        fabOnClick = fabOnClick,
         scrollBehavior = bottomBarScrollBehavior,
         navigateToTopLevelDestination = navigationActions::navigateTo,
     ) {
         val navType = navSuiteType.toKeepOnNavType()
-
-        val animationDuration = remember { FAB_ANIMATION_DURATION_MS }
-
-        val fabBackgroundColor by animateColorAsState(
-            targetValue = if (uiState.keepOnIsActive) primaryContainerColor else backgroundColor,
-            animationSpec = tween(animationDuration),
-            label = "fabBackgroundColor"
-        )
-        val fabBorderColor by animateColorAsState(
-            targetValue = if (uiState.keepOnIsActive) backgroundColor else primaryContainerColor,
-            animationSpec = tween(animationDuration),
-            label = "fabBorderColor"
-        )
-        val fabContentColor by animateColorAsState(
-            targetValue = if (uiState.keepOnIsActive) onPrimaryContainerColor else onBackgroundColor,
-            animationSpec = tween(animationDuration),
-            label = "fabContentColor"
-        )
 
         val combinedInsets = WindowInsets.safeDrawing.union(WindowInsets.captionBar)
 
@@ -257,18 +242,15 @@ private fun KeepOnView(
             topBar = {
                 KeepOnTopAppBar(
                     scrollBehavior = topBarScrollBehavior,
-                    backgroundColor = colorScheme.background,
-                    onBackgroundColor = colorScheme.onBackground
+                    backgroundColor = backgroundColor,
+                    onBackgroundColor = onBackgroundColor
                 )
             },
             floatingActionButton = {
                 if (navType == KeepOnNavigationType.BOTTOM_NAVIGATION) {
                     KeepOnFloatingActionButton(
                         uiState = uiState,
-                        contentColor = fabContentColor,
-                        borderColor = fabBorderColor,
-                        backgroundColor = fabBackgroundColor,
-                        onEvent = onEvent
+                        onClick = fabOnClick
                     )
                 }
             },
@@ -351,14 +333,11 @@ private fun KeepOnTopAppBar(
 @Composable
 private fun KeepOnFloatingActionButton(
     uiState: MainViewUIState.Success,
-    contentColor: Color,
-    borderColor: Color,
-    backgroundColor: Color,
-    onEvent: (MainUIEvent) -> Unit,
+    onClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val stringResourceProvider = remember { StringResourceProviderImpl(context) }
-    val imageDescription by remember {
+    val imageDescription by remember(uiState.currentScreenTimeout, stringResourceProvider) {
         derivedStateOf {
             uiState.currentScreenTimeout.getFullDisplayTimeout(stringResourceProvider)
         }
@@ -371,17 +350,42 @@ private fun KeepOnFloatingActionButton(
         )
     }
 
+    val colorScheme = MaterialTheme.colorScheme
+    val primaryContainerColor = colorScheme.primaryContainer
+    val backgroundColor = colorScheme.background
+    val onBackgroundColor = colorScheme.onBackground
+    val onPrimaryContainerColor = colorScheme.onPrimaryContainer
+
+    val animationDuration = remember { FAB_ANIMATION_DURATION_MS }
+
+    val fabBackgroundColor by animateColorAsState(
+        targetValue = if (uiState.keepOnIsActive) primaryContainerColor else backgroundColor,
+        animationSpec = tween(animationDuration),
+        label = "fabBackgroundColor"
+    )
+
+    val fabBorderColor by animateColorAsState(
+        targetValue = if (uiState.keepOnIsActive) backgroundColor else primaryContainerColor,
+        animationSpec = tween(animationDuration),
+        label = "fabBorderColor"
+    )
+    val fabContentColor by animateColorAsState(
+        targetValue = if (uiState.keepOnIsActive) onPrimaryContainerColor else onBackgroundColor,
+        animationSpec = tween(animationDuration),
+        label = "fabContentColor"
+    )
+
     FloatingActionButton(
         modifier = Modifier
             .border(
                 width = 1.dp,
-                color = borderColor,
+                color = fabBorderColor,
                 RoundedCornerShape(FAB_CORNER_RADIUS.dp)
             )
             .size(FAB_SIZE.dp),
-        onClick = { onEvent(MainUIEvent.SetNextSelectedSystemScreenTimeout) },
-        containerColor = backgroundColor,
-        contentColor = contentColor,
+        onClick = onClick,
+        containerColor = fabBackgroundColor,
+        contentColor = fabContentColor,
         shape = RoundedCornerShape(FAB_CORNER_RADIUS.dp),
     ) {
         AsyncImage(
@@ -389,7 +393,7 @@ private fun KeepOnFloatingActionButton(
                 .size(FAB_ICON_SIZE.dp, FAB_ICON_SIZE.dp)
                 .padding(bottom = 2.dp),
             model = imageData,
-            colorFilter = ColorFilter.tint(contentColor),
+            colorFilter = ColorFilter.tint(fabContentColor),
             contentDescription = imageDescription,
         )
     }
