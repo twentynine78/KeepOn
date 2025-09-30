@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.KeepOn" parent="Theme.Material3.DynamicColors.DayNight" >
-        <item name="android:windowLayoutInDisplayCutoutMode">default</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">always</item>
     </style>
 </resources>

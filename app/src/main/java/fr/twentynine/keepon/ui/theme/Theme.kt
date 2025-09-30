@@ -96,10 +96,14 @@ fun KeepOnTheme(
         else -> LightColorScheme
     }
 
-    // Manage status bar color
+    // Manage system bar color
     LaunchedEffect(darkTheme) {
         val window = (view.context as Activity).window
-        window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        } else {
+            window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        }
 
         val insetsController = WindowCompat.getInsetsController(window, view)
         insetsController.isAppearanceLightStatusBars = !darkTheme
