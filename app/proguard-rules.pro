@@ -19,3 +19,10 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Coil rules from https://github.com/coil-kt/coil/blob/main/docs/faq.md#how-to-i-use-proguard-with-coil
+-keep class coil3.util.DecoderServiceLoaderTarget { *; }
+-keep class coil3.util.FetcherServiceLoaderTarget { *; }
+-keep class coil3.util.ServiceLoaderComponentRegistry { *; }
+-keep class * implements coil3.util.DecoderServiceLoaderTarget { *; }
+-keep class * implements coil3.util.FetcherServiceLoaderTarget { *; }
