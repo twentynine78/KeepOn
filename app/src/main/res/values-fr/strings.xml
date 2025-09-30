@@ -46,6 +46,9 @@
     <string name="select_timeouts_swipe_set_default_text">Définir par défaut</string>
     <string name="select_timeouts_swipe_already_default_text">Déjà par défaut</string>
 
+    <string name="default_screen_timeout_tooltip_when_active">Valeur par défaut\nBalayez pour modifier</string>
+    <string name="default_screen_timeout_tooltip_when_inactive">Valeur actuelle</string>
+
     <string name="font_options_title">Placement de l\'icône</string>
     <string name="font_options_text">Modifiez la taille de la police d\'écriture et l\'emplacement de l\'icône.</string>
     <string name="font_options_size_subtitle">Taille</string>

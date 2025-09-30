@@ -262,7 +262,7 @@ fun ScreenTimeoutRow(
         swipeEnabled = swipeEnable,
         isFirstLaunch = isFirstLaunch,
         onClickAction = { clickedItem ->
-            if (clickedItem.isLocked) {
+            if (clickedItem.isLocked || clickedItem.isDefault) {
                 coroutineScope.launch { tooltipState.show() }
             } else {
                 onEvent(MainUIEvent.ToggleScreenTimeoutSelection(clickedItem))
@@ -375,10 +375,68 @@ fun ScreenTimeoutRow(
                         )
                     }
                 }
+            } else if (item.isDefault) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    TooltipBox(
+                        modifier = Modifier,
+                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                            positioning = TooltipAnchorPosition.Left,
+                            spacingBetweenTooltipAndAnchor = SpacingBetweenTooltipAndAnchor,
+                        ),
+                        tooltip = {
+                            RichTooltip(
+                                modifier = Modifier
+                                    .border(
+                                        width = 1.dp,
+                                        color = MaterialTheme.colorScheme.outline,
+                                        shape = TooltipDefaults.richTooltipContainerShape
+                                    )
+                                    .align(Alignment.CenterEnd),
+                                maxWidth = TooltipDefaults.plainTooltipMaxWidth,
+                                shape = TooltipDefaults.richTooltipContainerShape,
+                                caretShape = ToolTipCaretShape,
+                                colors = TooltipDefaults.richTooltipColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    contentColor = MaterialTheme.colorScheme.onBackground,
+                                    titleContentColor = MaterialTheme.colorScheme.onBackground,
+                                    actionContentColor = MaterialTheme.colorScheme.onBackground,
+                                ),
+                            ) {
+                                val tooltipTextId = remember(resetTimeoutWhenScreenOff) {
+                                    if (resetTimeoutWhenScreenOff) {
+                                        R.string.default_screen_timeout_tooltip_when_active
+                                    } else {
+                                        R.string.default_screen_timeout_tooltip_when_inactive
+                                    }
+                                }
+                                Text(
+                                    modifier = Modifier
+                                        .padding(4.dp)
+                                        .align(Alignment.CenterEnd),
+                                    text = stringResource(tooltipTextId),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                )
+                            }
+                        },
+                        state = tooltipState
+                    ) {
+                        Checkbox(
+                            checked = item.isSelected,
+                            enabled = false,
+                            onCheckedChange = null,
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                        )
+                    }
+                }
             } else {
                 Checkbox(
                     checked = item.isSelected,
-                    enabled = !item.isDefault,
+                    enabled = true,
                     onCheckedChange = null,
                     modifier = Modifier
                         .padding(end = 8.dp)
