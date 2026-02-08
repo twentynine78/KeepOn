@@ -1,0 +1,45 @@
+name: Commit
+on: [push]
+
+env:
+  CI_NAME: Commit CI
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+    env:
+      BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: "temurin"
+          java-version: 21
+          cache: "gradle"
+
+      # for Linux
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: KeepOn-${{ matrix.os }}
+          path: app/build/outputs/apk/debug/
+          # keep 90 days
+          retention-days: 90
