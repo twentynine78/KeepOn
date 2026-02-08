@@ -1,0 +1,136 @@
+<resources>
+    <string name="app_name" translatable="false">KeepOn</string>
+
+    <string name="qs_service_name">保持亮屏</string>
+    <string name="screen_off_monitoring_service_name">屏幕状态监控服务</string>
+
+    <string name="screen_home">首页</string>
+    <string name="screen_style">样式</string>
+    <string name="screen_about">关于</string>
+
+    <string name="qs_short_second">s</string>
+    <string name="qs_short_minute">m</string>
+    <string name="qs_short_hour">h</string>
+    <string name="qs_short_infinite" translatable="false">∞</string>
+
+    <string name="qs_long_infinite">无限期</string>
+
+    <plurals name="qs_long_second">
+        <item quantity="one">%d 秒</item>
+        <item quantity="other">%d 秒</item>
+    </plurals>
+    <plurals name="qs_long_minute">
+        <item quantity="one">%d 分</item>
+        <item quantity="other">%d 分</item>
+    </plurals>
+    <plurals name="qs_long_hour">
+        <item quantity="one">%d 时</item>
+        <item quantity="other">%d 时</item>
+    </plurals>
+
+    <string name="timeout_restore_long">恢复默认值</string>
+    <string name="timeout_previous_long">恢复先前值</string>
+
+    <string name="tasker_activity_name">更改亮屏时长</string>
+    <string name="tasker_save_button">保存 Tasker 配置</string>
+
+    <string name="more_info_icon_desc">更多信息</string>
+
+    <string name="general_behavior_title">行为</string>
+    <string name="general_behavior_short_text">屏幕关闭时将亮屏时长重置为%s</string>
+    <string name="general_behavior_text">选择当屏幕关闭时，是否将亮屏时长重置为默认值。</string>
+
+    <string name="select_timeouts_title">亮屏时长</string>
+    <string name="select_timeouts_text">选择要在系统快捷开关中显示的时长选项，向左或向右滑动条目可将其设为默认值。</string>
+
+    <string name="select_timeouts_swipe_set_default_text">设为默认</string>
+    <string name="select_timeouts_swipe_already_default_text">当前默认</string>
+
+    <string name="default_screen_timeout_tooltip_when_active">默认值\n滑动可更改</string>
+    <string name="default_screen_timeout_tooltip_when_inactive">当前值</string>
+
+    <string name="font_options_title">图标布局</string>
+    <string name="font_options_text">更改字体大小和图标位置。</string>
+    <string name="font_options_size_subtitle">字体大小</string>
+    <string name="font_options_horizontal_position_subtitle">水平位置</string>
+    <string name="font_options_vertical_position_subtitle">垂直位置</string>
+
+    <string name="font_selection_tile">图标字体</string>
+    <string name="font_selection_text">选择用于生成图标的字体。</string>
+
+    <string name="font_style_tile">图标样式</string>
+    <string name="font_style_text">选择生成图标的字体样式。</string>
+    <string name="font_style_parameters_subtitle">字体参数</string>
+    <string name="font_style_parameters_bold">粗体</string>
+    <string name="font_style_parameters_italic">斜体</string>
+    <string name="font_style_parameters_underline">下划线</string>
+    <string name="font_style_parameters_appearance_subtitle">外观效果</string>
+    <string name="font_style_parameters_appearance_outlined">仅轮廓</string>
+
+    <string name="select_tasker_timeouts_title">选择超时时间</string>
+    <string name="select_tasker_timeouts_text">选择用于自动化操作的超时时间。</string>
+    <string name="tasker_dynamic_value_text">动态值</string>
+    <string name="tasker_static_value_text">静态值</string>
+
+    <string name="timeout_locked_icon_desc">不可用</string>
+    <string name="timeout_locked_tooltips_text">受设备限制，不可用！</string>
+
+    <string name="tip_general_notification_title">获取通知</string>
+    <string name="tip_general_notification_text">允许在 KeepOn 激活时显示通知，并管理屏幕延时。</string>
+    <string name="tip_general_notification_action_button_text">允许</string>
+    <string name="tip_general_notification_dismiss_button_text">不再显示</string>
+
+    <string name="tip_qstile_title">添加快捷开关</string>
+    <string name="tip_qstile_text">KeepOn 使用 Android 的“快捷开关”面板，方便您随时调用。</string>
+    <string name="tip_qstile_action_button_text">添加</string>
+    <string name="tip_qstile_dismiss_button_text">不再显示</string>
+
+    <string name="tip_rateapp_title">评价 KeepOn</string>
+    <string name="tip_rateapp_text">喜欢 KeepOn 吗？如果喜欢，请花一点时间给应用打个分 :)</string>
+    <string name="tip_rateapp_action_button_text">去评价</string>
+    <string name="tip_rateapp_dismiss_button_text">不再显示</string>
+
+    <string name="app_info_title">信息</string>
+    <string name="credit_info_title">致谢</string>
+
+    <string name="about_open_link_text">打开网站</string>
+
+    <string name="app_info_version_text">版本：</string>
+    <string name="app_info_author_text">作者：</string>
+    <string name="app_info_source_code_text">源代码：</string>
+
+    <string name="credit_info_type_library">软件库</string>
+    <string name="credit_info_type_font">字体</string>
+
+    <string name="credit_info_name_text">名称：</string>
+    <string name="credit_info_author_text">作者：</string>
+    <string name="credit_info_source_text">来源：</string>
+
+    <string name="error_view_title">发生错误</string>
+    <string name="error_view_text">似乎出了点问题！请尝试重启应用。\n给您带来不便，敬请谅解。</string>
+    <string name="error_view_message_prefix">错误：</string>
+
+    <string name="notification_channel_screen_monitor_name">KeepOn 屏幕控制</string>
+    <string name="notification_screen_monitor_title">KeepOn 正在运行</string>
+    <string name="notification_screen_monitor_text">KeepOn 正在后台运行以监控屏幕状态。</string>
+    <string name="notification_screen_monitor_action_open_keepon">打开 KeepOn</string>
+    <string name="notification_screen_monitor_action_stop_keepon">停止 KeepOn</string>
+
+    <string name="permissions_screen_title">所需权限</string>
+    <string name="permissions_screen_subtitle">我们不会以任何方式收集、存储或传输数据。</string>
+
+    <string name="permissions_screen_notification_title">允许通知</string>
+    <string name="permissions_screen_notification_subtitle">该通知用于提醒您 KeepOn 处于激活状态并正在监控屏幕状态。</string>
+
+    <string name="permissions_screen_battery_optimization_title">允许 KeepOn 后台运行</string>
+    <string name="permissions_screen_battery_optimization_subtitle">这可以防止系统停止 KeepOn 服务，使其能在后台运行。这不会影响电池续航。</string>
+
+    <string name="permissions_screen_write_setting_title">允许修改系统设置</string>
+    <string name="permissions_screen_write_setting_subtitle">这允许 KeepOn 根据您的偏好修改亮屏时长。</string>
+
+    <string name="permission_screen_request_icon_desc">请求权限</string>
+    <string name="permission_screen_check_icon_desc">权限已验证</string>
+
+    <string name="toast_missing_permission">错误，缺少必要权限！</string>
+    <string name="toast_invalid_screen_timeout">错误，无效的亮屏时长！</string>
+</resources>
