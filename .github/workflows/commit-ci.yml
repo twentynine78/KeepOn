@@ -51,21 +51,27 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
+
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
           distribution: "temurin"
           java-version: 21
           cache: "gradle"
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+
       - name: Modify gradle file for F-Droid
         run: |
-          sed -i -E '/androidGradlePlugin/s/(8|9)\.[0-9]+\.[0-9]+/8.11.1/' app/gradle/libs.versions.toml
+          sed -i -E '/androidGradlePlugin/s/(8|9)\.[0-9]+\.[0-9]+/8.11.1/' gradle/libs.versions.toml
+
       - name: Build F-Droid Debug APK
         run: ./gradlew assembleDebug
+
       - name: Upload F-Droid APK artifact
         uses: actions/upload-artifact@v6
         with:
