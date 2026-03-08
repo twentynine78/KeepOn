@@ -1,11 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.org.jetbrains.kotlin.android)
     alias(libs.plugins.com.google.devtools.ksp)
-    alias(libs.plugins.com.google.dagger.hilt.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.com.google.dagger.hilt.android)
 }
 
 android {
@@ -23,6 +22,7 @@ android {
             useSupportLibrary = true
         }
 
+        // Expose third-party library version as resource values
         val coilVersionFromToml: String = libs.versions.coilVersion.get()
         resValue("string", "coil_version", coilVersionFromToml)
     }
@@ -31,7 +31,7 @@ android {
         debug {
             isMinifyEnabled = false
             isShrinkResources = false
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             isDebuggable = true
             isJniDebuggable = true
             isPseudoLocalesEnabled = true
@@ -46,21 +46,24 @@ android {
         }
     }
 
+    buildFeatures {
+        compose = true
+        resValues = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-
-    buildFeatures {
-        compose = true
-    }
 }
+
 kotlin {
     jvmToolchain(JavaVersion.VERSION_21.majorVersion.toInt())
 }
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    ksp(libs.org.jetbrains.kotlin.metadata.jvm)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.lifecycle.service)

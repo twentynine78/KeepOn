@@ -26,3 +26,6 @@
 -keep class coil3.util.ServiceLoaderComponentRegistry { *; }
 -keep class * implements coil3.util.DecoderServiceLoaderTarget { *; }
 -keep class * implements coil3.util.FetcherServiceLoaderTarget { *; }
+
+# For Glance widget ActionCallback
+-keep class * implements androidx.glance.appwidget.action.ActionCallback { *; }
