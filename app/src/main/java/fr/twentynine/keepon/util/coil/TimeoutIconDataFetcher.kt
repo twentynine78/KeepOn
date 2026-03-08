@@ -7,24 +7,14 @@ import coil3.fetch.FetchResult
 import coil3.fetch.Fetcher
 import coil3.fetch.ImageFetchResult
 import coil3.request.Options
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
 import fr.twentynine.keepon.data.model.TimeoutIconData
-import fr.twentynine.keepon.util.StringResourceProvider
+import fr.twentynine.keepon.di.TimeoutIconDataFetcherEntryPoint
 
 class TimeoutIconDataFetcher(
     private val data: TimeoutIconData,
     private val options: Options
 ) : Fetcher {
-
-    @EntryPoint
-    @InstallIn(SingletonComponent::class)
-    interface TimeoutIconDataFetcherEntryPoint {
-        fun stringResourceProvider(): StringResourceProvider
-    }
-
     override suspend fun fetch(): FetchResult {
         val hiltEntryPoint = EntryPointAccessors.fromApplication(
             options.context,
