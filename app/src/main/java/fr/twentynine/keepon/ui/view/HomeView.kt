@@ -124,10 +124,7 @@ fun HomeScreen(
         item(key = "behaviorCard") {
             KeepOnBehaviorCard(
                 resetTimeoutWhenScreenOff = resetTimeoutWhenScreenOff,
-                defaultScreenTimeoutUI = remember(
-                    screenTimeouts.firstOrNull { it.isDefault },
-                    screenTimeouts.firstOrNull()
-                ) {
+                defaultScreenTimeoutUI = remember(screenTimeouts) {
                     screenTimeouts.firstOrNull { it.isDefault } ?: screenTimeouts.first()
                 },
                 onEvent = onEvent,

@@ -8,7 +8,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.twentynine.keepon.data.enums.SpecialScreenTimeoutType
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
-import fr.twentynine.keepon.util.QSTileUpdater
+import fr.twentynine.keepon.util.AppComponentsUpdater
 import fr.twentynine.keepon.util.extensions.goAsync
 import fr.twentynine.keepon.worker.SetNewScreenTimeoutWorkScheduler
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +21,7 @@ class RebootAppReceiver : BroadcastReceiver() {
     lateinit var userPreferencesRepository: UserPreferencesRepository
 
     @Inject
-    lateinit var qsTileUpdater: QSTileUpdater
+    lateinit var appComponentsUpdater: AppComponentsUpdater
 
     @Inject
     lateinit var screenOffReceiverServiceManager: ScreenOffReceiverServiceManager
@@ -32,10 +32,7 @@ class RebootAppReceiver : BroadcastReceiver() {
             return
         }
 
-        val action = intent.action
-        if (action == null) {
-            return
-        }
+        val action = intent.action ?: return
 
         when (action) {
             Intent.ACTION_BOOT_COMPLETED -> {
@@ -52,7 +49,7 @@ class RebootAppReceiver : BroadcastReceiver() {
                             )
                         }
                     }
-                    qsTileUpdater.requestUpdate()
+                    appComponentsUpdater.requestUpdate()
                 }
             }
             Intent.ACTION_MY_PACKAGE_REPLACED -> {
@@ -63,7 +60,7 @@ class RebootAppReceiver : BroadcastReceiver() {
                     if (keepOnIsActive && resetWhenScreenOff) {
                         screenOffReceiverServiceManager.startService()
                     }
-                    qsTileUpdater.requestUpdate()
+                    appComponentsUpdater.requestUpdate()
                 }
             }
         }

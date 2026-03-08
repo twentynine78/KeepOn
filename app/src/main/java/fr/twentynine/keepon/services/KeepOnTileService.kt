@@ -22,6 +22,7 @@ import coil3.size.Size
 import coil3.target.Target
 import coil3.toBitmap
 import dagger.hilt.android.AndroidEntryPoint
+import fr.twentynine.keepon.KeepOnApplication
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.data.enums.TimeoutIconSize
@@ -32,6 +33,7 @@ import fr.twentynine.keepon.util.BundleScrubber
 import fr.twentynine.keepon.util.LockableJob
 import fr.twentynine.keepon.util.RequiredPermissionsManager
 import fr.twentynine.keepon.util.StringResourceProvider
+import fr.twentynine.keepon.util.WidgetUpdater
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -50,9 +52,12 @@ class KeepOnTileService : TileService(), LifecycleOwner {
     @Inject
     lateinit var stringResourceProvider: StringResourceProvider
 
-    private val serviceJob = SupervisorJob()
+    @Inject
+    lateinit var widgetUpdater: WidgetUpdater
 
-    private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
+    private val serviceJob = SupervisorJob()
+    private val applicationScope by lazy { (this.applicationContext as KeepOnApplication).applicationScope }
+    private val serviceScope by lazy { CoroutineScope(applicationScope.coroutineContext + serviceJob) }
 
     override val lifecycle: Lifecycle
         get() = lifecycleDispatcher.lifecycle
@@ -117,7 +122,7 @@ class KeepOnTileService : TileService(), LifecycleOwner {
                     startMainActivityAndCollapse()
                 }
             } else {
-                userPreferencesRepository.setNextSelectedSystemScreenTimeout {
+                userPreferencesRepository.setNextSelectedSystemScreenTimeout(currentTimeout) {
                     currentUpdateJob.cancelOrJoin()
                     currentUpdateJob.lock()
                     currentUpdateJob.job = launch {
@@ -242,6 +247,9 @@ class KeepOnTileService : TileService(), LifecycleOwner {
             .build()
 
         imageLoader.executeBlocking(request)
+
+        // Request widget update
+        widgetUpdater.requestUpdateWidget()
     }
 
     private fun requestQSTileUpdate() {

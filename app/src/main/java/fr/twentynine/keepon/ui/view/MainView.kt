@@ -146,11 +146,13 @@ fun MainView(
         modifier = Modifier.fillMaxSize(),
         targetState = targetScreenState,
         transitionSpec = {
-            when {
-                targetState == MainScreenState.KEEP_ON && initialState == MainScreenState.PERMISSION ->
+            when (targetState) {
+                MainScreenState.KEEP_ON if initialState == MainScreenState.PERMISSION ->
                     slideInFromRight togetherWith slideOutToLeft
-                targetState == MainScreenState.PERMISSION && initialState == MainScreenState.KEEP_ON ->
+
+                MainScreenState.PERMISSION if initialState == MainScreenState.KEEP_ON ->
                     slideInFromLeft togetherWith slideOutToRight
+
                 else -> defaultFade
             }
         },

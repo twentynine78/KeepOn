@@ -43,7 +43,9 @@ object DesiredScreenTimeoutController {
         systemScreenTimeoutController: SystemScreenTimeoutController,
     ) {
         withContext(defaultDispatchers) {
-            pendingTimeouts.add(timeout)
+            if (pendingTimeouts.lastOrNull() != timeout) {
+                pendingTimeouts.add(timeout)
+            }
 
             screenTimeoutProcessingLock.withLock {
                 while (pendingTimeouts.isNotEmpty()) {

@@ -10,8 +10,8 @@ import dagger.assisted.AssistedInject
 import fr.twentynine.keepon.data.model.ScreenTimeout
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
+import fr.twentynine.keepon.util.AppComponentsUpdater
 import fr.twentynine.keepon.util.DesiredScreenTimeoutController
-import fr.twentynine.keepon.util.QSTileUpdater
 import fr.twentynine.keepon.util.SystemScreenTimeoutController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -22,7 +22,7 @@ class MonitorSystemScreenTimeoutWork @AssistedInject constructor(
     @Assisted private val workerParams: WorkerParameters,
     private val userPreferencesRepository: UserPreferencesRepository,
     private val systemScreenTimeoutController: SystemScreenTimeoutController,
-    private val qsTileUpdater: QSTileUpdater,
+    private val appComponentsUpdater: AppComponentsUpdater,
     private val screenOffReceiverServiceManager: ScreenOffReceiverServiceManager,
 ) : CoroutineWorker(appContext, workerParams) {
 
@@ -38,8 +38,8 @@ class MonitorSystemScreenTimeoutWork @AssistedInject constructor(
                 // Update current screen timeout with new data
                 updateCurrentSystemScreenTimeout(currentScreenTimeout, desiredScreenTimeout)
 
-                // Update the QS tile
-                qsTileUpdater.requestUpdate()
+                // Update app components
+                appComponentsUpdater.requestUpdate()
 
                 // Re-schedule the worker
                 MonitorSystemScreenTimeoutWorkScheduler.scheduleWork(
@@ -56,7 +56,7 @@ class MonitorSystemScreenTimeoutWork @AssistedInject constructor(
 
     private suspend fun updateCurrentSystemScreenTimeout(
         currentScreenTimeout: ScreenTimeout,
-        desiredScreenTimeout: ScreenTimeout?
+        desiredScreenTimeout: ScreenTimeout?,
     ) {
         // Check if the new timeout is initiated by the app with the desiredScreenTimeout value
         if (desiredScreenTimeout == currentScreenTimeout) {

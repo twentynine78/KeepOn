@@ -82,88 +82,94 @@ fun TaskerEditView(
     saveTaskerConfiguration: () -> Unit,
     onEvent: (TaskerUIEvent) -> Unit,
 ) {
-    when {
-        uiState is TaskerEditUIState.Error -> ErrorView(errorMessage = uiState.error)
-        uiState is TaskerEditUIState.Success && (!uiState.canWriteSystemSettings || !uiState.batteryIsNotOptimized) -> TaskerPermissionScreen(
-            uiState = uiState,
-            onEvent = onEvent,
-        )
-        uiState is TaskerEditUIState.Success -> {
-            val exitUntilCollapsedScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-            val scrollBehavior = remember { exitUntilCollapsedScrollBehavior }
+    when (uiState) {
+        is TaskerEditUIState.Error -> ErrorView(errorMessage = uiState.error)
+        is TaskerEditUIState.Success -> {
+            if (!uiState.canWriteSystemSettings || !uiState.batteryIsNotOptimized) {
+                TaskerPermissionScreen(
+                    uiState = uiState,
+                    onEvent = onEvent,
+                )
+            } else {
+                val exitUntilCollapsedScrollBehavior =
+                    TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+                val scrollBehavior = remember { exitUntilCollapsedScrollBehavior }
 
-            val combinedInsets = WindowInsets.safeDrawing.union(WindowInsets.captionBar)
+                val combinedInsets = WindowInsets.safeDrawing.union(WindowInsets.captionBar)
 
-            val backPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+                val backPressedDispatcher =
+                    LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
-            Scaffold(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .nestedScroll(scrollBehavior.nestedScrollConnection),
-                contentWindowInsets = combinedInsets,
-                containerColor = MaterialTheme.colorScheme.background,
-                topBar = {
-                    CenterAlignedTopAppBar(
-                        title = {
-                            Text(
-                                text = stringResource(R.string.app_name),
-                                style = MaterialTheme.typography.headlineLarge,
-                            )
-                        },
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.background,
-                            scrolledContainerColor = MaterialTheme.colorScheme.background,
-                            navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
-                            titleContentColor = MaterialTheme.colorScheme.onBackground,
-                            actionIconContentColor = MaterialTheme.colorScheme.onBackground
-                        ),
-                        navigationIcon = {
-                            IconButton(onClick = { backPressedDispatcher?.onBackPressed() }) {
+                Scaffold(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .nestedScroll(scrollBehavior.nestedScrollConnection),
+                    contentWindowInsets = combinedInsets,
+                    containerColor = MaterialTheme.colorScheme.background,
+                    topBar = {
+                        CenterAlignedTopAppBar(
+                            title = {
+                                Text(
+                                    text = stringResource(R.string.app_name),
+                                    style = MaterialTheme.typography.headlineLarge,
+                                )
+                            },
+                            colors = TopAppBarDefaults.topAppBarColors(
+                                containerColor = MaterialTheme.colorScheme.background,
+                                scrolledContainerColor = MaterialTheme.colorScheme.background,
+                                navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
+                                titleContentColor = MaterialTheme.colorScheme.onBackground,
+                                actionIconContentColor = MaterialTheme.colorScheme.onBackground
+                            ),
+                            navigationIcon = {
+                                IconButton(onClick = { backPressedDispatcher?.onBackPressed() }) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                                        contentDescription = null
+                                    )
+                                }
+                            },
+                            scrollBehavior = scrollBehavior
+                        )
+                    },
+                    floatingActionButton = {
+                        if (uiState.selectedScreenTimeout != null) {
+                            FloatingActionButton(
+                                onClick = saveTaskerConfiguration,
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.size(68.dp),
+                                shape = RoundedCornerShape(24.dp),
+                            ) {
                                 Icon(
-                                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                                    contentDescription = null
+                                    imageVector = Icons.Rounded.Save,
+                                    contentDescription = stringResource(R.string.tasker_save_button),
+                                    modifier = Modifier.size(40.dp, 40.dp),
                                 )
                             }
-                        },
-                        scrollBehavior = scrollBehavior
-                    )
-                },
-                floatingActionButton = {
-                    if (uiState.selectedScreenTimeout != null) {
-                        FloatingActionButton(
-                            onClick = saveTaskerConfiguration,
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.size(68.dp),
-                            shape = RoundedCornerShape(24.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Save,
-                                contentDescription = stringResource(R.string.tasker_save_button),
-                                modifier = Modifier.size(40.dp, 40.dp),
-                            )
                         }
                     }
-                }
-            ) { paddingValue ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.TopCenter,
-                ) {
-                    TaskerEditScreen(
-                        screenTimeouts = uiState.screenTimeouts,
-                        specialScreenTimeouts = uiState.specialScreenTimeouts,
-                        defaultScreenTimeout = uiState.defaultScreenTimeout,
-                        previousScreenTimeout = uiState.previousScreenTimeout,
-                        selectedScreenTimeout = uiState.selectedScreenTimeout,
-                        timeoutIconStyle = uiState.timeoutIconStyle,
-                        onEvent = onEvent,
-                        paddingValue = paddingValue,
-                    )
+                ) { paddingValue ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.TopCenter,
+                    ) {
+                        TaskerEditScreen(
+                            screenTimeouts = uiState.screenTimeouts,
+                            specialScreenTimeouts = uiState.specialScreenTimeouts,
+                            defaultScreenTimeout = uiState.defaultScreenTimeout,
+                            previousScreenTimeout = uiState.previousScreenTimeout,
+                            selectedScreenTimeout = uiState.selectedScreenTimeout,
+                            timeoutIconStyle = uiState.timeoutIconStyle,
+                            onEvent = onEvent,
+                            paddingValue = paddingValue,
+                        )
+                    }
                 }
             }
         }
+        is TaskerEditUIState.Loading -> {}
     }
 }
 

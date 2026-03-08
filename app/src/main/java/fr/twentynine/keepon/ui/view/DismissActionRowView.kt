@@ -32,36 +32,33 @@ fun DismissActionRowView(
         horizontalArrangement = horizontalArrangement,
     ) {
         if (contentVisible) {
-            val actualIcon = icon
-            val actualText = text
-
             if (horizontalArrangement == Arrangement.End) {
-                if (actualText != null) {
+                if (text != null) {
                     Text(
-                        text = actualText,
+                        text = text,
                         color = contentColor,
                     )
                 }
-                if (actualIcon != null) {
+                if (icon != null) {
                     Icon(
                         modifier = Modifier.padding(horizontal = 18.dp),
-                        imageVector = actualIcon,
+                        imageVector = icon,
                         tint = contentColor,
                         contentDescription = null,
                     )
                 }
             } else {
-                if (actualIcon != null) {
+                if (icon != null) {
                     Icon(
                         modifier = Modifier.padding(horizontal = 18.dp),
-                        imageVector = actualIcon,
+                        imageVector = icon,
                         tint = contentColor,
                         contentDescription = null,
                     )
                 }
-                if (actualText != null) {
+                if (text != null) {
                     Text(
-                        text = actualText,
+                        text = text,
                         color = contentColor,
                     )
                 }

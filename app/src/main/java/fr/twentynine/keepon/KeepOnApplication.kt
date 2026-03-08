@@ -17,6 +17,7 @@ import coil3.request.bitmapConfig
 import coil3.size.Precision
 import dagger.hilt.android.HiltAndroidApp
 import fr.twentynine.keepon.util.AppVersionManager
+import fr.twentynine.keepon.util.WidgetUpdater
 import fr.twentynine.keepon.util.coil.TimeoutIconDataFetcher
 import fr.twentynine.keepon.util.coil.TimeoutIconDataKeyer
 import fr.twentynine.keepon.worker.MonitorSystemScreenTimeoutWorkScheduler
@@ -37,7 +38,10 @@ class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configura
     @Inject
     lateinit var appVersionManager: AppVersionManager
 
-    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    @Inject
+    lateinit var widgetUpdater: WidgetUpdater
+
+    val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override val coroutineContext: CoroutineContext by lazy { applicationScope.coroutineContext }
 
@@ -49,6 +53,8 @@ class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configura
             MonitorSystemScreenTimeoutWorkScheduler.scheduleWork(workManager)
 
             appVersionManager.runAppMigrationIfNeeded()
+
+            widgetUpdater.requestUpdateWidgetPreview()
         }
     }
 

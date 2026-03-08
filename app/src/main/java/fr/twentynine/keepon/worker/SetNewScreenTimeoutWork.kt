@@ -10,7 +10,7 @@ import dagger.assisted.AssistedInject
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.data.model.ScreenTimeout
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
-import fr.twentynine.keepon.util.QSTileUpdater
+import fr.twentynine.keepon.util.AppComponentsUpdater
 import fr.twentynine.keepon.util.RequiredPermissionsManager
 import fr.twentynine.keepon.worker.SetNewScreenTimeoutWorkScheduler.Companion.NEW_SCREEN_TIMEOUT_DATA_KEY
 import fr.twentynine.keepon.worker.SetNewScreenTimeoutWorkScheduler.Companion.UPDATE_PREVIOUS_TIMEOUT_DATA_KEY
@@ -22,7 +22,7 @@ class SetNewScreenTimeoutWork @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val qsTileUpdater: QSTileUpdater,
+    private val appComponentsUpdater: AppComponentsUpdater,
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -36,7 +36,7 @@ class SetNewScreenTimeoutWork @AssistedInject constructor(
                         ScreenTimeout(newScreenTimeout),
                         updatePreviousTimeout
                     ) {
-                        qsTileUpdater.requestUpdate()
+                        appComponentsUpdater.requestUpdate()
                     }
                 }
             } else {

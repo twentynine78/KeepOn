@@ -33,7 +33,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -67,11 +67,14 @@ interface UserPreferencesRepository {
     suspend fun getQSTileAddedFlow(): Flow<Boolean>
     suspend fun setQSTileAdded(isAdded: Boolean)
     suspend fun getPreviousScreenTimeoutFlow(): Flow<ScreenTimeout>
-    suspend fun setNextSelectedSystemScreenTimeout(requestUpdateQSTile: suspend () -> Unit)
+    suspend fun setNextSelectedSystemScreenTimeout(
+        currentTimeout: ScreenTimeout? = null,
+        invokeUpdateComponents: suspend () -> Unit
+    )
     suspend fun setNewSystemScreenTimeout(
         newTimeout: ScreenTimeout,
         forceUpdatePreviousTimeout: Boolean = false,
-        requestUpdateQSTile: () -> Unit
+        invokeUpdateComponents: suspend () -> Unit
     )
     suspend fun getDismissedTipsFlow(): Flow<List<DismissedTips>>
     suspend fun getOldSelectedScreenTimeouts(): String
@@ -85,7 +88,7 @@ interface UserPreferencesRepository {
     suspend fun getAppLaunchCountFlow(): Flow<Long>
     suspend fun getAppLaunchCount(): Long
     suspend fun setAppLaunchCount(appLaunchCount: Long)
-    suspend fun resetSystemScreenTimeoutToDefault(requestUpdateQSTile: () -> Unit)
+    suspend fun resetSystemScreenTimeoutToDefault(invokeUpdateComponents: suspend () -> Unit)
     suspend fun setDismissedTip(dismissedTips: DismissedTips)
     suspend fun getLastRunVersionCode(): Long
     suspend fun setLastRunVersionCode(versionCode: Long)
@@ -96,7 +99,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     private val preferenceDataStoreHelper: PreferenceDataStoreHelper,
     private val systemScreenTimeoutController: dagger.Lazy<SystemScreenTimeoutController>,
     private val devicePolicyManagerHelper: dagger.Lazy<DevicePolicyManagerHelper>,
-    private val screenOffReceiverServiceManager: dagger.Lazy<ScreenOffReceiverServiceManager>
+    private val screenOffReceiverServiceManager: dagger.Lazy<ScreenOffReceiverServiceManager>,
 ) : UserPreferencesRepository {
 
     private val ioDispatcher = Dispatchers.IO
@@ -104,7 +107,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override val screenTimeouts = ScreenTimeoutRepository.screenTimeouts
     override val specialScreenTimeouts = ScreenTimeoutRepository.specialScreenTimeouts
 
-    override suspend fun getKeepOnIsActive(): Boolean = getKeepOnIsActiveFlow().first()
+    override suspend fun getKeepOnIsActive(): Boolean = getKeepOnIsActiveFlow().firstOrNull() ?: false
 
     override suspend fun getKeepOnIsActiveFlow(): Flow<Boolean> =
         withContext(ioDispatcher) {
@@ -139,10 +142,9 @@ class UserPreferencesRepositoryImpl @Inject constructor(
                 DataStoreSourceType.DATA_SOURCE
             )
                 .transformLatest { storedValue ->
-                    val currentTimeoutValue = storedValue
-                    var currentScreenTimeout = ScreenTimeout(currentTimeoutValue)
+                    var currentScreenTimeout = ScreenTimeout(storedValue)
 
-                    if (currentTimeoutValue == defaultValue) {
+                    if (storedValue == defaultValue) {
                         val initializedTimeout = initDefaultScreenTimeout(
                             systemScreenTimeoutController.get()
                         )
@@ -180,16 +182,16 @@ class UserPreferencesRepositoryImpl @Inject constructor(
             defaultScreenTimeout
         }
 
-    override suspend fun setDefaultScreenTimeout(timeout: ScreenTimeout, checkService: Boolean) =
+    override suspend fun setDefaultScreenTimeout(timeout: ScreenTimeout, checkService: Boolean): Unit =
         withContext(ioDispatcher) {
-            if (checkService && timeout == getCurrentScreenTimeout()) {
-                screenOffReceiverServiceManager.get().stopService()
-            }
             preferenceDataStoreHelper.putPreference(
                 DEFAULT_SCREEN_TIMEOUT,
                 timeout.value,
                 DataStoreSourceType.DATA_SOURCE
             )
+            if (checkService && timeout == getCurrentScreenTimeout()) {
+                screenOffReceiverServiceManager.get().stopService()
+            }
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -465,17 +467,17 @@ class UserPreferencesRepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun setNextSelectedSystemScreenTimeout(requestUpdateQSTile: suspend () -> Unit) =
+    override suspend fun setNextSelectedSystemScreenTimeout(currentTimeout: ScreenTimeout?, invokeUpdateComponents: suspend () -> Unit) =
         withContext(ioDispatcher) {
-            val nextTimeoutValue = getNextSelectedScreenTimeout()
+            val currentTimeout = currentTimeout ?: getCurrentScreenTimeout()
+            val nextTimeoutValue = getNextSelectedScreenTimeout(currentTimeout)
             val defaultTimeout = getDefaultScreenTimeout()
-            val currentTimeout = getCurrentScreenTimeout()
 
             if (!devicePolicyManagerHelper.get().isValidTimeout(nextTimeoutValue)) {
                 return@withContext
             }
 
-            setSystemScreenTimeout(nextTimeoutValue) { requestUpdateQSTile() }
+            setSystemScreenTimeout(nextTimeoutValue) { invokeUpdateComponents() }
 
             updateDefaultScreenTimeoutIfNoResetTimeout(
                 currentTimeout,
@@ -484,7 +486,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun setNewSystemScreenTimeout(newTimeout: ScreenTimeout, forceUpdatePreviousTimeout: Boolean, requestUpdateQSTile: () -> Unit) =
+    override suspend fun setNewSystemScreenTimeout(newTimeout: ScreenTimeout, forceUpdatePreviousTimeout: Boolean, invokeUpdateComponents: suspend () -> Unit) =
         withContext(ioDispatcher) {
             val defaultTimeout = getDefaultScreenTimeout()
             val currentTimeout = getCurrentScreenTimeout()
@@ -500,7 +502,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
                 return@withContext
             }
 
-            setSystemScreenTimeout(timeout, forceUpdatePreviousTimeout) { requestUpdateQSTile() }
+            setSystemScreenTimeout(timeout, forceUpdatePreviousTimeout) { invokeUpdateComponents() }
 
             updateDefaultScreenTimeoutIfNoResetTimeout(
                 currentTimeout,
@@ -690,12 +692,12 @@ class UserPreferencesRepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun resetSystemScreenTimeoutToDefault(requestUpdateQSTile: () -> Unit) =
+    override suspend fun resetSystemScreenTimeoutToDefault(invokeUpdateComponents: suspend () -> Unit) =
         withContext(ioDispatcher) {
             val defaultTimeout = getDefaultScreenTimeout()
             setSystemScreenTimeout(
                 defaultTimeout
-            ) { requestUpdateQSTile() }
+            ) { invokeUpdateComponents() }
             screenOffReceiverServiceManager.get().stopService()
         }
 
@@ -706,10 +708,9 @@ class UserPreferencesRepositoryImpl @Inject constructor(
             initialValue
         }
 
-    private suspend fun getNextSelectedScreenTimeout(): ScreenTimeout =
+    private suspend fun getNextSelectedScreenTimeout(currentTimeout: ScreenTimeout): ScreenTimeout =
         withContext(ioDispatcher) {
             val screenTimeouts = getSelectedScreenTimeouts().toMutableSet()
-            val currentTimeout = getCurrentScreenTimeout()
             val defaultScreenTimeout = getDefaultScreenTimeout()
 
             screenTimeouts.addAll(
@@ -749,7 +750,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     private suspend fun setSystemScreenTimeout(
         timeout: ScreenTimeout,
         forceUpdatePreviousTimeout: Boolean = false,
-        invokeUpdateQSTile: suspend () -> Unit,
+        invokeUpdateComponents: suspend () -> Unit,
     ) = withContext(ioDispatcher) {
         // Check if timeout value is allowed
         if (!devicePolicyManagerHelper.get().isValidTimeout(timeout)) {
@@ -758,7 +759,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
         // Update flow directly to prevent lag in UI (value will be override by the worker)
         setCurrentScreenTimeout(timeout, forceUpdatePreviousTimeout)
-        invokeUpdateQSTile()
+        invokeUpdateComponents()
 
         // Set the desired timeout and update the system screen timeout
         DesiredScreenTimeoutController.setDesiredScreenTimeout(timeout, systemScreenTimeoutController.get())

@@ -17,10 +17,10 @@ import fr.twentynine.keepon.data.model.TipsConstraintState
 import fr.twentynine.keepon.data.repo.TipsInfoRepository
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.util.AddTileServiceManager
+import fr.twentynine.keepon.util.AppComponentsUpdater
 import fr.twentynine.keepon.util.AppRateHelper
 import fr.twentynine.keepon.util.BatteryOptimizationManager
 import fr.twentynine.keepon.util.PostNotificationPermissionManager
-import fr.twentynine.keepon.util.QSTileUpdater
 import fr.twentynine.keepon.util.StringResourceProvider
 import fr.twentynine.keepon.util.SystemSettingPermissionManager
 import fr.twentynine.keepon.util.coil.MemoryCacheManager
@@ -48,7 +48,7 @@ class MainViewModel @Inject constructor(
     private val appRateHelper: AppRateHelper,
     private val addTileServiceManager: AddTileServiceManager,
     private val memoryCacheManager: MemoryCacheManager,
-    private val qsTileUpdater: QSTileUpdater,
+    private val appComponentsUpdater: AppComponentsUpdater,
 ) : ViewModel() {
 
     private val tipsConstraintState = MutableStateFlow(TipsConstraintState())
@@ -287,7 +287,7 @@ class MainViewModel @Inject constructor(
 
     private fun setNextSelectedSystemScreenTimeout() {
         viewModelScope.launch {
-            userPreferencesRepository.setNextSelectedSystemScreenTimeout { qsTileUpdater.requestUpdate() }
+            userPreferencesRepository.setNextSelectedSystemScreenTimeout { appComponentsUpdater.requestUpdate() }
         }
     }
 
@@ -300,17 +300,14 @@ class MainViewModel @Inject constructor(
 
             if (newScreenTimeout != defaultTimeout) {
                 userPreferencesRepository.setDefaultScreenTimeout(newScreenTimeout, true)
-                if (newScreenTimeout == currentScreenTimeout) {
-                    qsTileUpdater.requestUpdate()
-                }
-
                 if (defaultTimeout == currentScreenTimeout) {
                     userPreferencesRepository.setCurrentScreenTimeout(newScreenTimeout)
-                    userPreferencesRepository.setNewSystemScreenTimeout(
-                        newScreenTimeout
-                    ) { qsTileUpdater.requestUpdate() }
+                    userPreferencesRepository.setNewSystemScreenTimeout(newScreenTimeout) {
+                        appComponentsUpdater.requestUpdate()
+                    }
                 }
             }
+            appComponentsUpdater.requestUpdate()
         }
     }
 
@@ -318,7 +315,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             memoryCacheManager.clear()
             userPreferencesRepository.setTimeoutIconStyle(timeoutIconStyle)
-            qsTileUpdater.requestUpdate()
+            appComponentsUpdater.requestUpdate()
         }
     }
 

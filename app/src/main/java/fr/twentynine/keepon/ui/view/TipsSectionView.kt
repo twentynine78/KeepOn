@@ -61,16 +61,15 @@ fun TipsSectionView(
     }
 
     LaunchedEffect(tipsList, pagerState.settledPage) {
-        val newIncomingList = tipsList
         val currentlyDisplayedList = currentPagerList
         val currentPageInDisplayedList = pagerState.currentPage
 
-        if (newIncomingList.isEmpty()) {
+        if (tipsList.isEmpty()) {
             currentPagerList = emptyList()
         } else {
-            if (newIncomingList != currentlyDisplayedList) {
+            if (tipsList != currentlyDisplayedList) {
                 val oldPageCount = currentlyDisplayedList.size
-                val newPageCount = newIncomingList.size
+                val newPageCount = tipsList.size
 
                 var targetPage = currentPageInDisplayedList
 
@@ -81,7 +80,7 @@ fun TipsSectionView(
                         null
                     }
 
-                    if (currentItemId != null && newIncomingList.none { it.id == currentItemId }) {
+                    if (currentItemId != null && tipsList.none { it.id == currentItemId }) {
                         targetPage = if (currentPageInDisplayedList >= newPageCount) {
                             (newPageCount - 1).coerceAtLeast(0)
                         } else {
@@ -91,9 +90,9 @@ fun TipsSectionView(
                         targetPage = (newPageCount - 1).coerceAtLeast(0)
                     }
                 }
-                currentPagerList = newIncomingList
+                currentPagerList = tipsList
 
-                if (targetPage != pagerState.currentPage && targetPage < newIncomingList.size && !pagerState.isScrollInProgress) {
+                if (targetPage != pagerState.currentPage && targetPage < tipsList.size && !pagerState.isScrollInProgress) {
                     if (pagerState.currentPage != targetPage) {
                         if (targetPage < currentPagerList.size) {
                             pagerState.animateScrollToPage(targetPage)

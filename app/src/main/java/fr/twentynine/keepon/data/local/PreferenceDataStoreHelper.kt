@@ -13,7 +13,7 @@ import fr.twentynine.keepon.data.local.PreferenceDataStoreHelper.Companion.USER_
 import fr.twentynine.keepon.data.local.PreferenceDataStoreHelper.Companion.USER_PREFERENCES_NAME
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 import javax.inject.Inject
@@ -110,12 +110,12 @@ class PreferenceDataStoreHelperImpl @Inject constructor(@param:ApplicationContex
         key: Preferences.Key<T>,
         defaultValue: T,
         dataStoreSourceType: DataStoreSourceType
-    ): T = getDataSource(dataStoreSourceType).data.first()[key] ?: defaultValue
+    ): T = getDataSource(dataStoreSourceType).data.firstOrNull()?.get(key) ?: defaultValue
 
     override suspend fun <T> getLastPreference(
         key: Preferences.Key<T>,
         dataStoreSourceType: DataStoreSourceType
-    ): T? = getDataSource(dataStoreSourceType).data.first()[key]
+    ): T? = getDataSource(dataStoreSourceType).data.firstOrNull()?.get(key)
 
     // Sets the value based on the value passed in value parameter
     override suspend fun <T> putPreference(

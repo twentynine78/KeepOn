@@ -66,8 +66,6 @@ fun ScreenTimeoutSetDefaultDismissActionRowView(
         label = "contentColorAnimation"
     )
 
-    val contentIsVisible = swipeEnabledState
-
     val arrangement = when (dismissDirection) {
         SwipeToDismissBoxValue.EndToStart -> androidx.compose.foundation.layout.Arrangement.End
         SwipeToDismissBoxValue.StartToEnd -> androidx.compose.foundation.layout.Arrangement.Start
@@ -80,6 +78,6 @@ fun ScreenTimeoutSetDefaultDismissActionRowView(
         contentColor = animatedContentColor,
         backgroundColor = animatedBackgroundColor,
         horizontalArrangement = arrangement,
-        contentVisible = contentIsVisible
+        contentVisible = swipeEnabledState
     )
 }

@@ -26,7 +26,7 @@ object UserPreferencesRepositoryModule {
             preferenceDataStoreHelper,
             systemScreenTimeoutController,
             devicePolicyManagerHelper,
-            screenOffReceiverServiceManager
+            screenOffReceiverServiceManager,
         )
     }
 }

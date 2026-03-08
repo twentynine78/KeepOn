@@ -1,0 +1,15 @@
+<appwidget-provider
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:targetApi="s"
+    android:targetCellWidth="1"
+    android:targetCellHeight="1"
+    android:minWidth="60dp"
+    android:minHeight="60dp"
+    android:updatePeriodMillis="0"
+    android:resizeMode="horizontal|vertical"
+    android:widgetFeatures="reconfigurable|configuration_optional"
+    android:configure="fr.twentynine.keepon.MainActivity"
+    android:description="@string/tasker_activity_name"
+    android:initialLayout="@layout/glance_default_loading_layout"
+    android:previewImage="@drawable/ic_widget_preview_image"/>
