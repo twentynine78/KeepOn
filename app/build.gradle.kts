@@ -15,8 +15,8 @@ android {
         applicationId = "fr.twentynine.keepon"
         minSdk = 28
         targetSdk = 36
-        versionCode = 26
-        versionName = "2.0.6"
+        versionCode = 27
+        versionName = "2.1.0"
 
         vectorDrawables {
             useSupportLibrary = true
