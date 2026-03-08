@@ -166,7 +166,7 @@ fun FontSelectionRow(
         FontFamily(font)
     }
 
-    val onRowClick = remember(iconFontFamily.name) {
+    val onRowClick = remember(timeoutIconStyle) {
         {
             onEvent(
                 MainUIEvent.UpdateTimeoutIconStyle(
