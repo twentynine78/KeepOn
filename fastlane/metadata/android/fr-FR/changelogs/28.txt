@@ -1,0 +1,5 @@
+- Possibilité d'utiliser un ou plusieurs widgets pour contrôler l'application
+- Traduction en chinois simplifié
+- Corrections de bugs
+- Amélioration des performances et de la stabilité
+- Mises à jour des dépendances
