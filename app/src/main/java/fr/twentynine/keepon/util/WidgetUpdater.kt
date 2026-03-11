@@ -1,6 +1,7 @@
 package fr.twentynine.keepon.util
 
 import android.content.Context
+import android.os.Build
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.setWidgetPreviews
 import androidx.glance.appwidget.updateAll
@@ -26,9 +27,14 @@ class WidgetUpdaterImpl @Inject constructor(@param:ApplicationContext private va
     }
 
     override suspend fun requestUpdateWidgetPreview(): Boolean {
-        return withContext(Dispatchers.IO) {
-            val setPreviewResult = GlanceAppWidgetManager(context).setWidgetPreviews<KeepOnWidgetReceiver>()
-            return@withContext setPreviewResult == GlanceAppWidgetManager.SET_WIDGET_PREVIEWS_RESULT_SUCCESS
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            return withContext(Dispatchers.IO) {
+                val setPreviewResult =
+                    GlanceAppWidgetManager(context).setWidgetPreviews<KeepOnWidgetReceiver>()
+                return@withContext setPreviewResult == GlanceAppWidgetManager.SET_WIDGET_PREVIEWS_RESULT_SUCCESS
+            }
+        } else {
+            return true
         }
     }
 }
