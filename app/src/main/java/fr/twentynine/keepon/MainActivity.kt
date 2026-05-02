@@ -28,7 +28,7 @@ import fr.twentynine.keepon.util.SystemSettingPermissionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -142,9 +142,9 @@ class MainActivity : ComponentActivity() {
             val successUIState = mainViewModel.getUiState()
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .filter { state -> state is MainViewUIState.Success }
-                .first() as MainViewUIState.Success
+                .firstOrNull() as? MainViewUIState.Success
 
-            if (successUIState.keepOnIsActive && successUIState.resetTimeoutWhenScreenOff) {
+            if (successUIState != null && successUIState.keepOnIsActive && successUIState.resetTimeoutWhenScreenOff) {
                 screenOffReceiverServiceManager.startService()
             }
         }
