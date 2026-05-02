@@ -1,5 +1,6 @@
 package fr.twentynine.keepon.data.local
 
+import android.os.Build
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AddCircleOutline
 import androidx.compose.material.icons.rounded.NotificationsActive
@@ -39,7 +40,9 @@ sealed class TipsInfo(
         buttonDismissTextId = R.string.tip_qstile_dismiss_button_text,
         iconImageVector = Icons.Rounded.AddCircleOutline,
         buttonAction = MainUIEvent.RequestAddTileService,
-        constraint = { uiState -> !uiState.tileServiceIsAdded }
+        constraint = { uiState ->
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !uiState.tileServiceIsAdded
+        },
     )
     data object RateApp : TipsInfo(
         id = 300,
