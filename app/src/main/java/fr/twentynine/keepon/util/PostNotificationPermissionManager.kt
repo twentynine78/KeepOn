@@ -11,7 +11,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ActivityContext
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.util.PostNotificationPermissionManager.Companion.NOTIFICATION_CHANNEL_SCREEN_MONITOR_ID
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,6 +31,20 @@ interface PostNotificationPermissionManager {
         const val NOTIFICATION_CHANNEL_SCREEN_MONITOR_ID = "keepon_screen_monitor"
         const val NOTIFICATION_GROUP_KEY = "keepon_notification"
 
+        fun createNotificationChannel(context: Context) {
+            val notificationManager = context.getSystemService(NotificationManager::class.java) ?: return
+            val channel = NotificationChannel(
+                NOTIFICATION_CHANNEL_SCREEN_MONITOR_ID,
+                context.getString(R.string.notification_channel_screen_monitor_name),
+                NotificationManager.IMPORTANCE_MIN
+            ).apply {
+                lockscreenVisibility = NotificationCompat.VISIBILITY_SECRET
+                enableLights(false)
+                setShowBadge(false)
+            }
+            notificationManager.createNotificationChannel(channel)
+        }
+
         fun removeOldNotificationChannelKeepOnService(context: Context) {
             val notificationManager = context.getSystemService(NotificationManager::class.java)
             notificationManager.deleteNotificationChannel(NOTIFICATION_CHANNEL_OLD_KEEPON_SERVICE)
@@ -46,26 +59,9 @@ class PostNotificationPermissionManagerImpl @Inject constructor(
     private val _canPostNotification = MutableStateFlow(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
     override val canPostNotification = _canPostNotification.asStateFlow()
 
-    private val notificationManager by lazy { context.getSystemService(NotificationManager::class.java) }
-
-    private val notificationChannelKeepOnScreenMonitor = NotificationChannel(
-        NOTIFICATION_CHANNEL_SCREEN_MONITOR_ID,
-        context.getString(
-            R.string.notification_channel_screen_monitor_name
-        ),
-        NotificationManager.IMPORTANCE_MIN
-    ).also {
-        it.lockscreenVisibility = NotificationCompat.VISIBILITY_SECRET
-        it.enableLights(false)
-        it.setShowBadge(false)
-    }
     init {
         // Create notification channel if needed
-        createNotificationChannelKeepOnScreenMonitor()
-    }
-
-    private fun createNotificationChannelKeepOnScreenMonitor() {
-        notificationManager.createNotificationChannel(notificationChannelKeepOnScreenMonitor)
+        PostNotificationPermissionManager.createNotificationChannel(context)
     }
 
     override fun updatePostNotificationPermission(canPostNotification: Boolean) {

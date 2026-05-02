@@ -54,18 +54,16 @@ class ScreenOffReceiverService : LifecycleService() {
     override fun onCreate() {
         super.onCreate()
 
+        PostNotificationPermissionManager.createNotificationChannel(this)
+
         registerScreenOffReceiver()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val intentAction = intent?.action
 
-        if (intentAction != null) {
-            when (intentAction) {
-                ScreenOffReceiverServiceManager.ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE -> {
-                    stopSelf()
-                }
-            }
+        if (intentAction == ScreenOffReceiverServiceManager.ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE) {
+            stopSelf()
         } else {
             try {
                 // Start foreground service
@@ -81,7 +79,13 @@ class ScreenOffReceiverService : LifecycleService() {
                 )
 
                 ScreenOffReceiverServiceManager.setIsRunning(true)
-            } catch (_: Exception) {}
+            } catch (_: Exception) {
+                // If startForeground fails, we must stop the service immediately.
+                // This prevents RemoteServiceException (crash) triggered by the system
+                // if a service promised as "foreground" doesn't call startForeground() within 5s.
+                ScreenOffReceiverServiceManager.setIsRunning(false)
+                stopSelf()
+            }
         }
 
         return super.onStartCommand(intent, flags, START_STICKY)
