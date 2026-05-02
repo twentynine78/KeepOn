@@ -20,6 +20,7 @@ import fr.twentynine.keepon.util.AppVersionManager
 import fr.twentynine.keepon.util.WidgetUpdater
 import fr.twentynine.keepon.util.coil.TimeoutIconDataFetcher
 import fr.twentynine.keepon.util.coil.TimeoutIconDataKeyer
+import fr.twentynine.keepon.worker.GuardianSystemScreenTimeoutWorkerScheduler
 import fr.twentynine.keepon.worker.MonitorSystemScreenTimeoutWorkScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,12 +49,12 @@ class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configura
     override fun onCreate() {
         super.onCreate()
 
+        val workManager = WorkManager.getInstance(this.applicationContext)
+        MonitorSystemScreenTimeoutWorkScheduler.scheduleWork(workManager)
+        GuardianSystemScreenTimeoutWorkerScheduler.scheduleGuardianWork(workManager)
+
         applicationScope.launch {
-            val workManager = WorkManager.getInstance(this@KeepOnApplication)
-            MonitorSystemScreenTimeoutWorkScheduler.scheduleWork(workManager)
-
             appVersionManager.runAppMigrationIfNeeded()
-
             widgetUpdater.requestUpdateWidgetPreview()
         }
     }
