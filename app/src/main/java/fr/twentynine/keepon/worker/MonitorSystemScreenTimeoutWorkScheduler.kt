@@ -30,9 +30,8 @@ object MonitorSystemScreenTimeoutWorkScheduler {
         .build()
 
     fun scheduleWork(workManager: WorkManager, requeueIfRunning: Boolean = false) {
-        workManager.pruneWork()
         val workInfo = workManager.getWorkInfoById(SYSTEM_SCREEN_TIMEOUT_WORKER_ID).get()
-        if (workInfo == null || requeueIfRunning) {
+        if (workInfo == null || workInfo.state.isFinished || requeueIfRunning) {
             workManager.enqueueUniqueWork(
                 SYSTEM_SCREEN_TIMEOUT_WORKER,
                 ExistingWorkPolicy.REPLACE,
