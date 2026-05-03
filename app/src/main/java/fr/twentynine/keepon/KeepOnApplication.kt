@@ -49,11 +49,11 @@ class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configura
     override fun onCreate() {
         super.onCreate()
 
-        val workManager = WorkManager.getInstance(this.applicationContext)
-        MonitorSystemScreenTimeoutWorkScheduler.scheduleWork(workManager)
-        GuardianSystemScreenTimeoutWorkerScheduler.scheduleGuardianWork(workManager)
-
         applicationScope.launch {
+            val workManager = WorkManager.getInstance(this@KeepOnApplication.applicationContext)
+            MonitorSystemScreenTimeoutWorkScheduler.scheduleWork(workManager)
+            GuardianSystemScreenTimeoutWorkerScheduler.scheduleGuardianWork(workManager)
+
             appVersionManager.runAppMigrationIfNeeded()
             widgetUpdater.requestUpdateWidgetPreview()
         }
