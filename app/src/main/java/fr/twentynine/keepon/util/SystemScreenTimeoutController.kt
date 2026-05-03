@@ -26,11 +26,14 @@ class SystemScreenTimeoutControllerImpl @Inject constructor(@param:ApplicationCo
     }
 
     override fun setSystemScreenTimeout(timeout: ScreenTimeout) {
-        Settings.System.putInt(
+        val success = Settings.System.putInt(
             contentResolver,
             Settings.System.SCREEN_OFF_TIMEOUT,
             timeout.value
         )
+        if (!success) {
+            throw SecurityException("Failed to write SCREEN_OFF_TIMEOUT — WRITE_SETTINGS permission may be missing or revoked")
+        }
     }
 
     companion object {

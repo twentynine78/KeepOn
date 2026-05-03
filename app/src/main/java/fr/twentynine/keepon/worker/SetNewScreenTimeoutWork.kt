@@ -50,6 +50,15 @@ class SetNewScreenTimeoutWork @AssistedInject constructor(
             }
 
             Result.success()
+        } catch (_: SecurityException) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    appContext,
+                    appContext.getString(R.string.toast_missing_permission),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            Result.failure()
         } catch (_: Exception) {
             Result.retry()
         }
