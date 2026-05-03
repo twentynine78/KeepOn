@@ -1,6 +1,7 @@
 package fr.twentynine.keepon.util.extensions
 
 import android.content.BroadcastReceiver
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -16,5 +17,8 @@ fun BroadcastReceiver.goAsync(
     val pendingResult = goAsync()
     @OptIn(DelicateCoroutinesApi::class)
     GlobalScope.launch(context) { withTimeout(5000) { block() } }
-        .invokeOnCompletion { pendingResult.finish() }
+        .invokeOnCompletion { cause ->
+            if (cause != null) Log.e("BroadcastReceiverGoAsync", "Async receiver block failed", cause)
+            pendingResult.finish()
+        }
 }
