@@ -11,7 +11,7 @@ object GuardianSystemScreenTimeoutWorkerScheduler {
 
     fun scheduleGuardianWork(workManager: WorkManager) {
         val guardianRequest = PeriodicWorkRequestBuilder<GuardianSystemScreenTimeoutWorker>(
-            4, TimeUnit.HOURS
+            1, TimeUnit.HOURS
         ).build()
 
         workManager.enqueueUniquePeriodicWork(
