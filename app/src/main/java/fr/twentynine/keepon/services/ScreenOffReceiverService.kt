@@ -132,7 +132,7 @@ class ScreenOffReceiverService : LifecycleService() {
                 this,
                 screenOffReceiver,
                 intentFilter,
-                ContextCompat.RECEIVER_EXPORTED
+                ContextCompat.RECEIVER_NOT_EXPORTED
             )
         } catch (_: IllegalArgumentException) {}
     }
