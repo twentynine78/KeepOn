@@ -60,35 +60,35 @@ class ScreenOffReceiverService : LifecycleService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val intentAction = intent?.action
+        super.onStartCommand(intent, flags, startId)
 
-        if (intentAction == ScreenOffReceiverServiceManager.ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE) {
+        if (intent?.action == ScreenOffReceiverServiceManager.ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE) {
             stopSelf()
-        } else {
-            try {
-                // Start foreground service
-                ServiceCompat.startForeground(
-                    this,
-                    NOTIFICATION_ID,
-                    buildNotification(),
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                        ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
-                    } else {
-                        0
-                    }
-                )
-
-                ScreenOffReceiverServiceManager.setIsRunning(true)
-            } catch (_: Exception) {
-                // If startForeground fails, we must stop the service immediately.
-                // This prevents RemoteServiceException (crash) triggered by the system
-                // if a service promised as "foreground" doesn't call startForeground() within 5s.
-                ScreenOffReceiverServiceManager.setIsRunning(false)
-                stopSelf()
-            }
+            return START_NOT_STICKY
         }
 
-        return super.onStartCommand(intent, flags, START_STICKY)
+        return try {
+            // Start foreground service
+            ServiceCompat.startForeground(
+                this,
+                NOTIFICATION_ID,
+                buildNotification(),
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+                } else {
+                    0
+                }
+            )
+            ScreenOffReceiverServiceManager.setIsRunning(true)
+            START_STICKY
+        } catch (_: Exception) {
+            // If startForeground fails, we must stop the service immediately.
+            // This prevents RemoteServiceException (crash) triggered by the system
+            // if a service promised as "foreground" doesn't call startForeground() within 5s.
+            ScreenOffReceiverServiceManager.setIsRunning(false)
+            stopSelf()
+            START_NOT_STICKY
+        }
     }
 
     override fun onDestroy() {
