@@ -66,7 +66,7 @@ object DesiredScreenTimeoutController {
 
                         withTimeout(WAIT_TIME_FOR_TIMEOUT_APPLIED) {
                             while (requestedTimeout != systemScreenTimeoutController.getSystemScreenTimeout()) {
-                                delay(1)
+                                delay(100)
                             }
                         }
                     }
