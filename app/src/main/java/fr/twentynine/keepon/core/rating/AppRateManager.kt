@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util
+package fr.twentynine.keepon.core.rating
 
 import android.annotation.SuppressLint
 import android.content.Context

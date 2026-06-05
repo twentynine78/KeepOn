@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util.migration
+package fr.twentynine.keepon.data.migration
 
 import fr.twentynine.keepon.data.local.TipsInfo
 import fr.twentynine.keepon.data.model.DismissedTips

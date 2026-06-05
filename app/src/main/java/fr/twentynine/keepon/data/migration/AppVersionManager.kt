@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util.migration
+package fr.twentynine.keepon.data.migration
 
 import android.content.Context
 import android.content.pm.PackageManager
