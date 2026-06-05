@@ -3,7 +3,6 @@ package fr.twentynine.keepon.util.coil
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.text.TextPaint
@@ -16,16 +15,6 @@ import fr.twentynine.keepon.util.StringResourceProvider
 import fr.twentynine.keepon.util.extensions.px
 
 class TimeoutIconGenerator {
-
-    private val textBounds = Rect()
-    private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-        isAntiAlias = true
-    }
-    private val backgroundRect = Rect()
-    private val backgroundPaint = Paint().apply {
-        style = Paint.Style.FILL_AND_STROKE
-        color = Color.TRANSPARENT
-    }
 
     fun getBitmapFromText(
         context: Context,
@@ -45,8 +34,9 @@ class TimeoutIconGenerator {
         val horizontalPadding = iconStyle.iconStyleFontHorizontalSpacing
         val verticalPadding = iconStyle.iconStyleFontVerticalSpacing
 
-        // Set scale ratio to manage large and medium sizes
-        val scaleRatio = TimeoutIconSize.LARGE.size / iconSize.size
+        // Scale ratio relative to the largest icon size, so MEDIUM icons get
+        // proportionally smaller stroke/padding/font offsets than LARGE.
+        val scaleRatio = TimeoutIconSize.LARGE.size.toFloat() / iconSize.size
 
         val imageWidth = iconSize.size.px
         val imageHeight = iconSize.size.px
@@ -56,18 +46,16 @@ class TimeoutIconGenerator {
         val bitmap = createBitmap(imageWidth, imageHeight, Bitmap.Config.ALPHA_8)
         val canvas = Canvas(bitmap)
 
-        // Set background
-        backgroundRect.set(0, 0, imageWidth, imageHeight)
-        canvas.drawRect(backgroundRect, backgroundPaint)
+        // Apply typeface and text style from user preference
+        val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+            isAntiAlias = true
+            typeface = context.resources.getFont(iconTypeface)
+            style = if (outlinedFont) Paint.Style.STROKE else Paint.Style.FILL_AND_STROKE
+            strokeWidth = if (outlinedFont) (STROKE_WIDTH.px / scaleRatio) else 0f
+            isUnderlineText = underlineFont
+        }
 
-        // Set typeface from user preference
-        textPaint.typeface = context.resources.getFont(iconTypeface)
-
-        // Set text style from user preference
-        textPaint.style = if (outlinedFont) Paint.Style.STROKE else Paint.Style.FILL_AND_STROKE
-        textPaint.strokeWidth = if (outlinedFont) (STROKE_WIDTH.px / scaleRatio) else 0f
-        textPaint.isUnderlineText = underlineFont
-
+        val textBounds = Rect()
         setTextSizeAndGetBounds(
             textPaint,
             displayTimeout,
@@ -81,8 +69,10 @@ class TimeoutIconGenerator {
         // Calculate Text Position
         val horizontalPaddingPx = (horizontalPadding * HORIZONTAL_PADDING_STEP_COEF).px / scaleRatio
         val verticalPaddingPx = (verticalPadding * VERTICAL_PADDING_STEP_COEF).px / scaleRatio
-        val textX = backgroundRect.centerX().toFloat() - textBounds.centerX() + horizontalPaddingPx
-        val textY = backgroundRect.centerY().toFloat() - textBounds.centerY() - verticalPaddingPx
+        val centerX = (imageWidth / 2).toFloat()
+        val centerY = (imageHeight / 2).toFloat()
+        val textX = centerX - textBounds.centerX() + horizontalPaddingPx
+        val textY = centerY - textBounds.centerY() - verticalPaddingPx
 
         // Draw text
         canvas.drawText(
@@ -110,7 +100,7 @@ class TimeoutIconGenerator {
         imageWidth: Int,
         imageHeight: Int,
         fontSize: Int,
-        scaleRatio: Int,
+        scaleRatio: Float,
         outBounds: Rect
     ) {
         // Calculate text size with a default text size
@@ -131,7 +121,7 @@ class TimeoutIconGenerator {
         // If the text is too height, reduce text size
         if (outBounds.height().toFloat() / imageHeight > MAX_IMAGE_HEIGHT_PERCENT) {
             val maxImageHeight = imageHeight * MAX_IMAGE_HEIGHT_PERCENT
-            val newTextSize = desiredTextSize * maxImageHeight / textBounds.height().toFloat()
+            val newTextSize = desiredTextSize * maxImageHeight / outBounds.height().toFloat()
 
             textPaint.textSize = newTextSize
             textPaint.getTextBounds(text, 0, text.length, outBounds)
