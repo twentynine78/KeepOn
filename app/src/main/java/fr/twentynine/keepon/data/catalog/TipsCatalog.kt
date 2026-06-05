@@ -1,8 +1,8 @@
-package fr.twentynine.keepon.data.repo
+package fr.twentynine.keepon.data.catalog
 
-import fr.twentynine.keepon.data.local.TipsInfo
+import fr.twentynine.keepon.data.catalog.TipsInfo
 
-object TipsInfoRepository {
+object TipsCatalog {
 
     val tipsInfoList = listOf(
         TipsInfo.PostNotification,

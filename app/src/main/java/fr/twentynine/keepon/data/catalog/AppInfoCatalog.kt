@@ -1,9 +1,9 @@
-package fr.twentynine.keepon.data.repo
+package fr.twentynine.keepon.data.catalog
 
 import android.content.Context
 import fr.twentynine.keepon.data.model.AppInfo
 
-class AppInfoRepository {
+object AppInfoCatalog {
 
     fun getKeepOnAppInfo(context: Context): AppInfo {
         val appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "0.0.0"

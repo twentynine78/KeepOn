@@ -7,8 +7,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.twentynine.keepon.data.mapper.ScreenTimeoutToScreenTimeoutUIMapper
 import fr.twentynine.keepon.data.model.ScreenTimeout
 import fr.twentynine.keepon.data.model.ScreenTimeoutUI
-import fr.twentynine.keepon.data.model.TaskerEditUIState
-import fr.twentynine.keepon.data.model.TaskerUIEvent
+import fr.twentynine.keepon.ui.state.TaskerEditUIState
+import fr.twentynine.keepon.ui.event.TaskerUIEvent
 import fr.twentynine.keepon.data.model.TimeoutIconStyle
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.util.permission.BatteryOptimizationManager

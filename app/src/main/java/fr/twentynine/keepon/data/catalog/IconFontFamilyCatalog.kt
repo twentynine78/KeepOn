@@ -1,9 +1,9 @@
-package fr.twentynine.keepon.data.repo
+package fr.twentynine.keepon.data.catalog
 
-import fr.twentynine.keepon.data.local.IconFontFamily
+import fr.twentynine.keepon.data.catalog.IconFontFamily
 import kotlinx.collections.immutable.toImmutableMap
 
-object IconFontFamilyRepository {
+object IconFontFamilyCatalog {
     val iconFontFamilies = listOf(
         IconFontFamily.Roboto,
         IconFontFamily.Bitter,

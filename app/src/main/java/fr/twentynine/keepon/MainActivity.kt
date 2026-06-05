@@ -15,8 +15,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import fr.twentynine.keepon.data.model.MainUIEvent
-import fr.twentynine.keepon.data.model.MainViewUIState
+import fr.twentynine.keepon.ui.event.MainUIEvent
+import fr.twentynine.keepon.ui.state.MainViewUIState
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.ui.theme.KeepOnTheme
 import fr.twentynine.keepon.ui.view.MainView

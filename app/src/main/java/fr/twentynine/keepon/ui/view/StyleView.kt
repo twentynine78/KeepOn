@@ -47,11 +47,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.data.enums.ItemPosition
-import fr.twentynine.keepon.data.local.IconFontFamily
-import fr.twentynine.keepon.data.model.MainUIEvent
-import fr.twentynine.keepon.data.model.MainViewUIState
+import fr.twentynine.keepon.data.catalog.IconFontFamily
+import fr.twentynine.keepon.ui.event.MainUIEvent
+import fr.twentynine.keepon.ui.state.MainViewUIState
 import fr.twentynine.keepon.data.model.TimeoutIconStyle
-import fr.twentynine.keepon.data.repo.IconFontFamilyRepository
+import fr.twentynine.keepon.data.catalog.IconFontFamilyCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
 import kotlin.math.ceil
@@ -79,7 +79,7 @@ fun StyleScreen(
     paddingValue: PaddingValues,
 ) {
     val fontFamilies = remember {
-        IconFontFamilyRepository.iconFontFamilies.values.toList()
+        IconFontFamilyCatalog.iconFontFamilies.values.toList()
     }
 
     LazyColumn(

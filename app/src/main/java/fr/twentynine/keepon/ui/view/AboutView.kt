@@ -41,10 +41,10 @@ import androidx.core.net.toUri
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.data.enums.CreditInfoType
 import fr.twentynine.keepon.data.enums.ItemPosition
-import fr.twentynine.keepon.data.local.CreditInfo
+import fr.twentynine.keepon.data.catalog.CreditInfo
 import fr.twentynine.keepon.data.model.AppInfo
-import fr.twentynine.keepon.data.repo.AppInfoRepository
-import fr.twentynine.keepon.data.repo.CreditInfoRepository
+import fr.twentynine.keepon.data.catalog.AppInfoCatalog
+import fr.twentynine.keepon.data.catalog.CreditCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
 
@@ -55,10 +55,10 @@ fun AboutView(
 ) {
     val context = LocalContext.current
     val appInfo = remember {
-        AppInfoRepository().getKeepOnAppInfo(context)
+        AppInfoCatalog.getKeepOnAppInfo(context)
     }
     val creditInfoMap = remember {
-        CreditInfoRepository.creditInfoMap
+        CreditCatalog.creditInfoMap
     }
 
     AboutScreen(

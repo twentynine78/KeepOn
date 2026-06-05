@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.data.local
+package fr.twentynine.keepon.data.catalog
 
 import androidx.compose.runtime.Immutable
 import fr.twentynine.keepon.R

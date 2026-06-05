@@ -49,11 +49,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.data.model.MainUIEvent
-import fr.twentynine.keepon.data.model.MainViewUIState
+import fr.twentynine.keepon.ui.event.MainUIEvent
+import fr.twentynine.keepon.ui.state.MainViewUIState
 import fr.twentynine.keepon.data.model.NeededPermission
-import fr.twentynine.keepon.data.model.TaskerEditUIState
-import fr.twentynine.keepon.data.model.TaskerUIEvent
+import fr.twentynine.keepon.ui.state.TaskerEditUIState
+import fr.twentynine.keepon.ui.event.TaskerUIEvent
 
 @Composable
 fun MainPermissionScreen(

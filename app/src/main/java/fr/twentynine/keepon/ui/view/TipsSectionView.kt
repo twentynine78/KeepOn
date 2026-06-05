@@ -42,8 +42,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import fr.twentynine.keepon.data.local.TipsInfo
-import fr.twentynine.keepon.data.model.MainUIEvent
+import fr.twentynine.keepon.data.catalog.TipsInfo
+import fr.twentynine.keepon.data.enums.TipsAction
+import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.util.PulsatingIcon
 import kotlinx.coroutines.launch
 
@@ -191,7 +192,13 @@ fun TipsSectionView(
                                 }
                                 TextButton(
                                     onClick = {
-                                        onEvent(tip.buttonAction)
+                                        onEvent(
+                                            when (tip.buttonAction) {
+                                                TipsAction.RequestPostNotification -> MainUIEvent.RequestPostNotification
+                                                TipsAction.RequestAddTileService -> MainUIEvent.RequestAddTileService
+                                                TipsAction.RequestAppRate -> MainUIEvent.RequestAppRate
+                                            }
+                                        )
                                     },
                                     colors = ButtonDefaults.textButtonColors(
                                         contentColor = MaterialTheme.colorScheme.onTertiaryContainer,

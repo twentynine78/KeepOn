@@ -1,7 +1,10 @@
-package fr.twentynine.keepon.data.model
+package fr.twentynine.keepon.ui.state
 
 import androidx.compose.runtime.Immutable
-import fr.twentynine.keepon.data.local.TipsInfo
+import fr.twentynine.keepon.data.catalog.TipsInfo
+import fr.twentynine.keepon.data.model.ScreenTimeout
+import fr.twentynine.keepon.data.model.ScreenTimeoutUI
+import fr.twentynine.keepon.data.model.TimeoutIconStyle
 
 sealed interface MainViewUIState {
     data object Loading : MainViewUIState

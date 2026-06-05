@@ -1,7 +1,7 @@
 package fr.twentynine.keepon.data.model
 
 import androidx.compose.runtime.Stable
-import fr.twentynine.keepon.data.local.IconFontFamily
+import fr.twentynine.keepon.data.catalog.IconFontFamily
 import kotlinx.serialization.Serializable
 
 @Stable

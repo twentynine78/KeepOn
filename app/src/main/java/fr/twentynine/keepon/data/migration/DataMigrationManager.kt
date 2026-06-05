@@ -1,6 +1,6 @@
 package fr.twentynine.keepon.data.migration
 
-import fr.twentynine.keepon.data.local.TipsInfo
+import fr.twentynine.keepon.data.catalog.TipsInfo
 import fr.twentynine.keepon.data.model.DismissedTips
 import fr.twentynine.keepon.data.model.ScreenTimeout
 import fr.twentynine.keepon.data.model.TimeoutIconStyle

@@ -4,21 +4,21 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.twentynine.keepon.data.local.TipsInfo
+import fr.twentynine.keepon.data.catalog.TipsInfo
 import fr.twentynine.keepon.data.mapper.ScreenTimeoutToScreenTimeoutUIMapper
 import fr.twentynine.keepon.data.mapper.ScreenTimeoutUIToScreenTimeoutMapper
 import fr.twentynine.keepon.data.model.DismissedTips
-import fr.twentynine.keepon.data.model.MainUIEvent
-import fr.twentynine.keepon.data.model.MainViewUIState
+import fr.twentynine.keepon.ui.event.MainUIEvent
+import fr.twentynine.keepon.ui.state.MainViewUIState
 import fr.twentynine.keepon.data.model.ScreenTimeout
 import fr.twentynine.keepon.data.model.ScreenTimeoutUI
 import fr.twentynine.keepon.data.model.TimeoutIconStyle
 import fr.twentynine.keepon.data.model.TipsConstraintState
-import fr.twentynine.keepon.data.repo.TipsInfoRepository
+import fr.twentynine.keepon.data.catalog.TipsCatalog
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
-import fr.twentynine.keepon.util.component.AddTileServiceManager
-import fr.twentynine.keepon.util.component.AppComponentsUpdater
-import fr.twentynine.keepon.util.AppRateManager
+import fr.twentynine.keepon.ui.components.AddTileServiceManager
+import fr.twentynine.keepon.ui.components.AppComponentsUpdater
+import fr.twentynine.keepon.core.rating.AppRateManager
 import fr.twentynine.keepon.util.permission.BatteryOptimizationManager
 import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
 import fr.twentynine.keepon.util.StringResourceProvider
@@ -171,7 +171,7 @@ class MainViewModel @Inject constructor(
                 keepOnIsActive = arrayOfFlow[4] as Boolean,
                 isFirstLaunch = arrayOfFlow[5] as Boolean,
                 timeoutIconStyle = arrayOfFlow[6] as TimeoutIconStyle,
-                tipsList = TipsInfoRepository.tipsInfoList
+                tipsList = TipsCatalog.tipsInfoList
                     .filter { tipsInfo ->
                         !(arrayOfFlow[7] as List<*>).contains(DismissedTips(tipsInfo.id)) &&
                             tipsInfo.constraint(tipsConstraintState.value)

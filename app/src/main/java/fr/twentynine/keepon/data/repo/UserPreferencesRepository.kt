@@ -1,5 +1,6 @@
 package fr.twentynine.keepon.data.repo
 
+import fr.twentynine.keepon.data.catalog.ScreenTimeoutCatalog
 import fr.twentynine.keepon.data.enums.DataStoreSourceType
 import fr.twentynine.keepon.data.enums.SpecialScreenTimeoutType
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.APP_LAUNCH_COUNT
@@ -20,11 +21,11 @@ import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.SELECTED_SCR
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.TIMEOUT_ICON_STYLE
 import fr.twentynine.keepon.data.local.PreferenceDataStoreHelper
 import fr.twentynine.keepon.data.model.DismissedTips
-import fr.twentynine.keepon.data.model.OldTimeoutIconStyle
+import fr.twentynine.keepon.data.migration.OldTimeoutIconStyle
 import fr.twentynine.keepon.data.model.ScreenTimeout
 import fr.twentynine.keepon.data.model.TimeoutIconStyle
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
-import fr.twentynine.keepon.util.migration.DataMigrationManager
+import fr.twentynine.keepon.data.migration.DataMigrationManager
 import fr.twentynine.keepon.util.timeout.DesiredScreenTimeoutController
 import fr.twentynine.keepon.util.system.DevicePolicyController
 import fr.twentynine.keepon.util.timeout.SystemScreenTimeoutController
@@ -104,8 +105,8 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     private val ioDispatcher = Dispatchers.IO
 
-    override val screenTimeouts = ScreenTimeoutRepository.screenTimeouts
-    override val specialScreenTimeouts = ScreenTimeoutRepository.specialScreenTimeouts
+    override val screenTimeouts = ScreenTimeoutCatalog.screenTimeouts
+    override val specialScreenTimeouts = ScreenTimeoutCatalog.specialScreenTimeouts
 
     override suspend fun getKeepOnIsActive(): Boolean = getKeepOnIsActiveFlow().firstOrNull() ?: false
 

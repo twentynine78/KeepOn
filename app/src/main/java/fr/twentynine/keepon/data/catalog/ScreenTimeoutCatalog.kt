@@ -1,10 +1,10 @@
-package fr.twentynine.keepon.data.repo
+package fr.twentynine.keepon.data.catalog
 
 import fr.twentynine.keepon.data.enums.SpecialScreenTimeoutType
 import fr.twentynine.keepon.data.model.ScreenTimeout
 import kotlinx.collections.immutable.toPersistentList
 
-object ScreenTimeoutRepository {
+object ScreenTimeoutCatalog {
     val screenTimeouts = listOf(
         ScreenTimeout(
             value = 15000

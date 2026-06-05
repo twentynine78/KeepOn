@@ -1,9 +1,9 @@
-package fr.twentynine.keepon.data.repo
+package fr.twentynine.keepon.data.catalog
 
-import fr.twentynine.keepon.data.local.CreditInfo
+import fr.twentynine.keepon.data.catalog.CreditInfo
 import kotlinx.collections.immutable.toImmutableMap
 
-object CreditInfoRepository {
+object CreditCatalog {
     val creditInfoMap = listOf(
         CreditInfo.Coil,
         CreditInfo.Roboto,

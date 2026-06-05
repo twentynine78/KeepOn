@@ -63,8 +63,8 @@ import fr.twentynine.keepon.data.enums.TimeoutIconSize
 import fr.twentynine.keepon.data.mapper.ScreenTimeoutUIToScreenTimeoutMapper
 import fr.twentynine.keepon.data.model.ScreenTimeout
 import fr.twentynine.keepon.data.model.ScreenTimeoutUI
-import fr.twentynine.keepon.data.model.TaskerEditUIState
-import fr.twentynine.keepon.data.model.TaskerUIEvent
+import fr.twentynine.keepon.ui.state.TaskerEditUIState
+import fr.twentynine.keepon.ui.event.TaskerUIEvent
 import fr.twentynine.keepon.data.model.TimeoutIconData
 import fr.twentynine.keepon.data.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.util.GlowingText

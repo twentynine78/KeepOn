@@ -8,9 +8,9 @@ import android.graphics.Rect
 import android.text.TextPaint
 import androidx.core.graphics.createBitmap
 import fr.twentynine.keepon.data.enums.TimeoutIconSize
-import fr.twentynine.keepon.data.local.IconFontFamily
+import fr.twentynine.keepon.data.catalog.IconFontFamily
 import fr.twentynine.keepon.data.model.TimeoutIconData
-import fr.twentynine.keepon.data.repo.IconFontFamilyRepository
+import fr.twentynine.keepon.data.catalog.IconFontFamilyCatalog
 import fr.twentynine.keepon.util.StringResourceProvider
 import fr.twentynine.keepon.util.extensions.px
 
@@ -24,7 +24,7 @@ class TimeoutIconGenerator {
         val timeout = model.iconTimeout
         val iconSize = model.iconSize
         val iconStyle = model.iconStyle
-        val iconFontFamily = IconFontFamilyRepository.iconFontFamilies.getValue(iconStyle.iconFontFamilyName)
+        val iconFontFamily = IconFontFamilyCatalog.iconFontFamilies.getValue(iconStyle.iconFontFamilyName)
         val boldFont = iconStyle.iconStyleFontBold
         val italicFont = iconStyle.iconStyleFontItalic
         val iconTypeface = getIconTypefaceId(iconFontFamily, boldFont, italicFont)

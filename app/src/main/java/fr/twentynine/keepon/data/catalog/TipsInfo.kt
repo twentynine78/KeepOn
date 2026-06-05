@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.data.local
+package fr.twentynine.keepon.data.catalog
 
 import android.os.Build
 import androidx.compose.material.icons.Icons
@@ -8,7 +8,7 @@ import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.vector.ImageVector
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.data.model.MainUIEvent
+import fr.twentynine.keepon.data.enums.TipsAction
 import fr.twentynine.keepon.data.model.TipsConstraintState
 
 @Immutable
@@ -16,7 +16,7 @@ sealed class TipsInfo(
     val id: Int,
     val titleId: Int,
     val textId: Int,
-    val buttonAction: MainUIEvent,
+    val buttonAction: TipsAction,
     val buttonTextId: Int,
     val buttonDismissTextId: Int,
     val iconImageVector: ImageVector,
@@ -29,7 +29,7 @@ sealed class TipsInfo(
         buttonTextId = R.string.tip_general_notification_action_button_text,
         buttonDismissTextId = R.string.tip_general_notification_dismiss_button_text,
         iconImageVector = Icons.Rounded.NotificationsActive,
-        buttonAction = MainUIEvent.RequestPostNotification,
+        buttonAction = TipsAction.RequestPostNotification,
         constraint = { uiState -> !uiState.canPostNotification }
     )
     data object AddQSTile : TipsInfo(
@@ -39,7 +39,7 @@ sealed class TipsInfo(
         buttonTextId = R.string.tip_qstile_action_button_text,
         buttonDismissTextId = R.string.tip_qstile_dismiss_button_text,
         iconImageVector = Icons.Rounded.AddCircleOutline,
-        buttonAction = MainUIEvent.RequestAddTileService,
+        buttonAction = TipsAction.RequestAddTileService,
         constraint = { uiState ->
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !uiState.tileServiceIsAdded
         },
@@ -51,7 +51,7 @@ sealed class TipsInfo(
         buttonTextId = R.string.tip_rateapp_action_button_text,
         buttonDismissTextId = R.string.tip_rateapp_dismiss_button_text,
         iconImageVector = Icons.Rounded.StarOutline,
-        buttonAction = MainUIEvent.RequestAppRate,
+        buttonAction = TipsAction.RequestAppRate,
         constraint = { uiState -> uiState.showRateApp }
     )
 }
