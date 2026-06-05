@@ -16,21 +16,21 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class ComponentUpdaterModule {
+interface ComponentUpdaterModule {
 
     @Binds
     @Singleton
-    abstract fun bindAppComponentsUpdater(impl: AppComponentsUpdaterImpl): AppComponentsUpdater
+    fun bindAppComponentsUpdater(impl: AppComponentsUpdaterImpl): AppComponentsUpdater
 
     @Binds
     @Singleton
-    abstract fun bindQSTileUpdater(impl: QSTileUpdaterImpl): QSTileUpdater
+    fun bindQSTileUpdater(impl: QSTileUpdaterImpl): QSTileUpdater
 
     @Binds
     @Singleton
-    abstract fun bindWidgetUpdater(impl: WidgetUpdaterImpl): WidgetUpdater
+    fun bindWidgetUpdater(impl: WidgetUpdaterImpl): WidgetUpdater
 
     @Binds
     @Singleton
-    abstract fun bindAddTileServiceManager(impl: AddTileServiceManagerImpl): AddTileServiceManager
+    fun bindAddTileServiceManager(impl: AddTileServiceManagerImpl): AddTileServiceManager
 }

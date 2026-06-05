@@ -14,17 +14,17 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class SystemModule {
+interface SystemModule {
 
     @Binds
     @Singleton
-    abstract fun bindSystemScreenTimeoutController(impl: SystemScreenTimeoutControllerImpl): SystemScreenTimeoutController
+    fun bindSystemScreenTimeoutController(impl: SystemScreenTimeoutControllerImpl): SystemScreenTimeoutController
 
     @Binds
     @Singleton
-    abstract fun bindDevicePolicyController(impl: DevicePolicyControllerImpl): DevicePolicyController
+    fun bindDevicePolicyController(impl: DevicePolicyControllerImpl): DevicePolicyController
 
     @Binds
     @Singleton
-    abstract fun bindScreenOffReceiverServiceManager(impl: ScreenOffReceiverServiceManagerImpl): ScreenOffReceiverServiceManager
+    fun bindScreenOffReceiverServiceManager(impl: ScreenOffReceiverServiceManagerImpl): ScreenOffReceiverServiceManager
 }

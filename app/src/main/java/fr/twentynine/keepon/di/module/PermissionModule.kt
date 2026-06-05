@@ -14,17 +14,17 @@ import fr.twentynine.keepon.util.permission.SystemSettingPermissionManagerImpl
 
 @Module
 @InstallIn(ActivityComponent::class)
-abstract class PermissionModule {
+interface PermissionModule {
 
     @Binds
     @ActivityScoped
-    abstract fun bindBatteryOptimizationManager(impl: BatteryOptimizationManagerImpl): BatteryOptimizationManager
+    fun bindBatteryOptimizationManager(impl: BatteryOptimizationManagerImpl): BatteryOptimizationManager
 
     @Binds
     @ActivityScoped
-    abstract fun bindPostNotificationPermissionManager(impl: PostNotificationPermissionManagerImpl): PostNotificationPermissionManager
+    fun bindPostNotificationPermissionManager(impl: PostNotificationPermissionManagerImpl): PostNotificationPermissionManager
 
     @Binds
     @ActivityScoped
-    abstract fun bindSystemSettingPermissionManager(impl: SystemSettingPermissionManagerImpl): SystemSettingPermissionManager
+    fun bindSystemSettingPermissionManager(impl: SystemSettingPermissionManagerImpl): SystemSettingPermissionManager
 }

@@ -16,21 +16,21 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class AppModule {
+interface AppModule {
 
     @Binds
     @Singleton
-    abstract fun bindAppRateManager(impl: AppRateManagerImpl): AppRateManager
+    fun bindAppRateManager(impl: AppRateManagerImpl): AppRateManager
 
     @Binds
     @Singleton
-    abstract fun bindAppVersionManager(impl: AppVersionManagerImpl): AppVersionManager
+    fun bindAppVersionManager(impl: AppVersionManagerImpl): AppVersionManager
 
     @Binds
     @Singleton
-    abstract fun bindStringResourceProvider(impl: StringResourceProviderImpl): StringResourceProvider
+    fun bindStringResourceProvider(impl: StringResourceProviderImpl): StringResourceProvider
 
     @Binds
     @Singleton
-    abstract fun bindMemoryCacheManager(impl: MemoryCacheManagerImpl): MemoryCacheManager
+    fun bindMemoryCacheManager(impl: MemoryCacheManagerImpl): MemoryCacheManager
 }
