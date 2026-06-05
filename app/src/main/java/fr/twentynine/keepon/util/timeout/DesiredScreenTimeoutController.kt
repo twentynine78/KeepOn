@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util
+package fr.twentynine.keepon.util.timeout
 
 import fr.twentynine.keepon.data.model.ScreenTimeout
 import fr.twentynine.keepon.util.extensions.removeUntil

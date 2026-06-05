@@ -9,7 +9,7 @@ import java.util.Calendar
 import java.util.TimeZone
 import javax.inject.Inject
 
-interface AppRateHelper {
+interface AppRateManager {
     fun openPlayStore()
     fun canRateApp(): Boolean
     fun getFirstInstallTime(): Long
@@ -20,7 +20,7 @@ interface AppRateHelper {
     ): Boolean
 }
 
-class AppRateHelperImpl @Inject constructor(@param:ApplicationContext private val context: Context) : AppRateHelper {
+class AppRateManagerImpl @Inject constructor(@param:ApplicationContext private val context: Context) : AppRateManager {
 
     private val packageName by lazy { context.packageName }
     private val packageManager by lazy { context.packageManager }

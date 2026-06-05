@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util
+package fr.twentynine.keepon.util.component
 
 import android.content.ComponentName
 import android.content.Context

@@ -16,13 +16,13 @@ import fr.twentynine.keepon.data.model.TimeoutIconStyle
 import fr.twentynine.keepon.data.model.TipsConstraintState
 import fr.twentynine.keepon.data.repo.TipsInfoRepository
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
-import fr.twentynine.keepon.util.AddTileServiceManager
-import fr.twentynine.keepon.util.AppComponentsUpdater
-import fr.twentynine.keepon.util.AppRateHelper
-import fr.twentynine.keepon.util.BatteryOptimizationManager
-import fr.twentynine.keepon.util.PostNotificationPermissionManager
+import fr.twentynine.keepon.util.component.AddTileServiceManager
+import fr.twentynine.keepon.util.component.AppComponentsUpdater
+import fr.twentynine.keepon.util.AppRateManager
+import fr.twentynine.keepon.util.permission.BatteryOptimizationManager
+import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
 import fr.twentynine.keepon.util.StringResourceProvider
-import fr.twentynine.keepon.util.SystemSettingPermissionManager
+import fr.twentynine.keepon.util.permission.SystemSettingPermissionManager
 import fr.twentynine.keepon.util.coil.MemoryCacheManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -45,7 +45,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
     private val stringResourceProvider: StringResourceProvider,
-    private val appRateHelper: AppRateHelper,
+    private val appRateHelper: AppRateManager,
     private val addTileServiceManager: AddTileServiceManager,
     private val memoryCacheManager: MemoryCacheManager,
     private val appComponentsUpdater: AppComponentsUpdater,

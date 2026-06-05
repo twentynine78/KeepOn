@@ -6,10 +6,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManagerImpl
-import fr.twentynine.keepon.util.DevicePolicyManagerHelper
-import fr.twentynine.keepon.util.DevicePolicyManagerHelperImpl
-import fr.twentynine.keepon.util.SystemScreenTimeoutController
-import fr.twentynine.keepon.util.SystemScreenTimeoutControllerImpl
+import fr.twentynine.keepon.util.system.DevicePolicyController
+import fr.twentynine.keepon.util.system.DevicePolicyControllerImpl
+import fr.twentynine.keepon.util.timeout.SystemScreenTimeoutController
+import fr.twentynine.keepon.util.timeout.SystemScreenTimeoutControllerImpl
 import javax.inject.Singleton
 
 @Module
@@ -22,7 +22,7 @@ abstract class SystemModule {
 
     @Binds
     @Singleton
-    abstract fun bindDevicePolicyManagerHelper(impl: DevicePolicyManagerHelperImpl): DevicePolicyManagerHelper
+    abstract fun bindDevicePolicyController(impl: DevicePolicyControllerImpl): DevicePolicyController
 
     @Binds
     @Singleton

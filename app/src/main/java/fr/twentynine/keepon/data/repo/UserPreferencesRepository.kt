@@ -24,10 +24,10 @@ import fr.twentynine.keepon.data.model.OldTimeoutIconStyle
 import fr.twentynine.keepon.data.model.ScreenTimeout
 import fr.twentynine.keepon.data.model.TimeoutIconStyle
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
-import fr.twentynine.keepon.util.DataMigrationHelper
-import fr.twentynine.keepon.util.DesiredScreenTimeoutController
-import fr.twentynine.keepon.util.DevicePolicyManagerHelper
-import fr.twentynine.keepon.util.SystemScreenTimeoutController
+import fr.twentynine.keepon.util.migration.DataMigrationManager
+import fr.twentynine.keepon.util.timeout.DesiredScreenTimeoutController
+import fr.twentynine.keepon.util.system.DevicePolicyController
+import fr.twentynine.keepon.util.timeout.SystemScreenTimeoutController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -98,7 +98,7 @@ interface UserPreferencesRepository {
 class UserPreferencesRepositoryImpl @Inject constructor(
     private val preferenceDataStoreHelper: PreferenceDataStoreHelper,
     private val systemScreenTimeoutController: dagger.Lazy<SystemScreenTimeoutController>,
-    private val devicePolicyManagerHelper: dagger.Lazy<DevicePolicyManagerHelper>,
+    private val devicePolicyManagerHelper: dagger.Lazy<DevicePolicyController>,
     private val screenOffReceiverServiceManager: dagger.Lazy<ScreenOffReceiverServiceManager>,
 ) : UserPreferencesRepository {
 
@@ -251,7 +251,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
                 .transformLatest { strList ->
                     // Manage migration from the older icon style model
                     val screenTimeoutList = if (strList.isNullOrEmpty()) {
-                        DataMigrationHelper.getDefaultSelectedScreenTimeoutOrMigrateFromOld(
+                        DataMigrationManager.getDefaultSelectedScreenTimeoutOrMigrateFromOld(
                             this@UserPreferencesRepositoryImpl
                         )
                     } else {
@@ -271,7 +271,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
             // Manage migration from the older icon style model
             devicePolicyManagerHelper.get().removeNotAllowedScreenTimeout(
                 if (strList.isNullOrEmpty()) {
-                    DataMigrationHelper.getDefaultSelectedScreenTimeoutOrMigrateFromOld(
+                    DataMigrationManager.getDefaultSelectedScreenTimeoutOrMigrateFromOld(
                         this@UserPreferencesRepositoryImpl
                     )
                 } else {
@@ -299,7 +299,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
                 .transformLatest { resetWhenScreenOff ->
                     // Manage migration from the older icon style model
                     emit(
-                        resetWhenScreenOff ?: DataMigrationHelper.getResetTimeoutWhenScreenOffOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
+                        resetWhenScreenOff ?: DataMigrationManager.getResetTimeoutWhenScreenOffOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
                     )
                 }
                 .distinctUntilChanged()
@@ -312,7 +312,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
             )
             // Manage migration from the older icon style model
-            resetWhenScreenOff ?: DataMigrationHelper.getResetTimeoutWhenScreenOffOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
+            resetWhenScreenOff ?: DataMigrationManager.getResetTimeoutWhenScreenOffOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
         }
 
     override suspend fun setResetTimeoutWhenScreenOff(resetWhenScreenOff: Boolean) =
@@ -358,7 +358,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
                     // Manage migration from the older reset screen timeout value
                     emit(
                         if (timeoutIconStyleJson.isNullOrEmpty()) {
-                            DataMigrationHelper.getDefaultTimeoutIconStyleOrMigrateFromOld(
+                            DataMigrationManager.getDefaultTimeoutIconStyleOrMigrateFromOld(
                                 this@UserPreferencesRepositoryImpl
                             )
                         } else {
@@ -377,7 +377,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
             )
             // Manage migration from the older icon style model
             if (timeoutIconStyleJson.isNullOrEmpty()) {
-                DataMigrationHelper.getDefaultTimeoutIconStyleOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
+                DataMigrationManager.getDefaultTimeoutIconStyleOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
             } else {
                 Json.decodeFromString<TimeoutIconStyle>(timeoutIconStyleJson)
             }
@@ -542,7 +542,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
                     // Manage migration from the older value
                     emit(
                         if (dismissedTipsStr.isNullOrEmpty()) {
-                            DataMigrationHelper.getDefaultDismissedTipsListOrMigrateFromOld(
+                            DataMigrationManager.getDefaultDismissedTipsListOrMigrateFromOld(
                                 this@UserPreferencesRepositoryImpl
                             )
                         } else {
@@ -561,7 +561,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
             )
             // Manage migration from the older value
             if (dismissedTipsStr.isNullOrEmpty()) {
-                DataMigrationHelper.getDefaultDismissedTipsListOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
+                DataMigrationManager.getDefaultDismissedTipsListOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
             } else {
                 Json.decodeFromString<List<DismissedTips>>(dismissedTipsStr)
             }
@@ -648,7 +648,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
                     // Manage migration from the older value
                     emit(
                         isFirstLaunch
-                            ?: DataMigrationHelper.getDefaultIsFirstLaunchOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
+                            ?: DataMigrationManager.getDefaultIsFirstLaunchOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
                     )
                 }
                 .distinctUntilChanged()

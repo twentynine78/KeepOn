@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util
+package fr.twentynine.keepon.util.permission
 
 import android.content.Context
 import android.content.Intent

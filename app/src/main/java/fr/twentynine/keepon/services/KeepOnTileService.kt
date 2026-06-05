@@ -31,9 +31,9 @@ import fr.twentynine.keepon.data.model.TimeoutIconData
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.util.BundleScrubber
 import fr.twentynine.keepon.util.LockableJob
-import fr.twentynine.keepon.util.RequiredPermissionsManager
+import fr.twentynine.keepon.util.permission.RequiredPermissionsManager
 import fr.twentynine.keepon.util.StringResourceProvider
-import fr.twentynine.keepon.util.WidgetUpdater
+import fr.twentynine.keepon.util.component.WidgetUpdater
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

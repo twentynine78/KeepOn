@@ -22,10 +22,10 @@ import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.ui.theme.KeepOnTheme
 import fr.twentynine.keepon.ui.view.TaskerEditView
 import fr.twentynine.keepon.ui.viewmodel.TaskerEditViewModel
-import fr.twentynine.keepon.util.BatteryOptimizationManager
+import fr.twentynine.keepon.util.permission.BatteryOptimizationManager
 import fr.twentynine.keepon.util.BundleScrubber
-import fr.twentynine.keepon.util.PostNotificationPermissionManager
-import fr.twentynine.keepon.util.SystemSettingPermissionManager
+import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
+import fr.twentynine.keepon.util.permission.SystemSettingPermissionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

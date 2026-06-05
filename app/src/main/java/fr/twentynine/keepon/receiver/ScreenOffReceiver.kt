@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
-import fr.twentynine.keepon.util.AppComponentsUpdater
+import fr.twentynine.keepon.util.component.AppComponentsUpdater
 import fr.twentynine.keepon.util.extensions.goAsync
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject

@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util
+package fr.twentynine.keepon.util.component
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope

@@ -16,8 +16,8 @@ import coil3.request.allowHardware
 import coil3.request.bitmapConfig
 import coil3.size.Precision
 import dagger.hilt.android.HiltAndroidApp
-import fr.twentynine.keepon.util.AppVersionManager
-import fr.twentynine.keepon.util.WidgetUpdater
+import fr.twentynine.keepon.util.migration.AppVersionManager
+import fr.twentynine.keepon.util.component.WidgetUpdater
 import fr.twentynine.keepon.util.coil.TimeoutIconDataFetcher
 import fr.twentynine.keepon.util.coil.TimeoutIconDataKeyer
 import fr.twentynine.keepon.worker.GuardianSystemScreenTimeoutWorkerScheduler

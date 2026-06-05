@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util
+package fr.twentynine.keepon.util.system
 
 import android.app.admin.DevicePolicyManager
 import android.content.Context
@@ -6,13 +6,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.data.model.ScreenTimeout
 import javax.inject.Inject
 
-interface DevicePolicyManagerHelper {
+interface DevicePolicyController {
     fun getMaxAllowedScreenTimeout(): Long
     fun isValidTimeout(timeout: ScreenTimeout): Boolean
     fun removeNotAllowedScreenTimeout(timeouts: List<ScreenTimeout>): List<ScreenTimeout>
 }
 
-class DevicePolicyManagerHelperImpl @Inject constructor(@param:ApplicationContext private val context: Context) : DevicePolicyManagerHelper {
+class DevicePolicyControllerImpl @Inject constructor(@param:ApplicationContext private val context: Context) : DevicePolicyController {
 
     private val devicePolicyManager by lazy {
         context.getSystemService(DevicePolicyManager::class.java)

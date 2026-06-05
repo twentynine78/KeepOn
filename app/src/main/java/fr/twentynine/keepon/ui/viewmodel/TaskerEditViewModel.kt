@@ -11,10 +11,10 @@ import fr.twentynine.keepon.data.model.TaskerEditUIState
 import fr.twentynine.keepon.data.model.TaskerUIEvent
 import fr.twentynine.keepon.data.model.TimeoutIconStyle
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
-import fr.twentynine.keepon.util.BatteryOptimizationManager
-import fr.twentynine.keepon.util.PostNotificationPermissionManager
+import fr.twentynine.keepon.util.permission.BatteryOptimizationManager
+import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
 import fr.twentynine.keepon.util.StringResourceProvider
-import fr.twentynine.keepon.util.SystemSettingPermissionManager
+import fr.twentynine.keepon.util.permission.SystemSettingPermissionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

@@ -10,9 +10,9 @@ import dagger.assisted.AssistedInject
 import fr.twentynine.keepon.data.model.ScreenTimeout
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
-import fr.twentynine.keepon.util.AppComponentsUpdater
-import fr.twentynine.keepon.util.DesiredScreenTimeoutController
-import fr.twentynine.keepon.util.SystemScreenTimeoutController
+import fr.twentynine.keepon.util.component.AppComponentsUpdater
+import fr.twentynine.keepon.util.timeout.DesiredScreenTimeoutController
+import fr.twentynine.keepon.util.timeout.SystemScreenTimeoutController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

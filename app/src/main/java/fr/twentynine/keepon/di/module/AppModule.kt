@@ -4,10 +4,10 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import fr.twentynine.keepon.util.AppRateHelper
-import fr.twentynine.keepon.util.AppRateHelperImpl
-import fr.twentynine.keepon.util.AppVersionManager
-import fr.twentynine.keepon.util.AppVersionManagerImpl
+import fr.twentynine.keepon.util.AppRateManager
+import fr.twentynine.keepon.util.AppRateManagerImpl
+import fr.twentynine.keepon.util.migration.AppVersionManager
+import fr.twentynine.keepon.util.migration.AppVersionManagerImpl
 import fr.twentynine.keepon.util.StringResourceProvider
 import fr.twentynine.keepon.util.StringResourceProviderImpl
 import fr.twentynine.keepon.util.coil.MemoryCacheManager
@@ -20,7 +20,7 @@ abstract class AppModule {
 
     @Binds
     @Singleton
-    abstract fun bindAppRateHelper(impl: AppRateHelperImpl): AppRateHelper
+    abstract fun bindAppRateManager(impl: AppRateManagerImpl): AppRateManager
 
     @Binds
     @Singleton

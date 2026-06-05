@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util
+package fr.twentynine.keepon.util.component
 
 import android.app.StatusBarManager
 import android.content.ComponentName

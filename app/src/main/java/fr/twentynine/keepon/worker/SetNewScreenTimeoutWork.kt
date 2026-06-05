@@ -10,8 +10,8 @@ import dagger.assisted.AssistedInject
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.data.model.ScreenTimeout
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
-import fr.twentynine.keepon.util.AppComponentsUpdater
-import fr.twentynine.keepon.util.RequiredPermissionsManager
+import fr.twentynine.keepon.util.component.AppComponentsUpdater
+import fr.twentynine.keepon.util.permission.RequiredPermissionsManager
 import fr.twentynine.keepon.worker.SetNewScreenTimeoutWorkScheduler.Companion.NEW_SCREEN_TIMEOUT_DATA_KEY
 import fr.twentynine.keepon.worker.SetNewScreenTimeoutWorkScheduler.Companion.UPDATE_PREVIOUS_TIMEOUT_DATA_KEY
 import kotlinx.coroutines.Dispatchers

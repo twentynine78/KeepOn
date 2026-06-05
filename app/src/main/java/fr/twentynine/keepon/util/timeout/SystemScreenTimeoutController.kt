@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util
+package fr.twentynine.keepon.util.timeout
 
 import android.content.Context
 import android.provider.Settings

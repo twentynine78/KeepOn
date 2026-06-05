@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util
+package fr.twentynine.keepon.util.migration
 
 import fr.twentynine.keepon.data.local.TipsInfo
 import fr.twentynine.keepon.data.model.DismissedTips
@@ -8,7 +8,7 @@ import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-object DataMigrationHelper {
+object DataMigrationManager {
     private val ioDispatcher = Dispatchers.IO
 
     suspend fun getDefaultSelectedScreenTimeoutOrMigrateFromOld(

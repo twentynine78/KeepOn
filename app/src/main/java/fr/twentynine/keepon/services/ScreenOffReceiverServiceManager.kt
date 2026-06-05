@@ -8,7 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager.Companion.ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager.Companion.getIsRunning
-import fr.twentynine.keepon.util.RequiredPermissionsManager
+import fr.twentynine.keepon.util.permission.RequiredPermissionsManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.time.delay
 import kotlinx.coroutines.withContext

@@ -1,9 +1,11 @@
-package fr.twentynine.keepon.util
+package fr.twentynine.keepon.util.migration
 
 import android.content.Context
 import android.content.pm.PackageManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
+import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
+import fr.twentynine.keepon.util.system.DynamicShortcutManager
 import javax.inject.Inject
 
 interface AppVersionManager {
