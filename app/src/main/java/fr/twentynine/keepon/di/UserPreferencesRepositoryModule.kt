@@ -1,32 +1,18 @@
 package fr.twentynine.keepon.di
 
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import fr.twentynine.keepon.data.local.PreferenceDataStoreHelper
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.data.repo.UserPreferencesRepositoryImpl
-import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
-import fr.twentynine.keepon.util.DevicePolicyManagerHelper
-import fr.twentynine.keepon.util.SystemScreenTimeoutController
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object UserPreferencesRepositoryModule {
+abstract class UserPreferencesRepositoryModule {
 
-    @Provides
-    fun provideUserPreferencesRepository(
-        preferenceDataStoreHelper: PreferenceDataStoreHelper,
-        systemScreenTimeoutController: dagger.Lazy<SystemScreenTimeoutController>,
-        devicePolicyManagerHelper: dagger.Lazy<DevicePolicyManagerHelper>,
-        screenOffReceiverServiceManager: dagger.Lazy<ScreenOffReceiverServiceManager>,
-    ): UserPreferencesRepository {
-        return UserPreferencesRepositoryImpl(
-            preferenceDataStoreHelper,
-            systemScreenTimeoutController,
-            devicePolicyManagerHelper,
-            screenOffReceiverServiceManager,
-        )
-    }
+    @Binds
+    @Singleton
+    abstract fun bindUserPreferencesRepository(impl: UserPreferencesRepositoryImpl): UserPreferencesRepository
 }

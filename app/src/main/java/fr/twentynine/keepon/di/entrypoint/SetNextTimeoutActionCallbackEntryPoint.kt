@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.di
+package fr.twentynine.keepon.di.entrypoint
 
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn

@@ -1,20 +1,18 @@
 package fr.twentynine.keepon.di
 
-import android.content.Context
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import fr.twentynine.keepon.util.AddTileServiceManager
 import fr.twentynine.keepon.util.AddTileServiceManagerImpl
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AddTileServiceManagerModule {
+abstract class AddTileServiceManagerModule {
 
-    @Provides
-    fun provideAddTileServiceManager(@ApplicationContext context: Context): AddTileServiceManager {
-        return AddTileServiceManagerImpl(context)
-    }
+    @Binds
+    @Singleton
+    abstract fun bindAddTileServiceManager(impl: AddTileServiceManagerImpl): AddTileServiceManager
 }

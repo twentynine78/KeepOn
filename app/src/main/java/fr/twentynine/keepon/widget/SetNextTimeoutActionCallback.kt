@@ -6,7 +6,7 @@ import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
 import dagger.hilt.android.EntryPointAccessors
 import fr.twentynine.keepon.data.model.ScreenTimeout
-import fr.twentynine.keepon.di.SetNextTimeoutActionCallbackEntryPoint
+import fr.twentynine.keepon.di.entrypoint.SetNextTimeoutActionCallbackEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

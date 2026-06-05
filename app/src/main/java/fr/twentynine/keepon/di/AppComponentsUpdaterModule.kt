@@ -1,23 +1,18 @@
 package fr.twentynine.keepon.di
 
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import fr.twentynine.keepon.util.AppComponentsUpdater
 import fr.twentynine.keepon.util.AppComponentsUpdaterImpl
-import fr.twentynine.keepon.util.QSTileUpdater
-import fr.twentynine.keepon.util.WidgetUpdater
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppComponentsUpdaterModule {
+abstract class AppComponentsUpdaterModule {
 
-    @Provides
-    fun provideAppComponentsUpdater(
-        qsTileUpdater: QSTileUpdater,
-        widgetUpdater: WidgetUpdater,
-    ): AppComponentsUpdater {
-        return AppComponentsUpdaterImpl(qsTileUpdater, widgetUpdater)
-    }
+    @Binds
+    @Singleton
+    abstract fun bindAppComponentsUpdater(impl: AppComponentsUpdaterImpl): AppComponentsUpdater
 }

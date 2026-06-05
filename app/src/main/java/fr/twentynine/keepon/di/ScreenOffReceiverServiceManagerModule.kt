@@ -1,20 +1,18 @@
 package fr.twentynine.keepon.di
 
-import android.content.Context
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManagerImpl
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ScreenOffReceiverServiceManagerModule {
+abstract class ScreenOffReceiverServiceManagerModule {
 
-    @Provides
-    fun provideScreenOffReceiverServiceManager(@ApplicationContext context: Context): ScreenOffReceiverServiceManager {
-        return ScreenOffReceiverServiceManagerImpl(context)
-    }
+    @Binds
+    @Singleton
+    abstract fun bindScreenOffReceiverServiceManager(impl: ScreenOffReceiverServiceManagerImpl): ScreenOffReceiverServiceManager
 }

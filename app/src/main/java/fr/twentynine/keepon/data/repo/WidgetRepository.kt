@@ -5,7 +5,7 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import dagger.hilt.android.EntryPointAccessors
 import fr.twentynine.keepon.KeepOnApplication
 import fr.twentynine.keepon.data.model.WidgetUIState
-import fr.twentynine.keepon.di.WidgetRepositoryEntryPoint
+import fr.twentynine.keepon.di.entrypoint.WidgetRepositoryEntryPoint
 import fr.twentynine.keepon.util.LockableJob
 import fr.twentynine.keepon.widget.KeepOnWidget
 import kotlinx.coroutines.CoroutineScope

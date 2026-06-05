@@ -1,20 +1,18 @@
 package fr.twentynine.keepon.di
 
-import android.content.Context
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import fr.twentynine.keepon.util.WidgetUpdater
 import fr.twentynine.keepon.util.WidgetUpdaterImpl
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object WidgetUpdaterModule {
+abstract class WidgetUpdaterModule {
 
-    @Provides
-    fun provideQSTileUpdater(@ApplicationContext context: Context): WidgetUpdater {
-        return WidgetUpdaterImpl(context)
-    }
+    @Binds
+    @Singleton
+    abstract fun bindWidgetUpdater(impl: WidgetUpdaterImpl): WidgetUpdater
 }

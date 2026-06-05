@@ -1,20 +1,18 @@
 package fr.twentynine.keepon.di
 
-import android.content.Context
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import fr.twentynine.keepon.util.DevicePolicyManagerHelper
 import fr.twentynine.keepon.util.DevicePolicyManagerHelperImpl
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DevicePolicyManagerHelperModule {
+abstract class DevicePolicyManagerHelperModule {
 
-    @Provides
-    fun provideDevicePolicyManagerHelper(@ApplicationContext context: Context): DevicePolicyManagerHelper {
-        return DevicePolicyManagerHelperImpl(context)
-    }
+    @Binds
+    @Singleton
+    abstract fun bindDevicePolicyManagerHelper(impl: DevicePolicyManagerHelperImpl): DevicePolicyManagerHelper
 }

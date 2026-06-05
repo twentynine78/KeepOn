@@ -9,7 +9,7 @@ import coil3.fetch.ImageFetchResult
 import coil3.request.Options
 import dagger.hilt.android.EntryPointAccessors
 import fr.twentynine.keepon.data.model.TimeoutIconData
-import fr.twentynine.keepon.di.TimeoutIconDataFetcherEntryPoint
+import fr.twentynine.keepon.di.entrypoint.TimeoutIconDataFetcherEntryPoint
 
 class TimeoutIconDataFetcher(
     private val data: TimeoutIconData,
