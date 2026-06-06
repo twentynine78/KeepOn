@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.worker
+package fr.twentynine.keepon.core.worker
 
 import android.content.Context
 import androidx.work.BackoffPolicy

@@ -9,7 +9,7 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.catalog.ScreenTimeoutCatalog
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.util.BundleScrubber
-import fr.twentynine.keepon.worker.SetNewScreenTimeoutWorkScheduler
+import fr.twentynine.keepon.core.worker.SetNewScreenTimeoutWorkScheduler
 
 class FireReceiver : BroadcastReceiver() {
 

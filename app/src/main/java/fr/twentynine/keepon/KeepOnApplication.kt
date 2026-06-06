@@ -20,8 +20,8 @@ import fr.twentynine.keepon.data.migration.AppVersionManager
 import fr.twentynine.keepon.ui.components.WidgetUpdater
 import fr.twentynine.keepon.core.coil.TimeoutIconDataFetcher
 import fr.twentynine.keepon.core.coil.TimeoutIconDataKeyer
-import fr.twentynine.keepon.worker.GuardianSystemScreenTimeoutWorkerScheduler
-import fr.twentynine.keepon.worker.MonitorSystemScreenTimeoutWorkScheduler
+import fr.twentynine.keepon.core.worker.GuardianSystemScreenTimeoutWorkerScheduler
+import fr.twentynine.keepon.core.worker.MonitorSystemScreenTimeoutWorkScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

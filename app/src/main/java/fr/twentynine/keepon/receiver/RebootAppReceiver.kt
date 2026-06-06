@@ -10,7 +10,7 @@ import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
 import fr.twentynine.keepon.util.extensions.goAsync
-import fr.twentynine.keepon.worker.SetNewScreenTimeoutWorkScheduler
+import fr.twentynine.keepon.core.worker.SetNewScreenTimeoutWorkScheduler
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 

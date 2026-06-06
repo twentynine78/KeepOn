@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.worker
+package fr.twentynine.keepon.core.worker
 
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder

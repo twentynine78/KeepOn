@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.worker
+package fr.twentynine.keepon.core.worker
 
 import android.content.Context
 import android.widget.Toast
@@ -11,8 +11,8 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.usecase.timeout.UpdateSystemScreenTimeoutUseCase
 import fr.twentynine.keepon.util.permission.RequiredPermissionsManager
-import fr.twentynine.keepon.worker.SetNewScreenTimeoutWorkScheduler.Companion.NEW_SCREEN_TIMEOUT_DATA_KEY
-import fr.twentynine.keepon.worker.SetNewScreenTimeoutWorkScheduler.Companion.UPDATE_PREVIOUS_TIMEOUT_DATA_KEY
+import fr.twentynine.keepon.core.worker.SetNewScreenTimeoutWorkScheduler.Companion.NEW_SCREEN_TIMEOUT_DATA_KEY
+import fr.twentynine.keepon.core.worker.SetNewScreenTimeoutWorkScheduler.Companion.UPDATE_PREVIOUS_TIMEOUT_DATA_KEY
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
