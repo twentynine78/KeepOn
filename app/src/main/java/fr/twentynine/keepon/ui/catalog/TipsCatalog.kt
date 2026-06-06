@@ -1,6 +1,4 @@
-package fr.twentynine.keepon.data.catalog
-
-import fr.twentynine.keepon.data.catalog.TipsInfo
+package fr.twentynine.keepon.ui.catalog
 
 object TipsCatalog {
 

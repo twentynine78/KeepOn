@@ -1,7 +1,7 @@
 package fr.twentynine.keepon.ui.producer
 
-import fr.twentynine.keepon.data.catalog.TipsCatalog
-import fr.twentynine.keepon.data.catalog.TipsInfo
+import fr.twentynine.keepon.ui.catalog.TipsCatalog
+import fr.twentynine.keepon.ui.catalog.TipsInfo
 import fr.twentynine.keepon.domain.catalog.ScreenTimeoutCatalog
 import fr.twentynine.keepon.domain.model.DismissedTips
 import fr.twentynine.keepon.domain.model.ScreenTimeout

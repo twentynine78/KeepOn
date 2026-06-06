@@ -1,7 +1,7 @@
 package fr.twentynine.keepon.ui.state
 
 import androidx.compose.runtime.Immutable
-import fr.twentynine.keepon.data.catalog.TipsInfo
+import fr.twentynine.keepon.ui.catalog.TipsInfo
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle

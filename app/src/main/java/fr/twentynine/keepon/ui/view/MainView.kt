@@ -59,7 +59,7 @@ import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.model.TimeoutIconSize
-import fr.twentynine.keepon.data.catalog.TipsInfo
+import fr.twentynine.keepon.ui.catalog.TipsInfo
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
 import fr.twentynine.keepon.domain.model.TimeoutIconData

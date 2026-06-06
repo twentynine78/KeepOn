@@ -1,13 +1,11 @@
 package fr.twentynine.keepon.data.local
 
-import androidx.compose.runtime.Immutable
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 // Use old key for compatibility
-@Immutable
 object PreferenceDataStoreConstants {
     // Backed up data
     val SELECTED_SCREEN_TIMEOUT = stringPreferencesKey("newSelectedTimeout")

@@ -3,7 +3,7 @@ package fr.twentynine.keepon.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.twentynine.keepon.data.catalog.TipsInfo
+import fr.twentynine.keepon.ui.catalog.TipsInfo
 import fr.twentynine.keepon.ui.mapper.ScreenTimeoutUIToScreenTimeoutMapper
 import fr.twentynine.keepon.ui.producer.MainViewStateProducer
 import fr.twentynine.keepon.ui.event.MainUIEvent

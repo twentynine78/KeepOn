@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.data.catalog
+package fr.twentynine.keepon.ui.catalog
 
 import android.os.Build
 import androidx.compose.material.icons.Icons
@@ -8,7 +8,6 @@ import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.vector.ImageVector
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.data.enums.TipsAction
 import fr.twentynine.keepon.domain.model.TipsConstraintState
 
 @Immutable

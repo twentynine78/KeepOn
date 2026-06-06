@@ -1,6 +1,5 @@
 package fr.twentynine.keepon.data.repository
 
-import fr.twentynine.keepon.data.catalog.TipsInfo
 import fr.twentynine.keepon.data.enums.DataStoreSourceType
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.DISMISSED_TIPS
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.TIMEOUT_ICON_STYLE
@@ -66,7 +65,7 @@ class MigratingUiPreferencesRepository @Inject constructor(
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
             )
             if (current.isNullOrEmpty() && legacyPreferencesRepository.getOldAppReviewAsked()) {
-                delegate.setDismissedTip(DismissedTips(TipsInfo.RateApp.id))
+                delegate.setDismissedTip(DismissedTips(RATE_APP_TIP_ID))
                 legacyPreferencesRepository.removeOldAppReviewAsked()
             }
         }
@@ -82,4 +81,11 @@ class MigratingUiPreferencesRepository @Inject constructor(
 
     override suspend fun setDismissedTip(dismissedTips: DismissedTips) =
         delegate.setDismissedTip(dismissedTips)
+
+    private companion object {
+        // Persisted id of the "rate app" tip (TipsInfo.RateApp.id); a stored DismissedTips
+        // id can never change, so it is safe to reference by value from the data layer.
+        const val RATE_APP_TIP_ID = 300
+    }
 }
+

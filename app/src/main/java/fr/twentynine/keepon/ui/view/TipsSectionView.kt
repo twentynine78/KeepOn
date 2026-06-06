@@ -42,8 +42,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import fr.twentynine.keepon.data.catalog.TipsInfo
-import fr.twentynine.keepon.data.enums.TipsAction
+import fr.twentynine.keepon.ui.catalog.TipsInfo
+import fr.twentynine.keepon.ui.catalog.TipsAction
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.util.PulsatingIcon
 import kotlinx.coroutines.launch

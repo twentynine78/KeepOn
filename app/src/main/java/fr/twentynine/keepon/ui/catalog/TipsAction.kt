@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.data.enums
+package fr.twentynine.keepon.ui.catalog
 
 enum class TipsAction {
     RequestPostNotification,

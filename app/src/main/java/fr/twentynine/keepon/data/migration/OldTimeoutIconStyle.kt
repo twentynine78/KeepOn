@@ -1,11 +1,9 @@
 package fr.twentynine.keepon.data.migration
 
-import androidx.compose.runtime.Stable
 import fr.twentynine.keepon.domain.catalog.IconFontFamily
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import kotlinx.serialization.Serializable
 
-@Stable
 @Serializable
 data class OldTimeoutIconStyle(
     val iconStyleFontSize: Int = 0,
