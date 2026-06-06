@@ -4,16 +4,15 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.twentynine.keepon.ui.mapper.ScreenTimeoutToScreenTimeoutUIMapper
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.ui.state.TaskerEditUIState
 import fr.twentynine.keepon.ui.event.TaskerUIEvent
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
+import fr.twentynine.keepon.ui.producer.BuildScreenTimeoutUiListProducer
 import fr.twentynine.keepon.util.permission.BatteryOptimizationManager
 import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
-import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import fr.twentynine.keepon.util.permission.SystemSettingPermissionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -33,7 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TaskerEditViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val stringResourceProvider: StringResourceProvider,
+    private val buildScreenTimeoutUiListProducer: BuildScreenTimeoutUiListProducer,
 ) : ViewModel() {
 
     private val selectedScreenTimeoutUI: MutableStateFlow<ScreenTimeoutUI?> = MutableStateFlow(null)
@@ -87,20 +86,12 @@ class TaskerEditViewModel @Inject constructor(
             selectedScreenTimeoutUI,
         ) { arrayOfFlow ->
 
-            val maxAllowedScreenTimeout = userPreferencesRepository.getMaxAllowedScreenTimeout()
-
-            val specialScreenTimeoutUI = userPreferencesRepository.specialScreenTimeouts
-                .map { screenTimeout ->
-                    ScreenTimeoutToScreenTimeoutUIMapper.map(screenTimeout, stringResourceProvider)
-                }
-            val screenTimeoutUI = userPreferencesRepository.screenTimeouts
-                .map { screenTimeout ->
-                    ScreenTimeoutToScreenTimeoutUIMapper.map(
-                        screenTimeout = screenTimeout,
-                        stringResourceProvider = stringResourceProvider,
-                        isLocked = screenTimeout.value > maxAllowedScreenTimeout,
-                    )
-                }
+            val specialScreenTimeoutUI = buildScreenTimeoutUiListProducer(
+                userPreferencesRepository.specialScreenTimeouts
+            )
+            val screenTimeoutUI = buildScreenTimeoutUiListProducer(
+                userPreferencesRepository.screenTimeouts
+            )
 
             TaskerEditUIState.Success(
                 canWriteSystemSettings = arrayOfFlow[0] as Boolean,
@@ -129,20 +120,12 @@ class TaskerEditViewModel @Inject constructor(
 
     fun setInitialSelectedScreenTimeout(screenTimeout: Int) {
         viewModelScope.launch {
-            val maxAllowedScreenTimeout = userPreferencesRepository.getMaxAllowedScreenTimeout()
-
-            val specialScreenTimeoutUI = userPreferencesRepository.specialScreenTimeouts
-                .map { screenTimeout ->
-                    ScreenTimeoutToScreenTimeoutUIMapper.map(screenTimeout, stringResourceProvider)
-                }
-            val screenTimeoutUI = userPreferencesRepository.screenTimeouts
-                .map { screenTimeout ->
-                    ScreenTimeoutToScreenTimeoutUIMapper.map(
-                        screenTimeout = screenTimeout,
-                        stringResourceProvider = stringResourceProvider,
-                        isLocked = screenTimeout.value > maxAllowedScreenTimeout,
-                    )
-                }
+            val specialScreenTimeoutUI = buildScreenTimeoutUiListProducer(
+                userPreferencesRepository.specialScreenTimeouts
+            )
+            val screenTimeoutUI = buildScreenTimeoutUiListProducer(
+                userPreferencesRepository.screenTimeouts
+            )
 
             val allScreenTimeoutList = screenTimeoutUI
                 .plus(specialScreenTimeoutUI)

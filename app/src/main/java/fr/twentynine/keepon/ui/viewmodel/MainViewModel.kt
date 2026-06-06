@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.twentynine.keepon.data.catalog.TipsInfo
-import fr.twentynine.keepon.ui.mapper.ScreenTimeoutToScreenTimeoutUIMapper
 import fr.twentynine.keepon.ui.mapper.ScreenTimeoutUIToScreenTimeoutMapper
+import fr.twentynine.keepon.ui.producer.BuildScreenTimeoutUiListProducer
 import fr.twentynine.keepon.domain.model.DismissedTips
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
@@ -21,7 +21,6 @@ import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
 import fr.twentynine.keepon.domain.gateway.AppRateManager
 import fr.twentynine.keepon.util.permission.BatteryOptimizationManager
 import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
-import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import fr.twentynine.keepon.util.permission.SystemSettingPermissionManager
 import fr.twentynine.keepon.domain.gateway.MemoryCacheManager
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +43,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val stringResourceProvider: StringResourceProvider,
+    private val buildScreenTimeoutUiListProducer: BuildScreenTimeoutUiListProducer,
     private val appRateHelper: AppRateManager,
     private val addTileServiceManager: AddTileServiceManager,
     private val memoryCacheManager: MemoryCacheManager,
@@ -126,27 +125,12 @@ class MainViewModel @Inject constructor(
             userPreferencesRepository.getDefaultScreenTimeoutFlow(),
             userPreferencesRepository.getCurrentScreenTimeoutFlow()
         ) { allScreenTimeout, selectedScreenTimeout, defaultScreenTimeout, currentScreenTimeout ->
-            val maxAllowedScreenTimeout = userPreferencesRepository.getMaxAllowedScreenTimeout()
-
-            allScreenTimeout.map { screenTimeout ->
-                val isSelected = (
-                    selectedScreenTimeout.contains(screenTimeout) &&
-                        screenTimeout.value <= maxAllowedScreenTimeout
-                    ) ||
-                    screenTimeout == defaultScreenTimeout
-                val isDefault = screenTimeout == defaultScreenTimeout
-                val isCurrent = screenTimeout == currentScreenTimeout
-                val isLocked = screenTimeout.value > maxAllowedScreenTimeout
-
-                ScreenTimeoutToScreenTimeoutUIMapper.map(
-                    screenTimeout = screenTimeout,
-                    stringResourceProvider = stringResourceProvider,
-                    isSelected = isSelected,
-                    isDefault = isDefault,
-                    isCurrent = isCurrent,
-                    isLocked = isLocked,
-                )
-            }
+            buildScreenTimeoutUiListProducer(
+                timeouts = allScreenTimeout,
+                selectedTimeouts = selectedScreenTimeout,
+                defaultTimeout = defaultScreenTimeout,
+                currentTimeout = currentScreenTimeout,
+            )
         }
     }
 
