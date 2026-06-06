@@ -26,4 +26,5 @@ interface TimeoutPreferencesRepository {
     suspend fun setSelectedScreenTimeouts(selectedTimeouts: List<ScreenTimeout>)
     suspend fun getResetTimeoutWhenScreenOffFlow(): Flow<Boolean>
     suspend fun getResetTimeoutWhenScreenOff(): Boolean
+    suspend fun setResetTimeoutWhenScreenOff(resetWhenScreenOff: Boolean)
 }

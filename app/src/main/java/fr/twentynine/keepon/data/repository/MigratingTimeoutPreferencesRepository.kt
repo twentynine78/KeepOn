@@ -125,4 +125,7 @@ class MigratingTimeoutPreferencesRepository @Inject constructor(
 
     override suspend fun setSelectedScreenTimeouts(selectedTimeouts: List<ScreenTimeout>) =
         delegate.setSelectedScreenTimeouts(selectedTimeouts)
+
+    override suspend fun setResetTimeoutWhenScreenOff(resetWhenScreenOff: Boolean) =
+        delegate.setResetTimeoutWhenScreenOff(resetWhenScreenOff)
 }

@@ -242,4 +242,13 @@ class TimeoutPreferencesRepositoryImpl @Inject constructor(
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
             )
         }
+
+    override suspend fun setResetTimeoutWhenScreenOff(resetWhenScreenOff: Boolean) =
+        withContext(ioDispatcher) {
+            preferenceDataStoreHelper.putPreference(
+                RESET_TIMEOUT_WHEN_SCREEN_OFF,
+                resetWhenScreenOff,
+                DataStoreSourceType.DATA_SOURCE_BACKED_UP
+            )
+        }
 }
