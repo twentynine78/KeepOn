@@ -28,7 +28,11 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.model.TimeoutIconSize
 import fr.twentynine.keepon.ui.model.QSTimeoutData
 import fr.twentynine.keepon.domain.model.TimeoutIconData
-import fr.twentynine.keepon.data.repo.UserPreferencesRepository
+import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
+import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
+import fr.twentynine.keepon.domain.usecase.app.GetKeepOnStatusUseCase
+import fr.twentynine.keepon.domain.usecase.preferences.SetQSTileAddedUseCase
+import fr.twentynine.keepon.domain.usecase.timeout.SetNextSystemScreenTimeoutUseCase
 import fr.twentynine.keepon.core.util.BundleScrubber
 import fr.twentynine.keepon.core.util.LockableJob
 import fr.twentynine.keepon.core.permission.RequiredPermissionsManager
@@ -38,6 +42,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
@@ -47,7 +52,19 @@ import javax.inject.Inject
 class KeepOnTileService : TileService(), LifecycleOwner {
 
     @Inject
-    lateinit var userPreferencesRepository: UserPreferencesRepository
+    lateinit var timeoutPreferencesRepository: TimeoutPreferencesRepository
+
+    @Inject
+    lateinit var uiPreferencesRepository: UiPreferencesRepository
+
+    @Inject
+    lateinit var getKeepOnStatusUseCase: GetKeepOnStatusUseCase
+
+    @Inject
+    lateinit var setNextSystemScreenTimeoutUseCase: SetNextSystemScreenTimeoutUseCase
+
+    @Inject
+    lateinit var setQSTileAddedUseCase: SetQSTileAddedUseCase
 
     @Inject
     lateinit var stringResourceProvider: StringResourceProvider
@@ -81,7 +98,7 @@ class KeepOnTileService : TileService(), LifecycleOwner {
         super.onCreate()
 
         serviceScope.launch {
-            userPreferencesRepository.setQSTileAdded(true)
+            setQSTileAddedUseCase(true)
         }
     }
 
@@ -105,9 +122,9 @@ class KeepOnTileService : TileService(), LifecycleOwner {
         }
 
         serviceScope.launch {
-            val selectedTimeouts = userPreferencesRepository.getSelectedScreenTimeouts()
-            val defaultTimeout = userPreferencesRepository.getDefaultScreenTimeout()
-            val currentTimeout = userPreferencesRepository.getCurrentScreenTimeout()
+            val selectedTimeouts = timeoutPreferencesRepository.getSelectedScreenTimeouts()
+            val defaultTimeout = timeoutPreferencesRepository.getDefaultScreenTimeout()
+            val currentTimeout = timeoutPreferencesRepository.getCurrentScreenTimeout()
 
             val timeoutsWithDefault = if (selectedTimeouts.contains(defaultTimeout)) {
                 selectedTimeouts
@@ -122,12 +139,12 @@ class KeepOnTileService : TileService(), LifecycleOwner {
                     startMainActivityAndCollapse()
                 }
             } else {
-                userPreferencesRepository.setNextSelectedSystemScreenTimeout(currentTimeout) {
-                    currentUpdateJob.cancelOrJoin()
-                    currentUpdateJob.lock()
-                    currentUpdateJob.job = launch {
-                        updateQSTile()
-                    }
+                setNextSystemScreenTimeoutUseCase(currentTimeout)
+
+                currentUpdateJob.cancelOrJoin()
+                currentUpdateJob.lock()
+                currentUpdateJob.job = launch {
+                    updateQSTile()
                 }
             }
         }
@@ -169,9 +186,9 @@ class KeepOnTileService : TileService(), LifecycleOwner {
     }
 
     private suspend fun updateQSTile() {
-        val currentScreenTimeout = userPreferencesRepository.getCurrentScreenTimeout()
-        val timeoutIconStyle = userPreferencesRepository.getTimeoutIconStyle()
-        val keepOnState = userPreferencesRepository.getKeepOnIsActive()
+        val currentScreenTimeout = timeoutPreferencesRepository.getCurrentScreenTimeout()
+        val timeoutIconStyle = uiPreferencesRepository.getTimeoutIconStyle()
+        val keepOnState = getKeepOnStatusUseCase().firstOrNull() ?: false
 
         // Prepare data for the tile
         val newTimeoutIconData = TimeoutIconData(
@@ -200,7 +217,7 @@ class KeepOnTileService : TileService(), LifecycleOwner {
                     val previousQsTileLabel = tile.label
 
                     // Get the new KeepOn state
-                    val keepOnIsActive = userPreferencesRepository.getKeepOnIsActive()
+                    val keepOnIsActive = getKeepOnStatusUseCase().firstOrNull() ?: false
 
                     // Set the new QSTile data
                     tile.icon = newQsTileBitmap.toIcon()
