@@ -18,7 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import fr.twentynine.keepon.ui.state.TaskerEditUIState
 import fr.twentynine.keepon.ui.event.TaskerUIEvent
-import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
+import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.ui.theme.KeepOnTheme
 import fr.twentynine.keepon.ui.view.TaskerEditView
 import fr.twentynine.keepon.ui.viewmodel.TaskerEditViewModel

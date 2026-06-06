@@ -4,7 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
+import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManagerImpl
 import fr.twentynine.keepon.domain.gateway.DevicePolicyController
 import fr.twentynine.keepon.util.system.DevicePolicyControllerImpl

@@ -4,7 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import fr.twentynine.keepon.core.rating.AppRateManager
+import fr.twentynine.keepon.domain.gateway.AppRateManager
 import fr.twentynine.keepon.core.rating.AppRateManagerImpl
 import fr.twentynine.keepon.data.migration.AppVersionManager
 import fr.twentynine.keepon.data.migration.AppVersionManagerImpl

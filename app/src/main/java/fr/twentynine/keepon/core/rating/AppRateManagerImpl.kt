@@ -5,20 +5,10 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
+import fr.twentynine.keepon.domain.gateway.AppRateManager
 import java.util.Calendar
 import java.util.TimeZone
 import javax.inject.Inject
-
-interface AppRateManager {
-    fun openPlayStore()
-    fun canRateApp(): Boolean
-    fun getFirstInstallTime(): Long
-    fun needShowRateTip(
-        currentCount: Long,
-        firstInstallTime: Long,
-        canRateApp: Boolean,
-    ): Boolean
-}
 
 class AppRateManagerImpl @Inject constructor(@param:ApplicationContext private val context: Context) : AppRateManager {
 

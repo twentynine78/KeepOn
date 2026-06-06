@@ -6,38 +6,13 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager.Companion.ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE
-import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager.Companion.getIsRunning
+import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.util.permission.RequiredPermissionsManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.time.delay
 import kotlinx.coroutines.withContext
 import java.time.Duration
 import javax.inject.Inject
-
-interface ScreenOffReceiverServiceManager {
-    suspend fun startService()
-    suspend fun stopService()
-    suspend fun restartService()
-
-    companion object {
-        const val ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE = "ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE"
-
-        @Volatile
-        private var isRunning: Boolean = false
-
-        fun getIsRunning(): Boolean {
-            synchronized(this) {
-                return isRunning
-            }
-        }
-        fun setIsRunning(running: Boolean) {
-            synchronized(this) {
-                isRunning = running
-            }
-        }
-    }
-}
 
 class ScreenOffReceiverServiceManagerImpl @Inject constructor(@param:ApplicationContext private val context: Context) : ScreenOffReceiverServiceManager {
     override suspend fun startService() {
@@ -65,8 +40,7 @@ class ScreenOffReceiverServiceManagerImpl @Inject constructor(@param:Application
                         context.applicationContext,
                         ScreenOffReceiverService::class.java
                     ).also {
-                        it.action =
-                            ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE
+                        it.action = ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE
                     }
                 )
             } catch (_: Exception) {
@@ -91,6 +65,24 @@ class ScreenOffReceiverServiceManagerImpl @Inject constructor(@param:Application
                 context.getString(R.string.toast_missing_permission),
                 Toast.LENGTH_SHORT
             ).show()
+        }
+    }
+
+    companion object {
+        const val ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE = "ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE"
+
+        @Volatile
+        private var isRunning: Boolean = false
+
+        fun getIsRunning(): Boolean {
+            synchronized(this) {
+                return isRunning
+            }
+        }
+        fun setIsRunning(running: Boolean) {
+            synchronized(this) {
+                isRunning = running
+            }
         }
     }
 }

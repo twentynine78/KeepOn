@@ -10,7 +10,7 @@ import fr.twentynine.keepon.domain.model.DismissedTips
 import fr.twentynine.keepon.data.migration.OldTimeoutIconStyle
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
-import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
+import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.data.migration.LegacyPreferencesRepository
 import fr.twentynine.keepon.domain.repository.AppPreferencesRepository
 import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository

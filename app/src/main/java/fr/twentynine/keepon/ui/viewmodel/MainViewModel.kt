@@ -18,7 +18,7 @@ import fr.twentynine.keepon.data.catalog.TipsCatalog
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.ui.components.AddTileServiceManager
 import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
-import fr.twentynine.keepon.core.rating.AppRateManager
+import fr.twentynine.keepon.domain.gateway.AppRateManager
 import fr.twentynine.keepon.util.permission.BatteryOptimizationManager
 import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
