@@ -10,10 +10,13 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.PreviewSizeMode
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
-import fr.twentynine.keepon.data.repo.WidgetRepository
+import dagger.hilt.android.EntryPointAccessors
+import fr.twentynine.keepon.di.entrypoint.WidgetEntryPoint
+import fr.twentynine.keepon.ui.state.WidgetUIState
 import fr.twentynine.keepon.ui.widget.KeepOnWidgetPreview
 import fr.twentynine.keepon.ui.widget.KeepOnWidgetView
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 
 class KeepOnWidget : GlanceAppWidget() {
@@ -24,12 +27,12 @@ class KeepOnWidget : GlanceAppWidget() {
         get() = SizeMode.Responsive(WIDGET_SIZES)
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        withContext(Dispatchers.IO) {
-            WidgetRepository.updateWidgetUIState(context)
+        val widgetUIStateFlow = withContext(Dispatchers.IO) {
+            widgetStateProducer(context).invoke()
         }
 
         provideContent {
-            val widgetUIState by WidgetRepository.currentWidgetUIState.collectAsState()
+            val widgetUIState by widgetUIStateFlow.collectAsState(initial = WidgetUIState.Loading)
 
             KeepOnWidgetView(widgetUIState)
         }
@@ -37,13 +40,20 @@ class KeepOnWidget : GlanceAppWidget() {
 
     override suspend fun providePreview(context: Context, widgetCategory: Int) {
         val widgetUIState = withContext(Dispatchers.IO) {
-            WidgetRepository.getWidgetPreviewUIState(context)
+            widgetStateProducer(context).invoke().firstOrNull()
+                ?: WidgetUIState.Error("Error updating widget UI state")
         }
 
         provideContent {
             KeepOnWidgetPreview(widgetUIState)
         }
     }
+
+    private fun widgetStateProducer(context: Context) =
+        EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            WidgetEntryPoint::class.java,
+        ).widgetStateProducer()
 
     companion object {
         val SMALL_SQUARE = DpSize(60.dp, 60.dp)

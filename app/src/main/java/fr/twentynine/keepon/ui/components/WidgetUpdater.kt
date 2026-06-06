@@ -6,7 +6,6 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.setWidgetPreviews
 import androidx.glance.appwidget.updateAll
 import dagger.hilt.android.qualifiers.ApplicationContext
-import fr.twentynine.keepon.data.repo.WidgetRepository
 import fr.twentynine.keepon.receiver.KeepOnWidgetReceiver
 import fr.twentynine.keepon.widget.KeepOnWidget
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +20,6 @@ interface WidgetUpdater {
 class WidgetUpdaterImpl @Inject constructor(@param:ApplicationContext private val context: Context) : WidgetUpdater {
     override suspend fun requestUpdateWidget() {
         withContext(Dispatchers.IO) {
-            WidgetRepository.updateWidgetUIState(context)
             KeepOnWidget().updateAll(context)
         }
     }
