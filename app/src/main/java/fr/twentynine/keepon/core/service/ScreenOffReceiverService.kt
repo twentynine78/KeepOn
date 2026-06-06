@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.services
+package fr.twentynine.keepon.core.service
 
 import android.app.Notification
 import android.app.PendingIntent

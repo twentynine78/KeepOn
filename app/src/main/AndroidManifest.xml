@@ -32,7 +32,7 @@
         </activity>
 
         <service
-            android:name=".services.ScreenOffReceiverService"
+            android:name=".core.service.ScreenOffReceiverService"
             android:label="@string/screen_off_monitoring_service_name"
             android:exported="false"
             android:foregroundServiceType="specialUse">

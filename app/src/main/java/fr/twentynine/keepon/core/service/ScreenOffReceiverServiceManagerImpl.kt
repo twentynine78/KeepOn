@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.services
+package fr.twentynine.keepon.core.service
 
 import android.content.Context
 import android.content.Intent
