@@ -5,19 +5,13 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-import dagger.hilt.android.AndroidEntryPoint
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.domain.catalog.ScreenTimeoutCatalog
 import fr.twentynine.keepon.domain.model.ScreenTimeout
-import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.util.BundleScrubber
 import fr.twentynine.keepon.worker.SetNewScreenTimeoutWorkScheduler
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class FireReceiver : BroadcastReceiver() {
-
-    @Inject
-    lateinit var userPreferencesRepository: UserPreferencesRepository
 
     override fun onReceive(context: Context, intent: Intent) {
         // A hack to prevent a private serializable classloader attack
@@ -52,7 +46,7 @@ class FireReceiver : BroadcastReceiver() {
         if (timeoutValue != -1) {
             // Check if the received timeout value is valid
             val screenTimeoutValue = ScreenTimeout(timeoutValue)
-            val isValidScreenTimeout = (userPreferencesRepository.screenTimeouts + userPreferencesRepository.specialScreenTimeouts)
+            val isValidScreenTimeout = (ScreenTimeoutCatalog.screenTimeouts + ScreenTimeoutCatalog.specialScreenTimeouts)
                 .contains(screenTimeoutValue)
 
             if (isValidScreenTimeout) {

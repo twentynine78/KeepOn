@@ -3,7 +3,7 @@ package fr.twentynine.keepon.data.migration
 import android.content.Context
 import android.content.pm.PackageManager
 import dagger.hilt.android.qualifiers.ApplicationContext
-import fr.twentynine.keepon.data.repo.UserPreferencesRepository
+import fr.twentynine.keepon.domain.repository.AppPreferencesRepository
 import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
 import fr.twentynine.keepon.util.system.DynamicShortcutManager
 import javax.inject.Inject
@@ -13,17 +13,17 @@ interface AppVersionManager {
 }
 
 class AppVersionManagerImpl @Inject constructor(
-    private val userPreferencesRepository: UserPreferencesRepository,
+    private val appPreferencesRepository: AppPreferencesRepository,
     @param:ApplicationContext private val context: Context,
 ) : AppVersionManager {
 
     override suspend fun runAppMigrationIfNeeded() {
-        val lastRunVersionCode = userPreferencesRepository.getLastRunVersionCode()
+        val lastRunVersionCode = appPreferencesRepository.getLastRunVersionCode()
         val currentVersionCode = getCurrentVersionCode()
 
         if (lastRunVersionCode < currentVersionCode) {
             runMigrationTasks(lastRunVersionCode)
-            userPreferencesRepository.setLastRunVersionCode(currentVersionCode)
+            appPreferencesRepository.setLastRunVersionCode(currentVersionCode)
         }
     }
 
