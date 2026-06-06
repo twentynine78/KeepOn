@@ -7,20 +7,25 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.twentynine.keepon.data.catalog.TipsInfo
 import fr.twentynine.keepon.ui.mapper.ScreenTimeoutUIToScreenTimeoutMapper
 import fr.twentynine.keepon.ui.producer.MainViewStateProducer
-import fr.twentynine.keepon.domain.model.DismissedTips
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
-import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.ui.components.AddTileServiceManager
-import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
 import fr.twentynine.keepon.domain.gateway.AppRateManager
+import fr.twentynine.keepon.domain.usecase.app.IncrementAppLaunchCountUseCase
+import fr.twentynine.keepon.domain.usecase.app.SetIsFirstLaunchUseCase
+import fr.twentynine.keepon.domain.usecase.preferences.DismissTipUseCase
+import fr.twentynine.keepon.domain.usecase.preferences.SetQSTileAddedUseCase
+import fr.twentynine.keepon.domain.usecase.preferences.SetResetTimeoutWhenScreenOffUseCase
+import fr.twentynine.keepon.domain.usecase.preferences.UpdateTimeoutIconStyleUseCase
+import fr.twentynine.keepon.domain.usecase.timeout.SetDefaultScreenTimeoutUseCase
+import fr.twentynine.keepon.domain.usecase.timeout.SetNextSystemScreenTimeoutUseCase
+import fr.twentynine.keepon.domain.usecase.timeout.ToggleScreenTimeoutSelectionUseCase
 import fr.twentynine.keepon.util.permission.BatteryOptimizationManager
 import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
 import fr.twentynine.keepon.util.permission.SystemSettingPermissionManager
-import fr.twentynine.keepon.domain.gateway.MemoryCacheManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -35,12 +40,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val userPreferencesRepository: UserPreferencesRepository,
     private val mainViewStateProducer: MainViewStateProducer,
     private val appRateHelper: AppRateManager,
     private val addTileServiceManager: AddTileServiceManager,
-    private val memoryCacheManager: MemoryCacheManager,
-    private val appComponentsUpdater: AppComponentsUpdater,
+    private val setNextSystemScreenTimeoutUseCase: SetNextSystemScreenTimeoutUseCase,
+    private val setDefaultScreenTimeoutUseCase: SetDefaultScreenTimeoutUseCase,
+    private val toggleScreenTimeoutSelectionUseCase: ToggleScreenTimeoutSelectionUseCase,
+    private val setResetTimeoutWhenScreenOffUseCase: SetResetTimeoutWhenScreenOffUseCase,
+    private val updateTimeoutIconStyleUseCase: UpdateTimeoutIconStyleUseCase,
+    private val dismissTipUseCase: DismissTipUseCase,
+    private val setQSTileAddedUseCase: SetQSTileAddedUseCase,
+    private val incrementAppLaunchCountUseCase: IncrementAppLaunchCountUseCase,
+    private val setIsFirstLaunchUseCase: SetIsFirstLaunchUseCase,
 ) : ViewModel() {
 
     private lateinit var uiStateFlow: StateFlow<MainViewUIState>
@@ -118,14 +129,8 @@ class MainViewModel @Inject constructor(
     fun incrementAppLaunchCount(runBlocking: Boolean = false) {
         val action = suspend {
             if (!appLaunchIncremented && isPermissionsGranted()) {
-                val currentCount = userPreferencesRepository.getAppLaunchCount()
-
-                userPreferencesRepository.setAppLaunchCount(currentCount + 1)
+                incrementAppLaunchCountUseCase()
                 appLaunchIncremented = true
-
-                if (currentCount > 1L) {
-                    updateIsFirstLaunch()
-                }
             }
         }
         if (runBlocking) {
@@ -165,80 +170,49 @@ class MainViewModel @Inject constructor(
 
     private fun toggleScreenTimeoutSelection(screenTimeoutUI: ScreenTimeoutUI) {
         viewModelScope.launch {
-            val defaultScreenTimeout = userPreferencesRepository.getDefaultScreenTimeout()
-
-            if (screenTimeoutUI.value == defaultScreenTimeout.value) {
-                return@launch
-            }
-
-            val screenTimeout = ScreenTimeoutUIToScreenTimeoutMapper.map(screenTimeoutUI)
-            val currentSelection = userPreferencesRepository.getSelectedScreenTimeouts()
-
-            userPreferencesRepository.setSelectedScreenTimeouts(
-                if (currentSelection.contains(screenTimeout)) {
-                    currentSelection.minus(screenTimeout)
-                } else {
-                    currentSelection.plus(screenTimeout)
-                }
-            )
+            toggleScreenTimeoutSelectionUseCase(ScreenTimeoutUIToScreenTimeoutMapper.map(screenTimeoutUI))
         }
     }
 
     private fun setResetTimeoutWhenScreenOff(resetWhenScreenOff: Boolean) {
         viewModelScope.launch {
-            userPreferencesRepository.setResetTimeoutWhenScreenOff(resetWhenScreenOff)
+            setResetTimeoutWhenScreenOffUseCase(resetWhenScreenOff)
         }
     }
 
     private fun setNextSelectedSystemScreenTimeout() {
         viewModelScope.launch {
-            userPreferencesRepository.setNextSelectedSystemScreenTimeout { appComponentsUpdater.requestUpdate() }
+            setNextSystemScreenTimeoutUseCase()
         }
     }
 
-    private fun setDefaultScreenTimeout(
-        newScreenTimeout: ScreenTimeout
-    ) {
+    private fun setDefaultScreenTimeout(newScreenTimeout: ScreenTimeout) {
         viewModelScope.launch {
-            val defaultTimeout = userPreferencesRepository.getDefaultScreenTimeout()
-            val currentScreenTimeout = userPreferencesRepository.getCurrentScreenTimeout()
-
-            if (newScreenTimeout != defaultTimeout) {
-                userPreferencesRepository.setDefaultScreenTimeout(newScreenTimeout, true)
-                if (defaultTimeout == currentScreenTimeout) {
-                    userPreferencesRepository.setCurrentScreenTimeout(newScreenTimeout)
-                    userPreferencesRepository.setNewSystemScreenTimeout(newScreenTimeout) {
-                        appComponentsUpdater.requestUpdate()
-                    }
-                }
-            }
-            appComponentsUpdater.requestUpdate()
+            setDefaultScreenTimeoutUseCase(newScreenTimeout)
         }
     }
 
     private fun updateTimeoutIconStyle(timeoutIconStyle: TimeoutIconStyle) {
         viewModelScope.launch {
-            memoryCacheManager.clear()
-            userPreferencesRepository.setTimeoutIconStyle(timeoutIconStyle)
-            appComponentsUpdater.requestUpdate()
+            updateTimeoutIconStyleUseCase(timeoutIconStyle)
         }
     }
 
     private fun setQSTileAdded() {
         viewModelScope.launch {
-            userPreferencesRepository.setQSTileAdded(true)
+            setQSTileAddedUseCase(true)
         }
     }
 
     private fun setDismissedTips(dismissedTipId: Int) {
         viewModelScope.launch {
-            userPreferencesRepository.setDismissedTip(DismissedTips(dismissedTipId))
+            dismissTipUseCase(dismissedTipId)
         }
     }
 
     private fun updateIsFirstLaunch() {
         viewModelScope.launch {
-            userPreferencesRepository.setIsFirstLaunch(false)
+            setIsFirstLaunchUseCase(false)
         }
     }
 
@@ -259,7 +233,7 @@ class MainViewModel @Inject constructor(
     private fun requestAppRate() {
         appRateHelper.openPlayStore()
         viewModelScope.launch {
-            userPreferencesRepository.setDismissedTip(DismissedTips(TipsInfo.RateApp.id))
+            dismissTipUseCase(TipsInfo.RateApp.id)
         }
     }
 }

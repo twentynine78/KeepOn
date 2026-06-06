@@ -6,10 +6,8 @@ import javax.inject.Inject
 /**
  * Decides whether the "rate the app" tip should be shown: the app must have been
  * launched enough times, installed long enough, and the store must be reachable.
- *
- * Owns the rule (ex-`AppRateManager.needShowRateTip`); the gateway only provides the
- * install time and store availability. [appLaunchCount] is supplied by the caller so
- * the rule stays reactive to the launch-count flow.
+ * [appLaunchCount] is supplied by the caller so the rule stays reactive to the
+ * launch-count flow.
  */
 class CheckIfRateTipNeededUseCase @Inject constructor(
     private val appRateManager: AppRateManager,

@@ -6,8 +6,6 @@ import android.content.Intent
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.domain.gateway.AppRateManager
-import java.util.Calendar
-import java.util.TimeZone
 import javax.inject.Inject
 
 class AppRateManagerImpl @Inject constructor(@param:ApplicationContext private val context: Context) : AppRateManager {
@@ -34,37 +32,9 @@ class AppRateManagerImpl @Inject constructor(@param:ApplicationContext private v
         return packageManager.getPackageInfo(packageName, 0).firstInstallTime
     }
 
-    private fun getRemainingCount(currentCount: Long): Long {
-        return if (currentCount < DEFAULT_COUNT) {
-            DEFAULT_COUNT - currentCount
-        } else {
-            0
-        }
-    }
-
-    override fun needShowRateTip(
-        currentCount: Long,
-        firstInstallTime: Long,
-        canRateApp: Boolean,
-    ): Boolean {
-        val shouldShowRequest = (
-            getRemainingCount(currentCount) == 0L &&
-                Calendar.getInstance(
-                    TimeZone.getTimeZone("utc")
-                ).timeInMillis > (firstInstallTime + DEFAULT_INSTALL_TIME)
-            )
-
-        return shouldShowRequest && canRateApp
-    }
-
     @SuppressLint("QueryPermissionsNeeded")
     private fun canOpenIntent(intent: Intent): Boolean {
         return packageManager
             .queryIntentActivities(intent, 0).isNotEmpty()
-    }
-
-    companion object {
-        private const val DEFAULT_COUNT = 10
-        private const val DEFAULT_INSTALL_TIME = (3 * (1000 * 60 * 60 * 24)).toLong() // 3 days
     }
 }
