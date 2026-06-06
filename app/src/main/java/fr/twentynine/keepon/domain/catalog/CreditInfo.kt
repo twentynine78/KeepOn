@@ -1,9 +1,7 @@
 package fr.twentynine.keepon.domain.catalog
 
-import androidx.compose.runtime.Immutable
 import fr.twentynine.keepon.R
 
-@Immutable
 sealed class CreditInfo(
     val name: String,
     val author: String,

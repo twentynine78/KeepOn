@@ -1,11 +1,9 @@
 package fr.twentynine.keepon.domain.model
 
-import androidx.compose.runtime.Stable
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import kotlinx.serialization.Serializable
 
-@Stable
 @Serializable
 data class ScreenTimeout(
     val value: Int

@@ -1,8 +1,5 @@
 package fr.twentynine.keepon.domain.model
 
-import androidx.compose.runtime.Immutable
-
-@Immutable
 data class TipsConstraintState(
     val canPostNotification: Boolean = false,
     val servicesNotificationChannelIsDisabled: Boolean = true,

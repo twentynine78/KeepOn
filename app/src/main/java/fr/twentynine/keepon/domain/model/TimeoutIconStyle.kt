@@ -1,10 +1,8 @@
 package fr.twentynine.keepon.domain.model
 
-import androidx.compose.runtime.Stable
 import fr.twentynine.keepon.domain.catalog.IconFontFamily
 import kotlinx.serialization.Serializable
 
-@Stable
 @Serializable
 data class TimeoutIconStyle(
     val iconStyleFontSize: Int = 0,

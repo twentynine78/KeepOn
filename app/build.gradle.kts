@@ -61,6 +61,14 @@ kotlin {
     jvmToolchain(JavaVersion.VERSION_21.majorVersion.toInt())
 }
 
+composeCompiler {
+    // Mark the pure-Kotlin domain types as stable for the Compose compiler,
+    // keeping the domain layer free of any androidx.compose annotation.
+    stabilityConfigurationFiles.add(
+        rootProject.layout.projectDirectory.file("compose_stability.conf")
+    )
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     ksp(libs.org.jetbrains.kotlin.metadata.jvm)
