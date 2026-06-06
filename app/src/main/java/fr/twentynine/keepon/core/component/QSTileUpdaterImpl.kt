@@ -1,15 +1,12 @@
-package fr.twentynine.keepon.ui.components
+package fr.twentynine.keepon.core.component
 
 import android.content.ComponentName
 import android.content.Context
 import android.service.quicksettings.TileService
 import dagger.hilt.android.qualifiers.ApplicationContext
+import fr.twentynine.keepon.domain.gateway.QSTileUpdater
 import fr.twentynine.keepon.services.KeepOnTileService
 import javax.inject.Inject
-
-interface QSTileUpdater {
-    fun requestUpdate()
-}
 
 class QSTileUpdaterImpl @Inject constructor(@param:ApplicationContext private val context: Context) : QSTileUpdater {
 

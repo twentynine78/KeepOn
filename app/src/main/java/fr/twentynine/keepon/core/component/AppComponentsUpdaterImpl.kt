@@ -1,6 +1,8 @@
-package fr.twentynine.keepon.ui.components
+package fr.twentynine.keepon.core.component
 
 import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
+import fr.twentynine.keepon.domain.gateway.QSTileUpdater
+import fr.twentynine.keepon.domain.gateway.WidgetUpdater
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject

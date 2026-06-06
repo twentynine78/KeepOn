@@ -11,7 +11,7 @@ import fr.twentynine.keepon.ui.state.MainViewUIState
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
-import fr.twentynine.keepon.ui.components.AddTileServiceManager
+import fr.twentynine.keepon.domain.gateway.AddTileServiceManager
 import fr.twentynine.keepon.domain.gateway.AppRateManager
 import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
 import fr.twentynine.keepon.domain.usecase.app.IncrementAppLaunchCountUseCase

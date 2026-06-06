@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.components
+package fr.twentynine.keepon.ui.widget
 
 import android.content.Context
 import android.os.Build
@@ -6,16 +6,11 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.setWidgetPreviews
 import androidx.glance.appwidget.updateAll
 import dagger.hilt.android.qualifiers.ApplicationContext
+import fr.twentynine.keepon.domain.gateway.WidgetUpdater
 import fr.twentynine.keepon.receiver.KeepOnWidgetReceiver
-import fr.twentynine.keepon.ui.widget.KeepOnWidget
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-
-interface WidgetUpdater {
-    suspend fun requestUpdateWidget()
-    suspend fun requestUpdateWidgetPreview(): Boolean
-}
 
 class WidgetUpdaterImpl @Inject constructor(@param:ApplicationContext private val context: Context) : WidgetUpdater {
     override suspend fun requestUpdateWidget() {

@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.components
+package fr.twentynine.keepon.core.component
 
 import android.app.StatusBarManager
 import android.content.ComponentName
@@ -7,13 +7,10 @@ import android.graphics.drawable.Icon
 import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.domain.gateway.AddTileServiceManager
 import fr.twentynine.keepon.services.KeepOnTileService
 import java.util.concurrent.Executor
 import javax.inject.Inject
-
-interface AddTileServiceManager {
-    fun requestAddTileService(successCallback: () -> Unit, errorCallback: (Int) -> Unit = {})
-}
 
 class AddTileServiceManagerImpl @Inject constructor(@param:ApplicationContext private val context: Context) : AddTileServiceManager {
 

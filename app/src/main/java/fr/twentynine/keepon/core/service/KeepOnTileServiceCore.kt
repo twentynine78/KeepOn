@@ -25,7 +25,7 @@ import fr.twentynine.keepon.KeepOnApplication
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.model.TimeoutIconSize
-import fr.twentynine.keepon.ui.model.QSTimeoutData
+import fr.twentynine.keepon.core.model.QSTimeoutData
 import fr.twentynine.keepon.domain.model.TimeoutIconData
 import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
@@ -36,7 +36,7 @@ import fr.twentynine.keepon.core.util.BundleScrubber
 import fr.twentynine.keepon.core.util.LockableJob
 import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
-import fr.twentynine.keepon.ui.components.WidgetUpdater
+import fr.twentynine.keepon.domain.gateway.WidgetUpdater
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
