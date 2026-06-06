@@ -8,6 +8,8 @@ import fr.twentynine.keepon.domain.gateway.AppRateManager
 import fr.twentynine.keepon.core.rating.AppRateManagerImpl
 import fr.twentynine.keepon.domain.gateway.NotificationChannelManager
 import fr.twentynine.keepon.core.permission.NotificationChannelManagerImpl
+import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
+import fr.twentynine.keepon.core.permission.PermissionStateGatewayImpl
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import fr.twentynine.keepon.core.util.StringResourceProviderImpl
 import fr.twentynine.keepon.domain.gateway.MemoryCacheManager
@@ -25,6 +27,10 @@ interface AppModule {
     @Binds
     @Singleton
     fun bindNotificationChannelManager(impl: NotificationChannelManagerImpl): NotificationChannelManager
+
+    @Binds
+    @Singleton
+    fun bindPermissionStateGateway(impl: PermissionStateGatewayImpl): PermissionStateGateway
 
     @Binds
     @Singleton

@@ -7,17 +7,20 @@ import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
-import fr.twentynine.keepon.core.permission.RequiredPermissionsManager
+import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.time.delay
 import kotlinx.coroutines.withContext
 import java.time.Duration
 import javax.inject.Inject
 
-class ScreenOffReceiverServiceManagerImpl @Inject constructor(@param:ApplicationContext private val context: Context) : ScreenOffReceiverServiceManager {
+class ScreenOffReceiverServiceManagerImpl @Inject constructor(
+    @param:ApplicationContext private val context: Context,
+    private val permissionStateGateway: PermissionStateGateway,
+) : ScreenOffReceiverServiceManager {
     override suspend fun startService() {
         if (!getIsRunning()) {
-            if (RequiredPermissionsManager.isPermissionsGranted(context)) {
+            if (permissionStateGateway.areRequiredPermissionsGranted()) {
                 try {
                     ContextCompat.startForegroundService(
                         context,

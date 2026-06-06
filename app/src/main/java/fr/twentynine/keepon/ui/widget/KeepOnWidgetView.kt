@@ -13,9 +13,10 @@ import androidx.glance.LocalContext
 import androidx.glance.action.actionParametersOf
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
+import dagger.hilt.android.EntryPointAccessors
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.ui.state.WidgetUIState
-import fr.twentynine.keepon.core.permission.RequiredPermissionsManager
+import fr.twentynine.keepon.di.entrypoint.PermissionStateGatewayEntryPoint
 
 @Composable
 fun KeepOnWidgetView(
@@ -81,7 +82,13 @@ fun KeepOnWidgetView(
                     timeoutsWithDefault
                         .filter { screenTimeout -> screenTimeout != currentState.currentScreenTimeout }
                 }
-                val isSetupIncomplete = filteredSelectedScreenTimeouts.isEmpty() || !RequiredPermissionsManager.isPermissionsGranted(context)
+                val permissionStateGateway = remember(context) {
+                    EntryPointAccessors.fromApplication(
+                        context.applicationContext,
+                        PermissionStateGatewayEntryPoint::class.java,
+                    ).permissionStateGateway()
+                }
+                val isSetupIncomplete = filteredSelectedScreenTimeouts.isEmpty() || !permissionStateGateway.areRequiredPermissionsGranted()
                 val clickAction = remember(isSetupIncomplete, currentState.currentScreenTimeout) {
                     if (isSetupIncomplete) {
                         val mainActivityIntent =

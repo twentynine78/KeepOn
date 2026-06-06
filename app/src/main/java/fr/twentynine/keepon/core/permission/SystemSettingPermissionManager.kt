@@ -23,12 +23,6 @@ interface SystemSettingPermissionManager {
     fun checkWriteSystemSettingsPermission()
     fun requestWriteSystemSettingsPermission()
     fun canWriteSystemSettings(): Boolean
-
-    companion object {
-        fun canWriteSystemSettings(context: Context): Boolean {
-            return SystemSettingPermissionManagerImpl(context).canWriteSystemSettings()
-        }
-    }
 }
 
 class SystemSettingPermissionManagerImpl @Inject constructor(@param:ActivityContext private val context: Context) : SystemSettingPermissionManager {

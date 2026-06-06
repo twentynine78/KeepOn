@@ -35,7 +35,7 @@ import fr.twentynine.keepon.domain.usecase.preferences.SetQSTileAddedUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.SetNextSystemScreenTimeoutUseCase
 import fr.twentynine.keepon.core.util.BundleScrubber
 import fr.twentynine.keepon.core.util.LockableJob
-import fr.twentynine.keepon.core.permission.RequiredPermissionsManager
+import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import fr.twentynine.keepon.ui.components.WidgetUpdater
 import kotlinx.coroutines.CoroutineScope
@@ -71,6 +71,9 @@ class KeepOnTileService : TileService(), LifecycleOwner {
 
     @Inject
     lateinit var widgetUpdater: WidgetUpdater
+
+    @Inject
+    lateinit var permissionStateGateway: PermissionStateGateway
 
     private val serviceJob = SupervisorJob()
     private val applicationScope by lazy { (this.applicationContext as KeepOnApplication).applicationScope }
@@ -134,7 +137,7 @@ class KeepOnTileService : TileService(), LifecycleOwner {
             val filteredSelectedScreenTimeouts = timeoutsWithDefault
                 .filter { screenTimeout -> screenTimeout != currentTimeout }
 
-            if (filteredSelectedScreenTimeouts.isEmpty() || !RequiredPermissionsManager.isPermissionsGranted(this@KeepOnTileService)) {
+            if (filteredSelectedScreenTimeouts.isEmpty() || !permissionStateGateway.areRequiredPermissionsGranted()) {
                 withContext(Dispatchers.Main.immediate) {
                     startMainActivityAndCollapse()
                 }

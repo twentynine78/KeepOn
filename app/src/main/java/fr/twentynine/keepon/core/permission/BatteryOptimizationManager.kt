@@ -18,12 +18,6 @@ interface BatteryOptimizationManager {
     fun checkBatteryOptimizationState()
     fun requestDisableBatteryOptimization()
     fun isBatteryNotOptimized(): Boolean
-
-    companion object {
-        fun isBatteryNotOptimized(context: Context): Boolean {
-            return BatteryOptimizationManagerImpl(context).isBatteryNotOptimized()
-        }
-    }
 }
 
 class BatteryOptimizationManagerImpl @Inject constructor(
