@@ -9,7 +9,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
@@ -18,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import fr.twentynine.keepon.ui.state.TaskerEditUIState
 import fr.twentynine.keepon.ui.event.TaskerUIEvent
+import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
 import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.ui.theme.KeepOnTheme
 import fr.twentynine.keepon.ui.view.TaskerEditView
@@ -47,6 +47,9 @@ class EditActivity : ComponentActivity() {
 
     @Inject
     lateinit var screenOffReceiverServiceManager: ScreenOffReceiverServiceManager
+
+    @Inject
+    lateinit var permissionStateGateway: PermissionStateGateway
 
     private var uiState = mutableStateOf<TaskerEditUIState>(TaskerEditUIState.Loading)
 
@@ -94,12 +97,6 @@ class EditActivity : ComponentActivity() {
             return
         }
 
-        taskerEditViewModel.initViewModel(
-            systemSettingPermissionManager,
-            postNotificationPermissionManager,
-            batteryOptimizationManager,
-        )
-
         lifecycleScope.launch(Dispatchers.IO) {
             taskerEditViewModel.getUiState()
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
@@ -119,14 +116,12 @@ class EditActivity : ComponentActivity() {
             }
         }
 
-        val onEvent: (TaskerUIEvent) -> Unit = { event -> taskerEditViewModel.onEvent(event) }
-
         setContent {
             KeepOnTheme {
                 val requestPostNotificationPermissionLauncher = rememberLauncherForActivityResult(
                     ActivityResultContracts.RequestPermission()
                 ) { isGranted ->
-                    taskerEditViewModel.updatePostNotificationPermission(isGranted)
+                    permissionStateGateway.setPostNotificationGranted(isGranted)
                     if (isGranted) {
                         lifecycleScope.launch {
                             screenOffReceiverServiceManager.restartService()
@@ -134,10 +129,22 @@ class EditActivity : ComponentActivity() {
                     }
                 }
 
-                LaunchedEffect(taskerEditViewModel) {
-                    taskerEditViewModel.setManagedActivityResultLauncher(
-                        requestPostNotificationPermissionLauncher
-                    )
+                val onEvent: (TaskerUIEvent) -> Unit = { event ->
+                    when (event) {
+                        TaskerUIEvent.RequestWriteSystemSettingPermission ->
+                            systemSettingPermissionManager.requestWriteSystemSettingsPermission()
+                        TaskerUIEvent.RequestDisableBatteryOptimization ->
+                            batteryOptimizationManager.requestDisableBatteryOptimization()
+                        TaskerUIEvent.RequestPostNotification ->
+                            postNotificationPermissionManager.requestPostNotificationPermission(
+                                requestPostNotificationPermissionLauncher
+                            )
+                        TaskerUIEvent.CheckNeededPermissions -> {
+                            permissionStateGateway.refreshWriteSystemSettings()
+                            permissionStateGateway.refreshBatteryOptimization()
+                        }
+                        else -> taskerEditViewModel.onEvent(event)
+                    }
                 }
 
                 TaskerEditView(
@@ -183,20 +190,8 @@ class EditActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
 
-        checkWriteSystemSettingsPermission()
-        checkBatteryOptimizationState()
-        checkPostNotificationPermission()
-    }
-
-    private fun checkWriteSystemSettingsPermission() {
-        taskerEditViewModel.checkWriteSystemSettingsPermission()
-    }
-
-    private fun checkBatteryOptimizationState() {
-        taskerEditViewModel.checkBatteryOptimizationState()
-    }
-
-    private fun checkPostNotificationPermission() {
-        taskerEditViewModel.checkPostNotificationPermission()
+        permissionStateGateway.refreshWriteSystemSettings()
+        permissionStateGateway.refreshBatteryOptimization()
+        permissionStateGateway.refreshPostNotification()
     }
 }

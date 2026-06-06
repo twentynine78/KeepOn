@@ -8,7 +8,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
@@ -17,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
+import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
 import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.ui.theme.KeepOnTheme
 import fr.twentynine.keepon.ui.view.MainView
@@ -49,6 +49,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var screenOffReceiverServiceManager: ScreenOffReceiverServiceManager
 
+    @Inject
+    lateinit var permissionStateGateway: PermissionStateGateway
+
     private var uiState = mutableStateOf<MainViewUIState>(MainViewUIState.Loading)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,12 +73,6 @@ class MainActivity : ComponentActivity() {
             return
         }
 
-        mainViewModel.initViewModel(
-            systemSettingPermissionManager,
-            postNotificationPermissionManager,
-            batteryOptimizationManager,
-        )
-
         lifecycleScope.launch(Dispatchers.IO) {
             mainViewModel.incrementAppLaunchCount(true)
 
@@ -86,14 +83,12 @@ class MainActivity : ComponentActivity() {
                 }
         }
 
-        val onEvent: (MainUIEvent) -> Unit = { event -> mainViewModel.onEvent(event) }
-
         setContent {
             KeepOnTheme {
                 val requestPostNotificationPermissionLauncher = rememberLauncherForActivityResult(
                     ActivityResultContracts.RequestPermission()
                 ) { isGranted ->
-                    mainViewModel.updatePostNotificationPermission(isGranted)
+                    permissionStateGateway.setPostNotificationGranted(isGranted)
                     if (isGranted) {
                         lifecycleScope.launch {
                             screenOffReceiverServiceManager.restartService()
@@ -101,10 +96,22 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                LaunchedEffect(mainViewModel) {
-                    mainViewModel.setManagedActivityResultLauncher(
-                        requestPostNotificationPermissionLauncher
-                    )
+                val onEvent: (MainUIEvent) -> Unit = { event ->
+                    when (event) {
+                        MainUIEvent.RequestWriteSystemSettingPermission ->
+                            systemSettingPermissionManager.requestWriteSystemSettingsPermission()
+                        MainUIEvent.RequestDisableBatteryOptimization ->
+                            batteryOptimizationManager.requestDisableBatteryOptimization()
+                        MainUIEvent.RequestPostNotification ->
+                            postNotificationPermissionManager.requestPostNotificationPermission(
+                                requestPostNotificationPermissionLauncher
+                            )
+                        MainUIEvent.CheckNeededPermissions -> {
+                            permissionStateGateway.refreshWriteSystemSettings()
+                            permissionStateGateway.refreshBatteryOptimization()
+                        }
+                        else -> mainViewModel.onEvent(event)
+                    }
                 }
 
                 MainView(
@@ -118,23 +125,11 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
 
-        checkWriteSystemSettingsPermission()
-        checkBatteryOptimizationState()
-        checkPostNotificationPermission()
+        permissionStateGateway.refreshWriteSystemSettings()
+        permissionStateGateway.refreshBatteryOptimization()
+        permissionStateGateway.refreshPostNotification()
 
         startScreenOffReceiverServiceIfNeeded()
-    }
-
-    private fun checkWriteSystemSettingsPermission() {
-        mainViewModel.checkWriteSystemSettingsPermission()
-    }
-
-    private fun checkBatteryOptimizationState() {
-        mainViewModel.checkBatteryOptimizationState()
-    }
-
-    private fun checkPostNotificationPermission() {
-        mainViewModel.checkPostNotificationPermission()
     }
 
     private fun startScreenOffReceiverServiceIfNeeded() {

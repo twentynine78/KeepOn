@@ -10,34 +10,20 @@ import dagger.hilt.android.qualifiers.ActivityContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 
 interface SystemSettingPermissionManager {
-    val canWriteSystemSetting: Flow<Boolean>
-    fun checkWriteSystemSettingsPermission()
     fun requestWriteSystemSettingsPermission()
-    fun canWriteSystemSettings(): Boolean
 }
 
 class SystemSettingPermissionManagerImpl @Inject constructor(@param:ActivityContext private val context: Context) : SystemSettingPermissionManager {
-
-    private val _canWriteSystemSetting = MutableStateFlow(false)
-    override val canWriteSystemSetting = _canWriteSystemSetting.distinctUntilChanged { old, new -> old == new }
 
     private var checkPermissionJob: Job? = null
 
     private val waitTimeInMillis = 200L
     private val maxCheckRepeat = 300
-
-    override fun checkWriteSystemSettingsPermission() {
-        _canWriteSystemSetting.update { canWriteSystemSettings() }
-    }
 
     override fun requestWriteSystemSettingsPermission() {
         val permissionIntent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
@@ -47,10 +33,6 @@ class SystemSettingPermissionManagerImpl @Inject constructor(@param:ActivityCont
 
         context.startActivity(permissionIntent)
         checkPermission()
-    }
-
-    override fun canWriteSystemSettings(): Boolean {
-        return Settings.System.canWrite(context.applicationContext)
     }
 
     private fun checkPermission() {

@@ -4,24 +4,14 @@ import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ActivityContext
 import fr.twentynine.keepon.R
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 interface PostNotificationPermissionManager {
-    val canPostNotification: StateFlow<Boolean>
-
-    fun updatePostNotificationPermission(canPostNotification: Boolean)
-    fun checkPostNotificationPermission()
     fun requestPostNotificationPermission(
         requestPostNotificationPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
     )
@@ -50,26 +40,9 @@ class PostNotificationPermissionManagerImpl @Inject constructor(
     @param:ActivityContext private val context: Context
 ) : PostNotificationPermissionManager {
 
-    private val _canPostNotification = MutableStateFlow(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
-    override val canPostNotification = _canPostNotification.asStateFlow()
-
     init {
         // Create notification channel if needed
         PostNotificationPermissionManager.createNotificationChannel(context)
-    }
-
-    override fun updatePostNotificationPermission(canPostNotification: Boolean) {
-        _canPostNotification.update { canPostNotification }
-    }
-
-    override fun checkPostNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val permission = Manifest.permission.POST_NOTIFICATIONS
-
-            _canPostNotification.update {
-                ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
-            }
-        }
     }
 
     override fun requestPostNotificationPermission(
