@@ -8,6 +8,8 @@ import android.widget.Toast
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.catalog.ScreenTimeoutCatalog
 import fr.twentynine.keepon.domain.model.ScreenTimeout
+import fr.twentynine.keepon.core.tasker.PluginBundleManager
+import fr.twentynine.keepon.core.tasker.TaskerIntent
 import fr.twentynine.keepon.core.util.BundleScrubber
 import fr.twentynine.keepon.core.worker.SetNewScreenTimeoutWorkScheduler
 

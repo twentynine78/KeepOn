@@ -16,8 +16,8 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
 import fr.twentynine.keepon.core.receiver.ScreenOffReceiver
 import fr.twentynine.keepon.tasker.FireReceiver
-import fr.twentynine.keepon.tasker.PluginBundleManager
-import fr.twentynine.keepon.tasker.TaskerIntent
+import fr.twentynine.keepon.core.tasker.PluginBundleManager
+import fr.twentynine.keepon.core.tasker.TaskerIntent
 import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager
 import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager.Companion.NOTIFICATION_CHANNEL_SCREEN_MONITOR_ID
 

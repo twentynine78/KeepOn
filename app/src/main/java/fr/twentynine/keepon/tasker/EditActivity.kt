@@ -23,6 +23,8 @@ import fr.twentynine.keepon.ui.theme.KeepOnTheme
 import fr.twentynine.keepon.ui.view.TaskerEditView
 import fr.twentynine.keepon.ui.viewmodel.TaskerEditViewModel
 import fr.twentynine.keepon.core.permission.BatteryOptimizationManager
+import fr.twentynine.keepon.core.tasker.PluginBundleManager
+import fr.twentynine.keepon.core.tasker.TaskerIntent
 import fr.twentynine.keepon.core.util.BundleScrubber
 import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager
 import fr.twentynine.keepon.core.permission.SystemSettingPermissionManager

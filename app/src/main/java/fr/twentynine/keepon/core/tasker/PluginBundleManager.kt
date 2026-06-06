@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.tasker
+package fr.twentynine.keepon.core.tasker
 
 import android.os.Bundle
 
