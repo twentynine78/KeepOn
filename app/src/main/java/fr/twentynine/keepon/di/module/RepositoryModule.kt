@@ -10,7 +10,7 @@ import fr.twentynine.keepon.data.migration.LegacyPreferencesRepository
 import fr.twentynine.keepon.data.migration.LegacyPreferencesRepositoryImpl
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.data.repo.UserPreferencesRepositoryImpl
-import fr.twentynine.keepon.data.repository.AppPreferencesRepositoryImpl
+import fr.twentynine.keepon.data.repository.MigratingAppPreferencesRepository
 import fr.twentynine.keepon.data.repository.TimeoutPreferencesRepositoryImpl
 import fr.twentynine.keepon.data.repository.UiPreferencesRepositoryImpl
 import fr.twentynine.keepon.domain.repository.AppPreferencesRepository
@@ -36,7 +36,7 @@ interface RepositoryModule {
 
     @Binds
     @Singleton
-    fun bindAppPreferencesRepository(impl: AppPreferencesRepositoryImpl): AppPreferencesRepository
+    fun bindAppPreferencesRepository(impl: MigratingAppPreferencesRepository): AppPreferencesRepository
 
     @Binds
     @Singleton

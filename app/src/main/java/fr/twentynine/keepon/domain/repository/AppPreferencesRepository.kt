@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
  * first-launch flag). Pure data access — no business logic.
  */
 interface AppPreferencesRepository {
+    suspend fun getIsFirstLaunchFlow(): Flow<Boolean>
     suspend fun setIsFirstLaunch(isFirstLaunch: Boolean)
     suspend fun getAppLaunchCountFlow(): Flow<Long>
     suspend fun getAppLaunchCount(): Long

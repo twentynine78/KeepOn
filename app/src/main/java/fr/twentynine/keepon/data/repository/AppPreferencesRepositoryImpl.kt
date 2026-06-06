@@ -8,6 +8,7 @@ import fr.twentynine.keepon.data.local.PreferenceDataStoreHelper
 import fr.twentynine.keepon.domain.repository.AppPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -16,6 +17,17 @@ class AppPreferencesRepositoryImpl @Inject constructor(
 ) : AppPreferencesRepository {
 
     private val ioDispatcher = Dispatchers.IO
+
+    /** Pure read: defaults to true when unset. Legacy migration is applied by the decorator. */
+    override suspend fun getIsFirstLaunchFlow(): Flow<Boolean> =
+        withContext(ioDispatcher) {
+            preferenceDataStoreHelper.getPreference(
+                IS_FIRST_LAUNCH,
+                true,
+                DataStoreSourceType.DATA_SOURCE_BACKED_UP
+            )
+                .distinctUntilChanged()
+        }
 
     override suspend fun setIsFirstLaunch(isFirstLaunch: Boolean) =
         withContext(ioDispatcher) {

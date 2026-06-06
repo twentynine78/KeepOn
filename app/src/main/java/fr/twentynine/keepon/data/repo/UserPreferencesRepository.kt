@@ -6,7 +6,6 @@ import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.CURRENT_SCREEN_TIMEOUT
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.DEFAULT_SCREEN_TIMEOUT
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.DISMISSED_TIPS
-import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.IS_FIRST_LAUNCH
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.RESET_TIMEOUT_WHEN_SCREEN_OFF
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.SELECTED_SCREEN_TIMEOUT
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.TIMEOUT_ICON_STYLE
@@ -505,22 +504,8 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun removeOldSkipIntro() =
         legacyPreferencesRepository.removeOldSkipIntro()
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getIsFirstLaunchFlow(): Flow<Boolean> =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.getPreference(
-                IS_FIRST_LAUNCH,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-                .transformLatest { isFirstLaunch ->
-                    // Manage migration from the older value
-                    emit(
-                        isFirstLaunch
-                            ?: DataMigrationManager.getDefaultIsFirstLaunchOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
-                    )
-                }
-                .distinctUntilChanged()
-        }
+        appPreferencesRepository.getIsFirstLaunchFlow()
 
     override suspend fun setIsFirstLaunch(isFirstLaunch: Boolean) =
         appPreferencesRepository.setIsFirstLaunch(isFirstLaunch)
