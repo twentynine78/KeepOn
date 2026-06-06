@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util.coil
+package fr.twentynine.keepon.core.coil
 
 import android.content.Context
 import android.graphics.Bitmap

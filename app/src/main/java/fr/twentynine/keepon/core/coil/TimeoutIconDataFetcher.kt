@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util.coil
+package fr.twentynine.keepon.core.coil
 
 import coil3.ImageLoader
 import coil3.asImage

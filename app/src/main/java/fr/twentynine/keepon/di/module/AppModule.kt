@@ -11,7 +11,7 @@ import fr.twentynine.keepon.data.migration.AppVersionManagerImpl
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import fr.twentynine.keepon.util.StringResourceProviderImpl
 import fr.twentynine.keepon.domain.gateway.MemoryCacheManager
-import fr.twentynine.keepon.util.coil.MemoryCacheManagerImpl
+import fr.twentynine.keepon.core.coil.MemoryCacheManagerImpl
 import javax.inject.Singleton
 
 @Module
