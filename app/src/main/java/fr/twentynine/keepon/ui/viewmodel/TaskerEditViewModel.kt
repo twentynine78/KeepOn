@@ -91,16 +91,15 @@ class TaskerEditViewModel @Inject constructor(
 
             val specialScreenTimeoutUI = userPreferencesRepository.specialScreenTimeouts
                 .map { screenTimeout ->
-                    ScreenTimeoutToScreenTimeoutUIMapper
-                        .setStringResourceProvider(stringResourceProvider)
-                        .map(screenTimeout)
+                    ScreenTimeoutToScreenTimeoutUIMapper.map(screenTimeout, stringResourceProvider)
                 }
             val screenTimeoutUI = userPreferencesRepository.screenTimeouts
                 .map { screenTimeout ->
-                    ScreenTimeoutToScreenTimeoutUIMapper
-                        .setStringResourceProvider(stringResourceProvider)
-                        .setIsLocked(screenTimeout.value > maxAllowedScreenTimeout)
-                        .map(screenTimeout)
+                    ScreenTimeoutToScreenTimeoutUIMapper.map(
+                        screenTimeout = screenTimeout,
+                        stringResourceProvider = stringResourceProvider,
+                        isLocked = screenTimeout.value > maxAllowedScreenTimeout,
+                    )
                 }
 
             TaskerEditUIState.Success(
@@ -134,16 +133,15 @@ class TaskerEditViewModel @Inject constructor(
 
             val specialScreenTimeoutUI = userPreferencesRepository.specialScreenTimeouts
                 .map { screenTimeout ->
-                    ScreenTimeoutToScreenTimeoutUIMapper
-                        .setStringResourceProvider(stringResourceProvider)
-                        .map(screenTimeout)
+                    ScreenTimeoutToScreenTimeoutUIMapper.map(screenTimeout, stringResourceProvider)
                 }
             val screenTimeoutUI = userPreferencesRepository.screenTimeouts
                 .map { screenTimeout ->
-                    ScreenTimeoutToScreenTimeoutUIMapper
-                        .setStringResourceProvider(stringResourceProvider)
-                        .setIsLocked(screenTimeout.value > maxAllowedScreenTimeout)
-                        .map(screenTimeout)
+                    ScreenTimeoutToScreenTimeoutUIMapper.map(
+                        screenTimeout = screenTimeout,
+                        stringResourceProvider = stringResourceProvider,
+                        isLocked = screenTimeout.value > maxAllowedScreenTimeout,
+                    )
                 }
 
             val allScreenTimeoutList = screenTimeoutUI

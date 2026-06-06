@@ -138,13 +138,14 @@ class MainViewModel @Inject constructor(
                 val isCurrent = screenTimeout == currentScreenTimeout
                 val isLocked = screenTimeout.value > maxAllowedScreenTimeout
 
-                ScreenTimeoutToScreenTimeoutUIMapper
-                    .setStringResourceProvider(stringResourceProvider)
-                    .setIsSelected(isSelected)
-                    .setIsDefault(isDefault)
-                    .setIsCurrent(isCurrent)
-                    .setIsLocked(isLocked)
-                    .map(screenTimeout)
+                ScreenTimeoutToScreenTimeoutUIMapper.map(
+                    screenTimeout = screenTimeout,
+                    stringResourceProvider = stringResourceProvider,
+                    isSelected = isSelected,
+                    isDefault = isDefault,
+                    isCurrent = isCurrent,
+                    isLocked = isLocked,
+                )
             }
         }
     }
