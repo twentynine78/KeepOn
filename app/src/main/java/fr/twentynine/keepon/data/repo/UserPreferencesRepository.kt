@@ -5,10 +5,8 @@ import fr.twentynine.keepon.data.enums.DataStoreSourceType
 import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.CURRENT_SCREEN_TIMEOUT
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.DEFAULT_SCREEN_TIMEOUT
-import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.DISMISSED_TIPS
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.RESET_TIMEOUT_WHEN_SCREEN_OFF
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.SELECTED_SCREEN_TIMEOUT
-import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.TIMEOUT_ICON_STYLE
 import fr.twentynine.keepon.data.local.PreferenceDataStoreHelper
 import fr.twentynine.keepon.domain.model.DismissedTips
 import fr.twentynine.keepon.data.migration.OldTimeoutIconStyle
@@ -310,41 +308,11 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun removeOldResetTimeoutWhenScreenOff() =
         legacyPreferencesRepository.removeOldResetTimeoutWhenScreenOff()
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getTimeoutIconStyleFlow(): Flow<TimeoutIconStyle> =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.getPreference(
-                TIMEOUT_ICON_STYLE,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-                .transformLatest { timeoutIconStyleJson ->
-                    // Manage migration from the older reset screen timeout value
-                    emit(
-                        if (timeoutIconStyleJson.isNullOrEmpty()) {
-                            DataMigrationManager.getDefaultTimeoutIconStyleOrMigrateFromOld(
-                                this@UserPreferencesRepositoryImpl
-                            )
-                        } else {
-                            Json.decodeFromString<TimeoutIconStyle>(timeoutIconStyleJson)
-                        }
-                    )
-                }
-                .distinctUntilChanged()
-        }
+        uiPreferencesRepository.getTimeoutIconStyleFlow()
 
     override suspend fun getTimeoutIconStyle(): TimeoutIconStyle =
-        withContext(ioDispatcher) {
-            val timeoutIconStyleJson = preferenceDataStoreHelper.getLastPreference(
-                TIMEOUT_ICON_STYLE,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-            // Manage migration from the older icon style model
-            if (timeoutIconStyleJson.isNullOrEmpty()) {
-                DataMigrationManager.getDefaultTimeoutIconStyleOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
-            } else {
-                Json.decodeFromString<TimeoutIconStyle>(timeoutIconStyleJson)
-            }
-        }
+        uiPreferencesRepository.getTimeoutIconStyle()
 
     override suspend fun setTimeoutIconStyle(timeoutIconStyle: TimeoutIconStyle) =
         uiPreferencesRepository.setTimeoutIconStyle(timeoutIconStyle)
@@ -434,57 +402,11 @@ class UserPreferencesRepositoryImpl @Inject constructor(
             }
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getDismissedTipsFlow(): Flow<List<DismissedTips>> =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.getPreference(
-                DISMISSED_TIPS,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-                .transformLatest { dismissedTipsStr ->
-                    // Manage migration from the older value
-                    emit(
-                        if (dismissedTipsStr.isNullOrEmpty()) {
-                            DataMigrationManager.getDefaultDismissedTipsListOrMigrateFromOld(
-                                this@UserPreferencesRepositoryImpl
-                            )
-                        } else {
-                            Json.decodeFromString<List<DismissedTips>>(dismissedTipsStr)
-                        }
-                    )
-                }
-                .distinctUntilChanged()
-        }
-
-    private suspend fun getDismissedTips(): List<DismissedTips> =
-        withContext(ioDispatcher) {
-            val dismissedTipsStr = preferenceDataStoreHelper.getLastPreference(
-                DISMISSED_TIPS,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-            // Manage migration from the older value
-            if (dismissedTipsStr.isNullOrEmpty()) {
-                DataMigrationManager.getDefaultDismissedTipsListOrMigrateFromOld(this@UserPreferencesRepositoryImpl)
-            } else {
-                Json.decodeFromString<List<DismissedTips>>(dismissedTipsStr)
-            }
-        }
-
-    private suspend fun setDismissedTips(dismissedTips: List<DismissedTips>) =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.putPreference(
-                DISMISSED_TIPS,
-                Json.encodeToString<List<DismissedTips>>(dismissedTips),
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        uiPreferencesRepository.getDismissedTipsFlow()
 
     override suspend fun setDismissedTip(dismissedTips: DismissedTips) =
-        withContext(ioDispatcher) {
-            val dismissedTipList = getDismissedTips().toMutableList()
-            dismissedTipList.add(dismissedTips)
-            setDismissedTips(dismissedTipList)
-        }
+        uiPreferencesRepository.setDismissedTip(dismissedTips)
 
     override suspend fun getOldSelectedScreenTimeouts(): String =
         legacyPreferencesRepository.getOldSelectedScreenTimeouts()
