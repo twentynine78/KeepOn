@@ -15,7 +15,7 @@ import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.ui.state.WidgetUIState
-import fr.twentynine.keepon.util.permission.RequiredPermissionsManager
+import fr.twentynine.keepon.core.permission.RequiredPermissionsManager
 
 @Composable
 fun KeepOnWidgetView(

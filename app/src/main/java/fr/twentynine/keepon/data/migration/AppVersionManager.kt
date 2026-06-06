@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.domain.repository.AppPreferencesRepository
-import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
+import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager
 import fr.twentynine.keepon.core.system.DynamicShortcutManager
 import javax.inject.Inject
 

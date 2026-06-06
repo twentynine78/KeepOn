@@ -18,8 +18,8 @@ import fr.twentynine.keepon.receiver.ScreenOffReceiver
 import fr.twentynine.keepon.tasker.FireReceiver
 import fr.twentynine.keepon.tasker.PluginBundleManager
 import fr.twentynine.keepon.tasker.TaskerIntent
-import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
-import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager.Companion.NOTIFICATION_CHANNEL_SCREEN_MONITOR_ID
+import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager
+import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager.Companion.NOTIFICATION_CHANNEL_SCREEN_MONITOR_ID
 
 class ScreenOffReceiverService : LifecycleService() {
 

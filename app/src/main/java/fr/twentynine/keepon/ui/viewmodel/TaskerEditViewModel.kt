@@ -12,9 +12,9 @@ import fr.twentynine.keepon.ui.producer.BuildScreenTimeoutUiListProducer
 import fr.twentynine.keepon.ui.producer.TaskerEditStateProducer
 import fr.twentynine.keepon.domain.usecase.app.SetIsFirstLaunchUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.GetMaxAllowedScreenTimeoutUseCase
-import fr.twentynine.keepon.util.permission.BatteryOptimizationManager
-import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
-import fr.twentynine.keepon.util.permission.SystemSettingPermissionManager
+import fr.twentynine.keepon.core.permission.BatteryOptimizationManager
+import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager
+import fr.twentynine.keepon.core.permission.SystemSettingPermissionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

@@ -23,9 +23,9 @@ import fr.twentynine.keepon.domain.usecase.preferences.UpdateTimeoutIconStyleUse
 import fr.twentynine.keepon.domain.usecase.timeout.SetDefaultScreenTimeoutUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.SetNextSystemScreenTimeoutUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.ToggleScreenTimeoutSelectionUseCase
-import fr.twentynine.keepon.util.permission.BatteryOptimizationManager
-import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
-import fr.twentynine.keepon.util.permission.SystemSettingPermissionManager
+import fr.twentynine.keepon.core.permission.BatteryOptimizationManager
+import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager
+import fr.twentynine.keepon.core.permission.SystemSettingPermissionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

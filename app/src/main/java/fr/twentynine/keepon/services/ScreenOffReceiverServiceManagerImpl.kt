@@ -7,7 +7,7 @@ import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
-import fr.twentynine.keepon.util.permission.RequiredPermissionsManager
+import fr.twentynine.keepon.core.permission.RequiredPermissionsManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.time.delay
 import kotlinx.coroutines.withContext

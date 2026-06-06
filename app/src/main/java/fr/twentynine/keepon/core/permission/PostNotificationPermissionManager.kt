@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util.permission
+package fr.twentynine.keepon.core.permission
 
 import android.Manifest
 import android.app.NotificationChannel
