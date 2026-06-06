@@ -6,8 +6,16 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import fr.twentynine.keepon.data.local.PreferenceDataStoreHelper
 import fr.twentynine.keepon.data.local.PreferenceDataStoreHelperImpl
+import fr.twentynine.keepon.data.migration.LegacyPreferencesRepository
+import fr.twentynine.keepon.data.migration.LegacyPreferencesRepositoryImpl
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.data.repo.UserPreferencesRepositoryImpl
+import fr.twentynine.keepon.data.repository.AppPreferencesRepositoryImpl
+import fr.twentynine.keepon.data.repository.TimeoutPreferencesRepositoryImpl
+import fr.twentynine.keepon.data.repository.UiPreferencesRepositoryImpl
+import fr.twentynine.keepon.domain.repository.AppPreferencesRepository
+import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
+import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
 import javax.inject.Singleton
 
 @Module
@@ -21,4 +29,20 @@ interface RepositoryModule {
     @Binds
     @Singleton
     fun bindPreferenceDataStoreHelper(impl: PreferenceDataStoreHelperImpl): PreferenceDataStoreHelper
+
+    @Binds
+    @Singleton
+    fun bindLegacyPreferencesRepository(impl: LegacyPreferencesRepositoryImpl): LegacyPreferencesRepository
+
+    @Binds
+    @Singleton
+    fun bindAppPreferencesRepository(impl: AppPreferencesRepositoryImpl): AppPreferencesRepository
+
+    @Binds
+    @Singleton
+    fun bindUiPreferencesRepository(impl: UiPreferencesRepositoryImpl): UiPreferencesRepository
+
+    @Binds
+    @Singleton
+    fun bindTimeoutPreferencesRepository(impl: TimeoutPreferencesRepositoryImpl): TimeoutPreferencesRepository
 }

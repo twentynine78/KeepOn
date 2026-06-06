@@ -3,19 +3,10 @@ package fr.twentynine.keepon.data.repo
 import fr.twentynine.keepon.domain.catalog.ScreenTimeoutCatalog
 import fr.twentynine.keepon.data.enums.DataStoreSourceType
 import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
-import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.APP_LAUNCH_COUNT
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.CURRENT_SCREEN_TIMEOUT
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.DEFAULT_SCREEN_TIMEOUT
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.DISMISSED_TIPS
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.IS_FIRST_LAUNCH
-import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.LAST_RUN_VERSION_CODE
-import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.OLD_APP_REVIEW_ASKED
-import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.OLD_RESET_TIMEOUT_WHEN_SCREEN_OFF
-import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.OLD_SELECTED_SCREEN_TIMEOUT
-import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.OLD_SKIP_INTRO
-import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.OLD_TIMEOUT_ICON_STYLE
-import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.PREVIOUS_SCREEN_TIMEOUT
-import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.QSTILE_ADDED
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.RESET_TIMEOUT_WHEN_SCREEN_OFF
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.SELECTED_SCREEN_TIMEOUT
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.TIMEOUT_ICON_STYLE
@@ -26,6 +17,10 @@ import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.data.migration.DataMigrationManager
+import fr.twentynine.keepon.data.migration.LegacyPreferencesRepository
+import fr.twentynine.keepon.domain.repository.AppPreferencesRepository
+import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
+import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
 import fr.twentynine.keepon.util.timeout.DesiredScreenTimeoutController
 import fr.twentynine.keepon.domain.gateway.DevicePolicyController
 import fr.twentynine.keepon.domain.gateway.SystemScreenTimeoutController
@@ -101,6 +96,10 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     private val systemScreenTimeoutController: dagger.Lazy<SystemScreenTimeoutController>,
     private val devicePolicyManagerHelper: dagger.Lazy<DevicePolicyController>,
     private val screenOffReceiverServiceManager: dagger.Lazy<ScreenOffReceiverServiceManager>,
+    private val legacyPreferencesRepository: LegacyPreferencesRepository,
+    private val appPreferencesRepository: AppPreferencesRepository,
+    private val uiPreferencesRepository: UiPreferencesRepository,
+    private val timeoutPreferencesRepository: TimeoutPreferencesRepository,
 ) : UserPreferencesRepository {
 
     private val ioDispatcher = Dispatchers.IO
@@ -195,31 +194,11 @@ class UserPreferencesRepositoryImpl @Inject constructor(
             }
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getCurrentScreenTimeoutFlow(): Flow<ScreenTimeout> =
-        withContext(ioDispatcher) {
-            val defaultValue = systemScreenTimeoutController.get().getSystemScreenTimeout()
-            preferenceDataStoreHelper.getPreference(
-                CURRENT_SCREEN_TIMEOUT,
-                defaultValue.value,
-                DataStoreSourceType.DATA_SOURCE
-            )
-                .transformLatest { emit(ScreenTimeout(it)) }
-                .distinctUntilChanged()
-        }
+        timeoutPreferencesRepository.getCurrentScreenTimeoutFlow()
 
     override suspend fun getCurrentScreenTimeout(): ScreenTimeout =
-        withContext(ioDispatcher) {
-            val defaultValue = systemScreenTimeoutController.get().getSystemScreenTimeout()
-
-            ScreenTimeout(
-                preferenceDataStoreHelper.getLastPreference(
-                    CURRENT_SCREEN_TIMEOUT,
-                    defaultValue.value,
-                    DataStoreSourceType.DATA_SOURCE
-                )
-            )
-        }
+        timeoutPreferencesRepository.getCurrentScreenTimeout()
 
     override suspend fun setCurrentScreenTimeout(timeout: ScreenTimeout, forceUpdatePreviousTimeout: Boolean) =
         withContext(ioDispatcher) {
@@ -282,13 +261,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         }
 
     override suspend fun setSelectedScreenTimeouts(selectedTimeouts: List<ScreenTimeout>) =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.putPreference(
-                SELECTED_SCREEN_TIMEOUT,
-                Json.encodeToString(selectedTimeouts),
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        timeoutPreferencesRepository.setSelectedScreenTimeouts(selectedTimeouts)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getResetTimeoutWhenScreenOffFlow(): Flow<Boolean> =
@@ -333,20 +306,10 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         }
 
     override suspend fun getOldResetTimeoutWhenScreenOff(): Boolean? =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.getLastPreference(
-                OLD_RESET_TIMEOUT_WHEN_SCREEN_OFF,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        legacyPreferencesRepository.getOldResetTimeoutWhenScreenOff()
 
     override suspend fun removeOldResetTimeoutWhenScreenOff() =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.removePreference(
-                OLD_RESET_TIMEOUT_WHEN_SCREEN_OFF,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        legacyPreferencesRepository.removeOldResetTimeoutWhenScreenOff()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getTimeoutIconStyleFlow(): Flow<TimeoutIconStyle> =
@@ -385,88 +348,28 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         }
 
     override suspend fun setTimeoutIconStyle(timeoutIconStyle: TimeoutIconStyle) =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.putPreference(
-                TIMEOUT_ICON_STYLE,
-                Json.encodeToString(timeoutIconStyle),
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        uiPreferencesRepository.setTimeoutIconStyle(timeoutIconStyle)
 
     override suspend fun getOldTimeoutIconStyle(): OldTimeoutIconStyle? =
-        withContext(ioDispatcher) {
-            val oldValue = preferenceDataStoreHelper.getLastPreference(
-                OLD_TIMEOUT_ICON_STYLE,
-                "",
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-
-            if (oldValue.isNotEmpty()) {
-                Json.decodeFromString<OldTimeoutIconStyle>(oldValue)
-            } else {
-                null
-            }
-        }
+        legacyPreferencesRepository.getOldTimeoutIconStyle()
 
     override suspend fun removeOldTimeoutIconStyle() =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.removePreference(
-                OLD_TIMEOUT_ICON_STYLE,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        legacyPreferencesRepository.removeOldTimeoutIconStyle()
 
     override suspend fun getQSTileAddedFlow(): Flow<Boolean> =
-        withContext(ioDispatcher) {
-            val defaultValue = false
-            preferenceDataStoreHelper.getPreference(
-                QSTILE_ADDED,
-                defaultValue,
-                DataStoreSourceType.DATA_SOURCE
-            )
-        }
+        uiPreferencesRepository.getQSTileAddedFlow()
 
     override suspend fun setQSTileAdded(isAdded: Boolean) =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.putPreference(
-                QSTILE_ADDED,
-                isAdded,
-                DataStoreSourceType.DATA_SOURCE
-            )
-        }
+        uiPreferencesRepository.setQSTileAdded(isAdded)
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getPreviousScreenTimeoutFlow(): Flow<ScreenTimeout> =
-        withContext(ioDispatcher) {
-            val defaultValue = -1
-            preferenceDataStoreHelper.getPreference(
-                PREVIOUS_SCREEN_TIMEOUT,
-                defaultValue,
-                DataStoreSourceType.DATA_SOURCE
-            )
-                .transformLatest { emit(ScreenTimeout(it)) }
-                .distinctUntilChanged()
-        }
+        timeoutPreferencesRepository.getPreviousScreenTimeoutFlow()
 
-    private suspend fun getPreviousScreenTimeout(): ScreenTimeout {
-        val defaultValue = -1
-        return ScreenTimeout(
-            preferenceDataStoreHelper.getLastPreference(
-                PREVIOUS_SCREEN_TIMEOUT,
-                defaultValue,
-                DataStoreSourceType.DATA_SOURCE
-            )
-        )
-    }
+    private suspend fun getPreviousScreenTimeout(): ScreenTimeout =
+        timeoutPreferencesRepository.getPreviousScreenTimeout()
 
     private suspend fun setPreviousScreenTimeout(timeout: ScreenTimeout) =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.putPreference(
-                PREVIOUS_SCREEN_TIMEOUT,
-                timeout.value,
-                DataStoreSourceType.DATA_SOURCE
-            )
-        }
+        timeoutPreferencesRepository.setPreviousScreenTimeout(timeout)
 
     override suspend fun setNextSelectedSystemScreenTimeout(currentTimeout: ScreenTimeout?, invokeUpdateComponents: suspend () -> Unit) =
         withContext(ioDispatcher) {
@@ -585,58 +488,22 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         }
 
     override suspend fun getOldSelectedScreenTimeouts(): String =
-        withContext(ioDispatcher) {
-            val defaultValue = ""
-            preferenceDataStoreHelper.getLastPreference(
-                OLD_SELECTED_SCREEN_TIMEOUT,
-                defaultValue,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        legacyPreferencesRepository.getOldSelectedScreenTimeouts()
 
     override suspend fun removeOldSelectedScreenTimeouts() =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.removePreference(
-                OLD_SELECTED_SCREEN_TIMEOUT,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        legacyPreferencesRepository.removeOldSelectedScreenTimeouts()
 
     override suspend fun getOldAppReviewAsked(): Boolean =
-        withContext(ioDispatcher) {
-            val defaultValue = false
-            preferenceDataStoreHelper.getLastPreference(
-                OLD_APP_REVIEW_ASKED,
-                defaultValue,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        legacyPreferencesRepository.getOldAppReviewAsked()
 
     override suspend fun removeOldAppReviewAsked() =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.removePreference(
-                OLD_APP_REVIEW_ASKED,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        legacyPreferencesRepository.removeOldAppReviewAsked()
 
     override suspend fun getOldSkipIntro(): Boolean =
-        withContext(ioDispatcher) {
-            val defaultValue = false
-            preferenceDataStoreHelper.getLastPreference(
-                OLD_SKIP_INTRO,
-                defaultValue,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        legacyPreferencesRepository.getOldSkipIntro()
 
     override suspend fun removeOldSkipIntro() =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.removePreference(
-                OLD_SKIP_INTRO,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        legacyPreferencesRepository.removeOldSkipIntro()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getIsFirstLaunchFlow(): Flow<Boolean> =
@@ -656,42 +523,16 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         }
 
     override suspend fun setIsFirstLaunch(isFirstLaunch: Boolean) =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.putPreference(
-                IS_FIRST_LAUNCH,
-                isFirstLaunch,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        appPreferencesRepository.setIsFirstLaunch(isFirstLaunch)
 
     override suspend fun getAppLaunchCountFlow(): Flow<Long> =
-        withContext(ioDispatcher) {
-            val defaultValue = 0L
-            preferenceDataStoreHelper.getPreference(
-                APP_LAUNCH_COUNT,
-                defaultValue,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        appPreferencesRepository.getAppLaunchCountFlow()
 
     override suspend fun getAppLaunchCount(): Long =
-        withContext(ioDispatcher) {
-            val defaultValue = 0L
-            preferenceDataStoreHelper.getLastPreference(
-                APP_LAUNCH_COUNT,
-                defaultValue,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        appPreferencesRepository.getAppLaunchCount()
 
     override suspend fun setAppLaunchCount(appLaunchCount: Long) =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.putPreference(
-                APP_LAUNCH_COUNT,
-                appLaunchCount,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        appPreferencesRepository.setAppLaunchCount(appLaunchCount)
 
     override suspend fun resetSystemScreenTimeoutToDefault(invokeUpdateComponents: suspend () -> Unit) =
         withContext(ioDispatcher) {
@@ -730,21 +571,11 @@ class UserPreferencesRepositoryImpl @Inject constructor(
             sortedScreenTimeouts[nextIndex]
         }
 
-    override suspend fun getLastRunVersionCode(): Long {
-        return preferenceDataStoreHelper.getLastPreference(
-            LAST_RUN_VERSION_CODE,
-            0,
-            DataStoreSourceType.DATA_SOURCE
-        )
-    }
+    override suspend fun getLastRunVersionCode(): Long =
+        appPreferencesRepository.getLastRunVersionCode()
+
     override suspend fun setLastRunVersionCode(versionCode: Long) =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.putPreference(
-                LAST_RUN_VERSION_CODE,
-                versionCode,
-                DataStoreSourceType.DATA_SOURCE
-            )
-        }
+        appPreferencesRepository.setLastRunVersionCode(versionCode)
 
     override fun getMaxAllowedScreenTimeout() = devicePolicyManagerHelper.get().getMaxAllowedScreenTimeout()
 
