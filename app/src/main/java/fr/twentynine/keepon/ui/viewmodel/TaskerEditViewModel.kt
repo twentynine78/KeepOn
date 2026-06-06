@@ -4,25 +4,24 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.twentynine.keepon.domain.model.ScreenTimeout
+import fr.twentynine.keepon.domain.catalog.ScreenTimeoutCatalog
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.ui.state.TaskerEditUIState
 import fr.twentynine.keepon.ui.event.TaskerUIEvent
-import fr.twentynine.keepon.domain.model.TimeoutIconStyle
-import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.ui.producer.BuildScreenTimeoutUiListProducer
+import fr.twentynine.keepon.ui.producer.TaskerEditStateProducer
+import fr.twentynine.keepon.domain.usecase.app.SetIsFirstLaunchUseCase
+import fr.twentynine.keepon.domain.usecase.timeout.GetMaxAllowedScreenTimeoutUseCase
 import fr.twentynine.keepon.util.permission.BatteryOptimizationManager
 import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
 import fr.twentynine.keepon.util.permission.SystemSettingPermissionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -31,8 +30,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TaskerEditViewModel @Inject constructor(
-    private val userPreferencesRepository: UserPreferencesRepository,
+    private val taskerEditStateProducer: TaskerEditStateProducer,
     private val buildScreenTimeoutUiListProducer: BuildScreenTimeoutUiListProducer,
+    private val getMaxAllowedScreenTimeoutUseCase: GetMaxAllowedScreenTimeoutUseCase,
+    private val setIsFirstLaunchUseCase: SetIsFirstLaunchUseCase,
 ) : ViewModel() {
 
     private val selectedScreenTimeoutUI: MutableStateFlow<ScreenTimeoutUI?> = MutableStateFlow(null)
@@ -61,7 +62,12 @@ class TaskerEditViewModel @Inject constructor(
 
     suspend fun getUiState(): StateFlow<TaskerEditUIState> {
         return withContext(Dispatchers.IO) {
-            uiStateFlow = getCombinedFlow()
+            uiStateFlow = taskerEditStateProducer(
+                canWriteSystemSettingFlow = systemSettingPermissionManager.canWriteSystemSetting,
+                batteryIsNotOptimizedFlow = batteryOptimizationManager.batteryIsNotOptimized,
+                canPostNotificationFlow = postNotificationPermissionManager.canPostNotification,
+                selectedScreenTimeoutFlow = selectedScreenTimeoutUI,
+            )
                 .catch { error ->
                     TaskerEditUIState.Error(error.message ?: error.toString())
                 }
@@ -72,38 +78,6 @@ class TaskerEditViewModel @Inject constructor(
                 )
 
             return@withContext uiStateFlow
-        }
-    }
-
-    private suspend fun getCombinedFlow(): Flow<TaskerEditUIState.Success> {
-        return combine(
-            systemSettingPermissionManager.canWriteSystemSetting,
-            batteryOptimizationManager.batteryIsNotOptimized,
-            postNotificationPermissionManager.canPostNotification,
-            userPreferencesRepository.getDefaultScreenTimeoutFlow(),
-            userPreferencesRepository.getPreviousScreenTimeoutFlow(),
-            userPreferencesRepository.getTimeoutIconStyleFlow(),
-            selectedScreenTimeoutUI,
-        ) { arrayOfFlow ->
-
-            val specialScreenTimeoutUI = buildScreenTimeoutUiListProducer(
-                userPreferencesRepository.specialScreenTimeouts
-            )
-            val screenTimeoutUI = buildScreenTimeoutUiListProducer(
-                userPreferencesRepository.screenTimeouts
-            )
-
-            TaskerEditUIState.Success(
-                canWriteSystemSettings = arrayOfFlow[0] as Boolean,
-                batteryIsNotOptimized = arrayOfFlow[1] as Boolean,
-                canPostNotification = arrayOfFlow[2] as Boolean,
-                defaultScreenTimeout = arrayOfFlow[3] as ScreenTimeout,
-                previousScreenTimeout = arrayOfFlow[4] as ScreenTimeout,
-                timeoutIconStyle = arrayOfFlow[5] as TimeoutIconStyle,
-                specialScreenTimeouts = specialScreenTimeoutUI,
-                screenTimeouts = screenTimeoutUI,
-                selectedScreenTimeout = arrayOfFlow[6] as ScreenTimeoutUI?,
-            )
         }
     }
 
@@ -121,18 +95,16 @@ class TaskerEditViewModel @Inject constructor(
     fun setInitialSelectedScreenTimeout(screenTimeout: Int) {
         viewModelScope.launch {
             val specialScreenTimeoutUI = buildScreenTimeoutUiListProducer(
-                userPreferencesRepository.specialScreenTimeouts
+                ScreenTimeoutCatalog.specialScreenTimeouts
             )
             val screenTimeoutUI = buildScreenTimeoutUiListProducer(
-                userPreferencesRepository.screenTimeouts
+                ScreenTimeoutCatalog.screenTimeouts
             )
 
             val allScreenTimeoutList = screenTimeoutUI
                 .plus(specialScreenTimeoutUI)
             val initialScreenTimeout = allScreenTimeoutList
-                .firstOrNull { screenTimeoutUI ->
-                    screenTimeoutUI.value == screenTimeout
-                }
+                .firstOrNull { it.value == screenTimeout }
 
             initialScreenTimeout?.let { currentInitialTimeout ->
                 val timeoutToSet = if (currentInitialTimeout.isLocked) {
@@ -145,7 +117,7 @@ class TaskerEditViewModel @Inject constructor(
         }
     }
 
-    fun getMaxAllowedScreenTimeout() = userPreferencesRepository.getMaxAllowedScreenTimeout()
+    fun getMaxAllowedScreenTimeout() = getMaxAllowedScreenTimeoutUseCase()
 
     fun checkNeededPermissions() {
         viewModelScope.launch {
@@ -192,7 +164,7 @@ class TaskerEditViewModel @Inject constructor(
 
     private fun updateIsFirstLaunch() {
         viewModelScope.launch {
-            userPreferencesRepository.setIsFirstLaunch(false)
+            setIsFirstLaunchUseCase(false)
         }
     }
 }
