@@ -6,15 +6,13 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.twentynine.keepon.data.catalog.TipsInfo
 import fr.twentynine.keepon.ui.mapper.ScreenTimeoutUIToScreenTimeoutMapper
-import fr.twentynine.keepon.ui.producer.BuildScreenTimeoutUiListProducer
+import fr.twentynine.keepon.ui.producer.MainViewStateProducer
 import fr.twentynine.keepon.domain.model.DismissedTips
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
-import fr.twentynine.keepon.domain.model.TipsConstraintState
-import fr.twentynine.keepon.data.catalog.TipsCatalog
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.ui.components.AddTileServiceManager
 import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
@@ -26,15 +24,10 @@ import fr.twentynine.keepon.domain.gateway.MemoryCacheManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -43,14 +36,12 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val buildScreenTimeoutUiListProducer: BuildScreenTimeoutUiListProducer,
+    private val mainViewStateProducer: MainViewStateProducer,
     private val appRateHelper: AppRateManager,
     private val addTileServiceManager: AddTileServiceManager,
     private val memoryCacheManager: MemoryCacheManager,
     private val appComponentsUpdater: AppComponentsUpdater,
 ) : ViewModel() {
-
-    private val tipsConstraintState = MutableStateFlow(TipsConstraintState())
 
     private lateinit var uiStateFlow: StateFlow<MainViewUIState>
 
@@ -78,7 +69,11 @@ class MainViewModel @Inject constructor(
 
     suspend fun getUiState(): StateFlow<MainViewUIState> {
         return withContext(Dispatchers.IO) {
-            uiStateFlow = getCombinedFlow()
+            uiStateFlow = mainViewStateProducer(
+                canWriteSystemSettingFlow = systemSettingPermissionManager.canWriteSystemSetting,
+                batteryIsNotOptimizedFlow = batteryOptimizationManager.batteryIsNotOptimized,
+                canPostNotificationFlow = postNotificationPermissionManager.canPostNotification,
+            )
                 .catch { error ->
                     MainViewUIState.Error(error.message ?: error.toString())
                 }
@@ -89,81 +84,6 @@ class MainViewModel @Inject constructor(
                 )
 
             return@withContext uiStateFlow
-        }
-    }
-
-    private suspend fun combinedTipsList(): Flow<List<DismissedTips>> {
-        return combine(
-            userPreferencesRepository.getDismissedTipsFlow(),
-            postNotificationPermissionManager.canPostNotification,
-            batteryOptimizationManager.batteryIsNotOptimized,
-            userPreferencesRepository.getQSTileAddedFlow(),
-            userPreferencesRepository.getAppLaunchCountFlow(),
-        ) { flowArray ->
-            tipsConstraintState.update {
-                tipsConstraintState.value.copy(
-                    canPostNotification = flowArray[1] as Boolean,
-                    batteryIsNotOptimized = flowArray[2] as Boolean,
-                    tileServiceIsAdded = flowArray[3] as Boolean,
-                    showRateApp = appRateHelper.needShowRateTip(
-                        flowArray[4] as Long,
-                        appRateHelper.getFirstInstallTime(),
-                        appRateHelper.canRateApp()
-                    ),
-                )
-            }
-
-            @Suppress("UNCHECKED_CAST")
-            flowArray[0] as List<DismissedTips>
-        }
-    }
-
-    private suspend fun combinedScreenTimeoutList(): Flow<List<ScreenTimeoutUI>> {
-        return combine(
-            flowOf(userPreferencesRepository.screenTimeouts),
-            userPreferencesRepository.getSelectedScreenTimeoutFlow(),
-            userPreferencesRepository.getDefaultScreenTimeoutFlow(),
-            userPreferencesRepository.getCurrentScreenTimeoutFlow()
-        ) { allScreenTimeout, selectedScreenTimeout, defaultScreenTimeout, currentScreenTimeout ->
-            buildScreenTimeoutUiListProducer(
-                timeouts = allScreenTimeout,
-                selectedTimeouts = selectedScreenTimeout,
-                defaultTimeout = defaultScreenTimeout,
-                currentTimeout = currentScreenTimeout,
-            )
-        }
-    }
-
-    private suspend fun getCombinedFlow(): Flow<MainViewUIState.Success> {
-        return combine(
-            systemSettingPermissionManager.canWriteSystemSetting,
-            batteryOptimizationManager.batteryIsNotOptimized,
-            userPreferencesRepository.getResetTimeoutWhenScreenOffFlow(),
-            userPreferencesRepository.getCurrentScreenTimeoutFlow(),
-            userPreferencesRepository.getKeepOnIsActiveFlow(),
-            userPreferencesRepository.getIsFirstLaunchFlow(),
-            userPreferencesRepository.getTimeoutIconStyleFlow(),
-            combinedTipsList(),
-            combinedScreenTimeoutList(),
-            postNotificationPermissionManager.canPostNotification,
-        ) { arrayOfFlow ->
-            @Suppress("UNCHECKED_CAST")
-            MainViewUIState.Success(
-                canWriteSystemSettings = arrayOfFlow[0] as Boolean,
-                batteryIsNotOptimized = arrayOfFlow[1] as Boolean,
-                resetTimeoutWhenScreenOff = arrayOfFlow[2] as Boolean,
-                currentScreenTimeout = arrayOfFlow[3] as ScreenTimeout,
-                keepOnIsActive = arrayOfFlow[4] as Boolean,
-                isFirstLaunch = arrayOfFlow[5] as Boolean,
-                timeoutIconStyle = arrayOfFlow[6] as TimeoutIconStyle,
-                tipsList = TipsCatalog.tipsInfoList
-                    .filter { tipsInfo ->
-                        !(arrayOfFlow[7] as List<*>).contains(DismissedTips(tipsInfo.id)) &&
-                            tipsInfo.constraint(tipsConstraintState.value)
-                    },
-                screenTimeouts = arrayOfFlow[8] as List<ScreenTimeoutUI>,
-                canPostNotification = arrayOfFlow[9] as Boolean,
-            )
         }
     }
 
