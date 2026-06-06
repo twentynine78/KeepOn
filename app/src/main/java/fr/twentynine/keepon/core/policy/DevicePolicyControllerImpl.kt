@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util.system
+package fr.twentynine.keepon.core.policy
 
 import android.app.admin.DevicePolicyManager
 import android.content.Context

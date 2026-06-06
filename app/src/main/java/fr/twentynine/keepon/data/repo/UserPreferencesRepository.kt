@@ -15,7 +15,7 @@ import fr.twentynine.keepon.data.migration.LegacyPreferencesRepository
 import fr.twentynine.keepon.domain.repository.AppPreferencesRepository
 import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
-import fr.twentynine.keepon.util.timeout.DesiredScreenTimeoutController
+import fr.twentynine.keepon.core.system.timeout.DesiredScreenTimeoutController
 import fr.twentynine.keepon.domain.gateway.DevicePolicyController
 import fr.twentynine.keepon.domain.gateway.SystemScreenTimeoutController
 import kotlinx.coroutines.Dispatchers

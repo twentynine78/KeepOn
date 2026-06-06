@@ -5,7 +5,7 @@ import android.content.pm.PackageManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.domain.repository.AppPreferencesRepository
 import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
-import fr.twentynine.keepon.util.system.DynamicShortcutManager
+import fr.twentynine.keepon.core.system.DynamicShortcutManager
 import javax.inject.Inject
 
 interface AppVersionManager {

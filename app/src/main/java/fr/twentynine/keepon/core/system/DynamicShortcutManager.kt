@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util.system
+package fr.twentynine.keepon.core.system
 
 import android.content.Context
 

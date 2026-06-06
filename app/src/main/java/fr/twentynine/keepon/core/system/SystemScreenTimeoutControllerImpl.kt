@@ -1,8 +1,9 @@
-package fr.twentynine.keepon.util.timeout
+package fr.twentynine.keepon.core.system
 
 import android.content.Context
 import android.provider.Settings
 import dagger.hilt.android.qualifiers.ApplicationContext
+import fr.twentynine.keepon.core.system.timeout.DesiredScreenTimeoutController
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.gateway.SystemScreenTimeoutController
 import javax.inject.Inject
