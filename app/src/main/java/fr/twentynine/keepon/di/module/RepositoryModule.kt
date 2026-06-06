@@ -11,8 +11,8 @@ import fr.twentynine.keepon.data.migration.LegacyPreferencesRepositoryImpl
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.data.repo.UserPreferencesRepositoryImpl
 import fr.twentynine.keepon.data.repository.MigratingAppPreferencesRepository
+import fr.twentynine.keepon.data.repository.MigratingTimeoutPreferencesRepository
 import fr.twentynine.keepon.data.repository.MigratingUiPreferencesRepository
-import fr.twentynine.keepon.data.repository.TimeoutPreferencesRepositoryImpl
 import fr.twentynine.keepon.domain.repository.AppPreferencesRepository
 import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
@@ -44,5 +44,5 @@ interface RepositoryModule {
 
     @Binds
     @Singleton
-    fun bindTimeoutPreferencesRepository(impl: TimeoutPreferencesRepositoryImpl): TimeoutPreferencesRepository
+    fun bindTimeoutPreferencesRepository(impl: MigratingTimeoutPreferencesRepository): TimeoutPreferencesRepository
 }
