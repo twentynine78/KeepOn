@@ -51,7 +51,8 @@ import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconData
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.util.KeepOnNavigationContentPosition
-import fr.twentynine.keepon.util.StringResourceProviderImpl
+import fr.twentynine.keepon.di.entrypoint.StringResourceProviderEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 
 class KeepOnNavSuiteScope(
     val navSuiteType: NavigationSuiteType
@@ -234,7 +235,13 @@ fun NavigationRailView(
                     tween(animationDuration)
                 )
 
-                val stringResourceProvider = StringResourceProviderImpl(LocalContext.current)
+                val localContext = LocalContext.current
+                val stringResourceProvider = remember(localContext) {
+                    EntryPointAccessors.fromApplication(
+                        localContext.applicationContext,
+                        StringResourceProviderEntryPoint::class.java,
+                    ).stringResourceProvider()
+                }
                 val imageDescription = remember(currentScreenTimeout) {
                     currentScreenTimeout.getFullDisplayTimeout(stringResourceProvider)
                 }

@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util
+package fr.twentynine.keepon.core.util
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext

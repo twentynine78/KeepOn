@@ -71,7 +71,8 @@ import fr.twentynine.keepon.ui.navigation.TOP_LEVEL_DESTINATIONS
 import fr.twentynine.keepon.ui.navigation.withBadge
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.plus
-import fr.twentynine.keepon.util.StringResourceProviderImpl
+import fr.twentynine.keepon.di.entrypoint.StringResourceProviderEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 
 private fun NavigationSuiteType.toKeepOnNavType() = when (this) {
     NavigationSuiteType.NavigationBar -> KeepOnNavigationType.BOTTOM_NAVIGATION
@@ -338,7 +339,12 @@ private fun KeepOnFloatingActionButton(
     onClick: () -> Unit,
 ) {
     val context = LocalContext.current
-    val stringResourceProvider = remember { StringResourceProviderImpl(context) }
+    val stringResourceProvider = remember(context) {
+        EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            StringResourceProviderEntryPoint::class.java,
+        ).stringResourceProvider()
+    }
     val imageDescription by remember(uiState.currentScreenTimeout, stringResourceProvider) {
         derivedStateOf {
             uiState.currentScreenTimeout.getFullDisplayTimeout(stringResourceProvider)
