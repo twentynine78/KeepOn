@@ -22,7 +22,7 @@ import fr.twentynine.keepon.ui.theme.KeepOnTheme
 import fr.twentynine.keepon.ui.view.MainView
 import fr.twentynine.keepon.ui.viewmodel.MainViewModel
 import fr.twentynine.keepon.util.permission.BatteryOptimizationManager
-import fr.twentynine.keepon.util.BundleScrubber
+import fr.twentynine.keepon.core.util.BundleScrubber
 import fr.twentynine.keepon.util.permission.PostNotificationPermissionManager
 import fr.twentynine.keepon.util.permission.SystemSettingPermissionManager
 import kotlinx.coroutines.Dispatchers

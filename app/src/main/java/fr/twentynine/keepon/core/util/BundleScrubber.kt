@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util
+package fr.twentynine.keepon.core.util
 
 import android.content.Intent
 import android.os.Bundle

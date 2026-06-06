@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util
+package fr.twentynine.keepon.core.util
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
