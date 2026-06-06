@@ -6,19 +6,24 @@ import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
 import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
-import fr.twentynine.keepon.data.repo.UserPreferencesRepository
+import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
+import fr.twentynine.keepon.domain.usecase.app.GetKeepOnStatusUseCase
 import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
 import fr.twentynine.keepon.core.util.goAsync
 import fr.twentynine.keepon.core.worker.SetNewScreenTimeoutWorkScheduler
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class RebootAppReceiver : BroadcastReceiver() {
 
     @Inject
-    lateinit var userPreferencesRepository: UserPreferencesRepository
+    lateinit var timeoutPreferencesRepository: TimeoutPreferencesRepository
+
+    @Inject
+    lateinit var getKeepOnStatusUseCase: GetKeepOnStatusUseCase
 
     @Inject
     lateinit var appComponentsUpdater: AppComponentsUpdater
@@ -38,9 +43,9 @@ class RebootAppReceiver : BroadcastReceiver() {
             Intent.ACTION_BOOT_COMPLETED -> {
                 goAsync(Dispatchers.Default) {
                     // Reset the timeout to default at boot
-                    if (userPreferencesRepository.getResetTimeoutWhenScreenOff()) {
-                        val currentScreenTimeout = userPreferencesRepository.getCurrentScreenTimeout()
-                        val defaultScreenTimeout = userPreferencesRepository.getDefaultScreenTimeout()
+                    if (timeoutPreferencesRepository.getResetTimeoutWhenScreenOff()) {
+                        val currentScreenTimeout = timeoutPreferencesRepository.getCurrentScreenTimeout()
+                        val defaultScreenTimeout = timeoutPreferencesRepository.getDefaultScreenTimeout()
 
                         if (currentScreenTimeout != defaultScreenTimeout) {
                             SetNewScreenTimeoutWorkScheduler().scheduleWork(
@@ -54,8 +59,8 @@ class RebootAppReceiver : BroadcastReceiver() {
             }
             Intent.ACTION_MY_PACKAGE_REPLACED -> {
                 goAsync(Dispatchers.Default) {
-                    val keepOnIsActive = userPreferencesRepository.getKeepOnIsActive()
-                    val resetWhenScreenOff = userPreferencesRepository.getResetTimeoutWhenScreenOff()
+                    val keepOnIsActive = getKeepOnStatusUseCase().firstOrNull() ?: false
+                    val resetWhenScreenOff = timeoutPreferencesRepository.getResetTimeoutWhenScreenOff()
 
                     if (keepOnIsActive && resetWhenScreenOff) {
                         screenOffReceiverServiceManager.startService()
