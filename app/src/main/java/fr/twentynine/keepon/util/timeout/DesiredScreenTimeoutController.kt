@@ -1,6 +1,6 @@
 package fr.twentynine.keepon.util.timeout
 
-import fr.twentynine.keepon.data.model.ScreenTimeout
+import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.util.extensions.removeUntil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

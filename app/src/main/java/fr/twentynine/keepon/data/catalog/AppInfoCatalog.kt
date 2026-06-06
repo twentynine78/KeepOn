@@ -1,7 +1,7 @@
 package fr.twentynine.keepon.data.catalog
 
 import android.content.Context
-import fr.twentynine.keepon.data.model.AppInfo
+import fr.twentynine.keepon.domain.model.AppInfo
 
 object AppInfoCatalog {
 

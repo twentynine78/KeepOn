@@ -3,7 +3,7 @@ package fr.twentynine.keepon.ui.widget
 import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.glance.GlanceTheme
-import fr.twentynine.keepon.data.model.WidgetUIState
+import fr.twentynine.keepon.ui.state.WidgetUIState
 
 @Composable
 fun KeepOnWidgetTheme(

@@ -6,9 +6,9 @@ import coil3.imageLoader
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.toBitmap
-import fr.twentynine.keepon.data.enums.TimeoutIconSize
-import fr.twentynine.keepon.data.model.TimeoutIconData
-import fr.twentynine.keepon.data.model.WidgetUIState
+import fr.twentynine.keepon.domain.model.TimeoutIconSize
+import fr.twentynine.keepon.domain.model.TimeoutIconData
+import fr.twentynine.keepon.ui.state.WidgetUIState
 
 suspend fun WidgetUIState.getContentBitmap(
     context: Context,

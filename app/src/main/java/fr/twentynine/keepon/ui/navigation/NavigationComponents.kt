@@ -46,10 +46,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import coil3.compose.AsyncImage
-import fr.twentynine.keepon.data.enums.TimeoutIconSize
-import fr.twentynine.keepon.data.model.ScreenTimeout
-import fr.twentynine.keepon.data.model.TimeoutIconData
-import fr.twentynine.keepon.data.model.TimeoutIconStyle
+import fr.twentynine.keepon.domain.model.TimeoutIconSize
+import fr.twentynine.keepon.domain.model.ScreenTimeout
+import fr.twentynine.keepon.domain.model.TimeoutIconData
+import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.util.KeepOnNavigationContentPosition
 import fr.twentynine.keepon.util.StringResourceProviderImpl
 

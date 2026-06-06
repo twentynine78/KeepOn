@@ -3,7 +3,7 @@ package fr.twentynine.keepon.util.system
 import android.app.admin.DevicePolicyManager
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
-import fr.twentynine.keepon.data.model.ScreenTimeout
+import fr.twentynine.keepon.domain.model.ScreenTimeout
 import javax.inject.Inject
 
 interface DevicePolicyController {

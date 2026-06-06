@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import fr.twentynine.keepon.data.enums.ItemPosition
+import fr.twentynine.keepon.ui.model.ItemPosition
 
 val defaultRoundedCornerSize = 24.dp
 val defaultBorderWidth = 1.dp

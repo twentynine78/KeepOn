@@ -1,8 +1,8 @@
 package fr.twentynine.keepon.data.repo
 
-import fr.twentynine.keepon.data.catalog.ScreenTimeoutCatalog
+import fr.twentynine.keepon.domain.catalog.ScreenTimeoutCatalog
 import fr.twentynine.keepon.data.enums.DataStoreSourceType
-import fr.twentynine.keepon.data.enums.SpecialScreenTimeoutType
+import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.APP_LAUNCH_COUNT
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.CURRENT_SCREEN_TIMEOUT
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.DEFAULT_SCREEN_TIMEOUT
@@ -20,10 +20,10 @@ import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.RESET_TIMEOU
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.SELECTED_SCREEN_TIMEOUT
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.TIMEOUT_ICON_STYLE
 import fr.twentynine.keepon.data.local.PreferenceDataStoreHelper
-import fr.twentynine.keepon.data.model.DismissedTips
+import fr.twentynine.keepon.domain.model.DismissedTips
 import fr.twentynine.keepon.data.migration.OldTimeoutIconStyle
-import fr.twentynine.keepon.data.model.ScreenTimeout
-import fr.twentynine.keepon.data.model.TimeoutIconStyle
+import fr.twentynine.keepon.domain.model.ScreenTimeout
+import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.data.migration.DataMigrationManager
 import fr.twentynine.keepon.util.timeout.DesiredScreenTimeoutController

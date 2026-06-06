@@ -39,12 +39,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.data.enums.CreditInfoType
-import fr.twentynine.keepon.data.enums.ItemPosition
-import fr.twentynine.keepon.data.catalog.CreditInfo
-import fr.twentynine.keepon.data.model.AppInfo
+import fr.twentynine.keepon.domain.catalog.CreditInfoType
+import fr.twentynine.keepon.ui.model.ItemPosition
+import fr.twentynine.keepon.domain.catalog.CreditInfo
+import fr.twentynine.keepon.domain.model.AppInfo
 import fr.twentynine.keepon.data.catalog.AppInfoCatalog
-import fr.twentynine.keepon.data.catalog.CreditCatalog
+import fr.twentynine.keepon.domain.catalog.CreditCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
 

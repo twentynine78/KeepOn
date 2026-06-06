@@ -7,7 +7,7 @@ import android.content.Intent
 import android.widget.Toast
 import dagger.hilt.android.AndroidEntryPoint
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.data.model.ScreenTimeout
+import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.util.BundleScrubber
 import fr.twentynine.keepon.worker.SetNewScreenTimeoutWorkScheduler

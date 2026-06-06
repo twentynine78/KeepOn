@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.data.enums.SpecialScreenTimeoutType
+import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
 import fr.twentynine.keepon.receiver.ScreenOffReceiver
 import fr.twentynine.keepon.tasker.FireReceiver
 import fr.twentynine.keepon.tasker.PluginBundleManager

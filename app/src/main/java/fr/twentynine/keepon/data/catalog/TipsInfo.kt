@@ -9,7 +9,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.vector.ImageVector
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.data.enums.TipsAction
-import fr.twentynine.keepon.data.model.TipsConstraintState
+import fr.twentynine.keepon.domain.model.TipsConstraintState
 
 @Immutable
 sealed class TipsInfo(

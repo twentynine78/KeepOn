@@ -8,7 +8,7 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.data.model.ScreenTimeout
+import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.ui.components.AppComponentsUpdater
 import fr.twentynine.keepon.util.permission.RequiredPermissionsManager

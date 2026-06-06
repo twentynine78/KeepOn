@@ -4,8 +4,8 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import fr.twentynine.keepon.data.enums.ItemPosition
-import fr.twentynine.keepon.data.model.ScreenTimeoutUI
+import fr.twentynine.keepon.ui.model.ItemPosition
+import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 
 private const val SCREEN_TIMEOUT_CARD_SWIPE_THRESHOLD = 0.30f
 

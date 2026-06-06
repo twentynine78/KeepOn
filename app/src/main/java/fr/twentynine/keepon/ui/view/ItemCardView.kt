@@ -2,7 +2,7 @@ package fr.twentynine.keepon.ui.view
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import fr.twentynine.keepon.data.enums.ItemPosition
+import fr.twentynine.keepon.ui.model.ItemPosition
 
 @Composable
 fun ItemCardView(

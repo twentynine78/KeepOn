@@ -13,7 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.data.model.ScreenTimeoutUI
+import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 
 private const val CONTENT_COLOR_ANIMATION_DURATION_MS = 200
 private const val BACKGROUND_COLOR_ANIMATION_DURATION_MS = 400

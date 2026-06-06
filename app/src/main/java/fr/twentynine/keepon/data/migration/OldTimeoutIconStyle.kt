@@ -1,8 +1,8 @@
 package fr.twentynine.keepon.data.migration
 
 import androidx.compose.runtime.Stable
-import fr.twentynine.keepon.data.catalog.IconFontFamily
-import fr.twentynine.keepon.data.model.TimeoutIconStyle
+import fr.twentynine.keepon.domain.catalog.IconFontFamily
+import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import kotlinx.serialization.Serializable
 
 @Stable

@@ -58,11 +58,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.data.enums.TimeoutIconSize
+import fr.twentynine.keepon.domain.model.TimeoutIconSize
 import fr.twentynine.keepon.data.catalog.TipsInfo
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
-import fr.twentynine.keepon.data.model.TimeoutIconData
+import fr.twentynine.keepon.domain.model.TimeoutIconData
 import fr.twentynine.keepon.ui.navigation.KeepOnNavigationWrapper
 import fr.twentynine.keepon.ui.navigation.NavigationActions
 import fr.twentynine.keepon.ui.navigation.NavigationDestination

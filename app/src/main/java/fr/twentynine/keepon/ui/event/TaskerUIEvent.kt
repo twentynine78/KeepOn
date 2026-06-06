@@ -1,6 +1,6 @@
 package fr.twentynine.keepon.ui.event
 
-import fr.twentynine.keepon.data.model.ScreenTimeoutUI
+import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 
 sealed interface TaskerUIEvent {
     data object RequestWriteSystemSettingPermission : TaskerUIEvent

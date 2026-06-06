@@ -5,7 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
-import fr.twentynine.keepon.data.enums.SpecialScreenTimeoutType
+import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.ui.components.AppComponentsUpdater

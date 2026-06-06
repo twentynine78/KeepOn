@@ -46,12 +46,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.data.enums.ItemPosition
-import fr.twentynine.keepon.data.catalog.IconFontFamily
+import fr.twentynine.keepon.ui.model.ItemPosition
+import fr.twentynine.keepon.domain.catalog.IconFontFamily
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
-import fr.twentynine.keepon.data.model.TimeoutIconStyle
-import fr.twentynine.keepon.data.catalog.IconFontFamilyCatalog
+import fr.twentynine.keepon.domain.model.TimeoutIconStyle
+import fr.twentynine.keepon.domain.catalog.IconFontFamilyCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
 import kotlin.math.ceil

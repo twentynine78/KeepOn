@@ -17,7 +17,7 @@ import androidx.glance.layout.padding
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import fr.twentynine.keepon.MainActivity
-import fr.twentynine.keepon.data.model.WidgetUIState
+import fr.twentynine.keepon.ui.state.WidgetUIState
 
 @Composable
 fun KeepOnWidgetError(

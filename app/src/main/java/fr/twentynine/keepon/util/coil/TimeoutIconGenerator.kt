@@ -7,11 +7,11 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.text.TextPaint
 import androidx.core.graphics.createBitmap
-import fr.twentynine.keepon.data.enums.TimeoutIconSize
-import fr.twentynine.keepon.data.catalog.IconFontFamily
-import fr.twentynine.keepon.data.model.TimeoutIconData
-import fr.twentynine.keepon.data.catalog.IconFontFamilyCatalog
-import fr.twentynine.keepon.util.StringResourceProvider
+import fr.twentynine.keepon.domain.model.TimeoutIconSize
+import fr.twentynine.keepon.domain.catalog.IconFontFamily
+import fr.twentynine.keepon.domain.model.TimeoutIconData
+import fr.twentynine.keepon.domain.catalog.IconFontFamilyCatalog
+import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import fr.twentynine.keepon.util.extensions.px
 
 class TimeoutIconGenerator {

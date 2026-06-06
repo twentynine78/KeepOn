@@ -1,9 +1,9 @@
 package fr.twentynine.keepon.data.migration
 
 import fr.twentynine.keepon.data.catalog.TipsInfo
-import fr.twentynine.keepon.data.model.DismissedTips
-import fr.twentynine.keepon.data.model.ScreenTimeout
-import fr.twentynine.keepon.data.model.TimeoutIconStyle
+import fr.twentynine.keepon.domain.model.DismissedTips
+import fr.twentynine.keepon.domain.model.ScreenTimeout
+import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

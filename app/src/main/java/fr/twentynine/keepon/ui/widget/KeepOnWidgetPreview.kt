@@ -7,7 +7,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.glance.ColorFilter
 import androidx.glance.LocalContext
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.data.model.WidgetUIState
+import fr.twentynine.keepon.ui.state.WidgetUIState
 
 @Composable
 fun KeepOnWidgetPreview(

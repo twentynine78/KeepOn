@@ -1,9 +1,9 @@
 package fr.twentynine.keepon.ui.state
 
 import androidx.compose.runtime.Immutable
-import fr.twentynine.keepon.data.model.ScreenTimeout
-import fr.twentynine.keepon.data.model.ScreenTimeoutUI
-import fr.twentynine.keepon.data.model.TimeoutIconStyle
+import fr.twentynine.keepon.domain.model.ScreenTimeout
+import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
+import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 
 sealed interface TaskerEditUIState {
     data object Loading : TaskerEditUIState
