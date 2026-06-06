@@ -9,7 +9,7 @@ import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
-import fr.twentynine.keepon.util.extensions.goAsync
+import fr.twentynine.keepon.core.util.goAsync
 import fr.twentynine.keepon.core.worker.SetNewScreenTimeoutWorkScheduler
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject

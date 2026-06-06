@@ -12,7 +12,7 @@ import fr.twentynine.keepon.domain.catalog.IconFontFamily
 import fr.twentynine.keepon.domain.model.TimeoutIconData
 import fr.twentynine.keepon.domain.catalog.IconFontFamilyCatalog
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
-import fr.twentynine.keepon.util.extensions.px
+import fr.twentynine.keepon.core.util.px
 
 class TimeoutIconGenerator {
 

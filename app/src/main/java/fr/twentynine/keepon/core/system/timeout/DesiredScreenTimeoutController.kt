@@ -2,7 +2,7 @@ package fr.twentynine.keepon.core.system.timeout
 
 import fr.twentynine.keepon.domain.gateway.SystemScreenTimeoutController
 import fr.twentynine.keepon.domain.model.ScreenTimeout
-import fr.twentynine.keepon.util.extensions.removeUntil
+import fr.twentynine.keepon.core.util.removeUntil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

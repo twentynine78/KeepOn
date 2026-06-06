@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util.extensions
+package fr.twentynine.keepon.core.util
 
 import java.util.UUID
 

@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.util.extensions
+package fr.twentynine.keepon.core.util
 
 fun <T> MutableList<T>.removeUntil(target: T) {
     synchronized(this) {

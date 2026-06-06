@@ -7,7 +7,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
-import fr.twentynine.keepon.util.extensions.uuid
+import fr.twentynine.keepon.core.util.uuid
 import java.time.Duration
 
 object MonitorSystemScreenTimeoutWorkScheduler {
