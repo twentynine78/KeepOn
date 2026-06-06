@@ -16,4 +16,11 @@ interface SystemScreenTimeoutController {
      * system has applied the value (or a short timeout elapses).
      */
     suspend fun applyDesiredScreenTimeout(timeout: ScreenTimeout)
+
+    /**
+     * Returns and consumes the pending app-initiated desired timeout that matches
+     * [currentTimeout] (the anti-collision signal), or null when the change did not
+     * originate from the app (i.e. the user changed it from the system settings).
+     */
+    fun consumeDesiredScreenTimeout(currentTimeout: ScreenTimeout): ScreenTimeout?
 }

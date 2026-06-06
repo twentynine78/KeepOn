@@ -38,6 +38,10 @@ class SystemScreenTimeoutControllerImpl @Inject constructor(@param:ApplicationCo
         DesiredScreenTimeoutController.setDesiredScreenTimeout(timeout, this)
     }
 
+    override fun consumeDesiredScreenTimeout(currentTimeout: ScreenTimeout): ScreenTimeout? {
+        return DesiredScreenTimeoutController.getDesiredScreenTimeout(currentTimeout)
+    }
+
     companion object {
         private const val DEFAULT_SCREEN_TIMEOUT = 60000
     }
