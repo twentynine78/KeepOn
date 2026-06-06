@@ -47,7 +47,7 @@
         </service>
 
         <receiver
-            android:name=".receiver.ScreenOffReceiver"
+            android:name=".core.receiver.ScreenOffReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.SCREEN_OFF"/>
@@ -69,7 +69,7 @@
         </service>
 
         <receiver
-            android:name=".receiver.RebootAppReceiver"
+            android:name=".core.receiver.RebootAppReceiver"
             android:exported="false">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.receiver
+package fr.twentynine.keepon.core.receiver
 
 import android.content.BroadcastReceiver
 import android.content.Context
