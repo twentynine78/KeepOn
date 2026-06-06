@@ -4,8 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
-import fr.twentynine.keepon.data.repo.UserPreferencesRepository
-import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
+import fr.twentynine.keepon.domain.usecase.timeout.ResetSystemScreenTimeoutUseCase
 import fr.twentynine.keepon.util.extensions.goAsync
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
@@ -14,15 +13,12 @@ import javax.inject.Inject
 class ScreenOffReceiver : BroadcastReceiver() {
 
     @Inject
-    lateinit var userPreferencesRepository: UserPreferencesRepository
-
-    @Inject
-    lateinit var appComponentsUpdater: AppComponentsUpdater
+    lateinit var resetSystemScreenTimeoutUseCase: ResetSystemScreenTimeoutUseCase
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_SCREEN_OFF) {
             goAsync(Dispatchers.Default) {
-                userPreferencesRepository.resetSystemScreenTimeoutToDefault { appComponentsUpdater.requestUpdate() }
+                resetSystemScreenTimeoutUseCase()
             }
         }
     }

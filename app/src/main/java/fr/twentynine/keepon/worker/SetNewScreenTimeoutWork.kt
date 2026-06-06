@@ -9,8 +9,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.model.ScreenTimeout
-import fr.twentynine.keepon.data.repo.UserPreferencesRepository
-import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
+import fr.twentynine.keepon.domain.usecase.timeout.UpdateSystemScreenTimeoutUseCase
 import fr.twentynine.keepon.util.permission.RequiredPermissionsManager
 import fr.twentynine.keepon.worker.SetNewScreenTimeoutWorkScheduler.Companion.NEW_SCREEN_TIMEOUT_DATA_KEY
 import fr.twentynine.keepon.worker.SetNewScreenTimeoutWorkScheduler.Companion.UPDATE_PREVIOUS_TIMEOUT_DATA_KEY
@@ -21,8 +20,7 @@ import kotlinx.coroutines.withContext
 class SetNewScreenTimeoutWork @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    private val userPreferencesRepository: UserPreferencesRepository,
-    private val appComponentsUpdater: AppComponentsUpdater,
+    private val updateSystemScreenTimeoutUseCase: UpdateSystemScreenTimeoutUseCase,
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -32,12 +30,10 @@ class SetNewScreenTimeoutWork @AssistedInject constructor(
                 val updatePreviousTimeout = inputData.getBoolean(UPDATE_PREVIOUS_TIMEOUT_DATA_KEY, false)
 
                 if (newScreenTimeout != -1) {
-                    userPreferencesRepository.setNewSystemScreenTimeout(
+                    updateSystemScreenTimeoutUseCase(
                         ScreenTimeout(newScreenTimeout),
                         updatePreviousTimeout
-                    ) {
-                        appComponentsUpdater.requestUpdate()
-                    }
+                    )
                 }
             } else {
                 withContext(Dispatchers.Main) {

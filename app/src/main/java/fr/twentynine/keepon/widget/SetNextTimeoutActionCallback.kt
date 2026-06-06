@@ -21,16 +21,13 @@ class SetNextTimeoutActionCallback : ActionCallback {
             appContext,
             SetNextTimeoutActionCallbackEntryPoint::class.java,
         )
-        val userPreferencesRepository = hiltEntryPoint.userPreferencesRepository()
-        val appComponentsUpdater = hiltEntryPoint.appComponentsUpdater()
+        val setNextSystemScreenTimeoutUseCase = hiltEntryPoint.setNextSystemScreenTimeoutUseCase()
 
         val currentTimeoutValue: Int = parameters[currentTimeoutParameterKey] ?: return
         val currentTimeout = ScreenTimeout(currentTimeoutValue)
 
         withContext(Dispatchers.IO) {
-            userPreferencesRepository.setNextSelectedSystemScreenTimeout(currentTimeout) {
-                appComponentsUpdater.requestUpdate()
-            }
+            setNextSystemScreenTimeoutUseCase(currentTimeout)
         }
     }
 

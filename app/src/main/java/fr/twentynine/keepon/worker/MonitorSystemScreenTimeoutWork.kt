@@ -7,12 +7,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import fr.twentynine.keepon.domain.model.ScreenTimeout
-import fr.twentynine.keepon.data.repo.UserPreferencesRepository
-import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
-import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
-import fr.twentynine.keepon.util.timeout.DesiredScreenTimeoutController
-import fr.twentynine.keepon.domain.gateway.SystemScreenTimeoutController
+import fr.twentynine.keepon.domain.usecase.timeout.SynchronizeSystemTimeoutUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -20,10 +15,7 @@ import kotlinx.coroutines.withContext
 class MonitorSystemScreenTimeoutWork @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted private val workerParams: WorkerParameters,
-    private val userPreferencesRepository: UserPreferencesRepository,
-    private val systemScreenTimeoutController: SystemScreenTimeoutController,
-    private val appComponentsUpdater: AppComponentsUpdater,
-    private val screenOffReceiverServiceManager: ScreenOffReceiverServiceManager,
+    private val synchronizeSystemTimeoutUseCase: SynchronizeSystemTimeoutUseCase,
 ) : CoroutineWorker(appContext, workerParams) {
 
     private val workManager = WorkManager.getInstance(appContext)
@@ -31,15 +23,7 @@ class MonitorSystemScreenTimeoutWork @AssistedInject constructor(
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {
             return@withContext try {
-                // Get desired screen timeout
-                val currentScreenTimeout = systemScreenTimeoutController.getSystemScreenTimeout()
-                val desiredScreenTimeout = DesiredScreenTimeoutController.getDesiredScreenTimeout(currentScreenTimeout)
-
-                // Update current screen timeout with new data
-                updateCurrentSystemScreenTimeout(currentScreenTimeout, desiredScreenTimeout)
-
-                // Update app components
-                appComponentsUpdater.requestUpdate()
+                synchronizeSystemTimeoutUseCase()
 
                 // Re-schedule the worker
                 MonitorSystemScreenTimeoutWorkScheduler.scheduleWork(
@@ -52,28 +36,5 @@ class MonitorSystemScreenTimeoutWork @AssistedInject constructor(
                 Result.failure()
             }
         }
-    }
-
-    private suspend fun updateCurrentSystemScreenTimeout(
-        currentScreenTimeout: ScreenTimeout,
-        desiredScreenTimeout: ScreenTimeout?,
-    ) {
-        // Check if the new timeout is initiated by the app with the desiredScreenTimeout value
-        if (desiredScreenTimeout == currentScreenTimeout) {
-            val startScreenOffReceiverService = currentScreenTimeout != userPreferencesRepository.getDefaultScreenTimeout() &&
-                userPreferencesRepository.getResetTimeoutWhenScreenOff()
-
-            if (startScreenOffReceiverService) {
-                screenOffReceiverServiceManager.startService()
-            } else {
-                screenOffReceiverServiceManager.stopService()
-            }
-        } else {
-            userPreferencesRepository.setDefaultScreenTimeout(currentScreenTimeout)
-
-            screenOffReceiverServiceManager.stopService()
-        }
-
-        userPreferencesRepository.setCurrentScreenTimeout(currentScreenTimeout)
     }
 }
