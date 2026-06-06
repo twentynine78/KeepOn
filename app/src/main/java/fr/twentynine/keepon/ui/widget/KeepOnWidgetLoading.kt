@@ -12,7 +12,7 @@ import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
-import fr.twentynine.keepon.widget.KeepOnWidget.Companion.SMALL_SQUARE
+import fr.twentynine.keepon.ui.widget.KeepOnWidget.Companion.SMALL_SQUARE
 
 @Composable
 fun KeepOnWidgetLoading(

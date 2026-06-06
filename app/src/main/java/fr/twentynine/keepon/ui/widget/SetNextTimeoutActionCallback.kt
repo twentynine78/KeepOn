@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.widget
+package fr.twentynine.keepon.ui.widget
 
 import android.content.Context
 import androidx.glance.GlanceId

@@ -21,7 +21,7 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.unit.ColorProvider
-import fr.twentynine.keepon.widget.KeepOnWidget.Companion.SMALL_SQUARE
+import fr.twentynine.keepon.ui.widget.KeepOnWidget.Companion.SMALL_SQUARE
 
 @Composable
 fun KeepOnWidgetContent(

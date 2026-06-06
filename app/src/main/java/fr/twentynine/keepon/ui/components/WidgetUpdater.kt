@@ -7,7 +7,7 @@ import androidx.glance.appwidget.setWidgetPreviews
 import androidx.glance.appwidget.updateAll
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.receiver.KeepOnWidgetReceiver
-import fr.twentynine.keepon.widget.KeepOnWidget
+import fr.twentynine.keepon.ui.widget.KeepOnWidget
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

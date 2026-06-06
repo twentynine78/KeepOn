@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.widget
+package fr.twentynine.keepon.ui.widget
 
 import android.content.Context
 import androidx.compose.runtime.collectAsState
@@ -13,8 +13,6 @@ import androidx.glance.appwidget.provideContent
 import dagger.hilt.android.EntryPointAccessors
 import fr.twentynine.keepon.di.entrypoint.WidgetEntryPoint
 import fr.twentynine.keepon.ui.state.WidgetUIState
-import fr.twentynine.keepon.ui.widget.KeepOnWidgetPreview
-import fr.twentynine.keepon.ui.widget.KeepOnWidgetView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
