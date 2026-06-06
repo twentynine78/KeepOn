@@ -12,6 +12,8 @@ import fr.twentynine.keepon.domain.gateway.SystemScreenTimeoutController
 import fr.twentynine.keepon.core.system.SystemScreenTimeoutControllerImpl
 import fr.twentynine.keepon.domain.gateway.AppVersionProvider
 import fr.twentynine.keepon.core.system.AppVersionProviderImpl
+import fr.twentynine.keepon.domain.gateway.AppInfoProvider
+import fr.twentynine.keepon.core.system.AppInfoProviderImpl
 import fr.twentynine.keepon.domain.gateway.DynamicShortcutManager
 import fr.twentynine.keepon.core.system.DynamicShortcutManagerImpl
 import javax.inject.Singleton
@@ -39,4 +41,8 @@ interface SystemModule {
     @Binds
     @Singleton
     fun bindDynamicShortcutManager(impl: DynamicShortcutManagerImpl): DynamicShortcutManager
+
+    @Binds
+    @Singleton
+    fun bindAppInfoProvider(impl: AppInfoProviderImpl): AppInfoProvider
 }
