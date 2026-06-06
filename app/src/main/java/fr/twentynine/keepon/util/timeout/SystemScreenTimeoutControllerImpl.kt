@@ -4,12 +4,8 @@ import android.content.Context
 import android.provider.Settings
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.domain.model.ScreenTimeout
+import fr.twentynine.keepon.domain.gateway.SystemScreenTimeoutController
 import javax.inject.Inject
-
-interface SystemScreenTimeoutController {
-    fun getSystemScreenTimeout(): ScreenTimeout
-    fun setSystemScreenTimeout(timeout: ScreenTimeout)
-}
 
 class SystemScreenTimeoutControllerImpl @Inject constructor(@param:ApplicationContext private val context: Context) : SystemScreenTimeoutController {
 

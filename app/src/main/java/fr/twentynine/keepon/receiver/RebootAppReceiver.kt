@@ -8,7 +8,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
 import fr.twentynine.keepon.data.repo.UserPreferencesRepository
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
-import fr.twentynine.keepon.ui.components.AppComponentsUpdater
+import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
 import fr.twentynine.keepon.util.extensions.goAsync
 import fr.twentynine.keepon.worker.SetNewScreenTimeoutWorkScheduler
 import kotlinx.coroutines.Dispatchers

@@ -6,7 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import fr.twentynine.keepon.ui.components.AddTileServiceManager
 import fr.twentynine.keepon.ui.components.AddTileServiceManagerImpl
-import fr.twentynine.keepon.ui.components.AppComponentsUpdater
+import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
 import fr.twentynine.keepon.ui.components.AppComponentsUpdaterImpl
 import fr.twentynine.keepon.ui.components.QSTileUpdater
 import fr.twentynine.keepon.ui.components.QSTileUpdaterImpl

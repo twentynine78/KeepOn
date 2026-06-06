@@ -1,13 +1,9 @@
 package fr.twentynine.keepon.ui.components
 
-import kotlinx.coroutines.Job
+import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-interface AppComponentsUpdater {
-    suspend fun requestUpdate(): Job
-}
 
 class AppComponentsUpdaterImpl @Inject constructor(
     private val qsTileUpdater: QSTileUpdater,

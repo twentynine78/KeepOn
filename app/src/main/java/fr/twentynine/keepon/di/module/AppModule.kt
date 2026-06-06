@@ -10,7 +10,7 @@ import fr.twentynine.keepon.data.migration.AppVersionManager
 import fr.twentynine.keepon.data.migration.AppVersionManagerImpl
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import fr.twentynine.keepon.util.StringResourceProviderImpl
-import fr.twentynine.keepon.util.coil.MemoryCacheManager
+import fr.twentynine.keepon.domain.gateway.MemoryCacheManager
 import fr.twentynine.keepon.util.coil.MemoryCacheManagerImpl
 import javax.inject.Singleton
 

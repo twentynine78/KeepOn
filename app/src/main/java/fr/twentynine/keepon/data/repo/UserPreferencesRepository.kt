@@ -27,8 +27,8 @@ import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.services.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.data.migration.DataMigrationManager
 import fr.twentynine.keepon.util.timeout.DesiredScreenTimeoutController
-import fr.twentynine.keepon.util.system.DevicePolicyController
-import fr.twentynine.keepon.util.timeout.SystemScreenTimeoutController
+import fr.twentynine.keepon.domain.gateway.DevicePolicyController
+import fr.twentynine.keepon.domain.gateway.SystemScreenTimeoutController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
