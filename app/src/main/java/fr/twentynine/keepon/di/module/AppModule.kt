@@ -6,8 +6,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import fr.twentynine.keepon.domain.gateway.AppRateManager
 import fr.twentynine.keepon.core.rating.AppRateManagerImpl
-import fr.twentynine.keepon.data.migration.AppVersionManager
-import fr.twentynine.keepon.data.migration.AppVersionManagerImpl
+import fr.twentynine.keepon.domain.gateway.NotificationChannelManager
+import fr.twentynine.keepon.core.permission.NotificationChannelManagerImpl
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import fr.twentynine.keepon.core.util.StringResourceProviderImpl
 import fr.twentynine.keepon.domain.gateway.MemoryCacheManager
@@ -24,7 +24,7 @@ interface AppModule {
 
     @Binds
     @Singleton
-    fun bindAppVersionManager(impl: AppVersionManagerImpl): AppVersionManager
+    fun bindNotificationChannelManager(impl: NotificationChannelManagerImpl): NotificationChannelManager
 
     @Binds
     @Singleton

@@ -27,7 +27,6 @@ interface PostNotificationPermissionManager {
     )
 
     companion object {
-        const val NOTIFICATION_CHANNEL_OLD_KEEPON_SERVICE = "keepon_services"
         const val NOTIFICATION_CHANNEL_SCREEN_MONITOR_ID = "keepon_screen_monitor"
         const val NOTIFICATION_GROUP_KEY = "keepon_notification"
 
@@ -43,11 +42,6 @@ interface PostNotificationPermissionManager {
                 setShowBadge(false)
             }
             notificationManager.createNotificationChannel(channel)
-        }
-
-        fun removeOldNotificationChannelKeepOnService(context: Context) {
-            val notificationManager = context.getSystemService(NotificationManager::class.java)
-            notificationManager.deleteNotificationChannel(NOTIFICATION_CHANNEL_OLD_KEEPON_SERVICE)
         }
     }
 }

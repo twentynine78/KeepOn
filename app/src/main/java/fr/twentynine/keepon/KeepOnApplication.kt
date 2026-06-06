@@ -16,7 +16,7 @@ import coil3.request.allowHardware
 import coil3.request.bitmapConfig
 import coil3.size.Precision
 import dagger.hilt.android.HiltAndroidApp
-import fr.twentynine.keepon.data.migration.AppVersionManager
+import fr.twentynine.keepon.domain.usecase.app.RunAppMigrationUseCase
 import fr.twentynine.keepon.ui.components.WidgetUpdater
 import fr.twentynine.keepon.core.coil.TimeoutIconDataFetcher
 import fr.twentynine.keepon.core.coil.TimeoutIconDataKeyer
@@ -37,7 +37,7 @@ class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configura
     lateinit var hiltWorkerFactory: HiltWorkerFactory
 
     @Inject
-    lateinit var appVersionManager: AppVersionManager
+    lateinit var runAppMigrationUseCase: RunAppMigrationUseCase
 
     @Inject
     lateinit var widgetUpdater: WidgetUpdater
@@ -54,7 +54,7 @@ class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configura
             MonitorSystemScreenTimeoutWorkScheduler.scheduleWork(workManager)
             GuardianSystemScreenTimeoutWorkerScheduler.scheduleGuardianWork(workManager)
 
-            appVersionManager.runAppMigrationIfNeeded()
+            runAppMigrationUseCase()
             widgetUpdater.requestUpdateWidgetPreview()
         }
     }
