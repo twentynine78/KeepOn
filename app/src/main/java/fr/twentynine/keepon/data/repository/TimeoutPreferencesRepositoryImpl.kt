@@ -127,6 +127,15 @@ class TimeoutPreferencesRepositoryImpl @Inject constructor(
             )
         }
 
+    override suspend fun setCurrentScreenTimeout(timeout: ScreenTimeout) =
+        withContext(ioDispatcher) {
+            preferenceDataStoreHelper.putPreference(
+                CURRENT_SCREEN_TIMEOUT,
+                timeout.value,
+                DataStoreSourceType.DATA_SOURCE
+            )
+        }
+
     // ----- Previous -----
 
     @OptIn(ExperimentalCoroutinesApi::class)

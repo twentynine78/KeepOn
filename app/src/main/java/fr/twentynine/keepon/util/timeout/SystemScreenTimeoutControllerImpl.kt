@@ -32,6 +32,12 @@ class SystemScreenTimeoutControllerImpl @Inject constructor(@param:ApplicationCo
         }
     }
 
+    override suspend fun applyDesiredScreenTimeout(timeout: ScreenTimeout) {
+        // The desired-timeout queue is an internal detail of this system-write gateway:
+        // it records the app-initiated intent and waits for the system to apply it.
+        DesiredScreenTimeoutController.setDesiredScreenTimeout(timeout, this)
+    }
+
     companion object {
         private const val DEFAULT_SCREEN_TIMEOUT = 60000
     }

@@ -17,6 +17,7 @@ interface TimeoutPreferencesRepository {
     suspend fun setDefaultScreenTimeout(timeout: ScreenTimeout)
     suspend fun getCurrentScreenTimeoutFlow(): Flow<ScreenTimeout>
     suspend fun getCurrentScreenTimeout(): ScreenTimeout
+    suspend fun setCurrentScreenTimeout(timeout: ScreenTimeout)
     suspend fun getPreviousScreenTimeoutFlow(): Flow<ScreenTimeout>
     suspend fun getPreviousScreenTimeout(): ScreenTimeout
     suspend fun setPreviousScreenTimeout(timeout: ScreenTimeout)

@@ -9,4 +9,11 @@ import fr.twentynine.keepon.domain.model.ScreenTimeout
 interface SystemScreenTimeoutController {
     fun getSystemScreenTimeout(): ScreenTimeout
     fun setSystemScreenTimeout(timeout: ScreenTimeout)
+
+    /**
+     * Applies [timeout] through the anti-collision desired-timeout queue so the
+     * monitor worker recognizes the change as app-initiated. Suspends until the
+     * system has applied the value (or a short timeout elapses).
+     */
+    suspend fun applyDesiredScreenTimeout(timeout: ScreenTimeout)
 }

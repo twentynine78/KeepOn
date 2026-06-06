@@ -111,6 +111,9 @@ class MigratingTimeoutPreferencesRepository @Inject constructor(
     override suspend fun getCurrentScreenTimeout(): ScreenTimeout =
         delegate.getCurrentScreenTimeout()
 
+    override suspend fun setCurrentScreenTimeout(timeout: ScreenTimeout) =
+        delegate.setCurrentScreenTimeout(timeout)
+
     override suspend fun getPreviousScreenTimeoutFlow(): Flow<ScreenTimeout> =
         delegate.getPreviousScreenTimeoutFlow()
 
