@@ -41,10 +41,6 @@ import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.component.TimeoutFab
 import fr.twentynine.keepon.ui.util.KeepOnNavigationContentPosition
 
-class KeepOnNavSuiteScope(
-    val navSuiteType: NavigationSuiteType
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun KeepOnNavigationWrapper(
