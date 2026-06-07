@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.glance.ColorFilter
 import androidx.glance.LocalContext
 import androidx.glance.action.actionParametersOf
 import androidx.glance.appwidget.action.actionRunCallback
@@ -33,40 +32,8 @@ fun KeepOnWidgetView(
                     bitmap = currentState.getContentBitmap(context)
                 }
 
-                // Get colors
-                val borderColor = remember(currentState.keepOnIsActive) {
-                    if (currentState.keepOnIsActive) {
-                        KeepOnWidgetColorScheme.colors.background.getColor(context)
-                    } else {
-                        KeepOnWidgetColorScheme.colors.primaryContainer.getColor(context)
-                    }
-                }
-                val widgetBackgroundColor = KeepOnWidgetColorScheme.colors.widgetBackground.getColor(
-                    context
-                ).copy(alpha = WIDGET_BACKGROUND_COLOR_ALPHA)
-                val backgroundColor = remember(currentState.keepOnIsActive) {
-                    if (currentState.keepOnIsActive) {
-                        KeepOnWidgetColorScheme.colors.primaryContainer
-                    } else {
-                        KeepOnWidgetColorScheme.colors.background
-                    }
-                }
-                val imageColorFilter = remember(currentState.keepOnIsActive) {
-                    ColorFilter.tint(
-                        if (currentState.keepOnIsActive) {
-                            KeepOnWidgetColorScheme.colors.onPrimaryContainer
-                        } else {
-                            KeepOnWidgetColorScheme.colors.onBackground
-                        }
-                    )
-                }
-                val contentColor = remember(currentState.keepOnIsActive) {
-                    if (currentState.keepOnIsActive) {
-                        KeepOnWidgetColorScheme.colors.onPrimaryContainer
-                    } else {
-                        KeepOnWidgetColorScheme.colors.onBackground
-                    }
-                }
+                // Get colors (active vs inactive palette; the preview reuses the inactive one)
+                val colors = rememberWidgetColors(currentState.keepOnIsActive)
 
                 // Get click action. Permission is enforced at click time by the callback
                 // (the rendered action can be stale), so the render only routes straight to
@@ -88,13 +55,13 @@ fun KeepOnWidgetView(
                 }
 
                 KeepOnWidgetContent(
-                    borderColor,
-                    backgroundColor,
-                    widgetBackgroundColor,
-                    imageColorFilter,
-                    contentColor,
-                    bitmap,
-                    clickAction
+                    borderColor = colors.borderColor,
+                    backgroundColor = colors.backgroundColor,
+                    widgetBackgroundColor = colors.widgetBackgroundColor,
+                    imageColorFilter = colors.imageColorFilter,
+                    contentColor = colors.contentColor,
+                    contentBitmap = bitmap,
+                    onClickAction = clickAction,
                 )
             }
             is WidgetUIState.Error -> KeepOnWidgetError(currentState)

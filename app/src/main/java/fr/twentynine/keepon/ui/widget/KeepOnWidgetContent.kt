@@ -3,12 +3,10 @@ package fr.twentynine.keepon.ui.widget
 import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
-import androidx.glance.LocalSize
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
@@ -21,7 +19,6 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.unit.ColorProvider
-import fr.twentynine.keepon.ui.widget.KeepOnWidget.Companion.SMALL_SQUARE
 
 @Composable
 fun KeepOnWidgetContent(
@@ -33,16 +30,12 @@ fun KeepOnWidgetContent(
     contentBitmap: Bitmap?,
     onClickAction: Action?,
 ) {
-    val currentWidth = LocalSize.current.width
-    val widgetMinSize = if (currentWidth != 0.dp) {
-        currentWidth
-    } else {
-        SMALL_SQUARE.width
-    }
-    val cornerRadius = widgetMinSize / CORNER_RADIUS_RATIO
-    val outerBoxPadding = widgetMinSize / OUTER_BOX_PADDING_RATIO
-    val borderSize = outerBoxPadding / BORDER_SIZE_RATIO
-    val imagePadding = widgetMinSize / IMAGE_PADDING_RATIO
+    val dimens = rememberWidgetDimens()
+    val widgetMinSize = dimens.widgetMinSize
+    val cornerRadius = dimens.cornerRadius
+    val outerBoxPadding = dimens.outerBoxPadding
+    val borderSize = dimens.borderSize
+    val imagePadding = dimens.imagePadding
 
     Box(
         contentAlignment = Alignment.Center,

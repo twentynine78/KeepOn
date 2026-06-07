@@ -4,7 +4,6 @@ import android.graphics.drawable.InsetDrawable
 import androidx.compose.runtime.Composable
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.glance.ColorFilter
 import androidx.glance.LocalContext
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.state.WidgetUIState
@@ -17,15 +16,8 @@ fun KeepOnWidgetPreview(
         when (currentState) {
             is WidgetUIState.Loading -> KeepOnWidgetLoading()
             is WidgetUIState.Success -> {
-                // Get local context
-                val context = LocalContext.current
-                // Get colors
-                val borderColor = KeepOnWidgetColorScheme.colors.primaryContainer.getColor(context)
-                val widgetBackgroundColor = KeepOnWidgetColorScheme.colors.widgetBackground.getColor(context)
-                    .copy(alpha = WIDGET_BACKGROUND_COLOR_ALPHA)
-                val backgroundColor = KeepOnWidgetColorScheme.colors.background
-                val imageColorFilter = ColorFilter.tint(KeepOnWidgetColorScheme.colors.onBackground)
-                val contentColor = KeepOnWidgetColorScheme.colors.onBackground
+                // The preview shows the inactive palette (no live state to drive it).
+                val colors = rememberWidgetColors(keepOnIsActive = false)
 
                 // Get the bitmap from drawable icon with 10.dp padding
                 val localContext = LocalContext.current
@@ -40,13 +32,13 @@ fun KeepOnWidgetPreview(
                 }?.toBitmap()
 
                 KeepOnWidgetContent(
-                    borderColor,
-                    backgroundColor,
-                    widgetBackgroundColor,
-                    imageColorFilter,
-                    contentColor,
-                    bitmap,
-                    null
+                    borderColor = colors.borderColor,
+                    backgroundColor = colors.backgroundColor,
+                    widgetBackgroundColor = colors.widgetBackgroundColor,
+                    imageColorFilter = colors.imageColorFilter,
+                    contentColor = colors.contentColor,
+                    contentBitmap = bitmap,
+                    onClickAction = null,
                 )
             }
 
