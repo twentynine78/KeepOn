@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.view
+package fr.twentynine.keepon.ui.component
 
 import android.os.Parcelable
 import androidx.compose.animation.core.Animatable

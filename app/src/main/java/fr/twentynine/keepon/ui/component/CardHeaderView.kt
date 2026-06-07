@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.view
+package fr.twentynine.keepon.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically

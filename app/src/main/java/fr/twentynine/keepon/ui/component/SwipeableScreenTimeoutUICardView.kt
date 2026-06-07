@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.view
+package fr.twentynine.keepon.ui.component
 
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.runtime.Composable

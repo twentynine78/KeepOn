@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.view
+package fr.twentynine.keepon.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -45,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.ui.catalog.TipsInfo
 import fr.twentynine.keepon.ui.catalog.TipsAction
 import fr.twentynine.keepon.ui.event.MainUIEvent
-import fr.twentynine.keepon.ui.util.PulsatingIcon
 import kotlinx.coroutines.launch
 
 @Composable

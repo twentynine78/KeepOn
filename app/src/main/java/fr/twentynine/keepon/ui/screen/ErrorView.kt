@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.view
+package fr.twentynine.keepon.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

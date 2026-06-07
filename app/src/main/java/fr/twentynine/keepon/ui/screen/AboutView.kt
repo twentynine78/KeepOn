@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.view
+package fr.twentynine.keepon.ui.screen
 
 import android.content.Intent
 import androidx.compose.foundation.MarqueeAnimationMode
@@ -46,6 +46,8 @@ import fr.twentynine.keepon.domain.model.AppInfo
 import fr.twentynine.keepon.domain.catalog.CreditCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
+import fr.twentynine.keepon.ui.component.CardHeaderView
+import fr.twentynine.keepon.ui.component.ItemCardView
 
 @Composable
 fun AboutView(

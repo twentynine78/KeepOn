@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.util
+package fr.twentynine.keepon.ui.component
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween

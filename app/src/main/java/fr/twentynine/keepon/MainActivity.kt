@@ -19,7 +19,7 @@ import fr.twentynine.keepon.ui.state.MainViewUIState
 import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
 import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.ui.theme.KeepOnTheme
-import fr.twentynine.keepon.ui.view.MainView
+import fr.twentynine.keepon.ui.screen.MainView
 import fr.twentynine.keepon.ui.viewmodel.MainViewModel
 import fr.twentynine.keepon.core.permission.BatteryOptimizationManager
 import fr.twentynine.keepon.core.util.BundleScrubber

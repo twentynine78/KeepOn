@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.view
+package fr.twentynine.keepon.ui.screen
 
 import android.os.Build
 import androidx.compose.animation.animateColorAsState

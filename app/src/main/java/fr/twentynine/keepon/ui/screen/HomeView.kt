@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.view
+package fr.twentynine.keepon.ui.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -60,9 +60,12 @@ import fr.twentynine.keepon.ui.state.MainViewUIState
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.domain.model.TimeoutIconData
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
-import fr.twentynine.keepon.ui.util.GlowingText
+import fr.twentynine.keepon.ui.component.GlowingText
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
+import fr.twentynine.keepon.ui.component.CardHeaderView
+import fr.twentynine.keepon.ui.component.SwipeableScreenTimeoutUICardView
+import fr.twentynine.keepon.ui.component.TipsSectionView
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

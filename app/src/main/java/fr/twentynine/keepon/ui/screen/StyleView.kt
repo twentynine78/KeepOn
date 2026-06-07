@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.view
+package fr.twentynine.keepon.ui.screen
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -54,6 +54,8 @@ import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.domain.catalog.IconFontFamilyCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
+import fr.twentynine.keepon.ui.component.CardHeaderView
+import fr.twentynine.keepon.ui.component.ItemCardView
 import kotlin.math.ceil
 
 @Composable
