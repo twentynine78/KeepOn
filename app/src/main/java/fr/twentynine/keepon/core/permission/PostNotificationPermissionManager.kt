@@ -5,7 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.ActivityResultLauncher
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ActivityContext
 import fr.twentynine.keepon.R
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 interface PostNotificationPermissionManager {
     fun requestPostNotificationPermission(
-        requestPostNotificationPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
+        requestPostNotificationPermissionLauncher: ActivityResultLauncher<String>
     )
 
     companion object {
@@ -46,7 +46,7 @@ class PostNotificationPermissionManagerImpl @Inject constructor(
     }
 
     override fun requestPostNotificationPermission(
-        requestPostNotificationPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
+        requestPostNotificationPermissionLauncher: ActivityResultLauncher<String>,
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestPostNotificationPermissionLauncher.launch(

@@ -2,11 +2,8 @@ package fr.twentynine.keepon
 
 import android.content.ComponentName
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -18,40 +15,19 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
-import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
-import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.ui.theme.KeepOnTheme
 import fr.twentynine.keepon.ui.screen.MainScreen
 import fr.twentynine.keepon.ui.viewmodel.MainViewModel
-import fr.twentynine.keepon.core.permission.BatteryOptimizationManager
 import fr.twentynine.keepon.core.util.BundleScrubber
-import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager
-import fr.twentynine.keepon.core.permission.SystemSettingPermissionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : BasePermissionActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
-
-    @Inject
-    lateinit var systemSettingPermissionManager: SystemSettingPermissionManager
-
-    @Inject
-    lateinit var postNotificationPermissionManager: PostNotificationPermissionManager
-
-    @Inject
-    lateinit var batteryOptimizationManager: BatteryOptimizationManager
-
-    @Inject
-    lateinit var screenOffReceiverServiceManager: ScreenOffReceiverServiceManager
-
-    @Inject
-    lateinit var permissionStateGateway: PermissionStateGateway
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().apply {
@@ -76,32 +52,13 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             KeepOnTheme {
-                val requestPostNotificationPermissionLauncher = rememberLauncherForActivityResult(
-                    ActivityResultContracts.RequestPermission()
-                ) { isGranted ->
-                    permissionStateGateway.setPostNotificationGranted(isGranted)
-                    if (isGranted) {
-                        lifecycleScope.launch {
-                            screenOffReceiverServiceManager.restartService()
-                        }
-                    }
-                }
-
-                val onEvent: (MainUIEvent) -> Unit = remember(requestPostNotificationPermissionLauncher) {
+                val onEvent: (MainUIEvent) -> Unit = remember {
                     { event ->
                         when (event) {
-                            MainUIEvent.RequestWriteSystemSettingPermission ->
-                                systemSettingPermissionManager.requestWriteSystemSettingsPermission()
-                            MainUIEvent.RequestDisableBatteryOptimization ->
-                                batteryOptimizationManager.requestDisableBatteryOptimization()
-                            MainUIEvent.RequestPostNotification ->
-                                postNotificationPermissionManager.requestPostNotificationPermission(
-                                    requestPostNotificationPermissionLauncher
-                                )
-                            MainUIEvent.CheckNeededPermissions -> {
-                                permissionStateGateway.refreshWriteSystemSettings()
-                                permissionStateGateway.refreshBatteryOptimization()
-                            }
+                            MainUIEvent.RequestWriteSystemSettingPermission -> requestWriteSystemSettingPermission()
+                            MainUIEvent.RequestDisableBatteryOptimization -> requestDisableBatteryOptimization()
+                            MainUIEvent.RequestPostNotification -> requestPostNotificationPermission()
+                            MainUIEvent.CheckNeededPermissions -> checkNeededPermissions()
                             else -> mainViewModel.onEvent(event)
                         }
                     }
@@ -119,10 +76,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-
-        permissionStateGateway.refreshWriteSystemSettings()
-        permissionStateGateway.refreshBatteryOptimization()
-        permissionStateGateway.refreshPostNotification()
 
         startScreenOffReceiverServiceIfNeeded()
     }

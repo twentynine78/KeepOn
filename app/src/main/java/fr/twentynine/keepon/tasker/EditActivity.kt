@@ -3,52 +3,27 @@ package fr.twentynine.keepon.tasker
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import fr.twentynine.keepon.BasePermissionActivity
 import fr.twentynine.keepon.ui.state.TaskerEditUIState
 import fr.twentynine.keepon.ui.event.TaskerUIEvent
-import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
-import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.ui.theme.KeepOnTheme
 import fr.twentynine.keepon.ui.screen.TaskerEditRoute
 import fr.twentynine.keepon.ui.viewmodel.TaskerEditViewModel
-import fr.twentynine.keepon.core.permission.BatteryOptimizationManager
 import fr.twentynine.keepon.core.tasker.PluginBundleManager
 import fr.twentynine.keepon.core.tasker.TaskerIntent
 import fr.twentynine.keepon.core.util.BundleScrubber
-import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager
-import fr.twentynine.keepon.core.permission.SystemSettingPermissionManager
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class EditActivity : ComponentActivity() {
+class EditActivity : BasePermissionActivity() {
 
     private val taskerEditViewModel: TaskerEditViewModel by viewModels()
-
-    @Inject
-    lateinit var systemSettingPermissionManager: SystemSettingPermissionManager
-
-    @Inject
-    lateinit var postNotificationPermissionManager: PostNotificationPermissionManager
-
-    @Inject
-    lateinit var batteryOptimizationManager: BatteryOptimizationManager
-
-    @Inject
-    lateinit var screenOffReceiverServiceManager: ScreenOffReceiverServiceManager
-
-    @Inject
-    lateinit var permissionStateGateway: PermissionStateGateway
 
     private var isCancelled = true
 
@@ -107,31 +82,12 @@ class EditActivity : ComponentActivity() {
 
         setContent {
             KeepOnTheme {
-                val requestPostNotificationPermissionLauncher = rememberLauncherForActivityResult(
-                    ActivityResultContracts.RequestPermission()
-                ) { isGranted ->
-                    permissionStateGateway.setPostNotificationGranted(isGranted)
-                    if (isGranted) {
-                        lifecycleScope.launch {
-                            screenOffReceiverServiceManager.restartService()
-                        }
-                    }
-                }
-
                 val onEvent: (TaskerUIEvent) -> Unit = { event ->
                     when (event) {
-                        TaskerUIEvent.RequestWriteSystemSettingPermission ->
-                            systemSettingPermissionManager.requestWriteSystemSettingsPermission()
-                        TaskerUIEvent.RequestDisableBatteryOptimization ->
-                            batteryOptimizationManager.requestDisableBatteryOptimization()
-                        TaskerUIEvent.RequestPostNotification ->
-                            postNotificationPermissionManager.requestPostNotificationPermission(
-                                requestPostNotificationPermissionLauncher
-                            )
-                        TaskerUIEvent.CheckNeededPermissions -> {
-                            permissionStateGateway.refreshWriteSystemSettings()
-                            permissionStateGateway.refreshBatteryOptimization()
-                        }
+                        TaskerUIEvent.RequestWriteSystemSettingPermission -> requestWriteSystemSettingPermission()
+                        TaskerUIEvent.RequestDisableBatteryOptimization -> requestDisableBatteryOptimization()
+                        TaskerUIEvent.RequestPostNotification -> requestPostNotificationPermission()
+                        TaskerUIEvent.CheckNeededPermissions -> checkNeededPermissions()
                         else -> taskerEditViewModel.onEvent(event)
                     }
                 }
@@ -176,13 +132,5 @@ class EditActivity : ComponentActivity() {
         }
 
         super.finish()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        permissionStateGateway.refreshWriteSystemSettings()
-        permissionStateGateway.refreshBatteryOptimization()
-        permissionStateGateway.refreshPostNotification()
     }
 }
