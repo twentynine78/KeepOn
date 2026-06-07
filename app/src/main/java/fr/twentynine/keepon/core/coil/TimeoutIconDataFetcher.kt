@@ -7,23 +7,17 @@ import coil3.fetch.FetchResult
 import coil3.fetch.Fetcher
 import coil3.fetch.ImageFetchResult
 import coil3.request.Options
-import dagger.hilt.android.EntryPointAccessors
+import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import fr.twentynine.keepon.domain.model.TimeoutIconData
-import fr.twentynine.keepon.di.entrypoint.TimeoutIconDataFetcherEntryPoint
 
 class TimeoutIconDataFetcher(
     private val data: TimeoutIconData,
-    private val options: Options
+    private val options: Options,
+    private val stringResourceProvider: StringResourceProvider,
 ) : Fetcher {
     override suspend fun fetch(): FetchResult {
-        val hiltEntryPoint = EntryPointAccessors.fromApplication(
-            options.context,
-            TimeoutIconDataFetcherEntryPoint::class.java
-        )
-        val stringResourceProvider = hiltEntryPoint.stringResourceProvider()
-
         return ImageFetchResult(
-            image = TimeoutIconGenerator().getBitmapFromText(
+            image = TimeoutIconGenerator.getBitmapFromText(
                 options.context,
                 data,
                 stringResourceProvider
@@ -33,10 +27,12 @@ class TimeoutIconDataFetcher(
         )
     }
 
-    class Factory : Fetcher.Factory<TimeoutIconData> {
+    class Factory(
+        private val stringResourceProvider: StringResourceProvider,
+    ) : Fetcher.Factory<TimeoutIconData> {
 
         override fun create(data: TimeoutIconData, options: Options, imageLoader: ImageLoader): Fetcher {
-            return TimeoutIconDataFetcher(data, options)
+            return TimeoutIconDataFetcher(data, options, stringResourceProvider)
         }
     }
 }

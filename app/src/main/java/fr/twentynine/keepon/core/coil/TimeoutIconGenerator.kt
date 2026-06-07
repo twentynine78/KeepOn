@@ -14,7 +14,15 @@ import fr.twentynine.keepon.domain.catalog.IconFontFamilyCatalog
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import fr.twentynine.keepon.core.util.px
 
-class TimeoutIconGenerator {
+object TimeoutIconGenerator {
+
+    private const val STROKE_WIDTH = 1f
+    private const val DEFAULT_TEXT_SIZE = 20f
+
+    private const val FONT_SIZE_STEP_COEF = 4
+    private const val HORIZONTAL_PADDING_STEP_COEF = 2
+    private const val VERTICAL_PADDING_STEP_COEF = 2
+    private const val MAX_IMAGE_HEIGHT_PERCENT = 0.6f
 
     fun getBitmapFromText(
         context: Context,
@@ -126,15 +134,5 @@ class TimeoutIconGenerator {
             textPaint.textSize = newTextSize
             textPaint.getTextBounds(text, 0, text.length, outBounds)
         }
-    }
-
-    companion object {
-        const val STROKE_WIDTH = 1f
-        const val DEFAULT_TEXT_SIZE = 20f
-
-        const val FONT_SIZE_STEP_COEF = 4
-        const val HORIZONTAL_PADDING_STEP_COEF = 2
-        const val VERTICAL_PADDING_STEP_COEF = 2
-        const val MAX_IMAGE_HEIGHT_PERCENT = 0.6f
     }
 }
