@@ -132,6 +132,7 @@
     <string name="permission_screen_check_icon_desc">Permission validated</string>
 
     <string name="toast_missing_permission">Error, required permission missing!</string>
+    <string name="toast_screen_off_service_error">Error, screen monitoring service unavailable!</string>
     <string name="toast_invalid_screen_timeout">Error, invalid screen timeout!</string>
     <string name="screen_timeout_change_rejected">Your device blocked the screen timeout change</string>
 </resources>

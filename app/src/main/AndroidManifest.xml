@@ -46,15 +46,6 @@
                 If the setting is disabled, the service remains inactive and does not monitor the screen-off event."/>
         </service>
 
-        <receiver
-            android:name=".core.receiver.ScreenOffReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.SCREEN_OFF"/>
-                <category android:name="android.intent.category.DEFAUL"/>
-            </intent-filter>
-        </receiver>
-
         <service
             android:name=".services.KeepOnTileService"
             android:exported="true"

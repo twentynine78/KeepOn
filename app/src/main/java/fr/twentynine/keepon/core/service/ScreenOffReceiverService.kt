@@ -27,6 +27,9 @@ class ScreenOffReceiverService : LifecycleService() {
     @Inject
     lateinit var resetSystemScreenTimeoutUseCase: ResetSystemScreenTimeoutUseCase
 
+    @Inject
+    lateinit var screenOffServiceState: ScreenOffServiceState
+
     // Run on the app scope so the reset (which stops this service mid-way) completes
     // the system write even after the service is destroyed.
     private val applicationScope by lazy { (applicationContext as KeepOnApplication).applicationScope }
@@ -91,20 +94,20 @@ class ScreenOffReceiverService : LifecycleService() {
                     0
                 }
             )
-            ScreenOffReceiverServiceManagerImpl.setIsRunning(true)
+            screenOffServiceState.isRunning = true
             START_STICKY
         } catch (_: Exception) {
             // If startForeground fails, we must stop the service immediately.
             // This prevents RemoteServiceException (crash) triggered by the system
             // if a service promised as "foreground" doesn't call startForeground() within 5s.
-            ScreenOffReceiverServiceManagerImpl.setIsRunning(false)
+            screenOffServiceState.isRunning = false
             stopSelf()
             START_NOT_STICKY
         }
     }
 
     override fun onDestroy() {
-        ScreenOffReceiverServiceManagerImpl.setIsRunning(false)
+        screenOffServiceState.isRunning = false
 
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
 

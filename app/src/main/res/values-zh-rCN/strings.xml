@@ -132,6 +132,7 @@
     <string name="permission_screen_check_icon_desc">权限已验证</string>
 
     <string name="toast_missing_permission">错误，缺少必要权限！</string>
+    <string name="toast_screen_off_service_error">错误，息屏监控服务不可用！</string>
     <string name="toast_invalid_screen_timeout">错误，无效的亮屏时长！</string>
     <string name="screen_timeout_change_rejected">您的设备阻止了屏幕超时的更改</string>
 </resources>

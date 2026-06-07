@@ -132,6 +132,7 @@
     <string name="permission_screen_check_icon_desc">Permission validée</string>
 
     <string name="toast_missing_permission">Erreur, permission requise manquante !</string>
+    <string name="toast_screen_off_service_error">Erreur, service de surveillance de l\'écran indisponible !</string>
     <string name="toast_invalid_screen_timeout">Erreur, délai d\'expiration de l\'écran invalide !</string>
     <string name="screen_timeout_change_rejected">Votre appareil a bloqué la modification du délai d\'écran</string>
 </resources>
