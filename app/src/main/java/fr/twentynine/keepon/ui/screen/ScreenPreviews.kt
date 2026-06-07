@@ -6,6 +6,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.domain.catalog.CreditCatalog
 import fr.twentynine.keepon.domain.model.AppInfo
+import fr.twentynine.keepon.domain.model.ScreenTimeout
+import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.model.NeededPermission
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
@@ -63,6 +65,40 @@ private fun AboutScreenPreview() {
             ),
             creditInfoMap = CreditCatalog.creditInfoMap,
             navType = KeepOnNavigationType.BOTTOM_NAVIGATION,
+            paddingValue = PaddingValues(0.dp),
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun TaskerEditScreenPreview() {
+    KeepOnTheme(dynamicColor = false) {
+        TaskerEditScreen(
+            screenTimeouts = previewScreenTimeouts,
+            specialScreenTimeouts = listOf(
+                ScreenTimeoutUI(
+                    value = SpecialScreenTimeoutType.DEFAULT_SCREEN_TIMEOUT_TYPE.value,
+                    displayName = "Default",
+                    isSelected = false,
+                    isDefault = false,
+                    isCurrent = false,
+                    isLocked = false,
+                ),
+                ScreenTimeoutUI(
+                    value = SpecialScreenTimeoutType.PREVIOUS_SCREEN_TIMEOUT_TYPE.value,
+                    displayName = "Previous",
+                    isSelected = false,
+                    isDefault = false,
+                    isCurrent = false,
+                    isLocked = false,
+                ),
+            ),
+            defaultScreenTimeout = ScreenTimeout(30000),
+            previousScreenTimeout = ScreenTimeout(15000),
+            selectedScreenTimeout = previewScreenTimeouts[1],
+            timeoutIconStyle = TimeoutIconStyle(),
+            onEvent = {},
             paddingValue = PaddingValues(0.dp),
         )
     }
