@@ -99,10 +99,11 @@ private fun <T : Parcelable> AnimateSwipeableItemCardEffect(
     }
 
     LaunchedEffect(item, animateSwipeCondition, animateFirstDisplayCondition) {
-        if (item == null ||
+        val shouldSkipAnimation = item == null ||
             (!animateSwipeCondition && !animateFirstDisplayCondition) ||
             animationTriggerHandled
-        ) {
+
+        if (shouldSkipAnimation) {
             animatedTranslationX.snapTo(0f)
             return@LaunchedEffect
         }
