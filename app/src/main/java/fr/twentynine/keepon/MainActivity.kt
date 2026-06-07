@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -96,21 +97,23 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                val onEvent: (MainUIEvent) -> Unit = { event ->
-                    when (event) {
-                        MainUIEvent.RequestWriteSystemSettingPermission ->
-                            systemSettingPermissionManager.requestWriteSystemSettingsPermission()
-                        MainUIEvent.RequestDisableBatteryOptimization ->
-                            batteryOptimizationManager.requestDisableBatteryOptimization()
-                        MainUIEvent.RequestPostNotification ->
-                            postNotificationPermissionManager.requestPostNotificationPermission(
-                                requestPostNotificationPermissionLauncher
-                            )
-                        MainUIEvent.CheckNeededPermissions -> {
-                            permissionStateGateway.refreshWriteSystemSettings()
-                            permissionStateGateway.refreshBatteryOptimization()
+                val onEvent: (MainUIEvent) -> Unit = remember(requestPostNotificationPermissionLauncher) {
+                    { event ->
+                        when (event) {
+                            MainUIEvent.RequestWriteSystemSettingPermission ->
+                                systemSettingPermissionManager.requestWriteSystemSettingsPermission()
+                            MainUIEvent.RequestDisableBatteryOptimization ->
+                                batteryOptimizationManager.requestDisableBatteryOptimization()
+                            MainUIEvent.RequestPostNotification ->
+                                postNotificationPermissionManager.requestPostNotificationPermission(
+                                    requestPostNotificationPermissionLauncher
+                                )
+                            MainUIEvent.CheckNeededPermissions -> {
+                                permissionStateGateway.refreshWriteSystemSettings()
+                                permissionStateGateway.refreshBatteryOptimization()
+                            }
+                            else -> mainViewModel.onEvent(event)
                         }
-                        else -> mainViewModel.onEvent(event)
                     }
                 }
 
