@@ -8,8 +8,6 @@ import fr.twentynine.keepon.domain.gateway.AddTileServiceManager
 import fr.twentynine.keepon.core.component.AddTileServiceManagerImpl
 import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
 import fr.twentynine.keepon.core.component.AppComponentsUpdaterImpl
-import fr.twentynine.keepon.domain.gateway.QSTileUpdater
-import fr.twentynine.keepon.core.component.QSTileUpdaterImpl
 import fr.twentynine.keepon.domain.gateway.WidgetUpdater
 import fr.twentynine.keepon.ui.widget.WidgetUpdaterImpl
 import javax.inject.Singleton
@@ -21,10 +19,6 @@ interface ComponentUpdaterModule {
     @Binds
     @Singleton
     fun bindAppComponentsUpdater(impl: AppComponentsUpdaterImpl): AppComponentsUpdater
-
-    @Binds
-    @Singleton
-    fun bindQSTileUpdater(impl: QSTileUpdaterImpl): QSTileUpdater
 
     @Binds
     @Singleton
