@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.widget
+package fr.twentynine.keepon.ui.widget.component
 
 import androidx.compose.runtime.Composable
 import androidx.glance.GlanceModifier
@@ -9,6 +9,10 @@ import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
+import fr.twentynine.keepon.ui.widget.theme.KeepOnWidgetColorScheme
+import fr.twentynine.keepon.ui.widget.theme.applyRootBackground
+import fr.twentynine.keepon.ui.widget.theme.rememberLegacyCircleBackground
+import fr.twentynine.keepon.ui.widget.theme.rememberWidgetDimens
 
 @Composable
 fun KeepOnWidgetLoading(

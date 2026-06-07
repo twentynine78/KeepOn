@@ -13,6 +13,8 @@ import androidx.glance.appwidget.provideContent
 import dagger.hilt.android.EntryPointAccessors
 import fr.twentynine.keepon.di.entrypoint.WidgetEntryPoint
 import fr.twentynine.keepon.ui.state.WidgetUIState
+import fr.twentynine.keepon.ui.widget.component.KeepOnWidgetPreview
+import fr.twentynine.keepon.ui.widget.component.KeepOnWidgetView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext

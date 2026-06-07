@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.widget
+package fr.twentynine.keepon.ui.widget.component
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -14,6 +14,10 @@ import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.ui.state.WidgetUIState
+import fr.twentynine.keepon.ui.widget.SetNextTimeoutActionCallback
+import fr.twentynine.keepon.ui.widget.getContentBitmap
+import fr.twentynine.keepon.ui.widget.theme.KeepOnWidgetTheme
+import fr.twentynine.keepon.ui.widget.theme.rememberWidgetColors
 
 @Composable
 fun KeepOnWidgetView(

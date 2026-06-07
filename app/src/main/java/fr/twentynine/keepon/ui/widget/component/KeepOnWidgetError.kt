@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.widget
+package fr.twentynine.keepon.ui.widget.component
 
 import android.content.Intent
 import androidx.compose.runtime.Composable
@@ -18,6 +18,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.ui.state.WidgetUIState
+import fr.twentynine.keepon.ui.widget.theme.KeepOnWidgetColorScheme
 
 @Composable
 fun KeepOnWidgetError(

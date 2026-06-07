@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.widget
+package fr.twentynine.keepon.ui.widget.theme
 
 import android.os.Build
 import androidx.compose.runtime.Composable

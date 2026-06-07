@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.widget
+package fr.twentynine.keepon.ui.widget.component
 
 import android.graphics.drawable.InsetDrawable
 import androidx.compose.runtime.Composable
@@ -7,6 +7,8 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.glance.LocalContext
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.state.WidgetUIState
+import fr.twentynine.keepon.ui.widget.theme.KeepOnWidgetTheme
+import fr.twentynine.keepon.ui.widget.theme.rememberWidgetColors
 
 @Composable
 fun KeepOnWidgetPreview(

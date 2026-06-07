@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.widget
+package fr.twentynine.keepon.ui.widget.component
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
@@ -19,6 +19,10 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.unit.ColorProvider
+import fr.twentynine.keepon.ui.widget.theme.applyLayerBackground
+import fr.twentynine.keepon.ui.widget.theme.applyRootBackground
+import fr.twentynine.keepon.ui.widget.theme.rememberLegacyWidgetBackground
+import fr.twentynine.keepon.ui.widget.theme.rememberWidgetDimens
 
 @Composable
 fun KeepOnWidgetContent(

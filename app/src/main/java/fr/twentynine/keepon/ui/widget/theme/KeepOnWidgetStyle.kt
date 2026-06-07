@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.widget
+package fr.twentynine.keepon.ui.widget.theme
 
 import android.graphics.Bitmap
 import android.graphics.Paint

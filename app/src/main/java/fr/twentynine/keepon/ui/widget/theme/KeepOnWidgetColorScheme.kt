@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.widget
+package fr.twentynine.keepon.ui.widget.theme
 
 import androidx.glance.material3.ColorProviders
 import fr.twentynine.keepon.ui.theme.DarkColorScheme

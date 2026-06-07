@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.ui.widget
+package fr.twentynine.keepon.ui.widget.theme
 
 const val CORNER_RADIUS_RATIO = 2
 const val OUTER_BOX_PADDING_RATIO = 30
