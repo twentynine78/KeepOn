@@ -13,13 +13,12 @@ import androidx.core.graphics.drawable.toIcon
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ServiceLifecycleDispatcher
-import coil3.Image
-import coil3.executeBlocking
 import coil3.imageLoader
+import coil3.request.ErrorResult
 import coil3.request.ImageRequest
+import coil3.request.SuccessResult
 import coil3.request.lifecycle
 import coil3.size.Size
-import coil3.target.Target
 import coil3.toBitmap
 import fr.twentynine.keepon.KeepOnApplication
 import fr.twentynine.keepon.MainActivity
@@ -194,7 +193,7 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
         serviceJob.cancel()
     }
 
-    private fun updateQSTile(
+    private suspend fun updateQSTile(
         currentScreenTimeout: ScreenTimeout,
         timeoutIconStyle: TimeoutIconStyle,
         keepOnIsActive: Boolean,
@@ -205,29 +204,31 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
             timeoutIconStyle
         )
 
-        val qsCoilTarget = object : Target {
-            override fun onSuccess(result: Image) {
-                val tile = qsTile ?: return
+        val request = imageRequestBuilder
+            .data(newTimeoutIconData)
+            .build()
 
-                val newQsTileBitmap = result.toBitmap()
+        when (val result = imageLoader.execute(request)) {
+            is SuccessResult -> {
+                qsTile?.let { tile ->
+                    val timeoutDisplay =
+                        newTimeoutIconData.iconTimeout.getFullDisplayTimeout(stringResourceProvider)
 
-                tile.icon = newQsTileBitmap.toIcon()
-                tile.state = if (keepOnIsActive) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
-
-                val timeoutDisplay =
-                    newTimeoutIconData.iconTimeout.getFullDisplayTimeout(stringResourceProvider)
-                tile.label = "${getString(R.string.qs_service_name)} - $timeoutDisplay"
-
-                tile.updateTile()
+                    tile.icon = result.image.toBitmap().toIcon()
+                    tile.state = if (keepOnIsActive) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
+                    tile.label = "${getString(R.string.qs_service_name)} - $timeoutDisplay"
+                    tile.updateTile()
+                }
             }
 
-            override fun onError(error: Image?) {
+            is ErrorResult -> {
                 qsTile?.let { tile ->
-                    tile.icon = Icon.createWithResource(this@KeepOnTileServiceCore, R.drawable.ic_keepon)
+                    tile.icon = Icon.createWithResource(this, R.drawable.ic_keepon)
                     tile.label = getString(R.string.qs_service_name)
                     tile.state = Tile.STATE_UNAVAILABLE
                     tile.updateTile()
 
+                    // Retry off the collector so a slow retry does not block redraws.
                     serviceScope.launch {
                         delay(DELAY_BEFORE_RETRY_UPDATE)
                         requestQSTileUpdate()
@@ -235,14 +236,6 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
                 }
             }
         }
-
-        // Apply the new QSTile data with coil
-        val request = imageRequestBuilder
-            .data(newTimeoutIconData)
-            .target(qsCoilTarget)
-            .build()
-
-        imageLoader.executeBlocking(request)
 
         // Request widget update
         serviceScope.launch {
