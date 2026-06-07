@@ -5,15 +5,19 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import dagger.hilt.android.AndroidEntryPoint
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.domain.catalog.ScreenTimeoutCatalog
-import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.core.tasker.PluginBundleManager
 import fr.twentynine.keepon.core.tasker.TaskerIntent
 import fr.twentynine.keepon.core.util.BundleScrubber
-import fr.twentynine.keepon.core.worker.SetNewScreenTimeoutWorkScheduler
+import fr.twentynine.keepon.domain.usecase.timeout.ScheduleTaskerScreenTimeoutUseCase
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class FireReceiver : BroadcastReceiver() {
+
+    @Inject
+    lateinit var scheduleTaskerScreenTimeoutUseCase: ScheduleTaskerScreenTimeoutUseCase
 
     override fun onReceive(context: Context, intent: Intent) {
         // A hack to prevent a private serializable classloader attack
@@ -45,26 +49,12 @@ class FireReceiver : BroadcastReceiver() {
         // Get screen timeout value from Intent bundle
         val timeoutValue = bundle.getInt(PluginBundleManager.BUNDLE_EXTRA_TIMEOUT_VALUE, -1)
 
-        if (timeoutValue != -1) {
-            // Check if the received timeout value is valid
-            val screenTimeoutValue = ScreenTimeout(timeoutValue)
-            val isValidScreenTimeout = (ScreenTimeoutCatalog.screenTimeouts + ScreenTimeoutCatalog.specialScreenTimeouts)
-                .contains(screenTimeoutValue)
-
-            if (isValidScreenTimeout) {
-                SetNewScreenTimeoutWorkScheduler().scheduleWork(
-                    timeoutValue,
-                    context.applicationContext,
-                    true
-                )
-                return
-            }
+        if (!scheduleTaskerScreenTimeoutUseCase(timeoutValue)) {
+            Toast.makeText(
+                context.applicationContext,
+                R.string.toast_invalid_screen_timeout,
+                Toast.LENGTH_SHORT
+            ).show()
         }
-
-        Toast.makeText(
-            context.applicationContext,
-            R.string.toast_invalid_screen_timeout,
-            Toast.LENGTH_SHORT
-        ).show()
     }
 }
