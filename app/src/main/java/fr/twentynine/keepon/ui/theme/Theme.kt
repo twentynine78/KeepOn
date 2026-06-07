@@ -2,7 +2,6 @@ package fr.twentynine.keepon.ui.theme
 
 import android.app.Activity
 import android.os.Build
-import android.view.WindowManager
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -96,15 +95,11 @@ fun KeepOnTheme(
         else -> LightColorScheme
     }
 
-    // Manage system bar color (no-op outside an Activity, e.g. in @Preview)
+    // Keep the system-bar icon appearance in sync with the theme. Edge-to-edge itself is set up
+    // by enableEdgeToEdge() in the host Activity, so no extra window flags are needed here.
+    // (no-op outside an Activity, e.g. in @Preview)
     LaunchedEffect(darkTheme) {
         val window = (view.context as? Activity)?.window ?: return@LaunchedEffect
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        } else {
-            window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        }
-
         val insetsController = WindowCompat.getInsetsController(window, view)
         insetsController.isAppearanceLightStatusBars = !darkTheme
         insetsController.isAppearanceLightNavigationBars = !darkTheme
