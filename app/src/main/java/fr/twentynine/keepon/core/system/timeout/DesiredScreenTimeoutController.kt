@@ -3,6 +3,8 @@ package fr.twentynine.keepon.core.system.timeout
 import fr.twentynine.keepon.domain.gateway.SystemScreenTimeoutController
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.core.util.removeUntil
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -13,10 +15,9 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.TimeUnit
 
 object DesiredScreenTimeoutController {
-    private val WAIT_TIME_FOR_TIMEOUT_APPLIED = TimeUnit.SECONDS.toMillis(2)
+    private val WAIT_TIME_FOR_TIMEOUT_APPLIED = 2.seconds
 
     private val defaultDispatchers = Dispatchers.Default
     private val screenTimeoutProcessingLock = Mutex()
@@ -67,7 +68,7 @@ object DesiredScreenTimeoutController {
 
                         withTimeout(WAIT_TIME_FOR_TIMEOUT_APPLIED) {
                             while (requestedTimeout != systemScreenTimeoutController.getSystemScreenTimeout()) {
-                                delay(100)
+                                delay(100.milliseconds)
                             }
                         }
                     }

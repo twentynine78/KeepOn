@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.time.Duration.Companion.seconds
 
 fun BroadcastReceiver.goAsync(
     context: CoroutineContext = EmptyCoroutineContext,
@@ -16,7 +17,7 @@ fun BroadcastReceiver.goAsync(
 ) {
     val pendingResult = goAsync()
     @OptIn(DelicateCoroutinesApi::class)
-    GlobalScope.launch(context) { withTimeout(5000) { block() } }
+    GlobalScope.launch(context) { withTimeout(5.seconds) { block() } }
         .invokeOnCompletion { cause ->
             if (cause != null) Log.e("BroadcastReceiverGoAsync", "Async receiver block failed", cause)
             pendingResult.finish()

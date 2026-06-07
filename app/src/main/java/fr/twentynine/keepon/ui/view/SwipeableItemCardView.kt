@@ -41,12 +41,13 @@ import fr.twentynine.keepon.ui.util.rememberItemBottomBorderPadding
 import fr.twentynine.keepon.ui.util.rememberTopPadding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.with
 
 const val DEFAULT_SWIPE_THRESHOLD_FRACTION = 0.30f
 
 private const val INITIAL_ANIMATION_DURATION = 400
-private const val INITIAL_ANIMATION_DELAY = 450L
+private val INITIAL_ANIMATION_DELAY = 450.milliseconds
 private const val INITIAL_ANIMATION_OFFSET_DP = 64
 
 private val infiniteDensity = Density(Float.POSITIVE_INFINITY)

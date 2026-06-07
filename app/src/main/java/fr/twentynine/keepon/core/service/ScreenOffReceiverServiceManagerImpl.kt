@@ -9,9 +9,9 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.time.delay
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import java.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import javax.inject.Inject
 
 class ScreenOffReceiverServiceManagerImpl @Inject constructor(
@@ -57,7 +57,7 @@ class ScreenOffReceiverServiceManagerImpl @Inject constructor(
             return
         }
         stopService()
-        delay(Duration.ofMillis(500))
+        delay(500.milliseconds)
         startService()
     }
 

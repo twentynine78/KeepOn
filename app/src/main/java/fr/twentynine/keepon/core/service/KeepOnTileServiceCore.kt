@@ -37,6 +37,7 @@ import fr.twentynine.keepon.core.util.BundleScrubber
 import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import fr.twentynine.keepon.domain.gateway.WidgetUpdater
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -46,7 +47,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
@@ -288,6 +288,6 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
     }
 
     companion object {
-        private val DELAY_BEFORE_RETRY_UPDATE = TimeUnit.SECONDS.toMillis(10)
+        private val DELAY_BEFORE_RETRY_UPDATE = 10.seconds
     }
 }

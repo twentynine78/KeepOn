@@ -12,6 +12,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import kotlin.time.Duration.Companion.milliseconds
 import javax.inject.Inject
 
 interface SystemSettingPermissionManager {
@@ -22,7 +23,7 @@ class SystemSettingPermissionManagerImpl @Inject constructor(@param:ActivityCont
 
     private var checkPermissionJob: Job? = null
 
-    private val waitTimeInMillis = 200L
+    private val waitTime = 200.milliseconds
     private val maxCheckRepeat = 300
 
     override fun requestWriteSystemSettingsPermission() {
@@ -44,7 +45,7 @@ class SystemSettingPermissionManagerImpl @Inject constructor(@param:ActivityCont
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
             checkPermissionJob = context.lifecycleScope.launch(Dispatchers.Default) {
-                withTimeout(waitTimeInMillis * maxCheckRepeat) {
+                withTimeout(waitTime * maxCheckRepeat) {
                     repeat(maxCheckRepeat) {
                         if (Settings.System.canWrite(context)) {
                             try {
@@ -53,7 +54,7 @@ class SystemSettingPermissionManagerImpl @Inject constructor(@param:ActivityCont
                                 checkPermissionJob?.cancel()
                             }
                         } else {
-                            delay(waitTimeInMillis)
+                            delay(waitTime)
                         }
                     }
                 }
