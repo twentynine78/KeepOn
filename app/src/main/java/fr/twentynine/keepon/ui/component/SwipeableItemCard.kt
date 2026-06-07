@@ -47,8 +47,9 @@ import kotlin.with
 const val DEFAULT_SWIPE_THRESHOLD_FRACTION = 0.30f
 
 private const val INITIAL_ANIMATION_DURATION = 400
-private val INITIAL_ANIMATION_DELAY = 450.milliseconds
 private const val INITIAL_ANIMATION_OFFSET_DP = 64
+
+private val initialAnimationDelay = 450.milliseconds
 
 private val infiniteDensity = Density(Float.POSITIVE_INFINITY)
 
@@ -123,7 +124,7 @@ private fun <T : Parcelable> AnimateSwipeableItemCardEffect(
                         targetValue = initialTranslationPx + (initialTranslationPx / 2),
                         animationSpec = tween(INITIAL_ANIMATION_DURATION)
                     )
-                    delay(INITIAL_ANIMATION_DELAY)
+                    delay(initialAnimationDelay)
                     snapBackDampingRatio = Spring.DampingRatioHighBouncy
                 }
 
