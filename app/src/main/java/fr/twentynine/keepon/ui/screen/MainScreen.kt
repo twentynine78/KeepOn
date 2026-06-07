@@ -33,7 +33,6 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.material3.rememberBottomAppBarState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -112,19 +111,17 @@ fun MainScreen(
     uiState: MainViewUIState,
     onEvent: (MainUIEvent) -> Unit,
 ) {
-    val targetScreenState by remember(uiState) {
-        derivedStateOf {
-            when (uiState) {
-                is MainViewUIState.Error -> MainScreenState.ERROR
-                is MainViewUIState.Success -> {
-                    if (!uiState.canWriteSystemSettings || !uiState.batteryIsNotOptimized) {
-                        MainScreenState.PERMISSION
-                    } else {
-                        MainScreenState.KEEP_ON
-                    }
+    val targetScreenState = remember(uiState) {
+        when (uiState) {
+            is MainViewUIState.Error -> MainScreenState.ERROR
+            is MainViewUIState.Success -> {
+                if (!uiState.canWriteSystemSettings || !uiState.batteryIsNotOptimized) {
+                    MainScreenState.PERMISSION
+                } else {
+                    MainScreenState.KEEP_ON
                 }
-                is MainViewUIState.Loading -> MainScreenState.EMPTY
             }
+            is MainViewUIState.Loading -> MainScreenState.EMPTY
         }
     }
 

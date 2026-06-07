@@ -29,7 +29,6 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -126,10 +125,8 @@ fun BottomNavigationBar(
         scrollBehavior = scrollBehavior,
     ) {
         topLevelDestinations.forEach { topLevelDestination ->
-            val isSelected = remember(selectedDestination) {
-                selectedDestination == topLevelDestination.destination.route
-            }
-            val badgeAmount = remember(topLevelDestination.badgeAmount) { topLevelDestination.badgeAmount }
+            val isSelected = selectedDestination == topLevelDestination.destination.route
+            val badgeAmount = topLevelDestination.badgeAmount
 
             val itemAlpha by animateFloatAsState(1 - (scrollBehavior.state.collapsedFraction * 2))
 
@@ -217,10 +214,8 @@ fun KeepOnNavigationRail(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 topLevelDestinations.forEach { topLevelDestination ->
-                    val isSelected = remember(selectedDestination) {
-                        selectedDestination == topLevelDestination.destination.route
-                    }
-                    val badgeAmount = remember(topLevelDestination.badgeAmount) { topLevelDestination.badgeAmount }
+                    val isSelected = selectedDestination == topLevelDestination.destination.route
+                    val badgeAmount = topLevelDestination.badgeAmount
 
                     NavigationRailItem(
                         selected = isSelected,
