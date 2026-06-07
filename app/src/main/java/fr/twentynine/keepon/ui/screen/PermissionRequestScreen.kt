@@ -55,56 +55,71 @@ import fr.twentynine.keepon.ui.model.NeededPermission
 import fr.twentynine.keepon.ui.state.TaskerEditUIState
 import fr.twentynine.keepon.ui.event.TaskerUIEvent
 
+/**
+ * Builds the ordered permission list ([notification?, battery, write settings]) shared by the
+ * main and Tasker permission screens; only the per-permission request actions differ.
+ */
 @Composable
-fun MainPermissionScreen(
-    uiState: MainViewUIState.Success,
-    onEvent: (MainUIEvent) -> Unit,
-) {
-    val permissionScreenBatteryOptimizationTitle = stringResource(
-        R.string.permissions_screen_battery_optimization_title
-    )
-    val permissionScreenBatteryOptimizationSubtitle = stringResource(
-        R.string.permissions_screen_battery_optimization_subtitle
-    )
-    val permissionScreenWriteSettingTitle = stringResource(R.string.permissions_screen_write_setting_title)
-    val permissionScreenWriteSettingSubtitle = stringResource(R.string.permissions_screen_write_setting_subtitle)
-    val permissionScreenNotificationTitle = stringResource(R.string.permissions_screen_notification_title)
-    val permissionScreenNotificationSubtitle = stringResource(R.string.permissions_screen_notification_subtitle)
+private fun rememberNeededPermissions(
+    canPostNotification: Boolean,
+    batteryIsNotOptimized: Boolean,
+    canWriteSystemSettings: Boolean,
+    onRequestPostNotification: () -> Unit,
+    onRequestDisableBatteryOptimization: () -> Unit,
+    onRequestWriteSystemSetting: () -> Unit,
+): List<NeededPermission> {
+    val notificationTitle = stringResource(R.string.permissions_screen_notification_title)
+    val notificationSubtitle = stringResource(R.string.permissions_screen_notification_subtitle)
+    val batteryTitle = stringResource(R.string.permissions_screen_battery_optimization_title)
+    val batterySubtitle = stringResource(R.string.permissions_screen_battery_optimization_subtitle)
+    val writeSettingTitle = stringResource(R.string.permissions_screen_write_setting_title)
+    val writeSettingSubtitle = stringResource(R.string.permissions_screen_write_setting_subtitle)
 
-    val neededPermissionList = remember(
-        uiState.batteryIsNotOptimized,
-        uiState.canWriteSystemSettings,
-        uiState.canPostNotification
-    ) {
+    return remember(canPostNotification, batteryIsNotOptimized, canWriteSystemSettings) {
         buildList {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 add(
                     NeededPermission(
-                        title = permissionScreenNotificationTitle,
-                        description = permissionScreenNotificationSubtitle,
-                        requestNeeded = !uiState.canPostNotification,
-                        requestAction = { onEvent(MainUIEvent.RequestPostNotification) },
+                        title = notificationTitle,
+                        description = notificationSubtitle,
+                        requestNeeded = !canPostNotification,
+                        requestAction = onRequestPostNotification,
                     )
                 )
             }
             add(
                 NeededPermission(
-                    title = permissionScreenBatteryOptimizationTitle,
-                    description = permissionScreenBatteryOptimizationSubtitle,
-                    requestNeeded = !uiState.batteryIsNotOptimized,
-                    requestAction = { onEvent(MainUIEvent.RequestDisableBatteryOptimization) },
+                    title = batteryTitle,
+                    description = batterySubtitle,
+                    requestNeeded = !batteryIsNotOptimized,
+                    requestAction = onRequestDisableBatteryOptimization,
                 )
             )
             add(
                 NeededPermission(
-                    title = permissionScreenWriteSettingTitle,
-                    description = permissionScreenWriteSettingSubtitle,
-                    requestNeeded = !uiState.canWriteSystemSettings,
-                    requestAction = { onEvent(MainUIEvent.RequestWriteSystemSettingPermission) },
+                    title = writeSettingTitle,
+                    description = writeSettingSubtitle,
+                    requestNeeded = !canWriteSystemSettings,
+                    requestAction = onRequestWriteSystemSetting,
                 )
             )
         }
     }
+}
+
+@Composable
+fun MainPermissionScreen(
+    uiState: MainViewUIState.Success,
+    onEvent: (MainUIEvent) -> Unit,
+) {
+    val neededPermissionList = rememberNeededPermissions(
+        canPostNotification = uiState.canPostNotification,
+        batteryIsNotOptimized = uiState.batteryIsNotOptimized,
+        canWriteSystemSettings = uiState.canWriteSystemSettings,
+        onRequestPostNotification = { onEvent(MainUIEvent.RequestPostNotification) },
+        onRequestDisableBatteryOptimization = { onEvent(MainUIEvent.RequestDisableBatteryOptimization) },
+        onRequestWriteSystemSetting = { onEvent(MainUIEvent.RequestWriteSystemSettingPermission) },
+    )
 
     PermissionRequestScreen(
         neededPermissionList = neededPermissionList,
@@ -120,51 +135,14 @@ fun TaskerPermissionScreen(
     uiState: TaskerEditUIState.Success,
     onEvent: (TaskerUIEvent) -> Unit,
 ) {
-    val permissionScreenBatteryOptimizationTitle = stringResource(
-        R.string.permissions_screen_battery_optimization_title
+    val neededPermissionList = rememberNeededPermissions(
+        canPostNotification = uiState.canPostNotification,
+        batteryIsNotOptimized = uiState.batteryIsNotOptimized,
+        canWriteSystemSettings = uiState.canWriteSystemSettings,
+        onRequestPostNotification = { onEvent(TaskerUIEvent.RequestPostNotification) },
+        onRequestDisableBatteryOptimization = { onEvent(TaskerUIEvent.RequestDisableBatteryOptimization) },
+        onRequestWriteSystemSetting = { onEvent(TaskerUIEvent.RequestWriteSystemSettingPermission) },
     )
-    val permissionScreenBatteryOptimizationSubtitle = stringResource(
-        R.string.permissions_screen_battery_optimization_subtitle
-    )
-    val permissionScreenWriteSettingTitle = stringResource(R.string.permissions_screen_write_setting_title)
-    val permissionScreenWriteSettingSubtitle = stringResource(R.string.permissions_screen_write_setting_subtitle)
-    val permissionScreenNotificationTitle = stringResource(R.string.permissions_screen_notification_title)
-    val permissionScreenNotificationSubtitle = stringResource(R.string.permissions_screen_notification_subtitle)
-
-    val neededPermissionList = remember(
-        uiState.batteryIsNotOptimized,
-        uiState.canWriteSystemSettings,
-        uiState.canPostNotification
-    ) {
-        val mutableNeededPermissionList = mutableListOf(
-            NeededPermission(
-                title = permissionScreenBatteryOptimizationTitle,
-                description = permissionScreenBatteryOptimizationSubtitle,
-                requestNeeded = !uiState.batteryIsNotOptimized,
-                requestAction = { onEvent(TaskerUIEvent.RequestDisableBatteryOptimization) },
-            ),
-            NeededPermission(
-                title = permissionScreenWriteSettingTitle,
-                description = permissionScreenWriteSettingSubtitle,
-                requestNeeded = !uiState.canWriteSystemSettings,
-                requestAction = { onEvent(TaskerUIEvent.RequestWriteSystemSettingPermission) },
-            )
-        )
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            mutableNeededPermissionList.add(
-                0,
-                NeededPermission(
-                    title = permissionScreenNotificationTitle,
-                    description = permissionScreenNotificationSubtitle,
-                    requestNeeded = !uiState.canPostNotification,
-                    requestAction = { onEvent(TaskerUIEvent.RequestPostNotification) },
-                ),
-            )
-        }
-
-        mutableNeededPermissionList.toList()
-    }
 
     PermissionRequestScreen(
         neededPermissionList = neededPermissionList,
