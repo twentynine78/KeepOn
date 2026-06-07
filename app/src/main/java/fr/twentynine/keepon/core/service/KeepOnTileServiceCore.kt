@@ -31,6 +31,7 @@ import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
 import fr.twentynine.keepon.domain.usecase.app.GetKeepOnStatusUseCase
 import fr.twentynine.keepon.domain.usecase.preferences.SetQSTileAddedUseCase
+import fr.twentynine.keepon.domain.usecase.timeout.CanCycleScreenTimeoutUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.SetNextSystemScreenTimeoutUseCase
 import fr.twentynine.keepon.core.util.BundleScrubber
 import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
@@ -60,6 +61,9 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
 
     @Inject
     lateinit var setNextSystemScreenTimeoutUseCase: SetNextSystemScreenTimeoutUseCase
+
+    @Inject
+    lateinit var canCycleScreenTimeoutUseCase: CanCycleScreenTimeoutUseCase
 
     @Inject
     lateinit var setQSTileAddedUseCase: SetQSTileAddedUseCase
@@ -134,25 +138,13 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
         }
 
         serviceScope.launch {
-            val selectedTimeouts = timeoutPreferencesRepository.getSelectedScreenTimeouts()
-            val defaultTimeout = timeoutPreferencesRepository.getDefaultScreenTimeout()
-            val currentTimeout = timeoutPreferencesRepository.getCurrentScreenTimeout()
-
-            val timeoutsWithDefault = if (selectedTimeouts.contains(defaultTimeout)) {
-                selectedTimeouts
-            } else {
-                listOf(defaultTimeout) + selectedTimeouts
-            }
-            val filteredSelectedScreenTimeouts = timeoutsWithDefault
-                .filter { screenTimeout -> screenTimeout != currentTimeout }
-
-            if (filteredSelectedScreenTimeouts.isEmpty() || !permissionStateGateway.areRequiredPermissionsGranted()) {
+            if (!canCycleScreenTimeoutUseCase() || !permissionStateGateway.areRequiredPermissionsGranted()) {
                 withContext(Dispatchers.Main.immediate) {
                     startMainActivityAndCollapse()
                 }
             } else {
                 // The listening collector redraws the tile once the new timeout is persisted.
-                setNextSystemScreenTimeoutUseCase(currentTimeout)
+                setNextSystemScreenTimeoutUseCase()
             }
         }
     }

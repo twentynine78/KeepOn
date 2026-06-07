@@ -71,24 +71,13 @@ fun KeepOnWidgetView(
                 }
 
                 // Get click action
-                val timeoutsWithDefault = remember(currentState.selectedTimeouts, currentState.defaultTimeout) {
-                    if (currentState.selectedTimeouts.contains(currentState.defaultTimeout)) {
-                        currentState.selectedTimeouts
-                    } else {
-                        listOf(currentState.defaultTimeout) + currentState.selectedTimeouts
-                    }
-                }
-                val filteredSelectedScreenTimeouts = remember(timeoutsWithDefault, currentState.currentScreenTimeout) {
-                    timeoutsWithDefault
-                        .filter { screenTimeout -> screenTimeout != currentState.currentScreenTimeout }
-                }
                 val permissionStateGateway = remember(context) {
                     EntryPointAccessors.fromApplication(
                         context.applicationContext,
                         PermissionStateGatewayEntryPoint::class.java,
                     ).permissionStateGateway()
                 }
-                val isSetupIncomplete = filteredSelectedScreenTimeouts.isEmpty() || !permissionStateGateway.areRequiredPermissionsGranted()
+                val isSetupIncomplete = !currentState.canCycleTimeout || !permissionStateGateway.areRequiredPermissionsGranted()
                 val clickAction = remember(isSetupIncomplete, currentState.currentScreenTimeout) {
                     if (isSetupIncomplete) {
                         val mainActivityIntent =

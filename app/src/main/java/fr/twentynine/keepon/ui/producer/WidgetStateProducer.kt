@@ -3,6 +3,7 @@ package fr.twentynine.keepon.ui.producer
 import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
 import fr.twentynine.keepon.domain.usecase.app.GetKeepOnStatusUseCase
+import fr.twentynine.keepon.domain.usecase.timeout.canCycleScreenTimeout
 import fr.twentynine.keepon.ui.state.WidgetUIState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -31,8 +32,11 @@ class WidgetStateProducer @Inject constructor(
                 currentScreenTimeout = currentScreenTimeout,
                 keepOnIsActive = keepOnIsActive,
                 timeoutIconStyle = timeoutIconStyle,
-                selectedTimeouts = selectedTimeouts,
-                defaultTimeout = defaultTimeout,
+                canCycleTimeout = canCycleScreenTimeout(
+                    selectedTimeouts = selectedTimeouts,
+                    defaultTimeout = defaultTimeout,
+                    currentTimeout = currentScreenTimeout,
+                ),
             ) as WidgetUIState
         }.catch { error ->
             emit(WidgetUIState.Error(error.message ?: error.toString()))

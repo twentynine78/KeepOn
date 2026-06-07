@@ -13,7 +13,6 @@ sealed interface WidgetUIState {
         val currentScreenTimeout: ScreenTimeout,
         val keepOnIsActive: Boolean,
         val timeoutIconStyle: TimeoutIconStyle,
-        val selectedTimeouts: List<ScreenTimeout>,
-        val defaultTimeout: ScreenTimeout,
+        val canCycleTimeout: Boolean,
     ) : WidgetUIState
 }
