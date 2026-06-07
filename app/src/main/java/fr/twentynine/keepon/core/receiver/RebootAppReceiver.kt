@@ -10,8 +10,8 @@ import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import fr.twentynine.keepon.domain.usecase.app.GetKeepOnStatusUseCase
 import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
+import fr.twentynine.keepon.domain.gateway.ScreenTimeoutScheduler
 import fr.twentynine.keepon.core.util.goAsync
-import fr.twentynine.keepon.core.worker.SetNewScreenTimeoutWorkScheduler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
@@ -31,6 +31,9 @@ class RebootAppReceiver : BroadcastReceiver() {
     @Inject
     lateinit var screenOffReceiverServiceManager: ScreenOffReceiverServiceManager
 
+    @Inject
+    lateinit var screenTimeoutScheduler: ScreenTimeoutScheduler
+
     override fun onReceive(context: Context, intent: Intent) {
         // Ignore implicit intents, because they are not valid.
         if (context.packageName != intent.getPackage() && ComponentName(context, this.javaClass.name) != intent.component) {
@@ -48,10 +51,7 @@ class RebootAppReceiver : BroadcastReceiver() {
                         val defaultScreenTimeout = timeoutPreferencesRepository.getDefaultScreenTimeout()
 
                         if (currentScreenTimeout != defaultScreenTimeout) {
-                            SetNewScreenTimeoutWorkScheduler().scheduleWork(
-                                SpecialScreenTimeoutType.DEFAULT_SCREEN_TIMEOUT_TYPE.value,
-                                context.applicationContext
-                            )
+                            screenTimeoutScheduler.schedule(SpecialScreenTimeoutType.DEFAULT_SCREEN_TIMEOUT_TYPE.value)
                         }
                     }
                     appComponentsUpdater.requestUpdate()
