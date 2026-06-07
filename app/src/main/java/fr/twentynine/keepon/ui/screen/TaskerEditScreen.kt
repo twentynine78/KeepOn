@@ -10,13 +10,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.captionBar
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -56,7 +54,7 @@ import fr.twentynine.keepon.ui.state.TaskerEditUIState
 import fr.twentynine.keepon.ui.event.TaskerUIEvent
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.component.GlowingText
-import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
+import fr.twentynine.keepon.ui.util.screenContentModifier
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.ItemCard
 import fr.twentynine.keepon.ui.component.KeepOnRichTooltip
@@ -203,11 +201,7 @@ fun TaskerScreenTimeoutList(
     modifier: Modifier = Modifier,
     paddingValue: PaddingValues,
 ) {
-    val maxWidthModifier = remember {
-        Modifier
-            .fillMaxHeight()
-            .width(MAX_SCREEN_CONTENT_WIDTH_IN_DP.dp)
-    }
+    val maxWidthModifier = screenContentModifier
 
     LazyColumn(
         modifier = modifier

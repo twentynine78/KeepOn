@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,7 +48,8 @@ import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.component.GlowingText
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
-import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
+import fr.twentynine.keepon.ui.util.bottomSpacerHeight
+import fr.twentynine.keepon.ui.util.screenContentModifier
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.KeepOnRichTooltip
 import fr.twentynine.keepon.ui.component.SwipeableScreenTimeoutCard
@@ -91,10 +91,7 @@ fun HomeScreen(
     navType: KeepOnNavigationType,
     paddingValue: PaddingValues,
 ) {
-    val baseMaxWidthModifier = remember {
-        Modifier
-            .width(MAX_SCREEN_CONTENT_WIDTH_IN_DP.dp)
-    }
+    val baseMaxWidthModifier = screenContentModifier
 
     LazyColumn(
         modifier = Modifier
@@ -152,12 +149,7 @@ fun HomeScreen(
         }
 
         item(key = "bottomSpacer") {
-            val spacerBottomHeight = remember(navType) {
-                when (navType) {
-                    KeepOnNavigationType.BOTTOM_NAVIGATION -> 118.dp
-                    else -> 12.dp
-                }
-            }
+            val spacerBottomHeight = bottomSpacerHeight(navType)
             Spacer(modifier = Modifier.padding(bottom = spacerBottomHeight))
         }
     }

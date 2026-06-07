@@ -11,12 +11,10 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -53,7 +51,8 @@ import fr.twentynine.keepon.ui.state.MainViewUIState
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.domain.catalog.IconFontFamilyCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
-import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
+import fr.twentynine.keepon.ui.util.bottomSpacerHeight
+import fr.twentynine.keepon.ui.util.screenContentModifier
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.ItemCard
 import kotlin.math.ceil
@@ -91,9 +90,7 @@ fun StyleScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val maxWidthModifier = Modifier
-            .fillMaxHeight()
-            .width(MAX_SCREEN_CONTENT_WIDTH_IN_DP.dp)
+        val maxWidthModifier = screenContentModifier
 
         item(key = "headerCard") {
             Column(
@@ -142,12 +139,7 @@ fun StyleScreen(
         }
 
         item(key = "bottomSpacer") {
-            val spacerBottomHeight = remember(navType) {
-                when (navType) {
-                    KeepOnNavigationType.BOTTOM_NAVIGATION -> 112.dp
-                    else -> 12.dp
-                }
-            }
+            val spacerBottomHeight = bottomSpacerHeight(navType)
             Spacer(modifier = Modifier.padding(bottom = spacerBottomHeight))
         }
     }

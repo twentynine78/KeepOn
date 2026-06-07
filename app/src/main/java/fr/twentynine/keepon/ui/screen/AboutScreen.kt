@@ -10,12 +10,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,7 +43,8 @@ import fr.twentynine.keepon.domain.catalog.CreditInfo
 import fr.twentynine.keepon.domain.model.AppInfo
 import fr.twentynine.keepon.domain.catalog.CreditCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
-import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
+import fr.twentynine.keepon.ui.util.bottomSpacerHeight
+import fr.twentynine.keepon.ui.util.screenContentModifier
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.ItemCard
 
@@ -74,11 +73,7 @@ fun AboutScreen(
     navType: KeepOnNavigationType,
     paddingValue: PaddingValues,
 ) {
-    val maxWidthModifier = remember {
-        Modifier
-            .fillMaxHeight()
-            .width(MAX_SCREEN_CONTENT_WIDTH_IN_DP.dp)
-    }
+    val maxWidthModifier = screenContentModifier
 
     LazyColumn(
         modifier = Modifier
@@ -138,12 +133,7 @@ fun AboutScreen(
         }
 
         item(key = "bottomSpacer") {
-            val spacerBottomHeight = remember(navType) {
-                when (navType) {
-                    KeepOnNavigationType.BOTTOM_NAVIGATION -> 112.dp
-                    else -> 12.dp
-                }
-            }
+            val spacerBottomHeight = bottomSpacerHeight(navType)
             Spacer(modifier = Modifier.padding(bottom = spacerBottomHeight))
         }
     }
