@@ -9,10 +9,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import fr.twentynine.keepon.ui.state.TaskerEditUIState
@@ -28,7 +27,6 @@ import fr.twentynine.keepon.core.tasker.TaskerIntent
 import fr.twentynine.keepon.core.util.BundleScrubber
 import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager
 import fr.twentynine.keepon.core.permission.SystemSettingPermissionManager
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -52,14 +50,12 @@ class EditActivity : ComponentActivity() {
     @Inject
     lateinit var permissionStateGateway: PermissionStateGateway
 
-    private var uiState = mutableStateOf<TaskerEditUIState>(TaskerEditUIState.Loading)
-
     private var isCancelled = true
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().apply {
             setKeepOnScreenCondition {
-                uiState.value is TaskerEditUIState.Loading
+                taskerEditViewModel.uiState.value is TaskerEditUIState.Loading
             }
         }
 
@@ -96,14 +92,6 @@ class EditActivity : ComponentActivity() {
             setResult(RESULT_CANCELED)
             finish()
             return
-        }
-
-        lifecycleScope.launch {
-            taskerEditViewModel.uiState
-                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { newUIState ->
-                    uiState.value = newUIState
-                }
         }
 
         if (forwardedBundle != null) {
@@ -148,11 +136,13 @@ class EditActivity : ComponentActivity() {
                     }
                 }
 
+                val uiState by taskerEditViewModel.uiState.collectAsStateWithLifecycle()
+
                 TaskerEditRoute(
-                    uiState = uiState.value,
+                    uiState = uiState,
                     onEvent = onEvent,
                     saveTaskerConfiguration = {
-                        isCancelled = (uiState.value as TaskerEditUIState.Success).selectedScreenTimeout == null
+                        isCancelled = (taskerEditViewModel.uiState.value as TaskerEditUIState.Success).selectedScreenTimeout == null
                         finish()
                     }
                 )
@@ -164,7 +154,7 @@ class EditActivity : ComponentActivity() {
         if (isCancelled) {
             setResult(RESULT_CANCELED)
         } else {
-            val selectedTimeout = (uiState.value as TaskerEditUIState.Success).selectedScreenTimeout
+            val selectedTimeout = (taskerEditViewModel.uiState.value as TaskerEditUIState.Success).selectedScreenTimeout
 
             if (selectedTimeout == null) {
                 setResult(RESULT_CANCELED)

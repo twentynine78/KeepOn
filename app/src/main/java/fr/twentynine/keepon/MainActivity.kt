@@ -8,10 +8,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,7 +28,6 @@ import fr.twentynine.keepon.core.util.BundleScrubber
 import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager
 import fr.twentynine.keepon.core.permission.SystemSettingPermissionManager
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -53,12 +53,10 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var permissionStateGateway: PermissionStateGateway
 
-    private var uiState = mutableStateOf<MainViewUIState>(MainViewUIState.Loading)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().apply {
             setKeepOnScreenCondition {
-                uiState.value is MainViewUIState.Loading
+                mainViewModel.uiState.value is MainViewUIState.Loading
             }
         }
 
@@ -75,14 +73,6 @@ class MainActivity : ComponentActivity() {
         }
 
         mainViewModel.incrementAppLaunchCount()
-
-        lifecycleScope.launch {
-            mainViewModel.uiState
-                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                .collectLatest { newUIState ->
-                    uiState.value = newUIState
-                }
-        }
 
         setContent {
             KeepOnTheme {
@@ -117,8 +107,10 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+                val uiState by mainViewModel.uiState.collectAsStateWithLifecycle()
+
                 MainScreen(
-                    uiState = uiState.value,
+                    uiState = uiState,
                     onEvent = onEvent
                 )
             }
