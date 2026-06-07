@@ -15,7 +15,7 @@ import fr.twentynine.keepon.domain.usecase.app.RunAppMigrationUseCase
 import fr.twentynine.keepon.domain.gateway.WidgetUpdater
 import fr.twentynine.keepon.core.coil.TimeoutIconDataFetcher
 import fr.twentynine.keepon.core.coil.TimeoutIconDataKeyer
-import fr.twentynine.keepon.di.entrypoint.TimeoutIconDataFetcherEntryPoint
+import fr.twentynine.keepon.di.entrypoint.StringResourceProviderEntryPoint
 import fr.twentynine.keepon.core.worker.GuardianSystemScreenTimeoutWorkerScheduler
 import fr.twentynine.keepon.core.worker.MonitorSystemScreenTimeoutWorkScheduler
 import kotlinx.coroutines.CoroutineScope
@@ -67,7 +67,7 @@ class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configura
         // are meaningful here. The string provider is resolved once for the fetcher factory.
         val stringResourceProvider = EntryPointAccessors.fromApplication(
             this.applicationContext,
-            TimeoutIconDataFetcherEntryPoint::class.java,
+            StringResourceProviderEntryPoint::class.java,
         ).stringResourceProvider()
 
         return ImageLoader.Builder(this.applicationContext)

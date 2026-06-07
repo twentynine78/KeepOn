@@ -7,6 +7,8 @@ import fr.twentynine.keepon.domain.model.DismissedTips
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.domain.model.TipsConstraintState
+import fr.twentynine.keepon.domain.gateway.AppInfoProvider
+import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import fr.twentynine.keepon.domain.repository.AppPreferencesRepository
 import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
@@ -30,7 +32,12 @@ class MainViewStateProducer @Inject constructor(
     private val getKeepOnStatusUseCase: GetKeepOnStatusUseCase,
     private val checkIfRateTipNeededUseCase: CheckIfRateTipNeededUseCase,
     private val buildScreenTimeoutUiListProducer: BuildScreenTimeoutUiListProducer,
+    private val stringResourceProvider: StringResourceProvider,
+    private val appInfoProvider: AppInfoProvider,
 ) {
+    // App metadata is static; read it once and reuse it across state emissions.
+    private val appInfo by lazy { appInfoProvider.getAppInfo() }
+
     suspend operator fun invoke(
         canWriteSystemSettingFlow: Flow<Boolean>,
         batteryIsNotOptimizedFlow: Flow<Boolean>,
@@ -55,11 +62,14 @@ class MainViewStateProducer @Inject constructor(
                 canPostNotification = arrayOfFlow[2] as Boolean,
                 resetTimeoutWhenScreenOff = arrayOfFlow[3] as Boolean,
                 currentScreenTimeout = arrayOfFlow[4] as ScreenTimeout,
+                currentTimeoutDisplay = (arrayOfFlow[4] as ScreenTimeout)
+                    .getFullDisplayTimeout(stringResourceProvider),
                 keepOnIsActive = arrayOfFlow[5] as Boolean,
                 isFirstLaunch = arrayOfFlow[6] as Boolean,
                 timeoutIconStyle = arrayOfFlow[7] as TimeoutIconStyle,
                 tipsList = arrayOfFlow[8] as List<TipsInfo>,
                 screenTimeouts = arrayOfFlow[9] as List<ScreenTimeoutUI>,
+                appInfo = appInfo,
             )
         }
     }

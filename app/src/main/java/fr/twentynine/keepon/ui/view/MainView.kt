@@ -46,7 +46,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -72,8 +71,6 @@ import fr.twentynine.keepon.ui.navigation.TOP_LEVEL_DESTINATIONS
 import fr.twentynine.keepon.ui.navigation.withBadge
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.plus
-import fr.twentynine.keepon.di.entrypoint.StringResourceProviderEntryPoint
-import dagger.hilt.android.EntryPointAccessors
 
 private fun NavigationSuiteType.toKeepOnNavType() = when (this) {
     NavigationSuiteType.NavigationBar -> KeepOnNavigationType.BOTTOM_NAVIGATION
@@ -228,6 +225,7 @@ private fun KeepOnView(
         selectedDestination = selectedDestination,
         keepOnIsActive = uiState.keepOnIsActive,
         currentScreenTimeout = uiState.currentScreenTimeout,
+        currentTimeoutDisplay = uiState.currentTimeoutDisplay,
         timeoutIconStyle = uiState.timeoutIconStyle,
         fabOnClick = fabOnClick,
         scrollBehavior = bottomBarScrollBehavior,
@@ -339,18 +337,6 @@ private fun KeepOnFloatingActionButton(
     uiState: MainViewUIState.Success,
     onClick: () -> Unit,
 ) {
-    val context = LocalContext.current
-    val stringResourceProvider = remember(context) {
-        EntryPointAccessors.fromApplication(
-            context.applicationContext,
-            StringResourceProviderEntryPoint::class.java,
-        ).stringResourceProvider()
-    }
-    val imageDescription by remember(uiState.currentScreenTimeout, stringResourceProvider) {
-        derivedStateOf {
-            uiState.currentScreenTimeout.getFullDisplayTimeout(stringResourceProvider)
-        }
-    }
     val imageData = remember(uiState.currentScreenTimeout, uiState.timeoutIconStyle) {
         TimeoutIconData(
             uiState.currentScreenTimeout,
@@ -404,7 +390,7 @@ private fun KeepOnFloatingActionButton(
                 .padding(bottom = 2.dp),
             model = imageModel,
             colorFilter = ColorFilter.tint(fabContentColor),
-            contentDescription = imageDescription,
+            contentDescription = uiState.currentTimeoutDisplay,
         )
     }
 }
@@ -475,6 +461,7 @@ private fun KeepOnNavHost(
             exitTransition = defaultExitTransition,
         ) {
             AboutView(
+                appInfo = uiState.appInfo,
                 navType = navType,
                 paddingValue = paddingValue,
             )

@@ -38,29 +38,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import dagger.hilt.android.EntryPointAccessors
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.catalog.CreditInfoType
 import fr.twentynine.keepon.ui.model.ItemPosition
 import fr.twentynine.keepon.domain.catalog.CreditInfo
 import fr.twentynine.keepon.domain.model.AppInfo
-import fr.twentynine.keepon.di.entrypoint.AppInfoProviderEntryPoint
 import fr.twentynine.keepon.domain.catalog.CreditCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
 
 @Composable
 fun AboutView(
+    appInfo: AppInfo,
     navType: KeepOnNavigationType,
     paddingValue: PaddingValues,
 ) {
-    val context = LocalContext.current
-    val appInfo = remember {
-        EntryPointAccessors.fromApplication(
-            context.applicationContext,
-            AppInfoProviderEntryPoint::class.java,
-        ).appInfoProvider().getAppInfo()
-    }
     val creditInfoMap = remember {
         CreditCatalog.creditInfoMap
     }

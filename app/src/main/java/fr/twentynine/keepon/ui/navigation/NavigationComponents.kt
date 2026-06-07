@@ -41,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
@@ -52,8 +51,6 @@ import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconData
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.util.KeepOnNavigationContentPosition
-import fr.twentynine.keepon.di.entrypoint.StringResourceProviderEntryPoint
-import dagger.hilt.android.EntryPointAccessors
 
 class KeepOnNavSuiteScope(
     val navSuiteType: NavigationSuiteType
@@ -67,6 +64,7 @@ fun KeepOnNavigationWrapper(
     navigateToTopLevelDestination: (NavigationDestination) -> Unit,
     keepOnIsActive: Boolean,
     currentScreenTimeout: ScreenTimeout,
+    currentTimeoutDisplay: String,
     timeoutIconStyle: TimeoutIconStyle,
     fabOnClick: () -> Unit,
     scrollBehavior: BottomAppBarScrollBehavior,
@@ -111,6 +109,7 @@ fun KeepOnNavigationWrapper(
                     navigateToTopLevelDestination = navigateToTopLevelDestination,
                     keepOnIsActive = keepOnIsActive,
                     currentScreenTimeout = currentScreenTimeout,
+                    currentTimeoutDisplay = currentTimeoutDisplay,
                     timeoutIconStyle = timeoutIconStyle,
                     fabOnClick = fabOnClick,
                     navigationContentPosition = navContentPosition,
@@ -184,6 +183,7 @@ fun NavigationRailView(
     navigateToTopLevelDestination: (NavigationDestination) -> Unit,
     keepOnIsActive: Boolean,
     currentScreenTimeout: ScreenTimeout,
+    currentTimeoutDisplay: String,
     timeoutIconStyle: TimeoutIconStyle,
     fabOnClick: () -> Unit,
     navigationContentPosition: KeepOnNavigationContentPosition,
@@ -236,16 +236,6 @@ fun NavigationRailView(
                     tween(animationDuration)
                 )
 
-                val localContext = LocalContext.current
-                val stringResourceProvider = remember(localContext) {
-                    EntryPointAccessors.fromApplication(
-                        localContext.applicationContext,
-                        StringResourceProviderEntryPoint::class.java,
-                    ).stringResourceProvider()
-                }
-                val imageDescription = remember(currentScreenTimeout) {
-                    currentScreenTimeout.getFullDisplayTimeout(stringResourceProvider)
-                }
                 val imageData = remember(currentScreenTimeout, timeoutIconStyle) {
                     TimeoutIconData(
                         currentScreenTimeout,
@@ -273,7 +263,7 @@ fun NavigationRailView(
                         modifier = Modifier.size(40.dp, 40.dp).padding(bottom = 2.dp),
                         model = imageModel,
                         colorFilter = ColorFilter.tint(fabContentColor),
-                        contentDescription = imageDescription,
+                        contentDescription = currentTimeoutDisplay,
                     )
                 }
             }
