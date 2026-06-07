@@ -61,36 +61,33 @@ fun TipsSection(
     }
 
     LaunchedEffect(tipsList, pagerState.settledPage) {
-        val currentlyDisplayedList = currentPagerList
-        val currentPageInDisplayedList = pagerState.currentPage
+        val displayedList = currentPagerList
+        val currentPage = pagerState.currentPage
 
-        if (tipsList.isEmpty()) {
-            currentPagerList = emptyList()
-        } else {
-            if (tipsList != currentlyDisplayedList) {
-                val oldPageCount = currentlyDisplayedList.size
-                val newPageCount = tipsList.size
+        when {
+            tipsList.isEmpty() -> currentPagerList = emptyList()
 
-                var targetPage = currentPageInDisplayedList
+            tipsList == displayedList -> Unit
 
-                if (newPageCount < oldPageCount) {
-                    val currentItemId = currentlyDisplayedList.getOrNull(currentPageInDisplayedList)?.id
+            else -> {
+                // When the tip currently on screen is dismissed, slide to the neighbour that will take
+                // its place BEFORE swapping the backing list, so the neighbour visibly slides in. The
+                // keyed pager keeps that neighbour in view once the dismissed tip is removed.
+                val currentTipRemoved = displayedList.getOrNull(currentPage)
+                    ?.let { shown -> tipsList.none { it.id == shown.id } } == true
 
-                    if (currentItemId != null && tipsList.none { it.id == currentItemId }) {
-                        targetPage = if (currentPageInDisplayedList >= newPageCount) {
-                            (newPageCount - 1).coerceAtLeast(0)
-                        } else {
-                            currentPageInDisplayedList
-                        }
-                    } else if (currentPageInDisplayedList >= newPageCount) {
-                        targetPage = (newPageCount - 1).coerceAtLeast(0)
+                if (currentTipRemoved && tipsList.size < displayedList.size && !pagerState.isScrollInProgress) {
+                    val slideToPage = when {
+                        currentPage < displayedList.lastIndex -> currentPage + 1 // right neighbour slides left into place
+                        currentPage > 0 -> currentPage - 1 // last tip: left neighbour slides right into place
+                        else -> -1 // it was the only tip (the section will just collapse)
+                    }
+                    if (slideToPage >= 0) {
+                        pagerState.animateScrollToPage(slideToPage)
                     }
                 }
-                currentPagerList = tipsList
 
-                if (targetPage != pagerState.currentPage && targetPage < tipsList.size && !pagerState.isScrollInProgress) {
-                    pagerState.animateScrollToPage(targetPage)
-                }
+                currentPagerList = tipsList
             }
         }
     }
