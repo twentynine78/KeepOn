@@ -37,13 +37,17 @@ fun KeepOnWidgetContent(
     val borderSize = dimens.borderSize
     val imagePadding = dimens.imagePadding
 
+    // On API < 31 cornerRadius() is a no-op; the rounded look comes from a single pre-rendered
+    // bitmap of the three concentric circles set as the root background (null on API 31+).
+    val legacyBackground = rememberLegacyWidgetBackground(borderColor, backgroundColor, widgetBackgroundColor)
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = GlanceModifier
             .appWidgetBackground()
             .cornerRadius(cornerRadius + (outerBoxPadding * 2))
             .size(widgetMinSize + (outerBoxPadding * 2))
-            .background(widgetBackgroundColor)
+            .applyRootBackground(legacyBackground, widgetBackgroundColor)
             .padding(outerBoxPadding),
     ) {
         Box(
@@ -51,13 +55,13 @@ fun KeepOnWidgetContent(
             modifier = GlanceModifier
                 .cornerRadius(cornerRadius)
                 .size(widgetMinSize)
-                .background(borderColor)
+                .applyLayerBackground(legacyBackground, borderColor)
                 .padding(borderSize),
         ) {
             val contentWidgetModifier = GlanceModifier
                 .cornerRadius(cornerRadius)
                 .fillMaxSize()
-                .background(backgroundColor)
+                .applyLayerBackground(legacyBackground, backgroundColor)
 
             val widgetContentModifier = if (onClickAction != null) {
                 contentWidgetModifier

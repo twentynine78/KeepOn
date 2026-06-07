@@ -35,9 +35,7 @@ height="80">](https://github.com/twentynine78/KeepOn/releases/latest)
 
 You can read / audit code and compile your own apk if you want!
 
-## Known limitations
 
-- **Widget shape on Android 9, 10 and 11 (API < 31):** the home screen widget is rendered with square corners instead of the rounded design. This is a platform limitation — Glance's `cornerRadius` modifier relies on an API that is only available from Android 12 (API 31) and is ignored on older versions. The widget remains fully functional (timeout display, tap to cycle); only the corner styling is affected.
 
 ## Credit
 
