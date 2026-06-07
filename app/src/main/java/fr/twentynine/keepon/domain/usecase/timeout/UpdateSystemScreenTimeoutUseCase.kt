@@ -19,6 +19,7 @@ class UpdateSystemScreenTimeoutUseCase @Inject constructor(
     private val timeoutPreferencesRepository: TimeoutPreferencesRepository,
     private val devicePolicyController: DevicePolicyController,
     private val applyScreenTimeoutUseCase: ApplyScreenTimeoutUseCase,
+    private val revertScreenTimeoutChangeUseCase: RevertScreenTimeoutChangeUseCase,
     private val userNotifier: UserNotifier,
 ) {
     suspend operator fun invoke(newTimeout: ScreenTimeout, forceUpdatePreviousTimeout: Boolean = false) {
@@ -38,8 +39,10 @@ class UpdateSystemScreenTimeoutUseCase @Inject constructor(
 
         val applied = applyScreenTimeoutUseCase(timeout, forceUpdatePreviousTimeout)
         if (!applied) {
-            // The device silently refused the write — tell the user instead of leaving
-            // the tile/widget showing a state that never took effect.
+            // The device silently refused the write: restore the stored state to the real
+            // current value and tell the user, instead of leaving the tile/widget showing
+            // a value that never took effect.
+            revertScreenTimeoutChangeUseCase(currentTimeout)
             userNotifier.notifyScreenTimeoutNotApplied()
             return
         }
