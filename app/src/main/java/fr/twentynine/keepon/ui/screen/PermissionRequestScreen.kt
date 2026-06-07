@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
-import fr.twentynine.keepon.ui.theme.SubtitleContentAlpha
+import fr.twentynine.keepon.ui.theme.SUBTITLE_CONTENT_ALPHA
 import fr.twentynine.keepon.ui.model.NeededPermission
 import fr.twentynine.keepon.ui.state.TaskerEditUIState
 import fr.twentynine.keepon.ui.event.TaskerUIEvent
@@ -277,7 +277,7 @@ fun PermissionItem(
 
     val subtitleTextColor by animateColorAsState(
         targetValue = if (permission.requestNeeded) {
-            MaterialTheme.colorScheme.onBackground.copy(alpha = SubtitleContentAlpha)
+            MaterialTheme.colorScheme.onBackground.copy(alpha = SUBTITLE_CONTENT_ALPHA)
         } else {
             MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
         },

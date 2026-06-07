@@ -12,4 +12,4 @@ val KeepOnCardCornerRadius = 24.dp
 val KeepOnCardShape = RoundedCornerShape(KeepOnCardCornerRadius)
 
 /** Alpha applied to secondary (subtitle) text drawn over the background color. */
-const val SubtitleContentAlpha = 0.8f
+const val SUBTITLE_CONTENT_ALPHA = 0.8f

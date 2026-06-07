@@ -45,7 +45,7 @@ import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.screenContentModifier
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
-import fr.twentynine.keepon.ui.theme.SubtitleContentAlpha
+import fr.twentynine.keepon.ui.theme.SUBTITLE_CONTENT_ALPHA
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.ItemCard
 
@@ -103,7 +103,7 @@ fun AboutScreen(
                     Text(
                         text = stringResource(creditInfoType.typeNameId),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = SubtitleContentAlpha),
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = SUBTITLE_CONTENT_ALPHA),
                         modifier = Modifier
                             .padding(start = 32.dp, end = 32.dp, top = topPadding, bottom = 8.dp),
                     )
