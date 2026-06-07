@@ -40,9 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.model.ItemPosition
 import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
@@ -52,7 +50,7 @@ import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.ui.state.TaskerEditUIState
 import fr.twentynine.keepon.ui.event.TaskerUIEvent
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
-import fr.twentynine.keepon.ui.component.GlowingText
+import fr.twentynine.keepon.ui.component.TimeoutRowLabel
 import fr.twentynine.keepon.ui.util.screenContentModifier
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
 import fr.twentynine.keepon.ui.theme.SubtitleContentAlpha
@@ -350,16 +348,10 @@ fun TaskerScreenTimeoutRow(
                 contentDescription = item.displayName,
             )
 
-            GlowingText(
-                modifier = Modifier.padding(start = 24.dp),
-                style = MaterialTheme.typography.labelMedium,
+            TimeoutRowLabel(
                 text = item.displayName,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.SemiBold,
                 showGlow = isSelected,
-                glowColor = MaterialTheme.colorScheme.onSurface,
-                glowRadius = 10.dp,
-                glowSpread = 2.dp,
+                modifier = Modifier.padding(start = 24.dp),
             )
 
             Spacer(Modifier.weight(1f))

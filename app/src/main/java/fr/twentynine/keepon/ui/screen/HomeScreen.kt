@@ -34,9 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.model.ItemPosition
 import fr.twentynine.keepon.ui.catalog.TipsInfo
@@ -45,7 +43,7 @@ import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
-import fr.twentynine.keepon.ui.component.GlowingText
+import fr.twentynine.keepon.ui.component.TimeoutRowLabel
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.screenContentModifier
@@ -268,18 +266,12 @@ fun ScreenTimeoutRow(
                 modifier = Modifier.align(Alignment.CenterStart),
             )
 
-            GlowingText(
+            TimeoutRowLabel(
+                text = item.displayName,
+                showGlow = item.isCurrent,
                 modifier = Modifier
                     .padding(start = 70.dp)
                     .align(Alignment.CenterStart),
-                style = MaterialTheme.typography.labelMedium,
-                text = item.displayName,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.SemiBold,
-                showGlow = item.isCurrent,
-                glowColor = MaterialTheme.colorScheme.onSurface,
-                glowRadius = 10.dp,
-                glowSpread = 2.dp,
             )
 
             when {
