@@ -48,7 +48,7 @@ import fr.twentynine.keepon.ui.event.MainUIEvent
 import kotlinx.coroutines.launch
 
 @Composable
-fun TipsSectionView(
+fun TipsSection(
     tipsList: List<TipsInfo>,
     onEvent: (MainUIEvent) -> Unit,
     modifier: Modifier = Modifier,

@@ -63,9 +63,9 @@ import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.component.GlowingText
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
-import fr.twentynine.keepon.ui.component.CardHeaderView
-import fr.twentynine.keepon.ui.component.SwipeableScreenTimeoutUICardView
-import fr.twentynine.keepon.ui.component.TipsSectionView
+import fr.twentynine.keepon.ui.component.CardHeader
+import fr.twentynine.keepon.ui.component.SwipeableScreenTimeoutCard
+import fr.twentynine.keepon.ui.component.TipsSection
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,7 +76,7 @@ private const val ITEM_CARD_BACKGROUND_COLOR_ALPHA = 0.65f
 private const val ITEM_CARD_BORDER_COLOR_ALPHA = 0.35f
 
 @Composable
-fun HomeView(
+fun HomeRoute(
     uiState: MainViewUIState.Success,
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
@@ -122,7 +122,7 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item(key = "tipsCard") {
-            TipsSectionView(tipsList = tipsList, onEvent = onEvent, modifier = baseMaxWidthModifier.padding(top = 8.dp))
+            TipsSection(tipsList = tipsList, onEvent = onEvent, modifier = baseMaxWidthModifier.padding(top = 8.dp))
         }
 
         item(key = "behaviorCard") {
@@ -141,7 +141,7 @@ fun HomeScreen(
                 modifier = baseMaxWidthModifier
                     .padding(top = 20.dp),
             ) {
-                CardHeaderView(
+                CardHeader(
                     iconVector = Icons.AutoMirrored.Rounded.PlaylistAddCheck,
                     iconSize = 22,
                     title = stringResource(R.string.select_timeouts_title),
@@ -192,7 +192,7 @@ fun KeepOnBehaviorCard(
         modifier = modifier
             .padding(top = 28.dp, bottom = 12.dp),
     ) {
-        CardHeaderView(
+        CardHeader(
             icon = painterResource(R.drawable.ic_keepon),
             title = stringResource(R.string.general_behavior_title),
             descText = stringResource(R.string.general_behavior_text),
@@ -283,7 +283,7 @@ fun ScreenTimeoutRow(
     val itemCardBackgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = ITEM_CARD_BACKGROUND_COLOR_ALPHA)
     val itemCardBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = ITEM_CARD_BORDER_COLOR_ALPHA)
 
-    SwipeableScreenTimeoutUICardView(
+    SwipeableScreenTimeoutCard(
         modifier = modifier
             .fillMaxSize(),
         item = item,

@@ -106,7 +106,7 @@ fun MainPermissionScreen(
         }
     }
 
-    RequestPermissionsView(
+    PermissionRequestScreen(
         neededPermissionList = neededPermissionList,
         updatePermissions = {
             onEvent(MainUIEvent.CheckNeededPermissions)
@@ -166,14 +166,14 @@ fun TaskerPermissionScreen(
         mutableNeededPermissionList.toList()
     }
 
-    RequestPermissionsView(
+    PermissionRequestScreen(
         neededPermissionList = neededPermissionList,
         updatePermissions = { onEvent(TaskerUIEvent.CheckNeededPermissions) },
     )
 }
 
 @Composable
-fun RequestPermissionsView(
+fun PermissionRequestScreen(
     neededPermissionList: List<NeededPermission>,
     updatePermissions: () -> Unit,
 ) {

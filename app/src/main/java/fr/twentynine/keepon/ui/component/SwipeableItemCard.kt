@@ -167,7 +167,7 @@ private fun <T : Parcelable> AnimateSwipeableItemCardEffect(
 }
 
 @Composable
-fun <T : Parcelable> SwipeableItemCardView(
+fun <T : Parcelable> SwipeableItemCard(
     item: T?,
     itemPosition: ItemPosition,
     modifier: Modifier = Modifier,

@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun DismissActionRowView(
+fun DismissActionRow(
     modifier: Modifier = Modifier,
     icon: ImageVector?,
     text: String?,

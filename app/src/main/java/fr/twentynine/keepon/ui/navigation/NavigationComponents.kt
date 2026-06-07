@@ -97,13 +97,13 @@ fun KeepOnNavigationWrapper(
         layoutType = navLayoutType,
         navigationSuite = {
             when (navLayoutType) {
-                NavigationSuiteType.NavigationBar -> BottomNavigationBarView(
+                NavigationSuiteType.NavigationBar -> BottomNavigationBar(
                     topLevelDestinations = topLevelDestinations,
                     selectedDestination = selectedDestination,
                     navigateToTopLevelDestination = navigateToTopLevelDestination,
                     scrollBehavior = scrollBehavior,
                 )
-                NavigationSuiteType.NavigationRail -> NavigationRailView(
+                NavigationSuiteType.NavigationRail -> KeepOnNavigationRail(
                     topLevelDestinations = topLevelDestinations,
                     selectedDestination = selectedDestination,
                     navigateToTopLevelDestination = navigateToTopLevelDestination,
@@ -123,7 +123,7 @@ fun KeepOnNavigationWrapper(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomNavigationBarView(
+fun BottomNavigationBar(
     topLevelDestinations: List<NavigationDestinationWithBadge>,
     selectedDestination: String,
     navigateToTopLevelDestination: (NavigationDestination) -> Unit,
@@ -177,7 +177,7 @@ fun BottomNavigationBarView(
 }
 
 @Composable
-fun NavigationRailView(
+fun KeepOnNavigationRail(
     topLevelDestinations: List<NavigationDestinationWithBadge>,
     selectedDestination: String,
     navigateToTopLevelDestination: (NavigationDestination) -> Unit,

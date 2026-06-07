@@ -19,7 +19,7 @@ private const val CONTENT_COLOR_ANIMATION_DURATION_MS = 200
 private const val BACKGROUND_COLOR_ANIMATION_DURATION_MS = 400
 
 @Composable
-fun ScreenTimeoutSetDefaultDismissActionRowView(
+fun SetDefaultDismissActionRow(
     dismissDirection: SwipeToDismissBoxValue,
     dismissProgress: Float,
     screenTimeoutUI: ScreenTimeoutUI,
@@ -72,7 +72,7 @@ fun ScreenTimeoutSetDefaultDismissActionRowView(
         else -> androidx.compose.foundation.layout.Arrangement.Start
     }
 
-    DismissActionRowView(
+    DismissActionRow(
         icon = iconSetDefault,
         text = textSetDefault,
         contentColor = animatedContentColor,

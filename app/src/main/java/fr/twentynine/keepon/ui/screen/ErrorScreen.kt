@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
 
 @Composable
-fun ErrorView(
+fun ErrorScreen(
     modifier: Modifier = Modifier,
     errorMessage: String,
 ) {

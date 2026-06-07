@@ -5,13 +5,13 @@ import androidx.compose.ui.Modifier
 import fr.twentynine.keepon.ui.model.ItemPosition
 
 @Composable
-fun ItemCardView(
+fun ItemCard(
     itemPosition: ItemPosition,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
-    SwipeableItemCardView(
+    SwipeableItemCard(
         item = null,
         itemPosition = itemPosition,
         modifier = modifier,

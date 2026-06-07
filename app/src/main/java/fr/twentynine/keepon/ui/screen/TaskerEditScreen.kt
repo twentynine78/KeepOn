@@ -70,8 +70,8 @@ import fr.twentynine.keepon.domain.model.TimeoutIconData
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.component.GlowingText
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
-import fr.twentynine.keepon.ui.component.CardHeaderView
-import fr.twentynine.keepon.ui.component.ItemCardView
+import fr.twentynine.keepon.ui.component.CardHeader
+import fr.twentynine.keepon.ui.component.ItemCard
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,13 +80,13 @@ private val SpacingBetweenTooltipAndAnchor = 22.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskerEditView(
+fun TaskerEditRoute(
     uiState: TaskerEditUIState,
     saveTaskerConfiguration: () -> Unit,
     onEvent: (TaskerUIEvent) -> Unit,
 ) {
     when (uiState) {
-        is TaskerEditUIState.Error -> ErrorView(errorMessage = uiState.error)
+        is TaskerEditUIState.Error -> ErrorScreen(errorMessage = uiState.error)
         is TaskerEditUIState.Success -> {
             if (!uiState.canWriteSystemSettings || !uiState.batteryIsNotOptimized) {
                 TaskerPermissionScreen(
@@ -236,7 +236,7 @@ fun TaskerScreenTimeoutList(
                 modifier = maxWidthModifier
                     .padding(top = 28.dp)
             ) {
-                CardHeaderView(
+                CardHeader(
                     title = stringResource(R.string.select_tasker_timeouts_title),
                     iconVector = Icons.Rounded.Build,
                     descText = stringResource(R.string.select_tasker_timeouts_text),
@@ -335,7 +335,7 @@ fun TaskerScreenTimeoutRow(
 
     val isSelected = remember(item, selectedScreenTimeout) { item.value == selectedScreenTimeout?.value }
 
-    ItemCardView(
+    ItemCard(
         itemPosition = itemPosition,
         modifier = modifier
     ) {

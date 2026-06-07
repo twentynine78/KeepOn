@@ -121,7 +121,7 @@ private enum class MainScreenState {
 }
 
 @Composable
-fun MainView(
+fun MainScreen(
     uiState: MainViewUIState,
     onEvent: (MainUIEvent) -> Unit,
 ) {
@@ -161,7 +161,7 @@ fun MainView(
         when (screenStateTarget) {
             MainScreenState.ERROR -> {
                 if (uiState is MainViewUIState.Error) {
-                    ErrorView(errorMessage = uiState.error)
+                    ErrorScreen(errorMessage = uiState.error)
                 }
             }
             MainScreenState.PERMISSION -> {
@@ -436,7 +436,7 @@ private fun KeepOnNavHost(
             enterTransition = defaultEnterTransition,
             exitTransition = defaultExitTransition,
         ) {
-            HomeView(
+            HomeRoute(
                 uiState = uiState,
                 onEvent = onEvent,
                 navType = navType,
@@ -448,7 +448,7 @@ private fun KeepOnNavHost(
             enterTransition = defaultEnterTransition,
             exitTransition = defaultExitTransition,
         ) {
-            StyleView(
+            StyleRoute(
                 uiState = uiState,
                 onEvent = onEvent,
                 navType = navType,
@@ -460,7 +460,7 @@ private fun KeepOnNavHost(
             enterTransition = defaultEnterTransition,
             exitTransition = defaultExitTransition,
         ) {
-            AboutView(
+            AboutRoute(
                 appInfo = uiState.appInfo,
                 navType = navType,
                 paddingValue = paddingValue,

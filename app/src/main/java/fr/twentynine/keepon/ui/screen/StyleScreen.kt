@@ -54,12 +54,12 @@ import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.domain.catalog.IconFontFamilyCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
-import fr.twentynine.keepon.ui.component.CardHeaderView
-import fr.twentynine.keepon.ui.component.ItemCardView
+import fr.twentynine.keepon.ui.component.CardHeader
+import fr.twentynine.keepon.ui.component.ItemCard
 import kotlin.math.ceil
 
 @Composable
-fun StyleView(
+fun StyleRoute(
     uiState: MainViewUIState.Success,
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
@@ -100,7 +100,7 @@ fun StyleScreen(
                 modifier = maxWidthModifier
                     .padding(top = 28.dp),
             ) {
-                CardHeaderView(
+                CardHeader(
                     iconVector = Icons.Outlined.FontDownload,
                     title = stringResource(R.string.font_selection_tile),
                     descText = stringResource(R.string.font_selection_text),
@@ -178,7 +178,7 @@ fun FontSelectionRow(
         }
     }
 
-    ItemCardView(modifier = modifier, itemPosition = itemPosition) {
+    ItemCard(modifier = modifier, itemPosition = itemPosition) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -244,7 +244,7 @@ fun FontStyleCard(
         modifier = modifier
             .padding(top = 28.dp, bottom = 12.dp),
     ) {
-        CardHeaderView(
+        CardHeader(
             iconVector = Icons.Rounded.FormatColorText,
             title = stringResource(R.string.font_style_tile),
             descText = stringResource(R.string.font_style_text),
@@ -355,7 +355,7 @@ fun FontOptionsCard(
         modifier = modifier
             .padding(top = 28.dp, bottom = 12.dp),
     ) {
-        CardHeaderView(
+        CardHeader(
             iconVector = Icons.Rounded.LocationSearching,
             title = stringResource(R.string.font_options_title),
             descText = stringResource(R.string.font_options_text),

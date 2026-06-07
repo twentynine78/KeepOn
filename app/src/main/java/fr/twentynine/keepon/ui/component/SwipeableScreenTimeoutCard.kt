@@ -10,7 +10,7 @@ import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 private const val SCREEN_TIMEOUT_CARD_SWIPE_THRESHOLD = 0.30f
 
 @Composable
-fun SwipeableScreenTimeoutUICardView(
+fun SwipeableScreenTimeoutCard(
     item: ScreenTimeoutUI,
     itemPosition: ItemPosition,
     modifier: Modifier = Modifier,
@@ -23,7 +23,7 @@ fun SwipeableScreenTimeoutUICardView(
     val isDefault = remember(item.isDefault) { item.isDefault }
     val isFirst = remember(itemPosition) { itemPosition == ItemPosition.FIRST }
 
-    SwipeableItemCardView(
+    SwipeableItemCard(
         item = item,
         itemPosition = itemPosition,
         modifier = modifier,
@@ -35,7 +35,7 @@ fun SwipeableScreenTimeoutUICardView(
         swipeThresholdFraction = SCREEN_TIMEOUT_CARD_SWIPE_THRESHOLD,
         backgroundContent = { dismissDirection, dismissProgress, currentItem ->
             if (currentItem != null) {
-                ScreenTimeoutSetDefaultDismissActionRowView(
+                SetDefaultDismissActionRow(
                     dismissDirection = dismissDirection,
                     dismissProgress = dismissProgress,
                     screenTimeoutUI = currentItem,

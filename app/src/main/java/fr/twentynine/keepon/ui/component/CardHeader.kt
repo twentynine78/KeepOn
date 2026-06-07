@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
 
 @Composable
-fun CardHeaderView(
+fun CardHeader(
     modifier: Modifier = Modifier,
     icon: Painter? = null,
     iconVector: ImageVector? = null,

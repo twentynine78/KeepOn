@@ -20,7 +20,7 @@ import fr.twentynine.keepon.ui.event.TaskerUIEvent
 import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
 import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.ui.theme.KeepOnTheme
-import fr.twentynine.keepon.ui.screen.TaskerEditView
+import fr.twentynine.keepon.ui.screen.TaskerEditRoute
 import fr.twentynine.keepon.ui.viewmodel.TaskerEditViewModel
 import fr.twentynine.keepon.core.permission.BatteryOptimizationManager
 import fr.twentynine.keepon.core.tasker.PluginBundleManager
@@ -149,7 +149,7 @@ class EditActivity : ComponentActivity() {
                     }
                 }
 
-                TaskerEditView(
+                TaskerEditRoute(
                     uiState = uiState.value,
                     onEvent = onEvent,
                     saveTaskerConfiguration = {

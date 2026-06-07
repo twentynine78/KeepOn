@@ -46,11 +46,11 @@ import fr.twentynine.keepon.domain.model.AppInfo
 import fr.twentynine.keepon.domain.catalog.CreditCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
-import fr.twentynine.keepon.ui.component.CardHeaderView
-import fr.twentynine.keepon.ui.component.ItemCardView
+import fr.twentynine.keepon.ui.component.CardHeader
+import fr.twentynine.keepon.ui.component.ItemCard
 
 @Composable
-fun AboutView(
+fun AboutRoute(
     appInfo: AppInfo,
     navType: KeepOnNavigationType,
     paddingValue: PaddingValues,
@@ -92,7 +92,7 @@ fun AboutScreen(
                 modifier = maxWidthModifier
                     .padding(top = 28.dp),
             ) {
-                CardHeaderView(
+                CardHeader(
                     iconVector = Icons.Rounded.FavoriteBorder,
                     title = stringResource(R.string.credit_info_title),
                 )
@@ -158,7 +158,7 @@ fun AppInfoCard(
         modifier = modifier
             .padding(top = 28.dp, bottom = 12.dp),
     ) {
-        CardHeaderView(
+        CardHeader(
             iconVector = Icons.Outlined.Info,
             title = stringResource(R.string.app_info_title),
         )
@@ -261,7 +261,7 @@ fun CreditInfoCardRow(
 ) {
     val context = LocalContext.current
 
-    ItemCardView(
+    ItemCard(
         itemPosition = itemPosition,
         modifier = modifier
     ) {
