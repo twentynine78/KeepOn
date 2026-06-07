@@ -21,13 +21,11 @@ import fr.twentynine.keepon.core.worker.MonitorSystemScreenTimeoutWorkScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 @HiltAndroidApp
-class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configuration.Provider, CoroutineScope {
+class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configuration.Provider {
 
     @Inject
     lateinit var hiltWorkerFactory: HiltWorkerFactory
@@ -40,8 +38,6 @@ class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configura
 
     val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    override val coroutineContext: CoroutineContext by lazy { applicationScope.coroutineContext }
-
     override fun onCreate() {
         super.onCreate()
 
@@ -53,12 +49,6 @@ class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configura
             runAppMigrationUseCase()
             widgetUpdater.requestUpdateWidgetPreview()
         }
-    }
-
-    override fun onTerminate() {
-        super.onTerminate()
-
-        applicationScope.cancel("Application is terminating")
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {

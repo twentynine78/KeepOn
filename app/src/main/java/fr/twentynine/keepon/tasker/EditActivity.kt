@@ -142,7 +142,7 @@ class EditActivity : ComponentActivity() {
                     uiState = uiState,
                     onEvent = onEvent,
                     saveTaskerConfiguration = {
-                        isCancelled = (taskerEditViewModel.uiState.value as TaskerEditUIState.Success).selectedScreenTimeout == null
+                        isCancelled = (taskerEditViewModel.uiState.value as? TaskerEditUIState.Success)?.selectedScreenTimeout == null
                         finish()
                     }
                 )
@@ -154,7 +154,7 @@ class EditActivity : ComponentActivity() {
         if (isCancelled) {
             setResult(RESULT_CANCELED)
         } else {
-            val selectedTimeout = (taskerEditViewModel.uiState.value as TaskerEditUIState.Success).selectedScreenTimeout
+            val selectedTimeout = (taskerEditViewModel.uiState.value as? TaskerEditUIState.Success)?.selectedScreenTimeout
 
             if (selectedTimeout == null) {
                 setResult(RESULT_CANCELED)
