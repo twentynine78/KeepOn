@@ -1,7 +1,6 @@
 package fr.twentynine.keepon.ui.screen
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -47,31 +46,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import fr.twentynine.keepon.ui.util.rememberTimeoutIconModel
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.model.ItemPosition
 import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
-import fr.twentynine.keepon.domain.model.TimeoutIconSize
 import fr.twentynine.keepon.ui.mapper.ScreenTimeoutUIToScreenTimeoutMapper
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.ui.state.TaskerEditUIState
 import fr.twentynine.keepon.ui.event.TaskerUIEvent
-import fr.twentynine.keepon.domain.model.TimeoutIconData
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.component.GlowingText
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.ItemCard
+import fr.twentynine.keepon.ui.component.TimeoutIconChip
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -356,10 +350,6 @@ fun TaskerScreenTimeoutRow(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val roundedCornerShape = remember { RoundedCornerShape(14.dp) }
-            val backgroundColorAlpha = 0.65f
-            val borderColorAlpha = 0.35f
-
             val itemValue = remember(item, defaultScreenTimeout, previousScreenTimeout) {
                 when (item.value) {
                     SpecialScreenTimeoutType.DEFAULT_SCREEN_TIMEOUT_TYPE.value -> defaultScreenTimeout
@@ -368,40 +358,11 @@ fun TaskerScreenTimeoutRow(
                 }
             }
 
-            val imageData = remember(timeoutIconStyle) {
-                TimeoutIconData(
-                    itemValue,
-                    TimeoutIconSize.MEDIUM,
-                    timeoutIconStyle
-                )
-            }
-            val imageModel = rememberTimeoutIconModel(imageData)
-
-            Box(
-                modifier = Modifier
-                    .clip(roundedCornerShape)
-                    .background(
-                        MaterialTheme.colorScheme.surface.copy(
-                            alpha = backgroundColorAlpha
-                        )
-                    )
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline.copy(
-                            alpha = borderColorAlpha
-                        ),
-                        shape = roundedCornerShape
-                    )
-                    .size(38.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                AsyncImage(
-                    modifier = Modifier.size(20.dp, 20.dp),
-                    model = imageModel,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
-                    contentDescription = item.displayName,
-                )
-            }
+            TimeoutIconChip(
+                screenTimeout = itemValue,
+                timeoutIconStyle = timeoutIconStyle,
+                contentDescription = item.displayName,
+            )
 
             GlowingText(
                 modifier = Modifier.padding(start = 24.dp),

@@ -1,7 +1,6 @@
 package fr.twentynine.keepon.ui.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,40 +39,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import fr.twentynine.keepon.ui.util.rememberTimeoutIconModel
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.model.ItemPosition
-import fr.twentynine.keepon.domain.model.TimeoutIconSize
 import fr.twentynine.keepon.ui.catalog.TipsInfo
 import fr.twentynine.keepon.ui.mapper.ScreenTimeoutUIToScreenTimeoutMapper
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
-import fr.twentynine.keepon.domain.model.TimeoutIconData
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.component.GlowingText
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.SwipeableScreenTimeoutCard
+import fr.twentynine.keepon.ui.component.TimeoutIconChip
 import fr.twentynine.keepon.ui.component.TipsSection
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 private val ToolTipCaretShape = TooltipDefaults.caretShape(DpSize(16.dp, 12.dp))
-private val ItemCardRoundedCornerShape = RoundedCornerShape(14.dp)
 private val SpacingBetweenTooltipAndAnchor = 22.dp
-private const val ITEM_CARD_BACKGROUND_COLOR_ALPHA = 0.65f
-private const val ITEM_CARD_BORDER_COLOR_ALPHA = 0.35f
 
 @Composable
 fun HomeRoute(
@@ -245,15 +236,6 @@ fun ScreenTimeoutRow(
     val coroutineScope = rememberCoroutineScope()
     val tooltipState = rememberTooltipState()
 
-    val imageData = remember(item, timeoutIconStyle) {
-        TimeoutIconData(
-            ScreenTimeoutUIToScreenTimeoutMapper.map(item),
-            TimeoutIconSize.MEDIUM,
-            timeoutIconStyle
-        )
-    }
-    val imageModel = rememberTimeoutIconModel(imageData)
-
     val swipeEnable = remember(item.isLocked, resetTimeoutWhenScreenOff) { !item.isLocked && resetTimeoutWhenScreenOff }
 
     val onClickAction = remember<(ScreenTimeoutUI) -> Unit>(item, tooltipState, onEvent) {
@@ -280,9 +262,6 @@ fun ScreenTimeoutRow(
         }
     }
 
-    val itemCardBackgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = ITEM_CARD_BACKGROUND_COLOR_ALPHA)
-    val itemCardBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = ITEM_CARD_BORDER_COLOR_ALPHA)
-
     SwipeableScreenTimeoutCard(
         modifier = modifier
             .fillMaxSize(),
@@ -299,26 +278,12 @@ fun ScreenTimeoutRow(
                 .padding(12.dp),
             contentAlignment = Alignment.CenterStart
         ) {
-            Box(
-                modifier = Modifier
-                    .clip(ItemCardRoundedCornerShape)
-                    .background(itemCardBackgroundColor)
-                    .border(
-                        width = 1.dp,
-                        color = itemCardBorderColor,
-                        shape = ItemCardRoundedCornerShape
-                    )
-                    .size(38.dp)
-                    .align(Alignment.CenterStart),
-                contentAlignment = Alignment.Center
-            ) {
-                AsyncImage(
-                    modifier = Modifier.size(20.dp, 20.dp),
-                    model = imageModel,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
-                    contentDescription = item.displayName,
-                )
-            }
+            TimeoutIconChip(
+                screenTimeout = ScreenTimeoutUIToScreenTimeoutMapper.map(item),
+                timeoutIconStyle = timeoutIconStyle,
+                contentDescription = item.displayName,
+                modifier = Modifier.align(Alignment.CenterStart),
+            )
 
             GlowingText(
                 modifier = Modifier
