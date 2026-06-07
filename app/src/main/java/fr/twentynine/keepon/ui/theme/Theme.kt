@@ -96,9 +96,9 @@ fun KeepOnTheme(
         else -> LightColorScheme
     }
 
-    // Manage system bar color
+    // Manage system bar color (no-op outside an Activity, e.g. in @Preview)
     LaunchedEffect(darkTheme) {
-        val window = (view.context as Activity).window
+        val window = (view.context as? Activity)?.window ?: return@LaunchedEffect
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         } else {
