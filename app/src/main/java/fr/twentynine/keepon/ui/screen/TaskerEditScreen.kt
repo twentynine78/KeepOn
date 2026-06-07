@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.Lock
@@ -55,6 +54,8 @@ import fr.twentynine.keepon.ui.event.TaskerUIEvent
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.component.GlowingText
 import fr.twentynine.keepon.ui.util.screenContentModifier
+import fr.twentynine.keepon.ui.theme.KeepOnCardShape
+import fr.twentynine.keepon.ui.theme.SubtitleContentAlpha
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.ItemCard
 import fr.twentynine.keepon.ui.component.KeepOnRichTooltip
@@ -125,7 +126,7 @@ fun TaskerEditRoute(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                                 modifier = Modifier.size(68.dp),
-                                shape = RoundedCornerShape(24.dp),
+                                shape = KeepOnCardShape,
                             ) {
                                 Icon(
                                     imageVector = Icons.Rounded.Save,
@@ -228,7 +229,7 @@ fun TaskerScreenTimeoutList(
                 Text(
                     text = stringResource(R.string.tasker_dynamic_value_text),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = SubtitleContentAlpha),
                     modifier = Modifier
                         .padding(start = 32.dp, end = 32.dp, bottom = 8.dp),
                 )
@@ -260,7 +261,7 @@ fun TaskerScreenTimeoutList(
                 Text(
                     text = stringResource(R.string.tasker_static_value_text),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = SubtitleContentAlpha),
                     modifier = Modifier
                         .padding(start = 32.dp, end = 32.dp, top = 8.dp, bottom = 8.dp),
                 )

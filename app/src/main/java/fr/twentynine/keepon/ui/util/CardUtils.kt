@@ -5,9 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import fr.twentynine.keepon.ui.theme.KeepOnCardCornerRadius
 import fr.twentynine.keepon.ui.model.ItemPosition
 
-val defaultRoundedCornerSize = 24.dp
+val defaultRoundedCornerSize = KeepOnCardCornerRadius
 val defaultBorderWidth = 1.dp
 val defaultCardHorizontalPadding = 16.dp
 val itemPaddingTopFirst = 0.dp

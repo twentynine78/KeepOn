@@ -21,9 +21,10 @@ import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconData
 import fr.twentynine.keepon.domain.model.TimeoutIconSize
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
+import fr.twentynine.keepon.ui.theme.KeepOnCardCornerRadius
 import fr.twentynine.keepon.ui.util.rememberTimeoutIconModel
 
-private val FabShape = RoundedCornerShape(24.dp)
+private val FabShape = RoundedCornerShape(KeepOnCardCornerRadius)
 private val FabSize = 68.dp
 private val FabIconSize = 40.dp
 private const val FAB_DEFAULT_ANIMATION_DURATION_MS = 50

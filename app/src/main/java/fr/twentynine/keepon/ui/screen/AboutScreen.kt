@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.outlined.Info
@@ -45,6 +44,8 @@ import fr.twentynine.keepon.domain.catalog.CreditCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.screenContentModifier
+import fr.twentynine.keepon.ui.theme.KeepOnCardShape
+import fr.twentynine.keepon.ui.theme.SubtitleContentAlpha
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.ItemCard
 
@@ -102,7 +103,7 @@ fun AboutScreen(
                     Text(
                         text = stringResource(creditInfoType.typeNameId),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = SubtitleContentAlpha),
                         modifier = Modifier
                             .padding(start = 32.dp, end = 32.dp, top = topPadding, bottom = 8.dp),
                     )
@@ -156,7 +157,7 @@ fun AppInfoCard(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp, bottom = 6.dp)
                 .align(alignment = Alignment.Start),
-            shape = RoundedCornerShape(24.dp),
+            shape = KeepOnCardShape,
         ) {
             Row(
                 modifier = Modifier

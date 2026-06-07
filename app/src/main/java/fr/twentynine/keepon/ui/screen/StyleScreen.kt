@@ -53,6 +53,7 @@ import fr.twentynine.keepon.domain.catalog.IconFontFamilyCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.screenContentModifier
+import fr.twentynine.keepon.ui.theme.KeepOnCardShape
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.ItemCard
 import kotlin.math.ceil
@@ -245,7 +246,7 @@ fun FontStyleCard(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .align(alignment = Alignment.Start),
-            shape = RoundedCornerShape(24.dp),
+            shape = KeepOnCardShape,
         ) {
             Column(
                 modifier = Modifier
@@ -356,7 +357,7 @@ fun FontOptionsCard(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp, bottom = 6.dp)
                 .align(alignment = Alignment.Start),
-            shape = RoundedCornerShape(24.dp),
+            shape = KeepOnCardShape,
         ) {
             val nbStep = remember { 10f }
             val range = remember(nbStep) { ceil(nbStep / 2).unaryMinus()..ceil(nbStep / 2) }

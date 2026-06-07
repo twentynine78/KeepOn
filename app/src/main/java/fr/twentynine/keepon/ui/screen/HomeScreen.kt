@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.PlaylistAddCheck
 import androidx.compose.material.icons.outlined.Lock
@@ -50,6 +49,7 @@ import fr.twentynine.keepon.ui.component.GlowingText
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.screenContentModifier
+import fr.twentynine.keepon.ui.theme.KeepOnCardShape
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.KeepOnRichTooltip
 import fr.twentynine.keepon.ui.component.SwipeableScreenTimeoutCard
@@ -175,7 +175,7 @@ fun KeepOnBehaviorCard(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
                 .align(alignment = Alignment.Start),
-            shape = RoundedCornerShape(24.dp),
+            shape = KeepOnCardShape,
         ) {
             Row(
                 modifier = Modifier
