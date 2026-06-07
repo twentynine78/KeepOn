@@ -1,7 +1,6 @@
 package fr.twentynine.keepon.ui.screen
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,12 +32,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
@@ -49,7 +44,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.twentynine.keepon.R
@@ -65,12 +59,9 @@ import fr.twentynine.keepon.ui.component.GlowingText
 import fr.twentynine.keepon.ui.util.MAX_SCREEN_CONTENT_WIDTH_IN_DP
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.ItemCard
+import fr.twentynine.keepon.ui.component.KeepOnRichTooltip
 import fr.twentynine.keepon.ui.component.TimeoutIconChip
 import kotlinx.coroutines.launch
-
-@OptIn(ExperimentalMaterial3Api::class)
-private val ToolTipCaretShape = TooltipDefaults.caretShape(DpSize(16.dp, 12.dp))
-private val SpacingBetweenTooltipAndAnchor = 22.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -379,44 +370,15 @@ fun TaskerScreenTimeoutRow(
             Spacer(Modifier.weight(1f))
 
             if (item.isLocked) {
-                TooltipBox(
-                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                        positioning = TooltipAnchorPosition.Left,
-                        spacingBetweenTooltipAndAnchor = SpacingBetweenTooltipAndAnchor,
-                    ),
-                    tooltip = {
-                        RichTooltip(
-                            modifier = Modifier
-                                .border(
-                                    width = 1.dp,
-                                    color = MaterialTheme.colorScheme.outline,
-                                    shape = TooltipDefaults.richTooltipContainerShape
-                                ),
-                            maxWidth = TooltipDefaults.plainTooltipMaxWidth,
-                            shape = TooltipDefaults.richTooltipContainerShape,
-                            caretShape = ToolTipCaretShape,
-                            colors = TooltipDefaults.richTooltipColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                contentColor = MaterialTheme.colorScheme.onBackground,
-                                titleContentColor = MaterialTheme.colorScheme.onBackground,
-                                actionContentColor = MaterialTheme.colorScheme.onBackground,
-                            ),
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(4.dp),
-                                text = stringResource(R.string.timeout_locked_tooltips_text),
-                                style = MaterialTheme.typography.bodyLarge,
-                            )
-                        }
-                    },
-                    state = tooltipState
-                ) {
-                    val iconClickLambda: () -> Unit = remember(tooltipState) {
-                        {
-                            coroutineScope.launch { tooltipState.show() }
-                        }
+                val iconClickLambda: () -> Unit = remember(tooltipState) {
+                    {
+                        coroutineScope.launch { tooltipState.show() }
                     }
+                }
+                KeepOnRichTooltip(
+                    text = stringResource(R.string.timeout_locked_tooltips_text),
+                    tooltipState = tooltipState,
+                ) {
                     Icon(
                         imageVector = Icons.Outlined.Lock,
                         contentDescription = stringResource(R.string.timeout_locked_icon_desc),
