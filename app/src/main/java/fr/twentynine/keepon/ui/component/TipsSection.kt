@@ -74,11 +74,7 @@ fun TipsSection(
                 var targetPage = currentPageInDisplayedList
 
                 if (newPageCount < oldPageCount) {
-                    val currentItemId = if (currentPageInDisplayedList < currentlyDisplayedList.size) {
-                        currentlyDisplayedList.getOrNull(currentPageInDisplayedList)?.id
-                    } else {
-                        null
-                    }
+                    val currentItemId = currentlyDisplayedList.getOrNull(currentPageInDisplayedList)?.id
 
                     if (currentItemId != null && tipsList.none { it.id == currentItemId }) {
                         targetPage = if (currentPageInDisplayedList >= newPageCount) {
@@ -93,11 +89,7 @@ fun TipsSection(
                 currentPagerList = tipsList
 
                 if (targetPage != pagerState.currentPage && targetPage < tipsList.size && !pagerState.isScrollInProgress) {
-                    if (pagerState.currentPage != targetPage) {
-                        if (targetPage < currentPagerList.size) {
-                            pagerState.animateScrollToPage(targetPage)
-                        }
-                    }
+                    pagerState.animateScrollToPage(targetPage)
                 }
             }
         }

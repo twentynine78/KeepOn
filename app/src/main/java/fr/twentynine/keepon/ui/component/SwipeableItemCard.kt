@@ -98,17 +98,10 @@ private fun <T : Parcelable> AnimateSwipeableItemCardEffect(
     }
 
     LaunchedEffect(item, animateSwipeCondition, animateFirstDisplayCondition) {
-        if (item == null) {
-            animatedTranslationX.snapTo(0f)
-            return@LaunchedEffect
-        }
-
-        if ((!animateSwipeCondition && !animateFirstDisplayCondition)) {
-            animatedTranslationX.snapTo(0f)
-            return@LaunchedEffect
-        }
-
-        if (animationTriggerHandled) {
+        if (item == null ||
+            (!animateSwipeCondition && !animateFirstDisplayCondition) ||
+            animationTriggerHandled
+        ) {
             animatedTranslationX.snapTo(0f)
             return@LaunchedEffect
         }
@@ -121,18 +114,20 @@ private fun <T : Parcelable> AnimateSwipeableItemCardEffect(
         if (isFirstEverAnimationCycleForThisItem) {
             isFirstEverAnimationCycleForThisItem = false
 
-            if (animateFirstDisplayCondition && originalFirstDisplayCondition) {
-                originalFirstDisplayCondition = false
-                // First display animation sequence
-                animatedTranslationX.snapTo(0f)
-                animatedTranslationX.animateTo(
-                    targetValue = initialTranslationPx + (initialTranslationPx / 2),
-                    animationSpec = tween(INITIAL_ANIMATION_DURATION)
-                )
-                delay(INITIAL_ANIMATION_DELAY)
-                snapBackDampingRatio = Spring.DampingRatioHighBouncy
-            } else {
-                if (animateSwipeCondition && !originalFirstDisplayCondition) {
+            when {
+                animateFirstDisplayCondition && originalFirstDisplayCondition -> {
+                    originalFirstDisplayCondition = false
+                    // First display animation sequence
+                    animatedTranslationX.snapTo(0f)
+                    animatedTranslationX.animateTo(
+                        targetValue = initialTranslationPx + (initialTranslationPx / 2),
+                        animationSpec = tween(INITIAL_ANIMATION_DURATION)
+                    )
+                    delay(INITIAL_ANIMATION_DELAY)
+                    snapBackDampingRatio = Spring.DampingRatioHighBouncy
+                }
+
+                animateSwipeCondition && !originalFirstDisplayCondition -> {
                     originalFirstDisplayCondition = false
                     // Swipe animation sequence.
                     val offset = if (swipeToDismissDirection == SwipeToDismissBoxValue.EndToStart) {
@@ -141,7 +136,9 @@ private fun <T : Parcelable> AnimateSwipeableItemCardEffect(
                         initialTranslationPx
                     }
                     animatedTranslationX.snapTo(offset)
-                } else {
+                }
+
+                else -> {
                     originalFirstDisplayCondition = false
                     // No animation at all (neither first display nor swipe-in).
                     animatedTranslationX.snapTo(0f)
