@@ -35,7 +35,6 @@ import fr.twentynine.keepon.domain.usecase.timeout.SetNextSystemScreenTimeoutUse
 import fr.twentynine.keepon.core.util.BundleScrubber
 import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
-import fr.twentynine.keepon.domain.gateway.WidgetUpdater
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -67,9 +66,6 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
 
     @Inject
     lateinit var stringResourceProvider: StringResourceProvider
-
-    @Inject
-    lateinit var widgetUpdater: WidgetUpdater
 
     @Inject
     lateinit var permissionStateGateway: PermissionStateGateway
@@ -235,11 +231,6 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
                     }
                 }
             }
-        }
-
-        // Request widget update
-        serviceScope.launch {
-            widgetUpdater.requestUpdateWidget()
         }
     }
 
