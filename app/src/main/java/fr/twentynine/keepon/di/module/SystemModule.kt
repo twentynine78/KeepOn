@@ -18,6 +18,8 @@ import fr.twentynine.keepon.domain.gateway.DynamicShortcutManager
 import fr.twentynine.keepon.core.system.DynamicShortcutManagerImpl
 import fr.twentynine.keepon.domain.gateway.ScreenTimeoutScheduler
 import fr.twentynine.keepon.core.worker.ScreenTimeoutSchedulerImpl
+import fr.twentynine.keepon.domain.gateway.UserNotifier
+import fr.twentynine.keepon.core.system.UserNotifierImpl
 import javax.inject.Singleton
 
 @Module
@@ -51,4 +53,8 @@ interface SystemModule {
     @Binds
     @Singleton
     fun bindScreenTimeoutScheduler(impl: ScreenTimeoutSchedulerImpl): ScreenTimeoutScheduler
+
+    @Binds
+    @Singleton
+    fun bindUserNotifier(impl: UserNotifierImpl): UserNotifier
 }

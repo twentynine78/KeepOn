@@ -1,6 +1,7 @@
 package fr.twentynine.keepon.domain.usecase.timeout
 
 import fr.twentynine.keepon.domain.gateway.DevicePolicyController
+import fr.twentynine.keepon.domain.gateway.UserNotifier
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
 import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
@@ -18,6 +19,7 @@ class UpdateSystemScreenTimeoutUseCase @Inject constructor(
     private val timeoutPreferencesRepository: TimeoutPreferencesRepository,
     private val devicePolicyController: DevicePolicyController,
     private val applyScreenTimeoutUseCase: ApplyScreenTimeoutUseCase,
+    private val userNotifier: UserNotifier,
 ) {
     suspend operator fun invoke(newTimeout: ScreenTimeout, forceUpdatePreviousTimeout: Boolean = false) {
         val defaultTimeout = timeoutPreferencesRepository.getDefaultScreenTimeout()
@@ -34,7 +36,13 @@ class UpdateSystemScreenTimeoutUseCase @Inject constructor(
             return
         }
 
-        applyScreenTimeoutUseCase(timeout, forceUpdatePreviousTimeout)
+        val applied = applyScreenTimeoutUseCase(timeout, forceUpdatePreviousTimeout)
+        if (!applied) {
+            // The device silently refused the write — tell the user instead of leaving
+            // the tile/widget showing a state that never took effect.
+            userNotifier.notifyScreenTimeoutNotApplied()
+            return
+        }
 
         updateDefaultScreenTimeoutIfNoResetTimeout(currentTimeout, defaultTimeout, newTimeout)
     }

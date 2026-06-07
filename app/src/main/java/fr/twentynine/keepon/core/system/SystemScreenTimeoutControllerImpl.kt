@@ -33,10 +33,10 @@ class SystemScreenTimeoutControllerImpl @Inject constructor(@param:ApplicationCo
         }
     }
 
-    override suspend fun applyDesiredScreenTimeout(timeout: ScreenTimeout) {
+    override suspend fun applyDesiredScreenTimeout(timeout: ScreenTimeout): Boolean {
         // The desired-timeout queue is an internal detail of this system-write gateway:
         // it records the app-initiated intent and waits for the system to apply it.
-        DesiredScreenTimeoutController.setDesiredScreenTimeout(timeout, this)
+        return DesiredScreenTimeoutController.setDesiredScreenTimeout(timeout, this)
     }
 
     override fun consumeDesiredScreenTimeout(currentTimeout: ScreenTimeout): ScreenTimeout? {

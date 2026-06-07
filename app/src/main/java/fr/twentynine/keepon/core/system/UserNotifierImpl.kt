@@ -1,0 +1,29 @@
+package fr.twentynine.keepon.core.system
+
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
+import dagger.hilt.android.qualifiers.ApplicationContext
+import fr.twentynine.keepon.R
+import fr.twentynine.keepon.domain.gateway.UserNotifier
+import javax.inject.Inject
+
+class UserNotifierImpl @Inject constructor(
+    @param:ApplicationContext private val context: Context,
+) : UserNotifier {
+
+    private val mainHandler = Handler(Looper.getMainLooper())
+
+    override fun notifyScreenTimeoutNotApplied() {
+        // Toast must be posted on the main thread; this port is called from background
+        // coroutines (tile, widget, worker, app).
+        mainHandler.post {
+            Toast.makeText(
+                context,
+                R.string.screen_timeout_change_rejected,
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+}

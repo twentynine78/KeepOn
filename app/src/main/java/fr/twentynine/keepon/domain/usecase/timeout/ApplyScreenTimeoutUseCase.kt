@@ -15,6 +15,9 @@ import javax.inject.Inject
  *
  * Internal building block shared by [UpdateSystemScreenTimeoutUseCase] and
  * [ResetSystemScreenTimeoutUseCase]; no-op when the value is not policy-allowed.
+ *
+ * @return true if the system adopted the value; false if it was rejected by the device
+ * or not policy-allowed.
  */
 class ApplyScreenTimeoutUseCase @Inject constructor(
     private val timeoutPreferencesRepository: TimeoutPreferencesRepository,
@@ -23,9 +26,9 @@ class ApplyScreenTimeoutUseCase @Inject constructor(
     private val appComponentsUpdater: AppComponentsUpdater,
     private val manageScreenOffServiceUseCase: ManageScreenOffServiceUseCase,
 ) {
-    suspend operator fun invoke(timeout: ScreenTimeout, forceUpdatePreviousTimeout: Boolean = false) {
+    suspend operator fun invoke(timeout: ScreenTimeout, forceUpdatePreviousTimeout: Boolean = false): Boolean {
         if (!devicePolicyController.isValidTimeout(timeout)) {
-            return
+            return false
         }
 
         val currentTimeout = timeoutPreferencesRepository.getCurrentScreenTimeout()
@@ -39,6 +42,6 @@ class ApplyScreenTimeoutUseCase @Inject constructor(
         manageScreenOffServiceUseCase()
         appComponentsUpdater.requestUpdate()
 
-        systemScreenTimeoutController.applyDesiredScreenTimeout(timeout)
+        return systemScreenTimeoutController.applyDesiredScreenTimeout(timeout)
     }
 }

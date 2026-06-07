@@ -133,4 +133,5 @@
 
     <string name="toast_missing_permission">Error, required permission missing!</string>
     <string name="toast_invalid_screen_timeout">Error, invalid screen timeout!</string>
+    <string name="screen_timeout_change_rejected">Your device blocked the screen timeout change</string>
 </resources>

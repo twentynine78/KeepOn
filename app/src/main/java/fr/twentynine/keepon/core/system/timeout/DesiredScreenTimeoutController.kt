@@ -13,11 +13,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import java.util.concurrent.LinkedBlockingQueue
 
 object DesiredScreenTimeoutController {
-    private val WAIT_TIME_FOR_TIMEOUT_APPLIED = 2.seconds
+    // Max time to wait for the system to reflect the written value before considering it
+    // rejected. Successful writes converge in ~100 ms, so this ceiling is only reached on
+    // slow or non-applying (OEM-restricted) devices.
+    private val WAIT_TIME_FOR_TIMEOUT_APPLIED = 5.seconds
 
     private val defaultDispatchers = Dispatchers.Default
     private val screenTimeoutProcessingLock = Mutex()
@@ -43,8 +46,8 @@ object DesiredScreenTimeoutController {
     suspend fun setDesiredScreenTimeout(
         timeout: ScreenTimeout,
         systemScreenTimeoutController: SystemScreenTimeoutController,
-    ) {
-        withContext(defaultDispatchers) {
+    ): Boolean {
+        return withContext(defaultDispatchers) {
             if (pendingTimeouts.lastOrNull() != timeout) {
                 pendingTimeouts.add(timeout)
             }
@@ -66,7 +69,7 @@ object DesiredScreenTimeoutController {
                             deferreds.awaitAll()
                         }
 
-                        withTimeout(WAIT_TIME_FOR_TIMEOUT_APPLIED) {
+                        withTimeoutOrNull(WAIT_TIME_FOR_TIMEOUT_APPLIED) {
                             while (requestedTimeout != systemScreenTimeoutController.getSystemScreenTimeout()) {
                                 delay(100.milliseconds)
                             }
@@ -74,6 +77,10 @@ object DesiredScreenTimeoutController {
                     }
                 }
             }
+
+            // Report whether the system actually adopted the requested value: some OEM
+            // ROMs accept the write (putInt returns true) but silently keep the old value.
+            systemScreenTimeoutController.getSystemScreenTimeout() == timeout
         }
     }
 }
