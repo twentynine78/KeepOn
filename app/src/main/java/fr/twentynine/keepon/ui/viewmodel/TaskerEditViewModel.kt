@@ -12,15 +12,15 @@ import fr.twentynine.keepon.ui.producer.TaskerEditStateProducer
 import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
 import fr.twentynine.keepon.domain.usecase.app.SetIsFirstLaunchUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.GetMaxAllowedScreenTimeoutUseCase
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,28 +34,25 @@ class TaskerEditViewModel @Inject constructor(
 
     private val selectedScreenTimeoutUI: MutableStateFlow<ScreenTimeoutUI?> = MutableStateFlow(null)
 
-    private lateinit var uiStateFlow: StateFlow<TaskerEditUIState>
-
-    suspend fun getUiState(): StateFlow<TaskerEditUIState> {
-        return withContext(Dispatchers.IO) {
-            uiStateFlow = taskerEditStateProducer(
-                canWriteSystemSettingFlow = permissionStateGateway.canWriteSystemSetting,
-                batteryIsNotOptimizedFlow = permissionStateGateway.batteryIsNotOptimized,
-                canPostNotificationFlow = permissionStateGateway.canPostNotification,
-                selectedScreenTimeoutFlow = selectedScreenTimeoutUI,
-            )
-                .catch { error ->
-                    TaskerEditUIState.Error(error.message ?: error.toString())
-                }
-                .stateIn(
-                    viewModelScope,
-                    SharingStarted.WhileSubscribed(5000),
-                    TaskerEditUIState.Loading
+    // The suspend producer is invoked lazily inside flow {} so this can be a single, eagerly
+    // built StateFlow (one upstream subscription, shared via WhileSubscribed).
+    val uiState: StateFlow<TaskerEditUIState> =
+        flow<TaskerEditUIState> {
+            emitAll(
+                taskerEditStateProducer(
+                    canWriteSystemSettingFlow = permissionStateGateway.canWriteSystemSetting,
+                    batteryIsNotOptimizedFlow = permissionStateGateway.batteryIsNotOptimized,
+                    canPostNotificationFlow = permissionStateGateway.canPostNotification,
+                    selectedScreenTimeoutFlow = selectedScreenTimeoutUI,
                 )
-
-            return@withContext uiStateFlow
+            )
         }
-    }
+            .catch { error -> emit(TaskerEditUIState.Error(error.message ?: error.toString())) }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                TaskerEditUIState.Loading
+            )
 
     fun onEvent(event: TaskerUIEvent) {
         when (event) {

@@ -28,7 +28,6 @@ import fr.twentynine.keepon.core.tasker.TaskerIntent
 import fr.twentynine.keepon.core.util.BundleScrubber
 import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager
 import fr.twentynine.keepon.core.permission.SystemSettingPermissionManager
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -99,8 +98,8 @@ class EditActivity : ComponentActivity() {
             return
         }
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            taskerEditViewModel.getUiState()
+        lifecycleScope.launch {
+            taskerEditViewModel.uiState
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .collectLatest { newUIState ->
                     uiState.value = newUIState

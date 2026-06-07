@@ -23,14 +23,13 @@ import fr.twentynine.keepon.domain.usecase.preferences.UpdateTimeoutIconStyleUse
 import fr.twentynine.keepon.domain.usecase.timeout.SetDefaultScreenTimeoutUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.SetNextSystemScreenTimeoutUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.ToggleScreenTimeoutSelectionUseCase
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,29 +49,26 @@ class MainViewModel @Inject constructor(
     private val setIsFirstLaunchUseCase: SetIsFirstLaunchUseCase,
 ) : ViewModel() {
 
-    private lateinit var uiStateFlow: StateFlow<MainViewUIState>
-
     private var appLaunchIncremented = false
 
-    suspend fun getUiState(): StateFlow<MainViewUIState> {
-        return withContext(Dispatchers.IO) {
-            uiStateFlow = mainViewStateProducer(
-                canWriteSystemSettingFlow = permissionStateGateway.canWriteSystemSetting,
-                batteryIsNotOptimizedFlow = permissionStateGateway.batteryIsNotOptimized,
-                canPostNotificationFlow = permissionStateGateway.canPostNotification,
-            )
-                .catch { error ->
-                    MainViewUIState.Error(error.message ?: error.toString())
-                }
-                .stateIn(
-                    viewModelScope,
-                    SharingStarted.WhileSubscribed(5000),
-                    MainViewUIState.Loading
+    // The suspend producer is invoked lazily inside flow {} so this can be a single, eagerly
+    // built StateFlow (one upstream subscription, shared via WhileSubscribed).
+    val uiState: StateFlow<MainViewUIState> =
+        flow<MainViewUIState> {
+            emitAll(
+                mainViewStateProducer(
+                    canWriteSystemSettingFlow = permissionStateGateway.canWriteSystemSetting,
+                    batteryIsNotOptimizedFlow = permissionStateGateway.batteryIsNotOptimized,
+                    canPostNotificationFlow = permissionStateGateway.canPostNotification,
                 )
-
-            return@withContext uiStateFlow
+            )
         }
-    }
+            .catch { error -> emit(MainViewUIState.Error(error.message ?: error.toString())) }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                MainViewUIState.Loading
+            )
 
     fun onEvent(event: MainUIEvent) {
         when (event) {
@@ -95,17 +91,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun incrementAppLaunchCount(runBlocking: Boolean = false) {
-        val action = suspend {
+    fun incrementAppLaunchCount() {
+        viewModelScope.launch {
             if (!appLaunchIncremented && permissionStateGateway.areRequiredPermissionsGranted()) {
                 incrementAppLaunchCountUseCase()
                 appLaunchIncremented = true
             }
-        }
-        if (runBlocking) {
-            runBlocking { action() }
-        } else {
-            viewModelScope.launch { action() }
         }
     }
 

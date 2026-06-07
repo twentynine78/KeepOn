@@ -74,10 +74,10 @@ class MainActivity : ComponentActivity() {
             return
         }
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            mainViewModel.incrementAppLaunchCount(true)
+        mainViewModel.incrementAppLaunchCount()
 
-            mainViewModel.getUiState()
+        lifecycleScope.launch {
+            mainViewModel.uiState
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .collectLatest { newUIState ->
                     uiState.value = newUIState
@@ -137,7 +137,7 @@ class MainActivity : ComponentActivity() {
 
     private fun startScreenOffReceiverServiceIfNeeded() {
         lifecycleScope.launch(Dispatchers.Default) {
-            val successUIState = mainViewModel.getUiState()
+            val successUIState = mainViewModel.uiState
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .filter { state -> state is MainViewUIState.Success }
                 .firstOrNull() as? MainViewUIState.Success
