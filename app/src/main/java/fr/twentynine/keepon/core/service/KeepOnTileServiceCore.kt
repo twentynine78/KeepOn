@@ -31,10 +31,9 @@ import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
 import fr.twentynine.keepon.domain.usecase.app.GetKeepOnStatusUseCase
 import fr.twentynine.keepon.domain.usecase.preferences.SetQSTileAddedUseCase
-import fr.twentynine.keepon.domain.usecase.timeout.CanCycleScreenTimeoutUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.SetNextSystemScreenTimeoutUseCase
+import fr.twentynine.keepon.domain.usecase.timeout.ShouldRouteToAppUseCase
 import fr.twentynine.keepon.core.util.BundleScrubber
-import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
@@ -63,16 +62,13 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
     lateinit var setNextSystemScreenTimeoutUseCase: SetNextSystemScreenTimeoutUseCase
 
     @Inject
-    lateinit var canCycleScreenTimeoutUseCase: CanCycleScreenTimeoutUseCase
+    lateinit var shouldRouteToAppUseCase: ShouldRouteToAppUseCase
 
     @Inject
     lateinit var setQSTileAddedUseCase: SetQSTileAddedUseCase
 
     @Inject
     lateinit var stringResourceProvider: StringResourceProvider
-
-    @Inject
-    lateinit var permissionStateGateway: PermissionStateGateway
 
     private val serviceJob = SupervisorJob()
     private val applicationScope by lazy { (this.applicationContext as KeepOnApplication).applicationScope }
@@ -138,7 +134,7 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
         }
 
         serviceScope.launch {
-            if (!canCycleScreenTimeoutUseCase() || !permissionStateGateway.areRequiredPermissionsGranted()) {
+            if (shouldRouteToAppUseCase()) {
                 withContext(Dispatchers.Main.immediate) {
                     startMainActivityAndCollapse()
                 }

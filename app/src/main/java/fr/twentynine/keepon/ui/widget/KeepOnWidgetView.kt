@@ -13,10 +13,8 @@ import androidx.glance.LocalContext
 import androidx.glance.action.actionParametersOf
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
-import dagger.hilt.android.EntryPointAccessors
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.ui.state.WidgetUIState
-import fr.twentynine.keepon.di.entrypoint.PermissionStateGatewayEntryPoint
 
 @Composable
 fun KeepOnWidgetView(
@@ -70,27 +68,22 @@ fun KeepOnWidgetView(
                     }
                 }
 
-                // Get click action
-                val permissionStateGateway = remember(context) {
-                    EntryPointAccessors.fromApplication(
-                        context.applicationContext,
-                        PermissionStateGatewayEntryPoint::class.java,
-                    ).permissionStateGateway()
-                }
-                val isSetupIncomplete = !currentState.canCycleTimeout || !permissionStateGateway.areRequiredPermissionsGranted()
-                val clickAction = remember(isSetupIncomplete, currentState.currentScreenTimeout) {
-                    if (isSetupIncomplete) {
-                        val mainActivityIntent =
-                            Intent(context, MainActivity::class.java).apply {
-                                flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                            }
-                        actionStartActivity(mainActivityIntent)
-                    } else {
+                // Get click action. Permission is enforced at click time by the callback
+                // (the rendered action can be stale), so the render only routes straight to
+                // the app when there is nothing to cycle.
+                val clickAction = remember(currentState.canCycleTimeout, currentState.currentScreenTimeout) {
+                    if (currentState.canCycleTimeout) {
                         actionRunCallback<SetNextTimeoutActionCallback>(
                             actionParametersOf(
                                 SetNextTimeoutActionCallback.currentTimeoutParameterKey to currentState.currentScreenTimeout.value
                             )
                         )
+                    } else {
+                        val mainActivityIntent =
+                            Intent(context, MainActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                            }
+                        actionStartActivity(mainActivityIntent)
                     }
                 }
 
