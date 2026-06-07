@@ -4,14 +4,12 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,13 +19,10 @@ import androidx.compose.foundation.layout.captionBar
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -44,7 +39,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
@@ -55,14 +49,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import coil3.compose.AsyncImage
-import fr.twentynine.keepon.ui.util.rememberTimeoutIconModel
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.domain.model.TimeoutIconSize
 import fr.twentynine.keepon.ui.catalog.TipsInfo
+import fr.twentynine.keepon.ui.component.TimeoutFab
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
-import fr.twentynine.keepon.domain.model.TimeoutIconData
 import fr.twentynine.keepon.ui.navigation.KeepOnNavigationWrapper
 import fr.twentynine.keepon.ui.navigation.NavigationActions
 import fr.twentynine.keepon.ui.navigation.NavigationDestination
@@ -79,10 +70,6 @@ private fun NavigationSuiteType.toKeepOnNavType() = when (this) {
 }
 
 private const val SLIDE_ANIMATION_DURATION_MS = 300
-private const val FAB_ANIMATION_DURATION_MS = 50
-private const val FAB_CORNER_RADIUS = 24
-private const val FAB_SIZE = 68
-private const val FAB_ICON_SIZE = 40
 
 private val enterPageTransitionSpec = tween<Float>(SLIDE_ANIMATION_DURATION_MS)
 private val exitPageTransitionSpec = tween<Float>(SLIDE_ANIMATION_DURATION_MS)
@@ -250,9 +237,12 @@ private fun KeepOnView(
             },
             floatingActionButton = {
                 if (navType == KeepOnNavigationType.BOTTOM_NAVIGATION) {
-                    KeepOnFloatingActionButton(
-                        uiState = uiState,
-                        onClick = fabOnClick
+                    TimeoutFab(
+                        keepOnIsActive = uiState.keepOnIsActive,
+                        currentScreenTimeout = uiState.currentScreenTimeout,
+                        currentTimeoutDisplay = uiState.currentTimeoutDisplay,
+                        timeoutIconStyle = uiState.timeoutIconStyle,
+                        onClick = fabOnClick,
                     )
                 }
             },
@@ -330,69 +320,6 @@ private fun KeepOnTopAppBar(
         colors = topAppBarColors,
         scrollBehavior = scrollBehavior
     )
-}
-
-@Composable
-private fun KeepOnFloatingActionButton(
-    uiState: MainViewUIState.Success,
-    onClick: () -> Unit,
-) {
-    val imageData = remember(uiState.currentScreenTimeout, uiState.timeoutIconStyle) {
-        TimeoutIconData(
-            uiState.currentScreenTimeout,
-            TimeoutIconSize.LARGE,
-            uiState.timeoutIconStyle
-        )
-    }
-    val imageModel = rememberTimeoutIconModel(imageData)
-
-    val colorScheme = MaterialTheme.colorScheme
-    val primaryContainerColor = colorScheme.primaryContainer
-    val backgroundColor = colorScheme.background
-    val onBackgroundColor = colorScheme.onBackground
-    val onPrimaryContainerColor = colorScheme.onPrimaryContainer
-
-    val animationDuration = remember { FAB_ANIMATION_DURATION_MS }
-
-    val fabBackgroundColor by animateColorAsState(
-        targetValue = if (uiState.keepOnIsActive) primaryContainerColor else backgroundColor,
-        animationSpec = tween(animationDuration),
-        label = "fabBackgroundColor"
-    )
-
-    val fabBorderColor by animateColorAsState(
-        targetValue = if (uiState.keepOnIsActive) backgroundColor else primaryContainerColor,
-        animationSpec = tween(animationDuration),
-        label = "fabBorderColor"
-    )
-    val fabContentColor by animateColorAsState(
-        targetValue = if (uiState.keepOnIsActive) onPrimaryContainerColor else onBackgroundColor,
-        animationSpec = tween(animationDuration),
-        label = "fabContentColor"
-    )
-
-    FloatingActionButton(
-        modifier = Modifier
-            .border(
-                width = 1.dp,
-                color = fabBorderColor,
-                RoundedCornerShape(FAB_CORNER_RADIUS.dp)
-            )
-            .size(FAB_SIZE.dp),
-        onClick = onClick,
-        containerColor = fabBackgroundColor,
-        contentColor = fabContentColor,
-        shape = RoundedCornerShape(FAB_CORNER_RADIUS.dp),
-    ) {
-        AsyncImage(
-            modifier = Modifier
-                .size(FAB_ICON_SIZE.dp, FAB_ICON_SIZE.dp)
-                .padding(bottom = 2.dp),
-            model = imageModel,
-            colorFilter = ColorFilter.tint(fabContentColor),
-            contentDescription = uiState.currentTimeoutDisplay,
-        )
-    }
 }
 
 @Composable

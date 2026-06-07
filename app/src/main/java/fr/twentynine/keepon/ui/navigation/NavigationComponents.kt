@@ -1,28 +1,22 @@
 package fr.twentynine.keepon.ui.navigation
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -40,16 +34,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
-import coil3.compose.AsyncImage
-import fr.twentynine.keepon.ui.util.rememberTimeoutIconModel
-import fr.twentynine.keepon.domain.model.TimeoutIconSize
 import fr.twentynine.keepon.domain.model.ScreenTimeout
-import fr.twentynine.keepon.domain.model.TimeoutIconData
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
+import fr.twentynine.keepon.ui.component.TimeoutFab
 import fr.twentynine.keepon.ui.util.KeepOnNavigationContentPosition
 
 class KeepOnNavSuiteScope(
@@ -204,68 +194,15 @@ fun KeepOnNavigationRail(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                val primaryContainerColor = MaterialTheme.colorScheme.primaryContainer
-                val backgroundColor = MaterialTheme.colorScheme.background
-                val onBackgroundColor = MaterialTheme.colorScheme.onBackground
-                val onPrimaryContainerColor = MaterialTheme.colorScheme.onPrimaryContainer
-
-                val animationDuration = 200
-
-                val fabBackgroundColor by animateColorAsState(
-                    if (keepOnIsActive) {
-                        primaryContainerColor
-                    } else {
-                        backgroundColor
-                    },
-                    tween(animationDuration)
-                )
-                val fabBorderColor by animateColorAsState(
-                    if (keepOnIsActive) {
-                        backgroundColor
-                    } else {
-                        primaryContainerColor
-                    },
-                    tween(animationDuration)
-                )
-                val fabContentColor by animateColorAsState(
-                    if (keepOnIsActive) {
-                        onPrimaryContainerColor
-                    } else {
-                        onBackgroundColor
-                    },
-                    tween(animationDuration)
-                )
-
-                val imageData = remember(currentScreenTimeout, timeoutIconStyle) {
-                    TimeoutIconData(
-                        currentScreenTimeout,
-                        TimeoutIconSize.LARGE,
-                        timeoutIconStyle
-                    )
-                }
-                val imageModel = rememberTimeoutIconModel(imageData)
-
-                FloatingActionButton(
-                    modifier = Modifier
-                        .border(
-                            width = 1.dp,
-                            color = fabBorderColor,
-                            RoundedCornerShape(24.dp)
-                        )
-                        .size(68.dp),
+                TimeoutFab(
+                    keepOnIsActive = keepOnIsActive,
+                    currentScreenTimeout = currentScreenTimeout,
+                    currentTimeoutDisplay = currentTimeoutDisplay,
+                    timeoutIconStyle = timeoutIconStyle,
                     onClick = fabOnClick,
-                    containerColor = fabBackgroundColor,
-                    contentColor = fabContentColor,
+                    animationDurationMs = 200,
                     elevation = FloatingActionButtonDefaults.elevation(1.dp),
-                    shape = RoundedCornerShape(24.dp),
-                ) {
-                    AsyncImage(
-                        modifier = Modifier.size(40.dp, 40.dp).padding(bottom = 2.dp),
-                        model = imageModel,
-                        colorFilter = ColorFilter.tint(fabContentColor),
-                        contentDescription = currentTimeoutDisplay,
-                    )
-                }
+                )
             }
 
             Spacer(modifier = Modifier.weight(0.3f))
