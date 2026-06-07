@@ -20,7 +20,7 @@ import coil3.request.SuccessResult
 import coil3.request.lifecycle
 import coil3.size.Size
 import coil3.toBitmap
-import fr.twentynine.keepon.KeepOnApplication
+import fr.twentynine.keepon.di.qualifier.ApplicationScope
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.model.ScreenTimeout
@@ -70,8 +70,11 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
     @Inject
     lateinit var stringResourceProvider: StringResourceProvider
 
+    @Inject
+    @ApplicationScope
+    lateinit var applicationScope: CoroutineScope
+
     private val serviceJob = SupervisorJob()
-    private val applicationScope by lazy { (this.applicationContext as KeepOnApplication).applicationScope }
     private val serviceScope by lazy { CoroutineScope(applicationScope.coroutineContext + serviceJob) }
 
     override val lifecycle: Lifecycle

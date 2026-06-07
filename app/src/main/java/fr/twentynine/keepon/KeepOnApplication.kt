@@ -18,9 +18,9 @@ import fr.twentynine.keepon.core.coil.TimeoutIconDataKeyer
 import fr.twentynine.keepon.di.entrypoint.StringResourceProviderEntryPoint
 import fr.twentynine.keepon.core.worker.GuardianSystemScreenTimeoutWorkerScheduler
 import fr.twentynine.keepon.core.worker.MonitorSystemScreenTimeoutWorkScheduler
+import fr.twentynine.keepon.di.qualifier.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,7 +36,9 @@ class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configura
     @Inject
     lateinit var widgetUpdater: WidgetUpdater
 
-    val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    @Inject
+    @ApplicationScope
+    lateinit var applicationScope: CoroutineScope
 
     override fun onCreate() {
         super.onCreate()

@@ -11,13 +11,14 @@ import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
 import dagger.hilt.android.AndroidEntryPoint
-import fr.twentynine.keepon.KeepOnApplication
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.core.receiver.ScreenOffReceiver
 import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager
 import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager.Companion.NOTIFICATION_CHANNEL_SCREEN_MONITOR_ID
 import fr.twentynine.keepon.domain.usecase.timeout.ResetSystemScreenTimeoutUseCase
+import fr.twentynine.keepon.di.qualifier.ApplicationScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,7 +33,9 @@ class ScreenOffReceiverService : LifecycleService() {
 
     // Run on the app scope so the reset (which stops this service mid-way) completes
     // the system write even after the service is destroyed.
-    private val applicationScope by lazy { (applicationContext as KeepOnApplication).applicationScope }
+    @Inject
+    @ApplicationScope
+    lateinit var applicationScope: CoroutineScope
 
     private val screenOffReceiver by lazy { ScreenOffReceiver() }
 
