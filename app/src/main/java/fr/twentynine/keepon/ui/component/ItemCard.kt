@@ -4,21 +4,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import fr.twentynine.keepon.ui.model.ItemPosition
 
+/**
+ * A static (non-swipeable) list card. Thin wrapper over [PositionedCard]; clicks, if any, are
+ * handled by the [content] itself.
+ */
 @Composable
 fun ItemCard(
     itemPosition: ItemPosition,
     modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
-    SwipeableItemCard(
-        item = null,
-        itemPosition = itemPosition,
-        modifier = modifier,
-        swipeEnabled = false,
-        onClickAction = { if (onClick != null) onClick() },
-        onSwipeAction = null,
-        backgroundContent = null,
-        content = { content() }
-    )
+    PositionedCard(itemPosition = itemPosition, modifier = modifier) {
+        content()
+    }
 }
