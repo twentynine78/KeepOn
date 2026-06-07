@@ -1,8 +1,6 @@
 package fr.twentynine.keepon.ui.producer
 
 import fr.twentynine.keepon.domain.catalog.ScreenTimeoutCatalog
-import fr.twentynine.keepon.domain.model.ScreenTimeout
-import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
@@ -27,25 +25,33 @@ class TaskerEditStateProducer @Inject constructor(
         canPostNotificationFlow: Flow<Boolean>,
         selectedScreenTimeoutFlow: Flow<ScreenTimeoutUI?>,
     ): Flow<TaskerEditUIState.Success> {
-        return combine(
+        // combine is only typed up to 5 flows; group the permissions into a typed sub-combine to
+        // keep the pipeline type-safe instead of the Array overload + casts.
+        val permissionFlagsFlow = combine(
             canWriteSystemSettingFlow,
             batteryIsNotOptimizedFlow,
             canPostNotificationFlow,
+        ) { canWrite, battery, canPost ->
+            PermissionFlags(canWrite, battery, canPost)
+        }
+
+        return combine(
+            permissionFlagsFlow,
             timeoutPreferencesRepository.getDefaultScreenTimeoutFlow(),
             timeoutPreferencesRepository.getPreviousScreenTimeoutFlow(),
             uiPreferencesRepository.getTimeoutIconStyleFlow(),
             selectedScreenTimeoutFlow,
-        ) { arrayOfFlow ->
+        ) { permissions, defaultScreenTimeout, previousScreenTimeout, iconStyle, selectedScreenTimeout ->
             TaskerEditUIState.Success(
-                canWriteSystemSettings = arrayOfFlow[0] as Boolean,
-                batteryIsNotOptimized = arrayOfFlow[1] as Boolean,
-                canPostNotification = arrayOfFlow[2] as Boolean,
-                defaultScreenTimeout = arrayOfFlow[3] as ScreenTimeout,
-                previousScreenTimeout = arrayOfFlow[4] as ScreenTimeout,
-                timeoutIconStyle = arrayOfFlow[5] as TimeoutIconStyle,
+                canWriteSystemSettings = permissions.canWriteSystemSettings,
+                batteryIsNotOptimized = permissions.batteryIsNotOptimized,
+                canPostNotification = permissions.canPostNotification,
+                defaultScreenTimeout = defaultScreenTimeout,
+                previousScreenTimeout = previousScreenTimeout,
+                timeoutIconStyle = iconStyle,
                 specialScreenTimeouts = buildScreenTimeoutUiListProducer(ScreenTimeoutCatalog.specialScreenTimeouts),
                 screenTimeouts = buildScreenTimeoutUiListProducer(ScreenTimeoutCatalog.screenTimeouts),
-                selectedScreenTimeout = arrayOfFlow[6] as ScreenTimeoutUI?,
+                selectedScreenTimeout = selectedScreenTimeout,
             )
         }
     }

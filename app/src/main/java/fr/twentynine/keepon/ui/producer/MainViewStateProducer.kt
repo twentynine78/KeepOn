@@ -4,8 +4,6 @@ import fr.twentynine.keepon.ui.catalog.TipsCatalog
 import fr.twentynine.keepon.ui.catalog.TipsInfo
 import fr.twentynine.keepon.domain.catalog.ScreenTimeoutCatalog
 import fr.twentynine.keepon.domain.model.DismissedTips
-import fr.twentynine.keepon.domain.model.ScreenTimeout
-import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.domain.model.TipsConstraintState
 import fr.twentynine.keepon.domain.gateway.AppInfoProvider
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
@@ -43,32 +41,45 @@ class MainViewStateProducer @Inject constructor(
         batteryIsNotOptimizedFlow: Flow<Boolean>,
         canPostNotificationFlow: Flow<Boolean>,
     ): Flow<MainViewUIState.Success> {
-        return combine(
+        // combine is only typed up to 5 flows; group into typed sub-combines (≤5 each) to keep
+        // the whole pipeline type-safe instead of falling back to the Array overload + casts.
+        val permissionFlagsFlow = combine(
             canWriteSystemSettingFlow,
             batteryIsNotOptimizedFlow,
             canPostNotificationFlow,
+        ) { canWrite, battery, canPost ->
+            PermissionFlags(canWrite, battery, canPost)
+        }
+
+        val mainPreferencesFlow = combine(
             timeoutPreferencesRepository.getResetTimeoutWhenScreenOffFlow(),
             timeoutPreferencesRepository.getCurrentScreenTimeoutFlow(),
             getKeepOnStatusUseCase(),
             appPreferencesRepository.getIsFirstLaunchFlow(),
             uiPreferencesRepository.getTimeoutIconStyleFlow(),
+        ) { reset, current, keepOnIsActive, isFirstLaunch, iconStyle ->
+            MainPreferences(reset, current, keepOnIsActive, isFirstLaunch, iconStyle)
+        }
+
+        return combine(
+            permissionFlagsFlow,
+            mainPreferencesFlow,
             tipsListFlow(canPostNotificationFlow, batteryIsNotOptimizedFlow),
             screenTimeoutListFlow(),
-        ) { arrayOfFlow ->
-            @Suppress("UNCHECKED_CAST")
+        ) { permissions, preferences, tipsList, screenTimeouts ->
             MainViewUIState.Success(
-                canWriteSystemSettings = arrayOfFlow[0] as Boolean,
-                batteryIsNotOptimized = arrayOfFlow[1] as Boolean,
-                canPostNotification = arrayOfFlow[2] as Boolean,
-                resetTimeoutWhenScreenOff = arrayOfFlow[3] as Boolean,
-                currentScreenTimeout = arrayOfFlow[4] as ScreenTimeout,
-                currentTimeoutDisplay = (arrayOfFlow[4] as ScreenTimeout)
+                canWriteSystemSettings = permissions.canWriteSystemSettings,
+                batteryIsNotOptimized = permissions.batteryIsNotOptimized,
+                canPostNotification = permissions.canPostNotification,
+                resetTimeoutWhenScreenOff = preferences.resetTimeoutWhenScreenOff,
+                currentScreenTimeout = preferences.currentScreenTimeout,
+                currentTimeoutDisplay = preferences.currentScreenTimeout
                     .getFullDisplayTimeout(stringResourceProvider),
-                keepOnIsActive = arrayOfFlow[5] as Boolean,
-                isFirstLaunch = arrayOfFlow[6] as Boolean,
-                timeoutIconStyle = arrayOfFlow[7] as TimeoutIconStyle,
-                tipsList = arrayOfFlow[8] as List<TipsInfo>,
-                screenTimeouts = arrayOfFlow[9] as List<ScreenTimeoutUI>,
+                keepOnIsActive = preferences.keepOnIsActive,
+                isFirstLaunch = preferences.isFirstLaunch,
+                timeoutIconStyle = preferences.timeoutIconStyle,
+                tipsList = tipsList,
+                screenTimeouts = screenTimeouts,
                 appInfo = appInfo,
             )
         }
