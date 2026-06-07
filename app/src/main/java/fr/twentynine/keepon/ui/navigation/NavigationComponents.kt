@@ -46,6 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import coil3.compose.AsyncImage
+import fr.twentynine.keepon.ui.util.rememberTimeoutIconModel
 import fr.twentynine.keepon.domain.model.TimeoutIconSize
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconData
@@ -252,6 +253,7 @@ fun NavigationRailView(
                         timeoutIconStyle
                     )
                 }
+                val imageModel = rememberTimeoutIconModel(imageData)
 
                 FloatingActionButton(
                     modifier = Modifier
@@ -269,7 +271,7 @@ fun NavigationRailView(
                 ) {
                     AsyncImage(
                         modifier = Modifier.size(40.dp, 40.dp).padding(bottom = 2.dp),
-                        model = imageData,
+                        model = imageModel,
                         colorFilter = ColorFilter.tint(fabContentColor),
                         contentDescription = imageDescription,
                     )

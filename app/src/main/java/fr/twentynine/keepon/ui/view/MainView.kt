@@ -57,6 +57,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
+import fr.twentynine.keepon.ui.util.rememberTimeoutIconModel
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.model.TimeoutIconSize
 import fr.twentynine.keepon.ui.catalog.TipsInfo
@@ -357,6 +358,7 @@ private fun KeepOnFloatingActionButton(
             uiState.timeoutIconStyle
         )
     }
+    val imageModel = rememberTimeoutIconModel(imageData)
 
     val colorScheme = MaterialTheme.colorScheme
     val primaryContainerColor = colorScheme.primaryContainer
@@ -400,7 +402,7 @@ private fun KeepOnFloatingActionButton(
             modifier = Modifier
                 .size(FAB_ICON_SIZE.dp, FAB_ICON_SIZE.dp)
                 .padding(bottom = 2.dp),
-            model = imageData,
+            model = imageModel,
             colorFilter = ColorFilter.tint(fabContentColor),
             contentDescription = imageDescription,
         )

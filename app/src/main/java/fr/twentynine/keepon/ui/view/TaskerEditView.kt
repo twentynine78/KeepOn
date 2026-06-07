@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import fr.twentynine.keepon.ui.util.rememberTimeoutIconModel
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.model.ItemPosition
 import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
@@ -372,6 +373,7 @@ fun TaskerScreenTimeoutRow(
                     timeoutIconStyle
                 )
             }
+            val imageModel = rememberTimeoutIconModel(imageData)
 
             Box(
                 modifier = Modifier
@@ -393,7 +395,7 @@ fun TaskerScreenTimeoutRow(
             ) {
                 AsyncImage(
                     modifier = Modifier.size(20.dp, 20.dp),
-                    model = imageData,
+                    model = imageModel,
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
                     contentDescription = item.displayName,
                 )
