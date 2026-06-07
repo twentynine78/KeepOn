@@ -24,24 +24,26 @@ import coil3.toBitmap
 import fr.twentynine.keepon.KeepOnApplication
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.domain.model.TimeoutIconSize
-import fr.twentynine.keepon.core.model.QSTimeoutData
+import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconData
+import fr.twentynine.keepon.domain.model.TimeoutIconSize
+import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
 import fr.twentynine.keepon.domain.usecase.app.GetKeepOnStatusUseCase
 import fr.twentynine.keepon.domain.usecase.preferences.SetQSTileAddedUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.SetNextSystemScreenTimeoutUseCase
 import fr.twentynine.keepon.core.util.BundleScrubber
-import fr.twentynine.keepon.core.util.LockableJob
 import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import fr.twentynine.keepon.domain.gateway.WidgetUpdater
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
@@ -84,15 +86,15 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
 
     private val iconSize = TimeoutIconSize.MEDIUM
 
-    private var currentUpdateJob: LockableJob = LockableJob()
+    // Active while the tile is listening (QS panel open): observes the state and
+    // redraws on every change, so the tile stays correct as long as it is visible.
+    private var listeningJob: Job? = null
 
     private val imageRequestBuilder by lazy {
         ImageRequest.Builder(this)
             .size(Size.ORIGINAL)
             .lifecycle(lifecycle)
     }
-
-    private lateinit var qsCoilTarget: Target
 
     override fun onCreate() {
         lifecycleDispatcher.onServicePreSuperOnCreate()
@@ -106,13 +108,27 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
     override fun onStartListening() {
         super.onStartListening()
 
-        // Launch update task
-        serviceScope.launch {
-            currentUpdateJob.cancelOrJoin()
-            currentUpdateJob.job = launch {
-                updateQSTile()
+        listeningJob?.cancel()
+        listeningJob = serviceScope.launch {
+            combine(
+                timeoutPreferencesRepository.getCurrentScreenTimeoutFlow(),
+                uiPreferencesRepository.getTimeoutIconStyleFlow(),
+                getKeepOnStatusUseCase(),
+            ) { currentTimeout, iconStyle, keepOnIsActive ->
+                Triple(currentTimeout, iconStyle, keepOnIsActive)
             }
+                .distinctUntilChanged()
+                .collect { (currentTimeout, iconStyle, keepOnIsActive) ->
+                    updateQSTile(currentTimeout, iconStyle, keepOnIsActive)
+                }
         }
+    }
+
+    override fun onStopListening() {
+        super.onStopListening()
+
+        listeningJob?.cancel()
+        listeningJob = null
     }
 
     override fun onClick() {
@@ -140,13 +156,8 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
                     startMainActivityAndCollapse()
                 }
             } else {
+                // The listening collector redraws the tile once the new timeout is persisted.
                 setNextSystemScreenTimeoutUseCase(currentTimeout)
-
-                currentUpdateJob.cancelOrJoin()
-                currentUpdateJob.lock()
-                currentUpdateJob.job = launch {
-                    updateQSTile()
-                }
             }
         }
     }
@@ -181,66 +192,33 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
         super.onDestroy()
 
         serviceJob.cancel()
-        serviceScope.launch {
-            currentUpdateJob.cancelOrJoin()
-        }
     }
 
-    private suspend fun updateQSTile() {
-        val currentScreenTimeout = timeoutPreferencesRepository.getCurrentScreenTimeout()
-        val timeoutIconStyle = uiPreferencesRepository.getTimeoutIconStyle()
-        val keepOnState = getKeepOnStatusUseCase().firstOrNull() ?: false
-
-        // Prepare data for the tile
+    private fun updateQSTile(
+        currentScreenTimeout: ScreenTimeout,
+        timeoutIconStyle: TimeoutIconStyle,
+        keepOnIsActive: Boolean,
+    ) {
         val newTimeoutIconData = TimeoutIconData(
             currentScreenTimeout,
             iconSize,
             timeoutIconStyle
         )
 
-        val newQSTimeoutData = QSTimeoutData(
-            keepOnState = keepOnState,
-            iconData = newTimeoutIconData
-        )
-
-        // Create Coil target
-        qsCoilTarget = object : Target {
+        val qsCoilTarget = object : Target {
             override fun onSuccess(result: Image) {
                 val tile = qsTile ?: return
 
-                // Perform image processing and preference fetching in a background coroutine
-                serviceScope.launch {
-                    // Get the new QSTile icon with coil
-                    val newQsTileBitmap = result.toBitmap()
+                val newQsTileBitmap = result.toBitmap()
 
-                    // Get the previous QSTile data
-                    val previousQsTileState = tile.state
-                    val previousQsTileLabel = tile.label
+                tile.icon = newQsTileBitmap.toIcon()
+                tile.state = if (keepOnIsActive) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
 
-                    // Get the new KeepOn state
-                    val keepOnIsActive = getKeepOnStatusUseCase().firstOrNull() ?: false
+                val timeoutDisplay =
+                    newTimeoutIconData.iconTimeout.getFullDisplayTimeout(stringResourceProvider)
+                tile.label = "${getString(R.string.qs_service_name)} - $timeoutDisplay"
 
-                    // Set the new QSTile data
-                    tile.icon = newQsTileBitmap.toIcon()
-                    tile.state = if (keepOnIsActive) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
-
-                    // Build the new QSTile label
-                    val timeoutDisplay =
-                        newQSTimeoutData.iconData.iconTimeout.getFullDisplayTimeout(
-                            stringResourceProvider
-                        )
-                    val newQsTileLabel = "${getString(R.string.qs_service_name)} - $timeoutDisplay"
-
-                    // Force update icon if only icon is changed
-                    if (previousQsTileState == tile.state && previousQsTileLabel == newQsTileLabel) {
-                        tile.label = "$newQsTileLabel "
-                        tile.updateTile()
-                    }
-
-                    // Set the new label and update the QSTile
-                    tile.label = newQsTileLabel
-                    tile.updateTile()
-                }
+                tile.updateTile()
             }
 
             override fun onError(error: Image?) {
@@ -267,7 +245,9 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
         imageLoader.executeBlocking(request)
 
         // Request widget update
-        widgetUpdater.requestUpdateWidget()
+        serviceScope.launch {
+            widgetUpdater.requestUpdateWidget()
+        }
     }
 
     private fun requestQSTileUpdate() {
