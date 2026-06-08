@@ -141,7 +141,7 @@ class ParticleTransitionRenderer(private val transition: ParticleTransition) : I
     )
 
     private companion object {
-        const val PHASE = 0.6f
+        const val PHASE = 0.7f
         const val SEED = 0x27D4EB2FL
         const val MIN_TRAVEL = 0.4f
         const val MIN_GRAIN_PX = 2f

@@ -1,11 +1,12 @@
 package fr.twentynine.keepon.domain.catalog
 
 import fr.twentynine.keepon.domain.model.AffineTransition
-import fr.twentynine.keepon.domain.model.FadingEdge
 import fr.twentynine.keepon.domain.model.IconTransition
 import fr.twentynine.keepon.domain.model.LayerTransform
 import fr.twentynine.keepon.domain.model.MorphTransition
 import fr.twentynine.keepon.domain.model.ParticleTransition
+import fr.twentynine.keepon.domain.model.ReelTransition
+import fr.twentynine.keepon.domain.model.VortexTransition
 import fr.twentynine.keepon.domain.model.WarpTransition
 
 /**
@@ -30,10 +31,8 @@ object IconTransitionCatalog {
         id = "warp",
     )
 
-    val fadeThrough = AffineTransition(
-        id = "fade_through",
-        enterAway = LayerTransform(scaleX = 0.92f, scaleY = 0.92f, alpha = 0f),
-        exitAway = LayerTransform(scaleX = 1.08f, scaleY = 1.08f, alpha = 0f),
+    val vortex = VortexTransition(
+        id = "vortex",
     )
 
     val flip = AffineTransition(
@@ -43,15 +42,14 @@ object IconTransitionCatalog {
         sequential = true,
     )
 
-    val swipeDown = AffineTransition(
+    // Rouleau cylindrique (molette de cadenas / bandeau de machine à sous) ; id "swipe_down" conservé
+    // pour les préférences existantes.
+    val swipeDown = ReelTransition(
         id = "swipe_down",
-        enterAway = LayerTransform(translationYFraction = -1f),
-        exitAway = LayerTransform(translationYFraction = 1f),
-        fadingEdge = FadingEdge.VERTICAL,
     )
 
     val all: List<IconTransition> =
-        listOf(liquidMorph, particles, warp, fadeThrough, flip, swipeDown)
+        listOf(liquidMorph, particles, warp, vortex, flip, swipeDown)
 
     val default: IconTransition = liquidMorph
 

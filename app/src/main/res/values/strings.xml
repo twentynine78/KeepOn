@@ -75,9 +75,9 @@
     <string name="icon_transition_type_liquid_morph">Liquid morph</string>
     <string name="icon_transition_type_warp">Turbulent warp</string>
     <string name="icon_transition_type_particles">Particles</string>
-    <string name="icon_transition_type_fade_through">Fade through</string>
+    <string name="icon_transition_type_vortex">Vortex</string>
     <string name="icon_transition_type_flip">Flip</string>
-    <string name="icon_transition_type_swipe_down">Swipe down</string>
+    <string name="icon_transition_type_swipe_down">Reel</string>
 
     <string name="select_tasker_timeouts_title">Select timeout</string>
     <string name="select_tasker_timeouts_text">Select the timeout value that will be use for the automation action.</string>

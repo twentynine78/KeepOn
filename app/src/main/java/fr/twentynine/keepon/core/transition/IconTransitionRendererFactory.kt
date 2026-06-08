@@ -3,11 +3,15 @@ package fr.twentynine.keepon.core.transition
 import fr.twentynine.keepon.core.transition.renderer.AffineTransitionRenderer
 import fr.twentynine.keepon.core.transition.renderer.MorphTransitionRenderer
 import fr.twentynine.keepon.core.transition.renderer.ParticleTransitionRenderer
+import fr.twentynine.keepon.core.transition.renderer.ReelTransitionRenderer
+import fr.twentynine.keepon.core.transition.renderer.VortexTransitionRenderer
 import fr.twentynine.keepon.core.transition.renderer.WarpTransitionRenderer
 import fr.twentynine.keepon.domain.model.AffineTransition
 import fr.twentynine.keepon.domain.model.IconTransition
 import fr.twentynine.keepon.domain.model.MorphTransition
 import fr.twentynine.keepon.domain.model.ParticleTransition
+import fr.twentynine.keepon.domain.model.ReelTransition
+import fr.twentynine.keepon.domain.model.VortexTransition
 import fr.twentynine.keepon.domain.model.WarpTransition
 
 /**
@@ -21,5 +25,7 @@ object IconTransitionRendererFactory {
         is MorphTransition -> MorphTransitionRenderer(transition)
         is WarpTransition -> WarpTransitionRenderer(transition)
         is ParticleTransition -> ParticleTransitionRenderer(transition)
+        is VortexTransition -> VortexTransitionRenderer(transition)
+        is ReelTransition -> ReelTransitionRenderer(transition)
     }
 }

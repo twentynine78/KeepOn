@@ -20,12 +20,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
@@ -38,7 +34,6 @@ import fr.twentynine.keepon.core.coil.timeoutIconImageRequest
 import fr.twentynine.keepon.core.transition.TransitionPlayer
 import fr.twentynine.keepon.domain.catalog.IconTransitionCatalog
 import fr.twentynine.keepon.domain.model.AffineTransition
-import fr.twentynine.keepon.domain.model.FadingEdge
 import fr.twentynine.keepon.domain.model.IconTransition
 import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.IconTransitionTiming
@@ -49,16 +44,8 @@ import fr.twentynine.keepon.domain.model.TimeoutIconSize
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.util.rememberTimeoutIconModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 
 private const val FLIP_CAMERA_DISTANCE = 16f
-
-private val EDGE_COLOR_STOPS = arrayOf(
-    0f to Color.Transparent,
-    FadingEdge.FADE_FRACTION to Color.Black,
-    1f - FadingEdge.FADE_FRACTION to Color.Black,
-    1f to Color.Transparent,
-)
 
 /**
  * The generated timeout icon with an optional change transition. When [animation] is enabled, a real
@@ -108,23 +95,6 @@ private fun AffineTimeoutIcon(
     iconSize: Dp,
     modifier: Modifier,
 ) {
-    // The edge fade is only meaningful while the icon is moving; gate it to the transition window so
-    // a settled icon (centred glyph) is never clipped, which lets the fade be generous.
-    var edgeFadeActive by remember { mutableStateOf(false) }
-    var settledTimeout by remember { mutableStateOf(currentScreenTimeout) }
-    LaunchedEffect(currentScreenTimeout) {
-        if (currentScreenTimeout != settledTimeout) {
-            edgeFadeActive = true
-            delay(durationMs.toLong())
-            edgeFadeActive = false
-        }
-        settledTimeout = currentScreenTimeout
-    }
-
-    val containerModifier = modifier
-        .size(iconSize)
-        .edgeFade(transition.fadingEdge, edgeFadeActive)
-
     AnimatedContent(
         targetState = currentScreenTimeout,
         // No-op fade just keeps both contents alive for the duration; the real motion is the
@@ -136,7 +106,7 @@ private fun AffineTimeoutIcon(
                 ) using SizeTransform(clip = false)
         },
         label = "timeoutIconTransition",
-        modifier = containerModifier,
+        modifier = modifier.size(iconSize),
     ) { timeout ->
         val entering = this.transition.targetState == EnterExitState.Visible
         val presence = this.transition.animateFloat(
@@ -271,25 +241,4 @@ private fun TimeoutIcon(
         colorFilter = colorFilter,
         contentDescription = contentDescription,
     )
-}
-
-/**
- * Fades the requested edges so sliding content appears/disappears softly. [active] gates the mask to
- * the transition window so a settled, centred glyph is never clipped. Supports vertical and/or
- * horizontal edges (the catalog only uses VERTICAL today; HORIZONTAL/BOTH are ready to use).
- */
-private fun Modifier.edgeFade(fadingEdge: FadingEdge, active: Boolean): Modifier {
-    if (fadingEdge == FadingEdge.NONE) return this
-    return this
-        .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
-        .drawWithContent {
-            drawContent()
-            if (!active) return@drawWithContent
-            if (fadingEdge.fadesVertical) {
-                drawRect(brush = Brush.verticalGradient(*EDGE_COLOR_STOPS), blendMode = BlendMode.DstIn)
-            }
-            if (fadingEdge.fadesHorizontal) {
-                drawRect(brush = Brush.horizontalGradient(*EDGE_COLOR_STOPS), blendMode = BlendMode.DstIn)
-            }
-        }
 }

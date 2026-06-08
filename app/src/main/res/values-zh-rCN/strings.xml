@@ -75,9 +75,9 @@
     <string name="icon_transition_type_liquid_morph">流体变形</string>
     <string name="icon_transition_type_warp">湍流扭曲</string>
     <string name="icon_transition_type_particles">粒子消散</string>
-    <string name="icon_transition_type_fade_through">缩放淡变</string>
+    <string name="icon_transition_type_vortex">漩涡</string>
     <string name="icon_transition_type_flip">翻转</string>
-    <string name="icon_transition_type_swipe_down">向下滑动</string>
+    <string name="icon_transition_type_swipe_down">滚轮</string>
 
     <string name="select_tasker_timeouts_title">选择超时时间</string>
     <string name="select_tasker_timeouts_text">选择用于自动化操作的超时时间。</string>

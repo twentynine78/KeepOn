@@ -278,7 +278,7 @@ fun IconTransitionAnimationCard(
 private fun transitionLabelRes(id: String): Int = when (id) {
     IconTransitionCatalog.liquidMorph.id -> R.string.icon_transition_type_liquid_morph
     IconTransitionCatalog.warp.id -> R.string.icon_transition_type_warp
-    IconTransitionCatalog.fadeThrough.id -> R.string.icon_transition_type_fade_through
+    IconTransitionCatalog.vortex.id -> R.string.icon_transition_type_vortex
     IconTransitionCatalog.flip.id -> R.string.icon_transition_type_flip
     IconTransitionCatalog.swipeDown.id -> R.string.icon_transition_type_swipe_down
     else -> R.string.icon_transition_type_particles

@@ -8,10 +8,8 @@ import androidx.core.graphics.createBitmap
 import fr.twentynine.keepon.core.transition.IconTransitionRenderer
 import fr.twentynine.keepon.core.transition.TransitionFrames
 import fr.twentynine.keepon.core.transition.util.ALPHA_OPAQUE
-import fr.twentynine.keepon.core.transition.util.EdgeFade
 import fr.twentynine.keepon.core.transition.util.IconMask
 import fr.twentynine.keepon.domain.model.AffineTransition
-import fr.twentynine.keepon.domain.model.FadingEdge
 import fr.twentynine.keepon.domain.model.LayerTransform
 import kotlin.math.cos
 
@@ -19,7 +17,7 @@ private val DEGREES_TO_RADIANS = (Math.PI / 180.0).toFloat()
 
 /**
  * Composites the outgoing and incoming layers with a translate/scale/alpha transform (plus a
- * vertical-squash approximation of the 3D `rotationX`) and an optional edge fade.
+ * vertical-squash approximation of the 3D `rotationX`).
  */
 class AffineTransitionRenderer(private val transition: AffineTransition) : IconTransitionRenderer {
 
@@ -28,7 +26,7 @@ class AffineTransitionRenderer(private val transition: AffineTransition) : IconT
         val softTo = IconMask.toSoftwareMask(to)
         return TransitionFrames { progress ->
             val (oldTransform, newTransform) = transition.transformsAt(progress)
-            buildFrame(softFrom, softTo, oldTransform, newTransform, transition.fadingEdge)
+            buildFrame(softFrom, softTo, oldTransform, newTransform)
         }
     }
 
@@ -37,7 +35,6 @@ class AffineTransitionRenderer(private val transition: AffineTransition) : IconT
         to: Bitmap,
         oldTransform: LayerTransform,
         newTransform: LayerTransform,
-        fadingEdge: FadingEdge,
     ): Bitmap {
         val width = to.width
         val height = to.height
@@ -45,15 +42,12 @@ class AffineTransitionRenderer(private val transition: AffineTransition) : IconT
         val canvas = Canvas(output)
         drawLayer(canvas, from, oldTransform)
         drawLayer(canvas, to, newTransform)
-        if (fadingEdge != FadingEdge.NONE) {
-            EdgeFade.apply(canvas, width.toFloat(), height.toFloat(), fadingEdge)
-        }
         return output
     }
 
     private fun drawLayer(canvas: Canvas, bitmap: Bitmap, transform: LayerTransform) {
-        // rotationX is faked on the 2D canvas by squashing vertically (cos of the angle); past 90°
-        // the layer faces away and is skipped.
+        // rotationX is faked on the 2D canvas by squashing vertically (cos of the angle) about the
+        // centre; past 90° the layer faces away and is skipped.
         val cosAngle = cos(transform.rotationX * DEGREES_TO_RADIANS)
         if (cosAngle <= 0f || transform.alpha <= 0f) return
 

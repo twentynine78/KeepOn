@@ -10,7 +10,6 @@ package fr.twentynine.keepon.domain.model
  */
 sealed interface IconTransition {
     val id: String
-    val fadingEdge: FadingEdge
 }
 
 /**
@@ -21,7 +20,6 @@ data class AffineTransition(
     override val id: String,
     val enterAway: LayerTransform,
     val exitAway: LayerTransform,
-    override val fadingEdge: FadingEdge = FadingEdge.NONE,
     val sequential: Boolean = false,
 ) : IconTransition {
     /** Transform of one layer given its [presence] (0 = fully absent → 1 = fully in place). */
@@ -63,7 +61,6 @@ sealed interface RenderedTransition : IconTransition
 data class MorphTransition(
     override val id: String,
     val edgeSoftness: Float = 1.5f,
-    override val fadingEdge: FadingEdge = FadingEdge.NONE,
 ) : RenderedTransition
 
 /**
@@ -75,7 +72,6 @@ data class MorphTransition(
 data class WarpTransition(
     override val id: String,
     val amplitude: Float = 0.05f,
-    override val fadingEdge: FadingEdge = FadingEdge.NONE,
 ) : RenderedTransition
 
 /**
@@ -86,6 +82,30 @@ data class WarpTransition(
 data class ParticleTransition(
     override val id: String,
     val grain: Float = 0.06f,
-    val scatter: Float = 0.35f,
-    override val fadingEdge: FadingEdge = FadingEdge.NONE,
+    val scatter: Float = 0.55f,
+) : RenderedTransition
+
+/**
+ * Vortex drain: the outgoing glyph is sucked into the centre along a spiral (its mesh collapses to a
+ * point while twisting, more sharply near the core) and vanishes, then the incoming glyph re-emerges
+ * from the centre and unwinds back into its shape — the same motion played in reverse. [twist] is the
+ * peak spiral rotation in radians (the centre sweeps through it; the rim barely turns).
+ */
+data class VortexTransition(
+    override val id: String,
+    val twist: Float = 5.65f,
+) : RenderedTransition
+
+/**
+ * Cylindrical reel: the two icons are glued to a vertical rotating drum at adjacent notches; on a
+ * change the drum rolls one notch. The outgoing glyph scrolls down and foreshortens as it wraps off
+ * the bottom edge while the incoming one emerges curved from the top and unrolls flat into place —
+ * a combination-padlock wheel / slot-machine reel, with no alpha fade (appearance is purely the sine
+ * foreshortening and the clipping at the box edges). [arcDegrees] is one notch's arc on the drum:
+ * larger reads as a tighter, more dramatic wheel. A per-layer roll envelope flattens each glyph to a
+ * rigid slab as it reaches the front, so the settled frame is the crisp icon.
+ */
+data class ReelTransition(
+    override val id: String,
+    val arcDegrees: Float = 105f,
 ) : RenderedTransition

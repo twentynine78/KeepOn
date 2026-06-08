@@ -75,9 +75,9 @@
     <string name="icon_transition_type_liquid_morph">Métamorphose fluide</string>
     <string name="icon_transition_type_warp">Distorsion turbulente</string>
     <string name="icon_transition_type_particles">Particules</string>
-    <string name="icon_transition_type_fade_through">Fondu zoom</string>
+    <string name="icon_transition_type_vortex">Tourbillon</string>
     <string name="icon_transition_type_flip">Bascule</string>
-    <string name="icon_transition_type_swipe_down">Balayage vers le bas</string>
+    <string name="icon_transition_type_swipe_down">Rouleau</string>
 
     <string name="select_tasker_timeouts_title">Délai d\'expiration de l\'écran</string>
     <string name="select_tasker_timeouts_text">Sélectionnez la valeur du délai d\'expiration de l\'écran qui sera utilisée pour l\'action d\'automatisation.</string>
