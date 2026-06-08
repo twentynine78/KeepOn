@@ -67,10 +67,11 @@
     <string name="font_style_parameters_appearance_subtitle">Font appearance</string>
     <string name="font_style_parameters_appearance_outlined">Outline only</string>
 
-    <string name="icon_transition_tile">Change animation</string>
+    <string name="icon_transition_tile">Icon animation</string>
     <string name="icon_transition_text">Play a short animation on the timeout icon whenever the screen timeout changes, so the value transitions smoothly instead of switching instantly.</string>
     <string name="icon_transition_enable">Enable transition animation</string>
     <string name="icon_transition_duration">Animation duration</string>
+    <string name="icon_transition_type_subtitle">Animation type</string>
     <string name="icon_transition_type_liquid_morph">Liquid morph</string>
     <string name="icon_transition_type_warp">Turbulent warp</string>
     <string name="icon_transition_type_particles">Particles</string>

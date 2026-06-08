@@ -13,3 +13,29 @@ val KeepOnCardShape = RoundedCornerShape(KeepOnCardCornerRadius)
 
 /** Alpha applied to secondary (subtitle) text drawn over the background color. */
 const val SUBTITLE_CONTENT_ALPHA = 0.8f
+
+// Style screen — shared layout rails so every card lines its content up on two constant columns.
+
+/** Single left content rail shared by subtitles, slider labels/tracks and control rows. */
+val StyleContentInset = 16.dp
+
+/** Negative offset that cancels a passive radio/checkbox's built-in 2dp padding so its glyph lands
+ *  exactly on the content rail (passive controls keep their drawn size — no 48dp touch target — so
+ *  the inset is small). In the rounded list cards this gives the radio the same start margin as its
+ *  top/bottom padding. */
+val StyleRadioGlyphInset = 2.dp
+
+/** Fixed leading-slot width so control labels share one column. */
+val StyleControlSlotWidth = 56.dp
+
+/** Gap between a control's leading slot and its label; sets the label column. */
+val StyleControlLabelSpacing = 16.dp
+
+/** Vertical padding of the animation-type radio rows. */
+val StyleControlRowVerticalPadding = 8.dp
+
+/** Vertical padding of a full-bleed list row (the font selection list). */
+val StyleListRowVerticalPadding = 16.dp
+
+/** Vertical padding of a standalone switch row (matches the home behavior switch). */
+val StyleSwitchRowVerticalPadding = 16.dp

@@ -67,10 +67,11 @@
     <string name="font_style_parameters_appearance_subtitle">外观效果</string>
     <string name="font_style_parameters_appearance_outlined">仅轮廓</string>
 
-    <string name="icon_transition_tile">切换动画</string>
+    <string name="icon_transition_tile">图标动画</string>
     <string name="icon_transition_text">每当屏幕超时变化时，在超时图标上播放一段短动画，让数值平滑过渡，而不是瞬间切换。</string>
     <string name="icon_transition_enable">启用过渡动画</string>
     <string name="icon_transition_duration">动画时长</string>
+    <string name="icon_transition_type_subtitle">动画类型</string>
     <string name="icon_transition_type_liquid_morph">流体变形</string>
     <string name="icon_transition_type_warp">湍流扭曲</string>
     <string name="icon_transition_type_particles">粒子消散</string>

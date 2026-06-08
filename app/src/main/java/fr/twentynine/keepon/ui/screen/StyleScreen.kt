@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -58,10 +57,16 @@ import fr.twentynine.keepon.domain.catalog.IconFontFamilyCatalog
 import fr.twentynine.keepon.domain.catalog.IconTransitionCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
+import fr.twentynine.keepon.ui.util.defaultCardHorizontalPadding
 import fr.twentynine.keepon.ui.util.screenContentModifier
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
+import fr.twentynine.keepon.ui.theme.StyleContentInset
+import fr.twentynine.keepon.ui.theme.StyleListRowVerticalPadding
+import fr.twentynine.keepon.ui.theme.StyleRadioGlyphInset
+import fr.twentynine.keepon.ui.theme.StyleSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.ItemCard
+import fr.twentynine.keepon.ui.component.LabeledControlRow
 import kotlin.math.ceil
 
 @Composable
@@ -162,9 +167,6 @@ fun StyleScreen(
     }
 }
 
-// Fixed leading slot so the radio buttons line up with the centre of the (wider) switch.
-private val TransitionControlSlotWidth = 56.dp
-
 // Material disabled-content opacity, applied to the animation choices when the toggle is off.
 private const val DISABLED_CONTENT_ALPHA = 0.38f
 
@@ -185,76 +187,70 @@ fun IconTransitionAnimationCard(
         )
         Card(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = defaultCardHorizontalPadding)
                 .align(alignment = Alignment.Start),
             shape = KeepOnCardShape,
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 16.dp),
+                    .padding(top = 8.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            onEvent(
-                                MainUIEvent.UpdateIconTransitionAnimation(
-                                    iconTransitionAnimation.copy(enabled = !iconTransitionAnimation.enabled)
-                                )
+                LabeledControlRow(
+                    onClick = {
+                        onEvent(
+                            MainUIEvent.UpdateIconTransitionAnimation(
+                                iconTransitionAnimation.copy(enabled = !iconTransitionAnimation.enabled)
                             )
-                        }
-                        .padding(horizontal = 8.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Box(
-                        modifier = Modifier.width(TransitionControlSlotWidth),
-                        contentAlignment = Alignment.Center,
-                    ) {
+                        )
+                    },
+                    verticalPadding = StyleSwitchRowVerticalPadding,
+                    leading = {
                         Switch(
                             checked = iconTransitionAnimation.enabled,
                             onCheckedChange = null,
                         )
-                    }
-                    Text(
-                        modifier = Modifier.padding(start = 16.dp),
-                        text = stringResource(R.string.icon_transition_enable),
-                    )
-                }
+                    },
+                    label = {
+                        Text(text = stringResource(R.string.icon_transition_enable))
+                    },
+                )
 
                 val animationsEnabled = iconTransitionAnimation.enabled
+                Text(
+                    text = stringResource(R.string.icon_transition_type_subtitle),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(horizontal = StyleContentInset)
+                        .alpha(if (animationsEnabled) 1f else DISABLED_CONTENT_ALPHA),
+                )
                 IconTransitionCatalog.all.forEach { transition ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable(enabled = animationsEnabled) {
-                                onEvent(
-                                    MainUIEvent.UpdateIconTransitionAnimation(
-                                        iconTransitionAnimation.copy(typeId = transition.id)
-                                    )
+                    LabeledControlRow(
+                        onClick = {
+                            onEvent(
+                                MainUIEvent.UpdateIconTransitionAnimation(
+                                    iconTransitionAnimation.copy(typeId = transition.id)
                                 )
-                            }
-                            .padding(horizontal = 8.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Box(
-                            modifier = Modifier.width(TransitionControlSlotWidth),
-                            contentAlignment = Alignment.Center,
-                        ) {
+                            )
+                        },
+                        enabled = animationsEnabled,
+                        leadingGlyphInset = StyleRadioGlyphInset,
+                        leading = {
                             RadioButton(
                                 selected = transition.id == iconTransitionAnimation.typeId,
                                 onClick = null,
                                 enabled = animationsEnabled,
                             )
-                        }
-                        Text(
-                            modifier = Modifier
-                                .padding(start = 16.dp)
-                                .alpha(if (animationsEnabled) 1f else DISABLED_CONTENT_ALPHA),
-                            text = stringResource(transitionLabelRes(transition.id)),
-                        )
-                    }
+                        },
+                        label = {
+                            Text(
+                                modifier = Modifier.alpha(if (animationsEnabled) 1f else DISABLED_CONTENT_ALPHA),
+                                text = stringResource(transitionLabelRes(transition.id)),
+                            )
+                        },
+                    )
                 }
 
                 FontOptionSlider(
@@ -271,6 +267,7 @@ fun IconTransitionAnimationCard(
                         IconTransitionTiming.DURATION_STEP_RANGE.toFloat(),
                     steps = IconTransitionTiming.DURATION_STEP_RANGE * 2 - 1,
                     topPadding = 12.dp,
+                    bottomPadding = 8.dp,
                     enabled = animationsEnabled,
                 )
             }
@@ -313,24 +310,23 @@ fun FontSelectionRow(
     }
 
     ItemCard(modifier = modifier, itemPosition = itemPosition) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onRowClick)
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            RadioButton(
-                selected = iconFontFamily.name == timeoutIconStyle.iconFontFamilyName,
-                onClick = null
-            )
-            Text(
-                modifier = Modifier.padding(horizontal = 42.dp),
-                text = iconFontFamily.displayName,
-                fontFamily = fontFamily
-            )
-        }
+        LabeledControlRow(
+            onClick = onRowClick,
+            verticalPadding = StyleListRowVerticalPadding,
+            leadingGlyphInset = StyleRadioGlyphInset,
+            leading = {
+                RadioButton(
+                    selected = iconFontFamily.name == timeoutIconStyle.iconFontFamilyName,
+                    onClick = null,
+                )
+            },
+            label = {
+                Text(
+                    text = iconFontFamily.displayName,
+                    fontFamily = fontFamily,
+                )
+            },
+        )
     }
 }
 
@@ -385,28 +381,28 @@ fun FontStyleCard(
         )
         Card(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = defaultCardHorizontalPadding)
                 .align(alignment = Alignment.Start),
             shape = KeepOnCardShape,
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 8.dp),
+                    .padding(top = 8.dp, bottom = 16.dp),
             ) {
                 Text(
                     text = stringResource(R.string.font_style_parameters_subtitle),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
-                        .padding(8.dp)
+                        .padding(horizontal = StyleContentInset, vertical = 8.dp)
                         .align(Alignment.Start),
                 )
                 FlowRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 8.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalArrangement = Arrangement.SpaceAround,
+                        .padding(start = StyleContentInset - StyleRadioGlyphInset, end = StyleContentInset, bottom = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     StyleCheckboxRow(
                         text = stringResource(R.string.font_style_parameters_bold),
@@ -430,25 +426,21 @@ fun FontStyleCard(
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .align(Alignment.Start)
-                        .padding(start = 8.dp, end = 8.dp, top = 12.dp),
+                        .padding(start = StyleContentInset, end = StyleContentInset, top = 24.dp),
                 )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(onClick = { onOutlinedChange(!timeoutIconStyle.iconStyleTextOutlined) })
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Switch(
-                        checked = timeoutIconStyle.iconStyleTextOutlined,
-                        onCheckedChange = null,
-                    )
-                    Text(
-                        modifier = Modifier.padding(start = 18.dp),
-                        text = stringResource(R.string.font_style_parameters_appearance_outlined)
-                    )
-                }
+                LabeledControlRow(
+                    onClick = { onOutlinedChange(!timeoutIconStyle.iconStyleTextOutlined) },
+                    verticalPadding = StyleSwitchRowVerticalPadding,
+                    leading = {
+                        Switch(
+                            checked = timeoutIconStyle.iconStyleTextOutlined,
+                            onCheckedChange = null,
+                        )
+                    },
+                    label = {
+                        Text(text = stringResource(R.string.font_style_parameters_appearance_outlined))
+                    },
+                )
             }
         }
     }
@@ -463,7 +455,7 @@ private fun StyleCheckboxRow(
     Row(
         modifier = Modifier
             .clickable { onCheckedChange(!checked) }
-            .padding(vertical = 4.dp, horizontal = 8.dp),
+            .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -496,7 +488,7 @@ fun FontOptionsCard(
         )
         Card(
             modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, bottom = 6.dp)
+                .padding(horizontal = defaultCardHorizontalPadding)
                 .align(alignment = Alignment.Start),
             shape = KeepOnCardShape,
         ) {
@@ -506,7 +498,7 @@ fun FontOptionsCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                    .padding(vertical = 16.dp),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.Start
             ) {
@@ -572,7 +564,14 @@ private fun FontOptionSlider(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
-    Column(modifier = Modifier.padding(top = topPadding, bottom = bottomPadding)) {
+    Column(
+        modifier = Modifier.padding(
+            start = StyleContentInset,
+            end = StyleContentInset,
+            top = topPadding,
+            bottom = bottomPadding,
+        )
+    ) {
         Text(
             text = label,
             modifier = Modifier
