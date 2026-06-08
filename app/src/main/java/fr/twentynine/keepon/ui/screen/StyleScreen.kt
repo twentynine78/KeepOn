@@ -15,12 +15,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FontDownload
+import androidx.compose.material.icons.rounded.Animation
 import androidx.compose.material.icons.rounded.FormatColorText
 import androidx.compose.material.icons.rounded.LocationSearching
 import androidx.compose.material3.Card
@@ -38,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -48,8 +51,11 @@ import fr.twentynine.keepon.ui.model.ItemPosition
 import fr.twentynine.keepon.domain.catalog.IconFontFamily
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
+import fr.twentynine.keepon.domain.model.IconTransitionAnimation
+import fr.twentynine.keepon.domain.model.IconTransitionTiming
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.domain.catalog.IconFontFamilyCatalog
+import fr.twentynine.keepon.domain.catalog.IconTransitionCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.screenContentModifier
@@ -67,6 +73,7 @@ fun StyleRoute(
 ) {
     StyleScreen(
         timeoutIconStyle = uiState.timeoutIconStyle,
+        iconTransitionAnimation = uiState.iconTransitionAnimation,
         onEvent = onEvent,
         navType = navType,
         paddingValue = paddingValue,
@@ -76,6 +83,7 @@ fun StyleRoute(
 @Composable
 fun StyleScreen(
     timeoutIconStyle: TimeoutIconStyle,
+    iconTransitionAnimation: IconTransitionAnimation,
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
     paddingValue: PaddingValues,
@@ -92,6 +100,14 @@ fun StyleScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val maxWidthModifier = screenContentModifier
+
+        item(key = "transitionCard") {
+            IconTransitionAnimationCard(
+                iconTransitionAnimation = iconTransitionAnimation,
+                onEvent = onEvent,
+                modifier = maxWidthModifier,
+            )
+        }
 
         item(key = "headerCard") {
             Column(
@@ -144,6 +160,131 @@ fun StyleScreen(
             Spacer(modifier = Modifier.padding(bottom = spacerBottomHeight))
         }
     }
+}
+
+// Fixed leading slot so the radio buttons line up with the centre of the (wider) switch.
+private val TransitionControlSlotWidth = 56.dp
+
+// Material disabled-content opacity, applied to the animation choices when the toggle is off.
+private const val DISABLED_CONTENT_ALPHA = 0.38f
+
+@Composable
+fun IconTransitionAnimationCard(
+    iconTransitionAnimation: IconTransitionAnimation,
+    onEvent: (MainUIEvent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .padding(top = 28.dp, bottom = 12.dp),
+    ) {
+        CardHeader(
+            iconVector = Icons.Rounded.Animation,
+            title = stringResource(R.string.icon_transition_tile),
+            descText = stringResource(R.string.icon_transition_text),
+        )
+        Card(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .align(alignment = Alignment.Start),
+            shape = KeepOnCardShape,
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onEvent(
+                                MainUIEvent.UpdateIconTransitionAnimation(
+                                    iconTransitionAnimation.copy(enabled = !iconTransitionAnimation.enabled)
+                                )
+                            )
+                        }
+                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Box(
+                        modifier = Modifier.width(TransitionControlSlotWidth),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Switch(
+                            checked = iconTransitionAnimation.enabled,
+                            onCheckedChange = null,
+                        )
+                    }
+                    Text(
+                        modifier = Modifier.padding(start = 16.dp),
+                        text = stringResource(R.string.icon_transition_enable),
+                    )
+                }
+
+                val animationsEnabled = iconTransitionAnimation.enabled
+                IconTransitionCatalog.all.forEach { transition ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(enabled = animationsEnabled) {
+                                onEvent(
+                                    MainUIEvent.UpdateIconTransitionAnimation(
+                                        iconTransitionAnimation.copy(typeId = transition.id)
+                                    )
+                                )
+                            }
+                            .padding(horizontal = 8.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Box(
+                            modifier = Modifier.width(TransitionControlSlotWidth),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            RadioButton(
+                                selected = transition.id == iconTransitionAnimation.typeId,
+                                onClick = null,
+                                enabled = animationsEnabled,
+                            )
+                        }
+                        Text(
+                            modifier = Modifier
+                                .padding(start = 16.dp)
+                                .alpha(if (animationsEnabled) 1f else DISABLED_CONTENT_ALPHA),
+                            text = stringResource(transitionLabelRes(transition.id)),
+                        )
+                    }
+                }
+
+                FontOptionSlider(
+                    label = stringResource(R.string.icon_transition_duration),
+                    value = iconTransitionAnimation.durationStep,
+                    onValueChange = { newValue ->
+                        onEvent(
+                            MainUIEvent.UpdateIconTransitionAnimation(
+                                iconTransitionAnimation.copy(durationStep = newValue)
+                            )
+                        )
+                    },
+                    valueRange = -IconTransitionTiming.DURATION_STEP_RANGE.toFloat()..
+                        IconTransitionTiming.DURATION_STEP_RANGE.toFloat(),
+                    steps = IconTransitionTiming.DURATION_STEP_RANGE * 2 - 1,
+                    topPadding = 12.dp,
+                    enabled = animationsEnabled,
+                )
+            }
+        }
+    }
+}
+
+private fun transitionLabelRes(id: String): Int = when (id) {
+    IconTransitionCatalog.liquidMorph.id -> R.string.icon_transition_type_liquid_morph
+    IconTransitionCatalog.warp.id -> R.string.icon_transition_type_warp
+    IconTransitionCatalog.fadeThrough.id -> R.string.icon_transition_type_fade_through
+    IconTransitionCatalog.flip.id -> R.string.icon_transition_type_flip
+    IconTransitionCatalog.swipeDown.id -> R.string.icon_transition_type_swipe_down
+    else -> R.string.icon_transition_type_particles
 }
 
 @Composable
@@ -426,14 +567,17 @@ private fun FontOptionSlider(
     valueRange: ClosedFloatingPointRange<Float>,
     steps: Int,
     topPadding: androidx.compose.ui.unit.Dp = 12.dp,
-    bottomPadding: androidx.compose.ui.unit.Dp = 0.dp
+    bottomPadding: androidx.compose.ui.unit.Dp = 0.dp,
+    enabled: Boolean = true,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
     Column(modifier = Modifier.padding(top = topPadding, bottom = bottomPadding)) {
         Text(
             text = label,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .alpha(if (enabled) 1f else DISABLED_CONTENT_ALPHA),
         )
         Slider(
             value = value.toFloat(),
@@ -442,6 +586,7 @@ private fun FontOptionSlider(
             },
             steps = steps,
             valueRange = valueRange,
+            enabled = enabled,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(32.dp),
@@ -476,7 +621,8 @@ private fun FontOptionSlider(
                     interactionSource = interactionSource,
                 ) {
                     SliderDefaults.Thumb(
-                        interactionSource = interactionSource
+                        interactionSource = interactionSource,
+                        enabled = enabled,
                     )
                 }
             }

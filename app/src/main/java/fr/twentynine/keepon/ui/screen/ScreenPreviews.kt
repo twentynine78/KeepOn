@@ -8,6 +8,7 @@ import fr.twentynine.keepon.domain.catalog.CreditCatalog
 import fr.twentynine.keepon.domain.model.AppInfo
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
+import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.model.NeededPermission
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
@@ -46,6 +47,7 @@ private fun StyleScreenPreview() {
     KeepOnTheme(dynamicColor = false) {
         StyleScreen(
             timeoutIconStyle = TimeoutIconStyle(),
+            iconTransitionAnimation = IconTransitionAnimation(),
             onEvent = {},
             navType = KeepOnNavigationType.BOTTOM_NAVIGATION,
             paddingValue = PaddingValues(0.dp),

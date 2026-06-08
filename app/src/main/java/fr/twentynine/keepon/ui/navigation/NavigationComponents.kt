@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
+import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.component.TimeoutFab
@@ -51,6 +52,7 @@ fun KeepOnNavigationWrapper(
     currentScreenTimeout: ScreenTimeout,
     currentTimeoutDisplay: String,
     timeoutIconStyle: TimeoutIconStyle,
+    iconTransitionAnimation: IconTransitionAnimation,
     fabOnClick: () -> Unit,
     scrollBehavior: BottomAppBarScrollBehavior,
     content: @Composable KeepOnNavSuiteScope.() -> Unit
@@ -96,6 +98,7 @@ fun KeepOnNavigationWrapper(
                     currentScreenTimeout = currentScreenTimeout,
                     currentTimeoutDisplay = currentTimeoutDisplay,
                     timeoutIconStyle = timeoutIconStyle,
+                    iconTransitionAnimation = iconTransitionAnimation,
                     fabOnClick = fabOnClick,
                     navigationContentPosition = navContentPosition,
                 )
@@ -168,6 +171,7 @@ fun KeepOnNavigationRail(
     currentScreenTimeout: ScreenTimeout,
     currentTimeoutDisplay: String,
     timeoutIconStyle: TimeoutIconStyle,
+    iconTransitionAnimation: IconTransitionAnimation,
     fabOnClick: () -> Unit,
     navigationContentPosition: KeepOnNavigationContentPosition,
 ) {
@@ -192,6 +196,7 @@ fun KeepOnNavigationRail(
                     currentScreenTimeout = currentScreenTimeout,
                     currentTimeoutDisplay = currentTimeoutDisplay,
                     timeoutIconStyle = timeoutIconStyle,
+                    iconTransitionAnimation = iconTransitionAnimation,
                     onClick = fabOnClick,
                     animationDurationMs = 200,
                     elevation = FloatingActionButtonDefaults.elevation(1.dp),

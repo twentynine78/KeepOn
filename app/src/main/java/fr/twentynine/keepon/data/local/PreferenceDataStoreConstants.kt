@@ -14,6 +14,7 @@ object PreferenceDataStoreConstants {
     val OLD_RESET_TIMEOUT_WHEN_SCREEN_OFF = booleanPreferencesKey("resetTimeoutOnScreenOff")
     val OLD_TIMEOUT_ICON_STYLE = stringPreferencesKey("timeoutIconStyle")
     val TIMEOUT_ICON_STYLE = stringPreferencesKey("newTimeoutIconStyle")
+    val ICON_TRANSITION_ANIMATION = stringPreferencesKey("iconTransitionAnimation")
     val DISMISSED_TIPS = stringPreferencesKey("dismissedTips")
     val APP_LAUNCH_COUNT = longPreferencesKey("appLaunchCount")
     val OLD_APP_REVIEW_ASKED = booleanPreferencesKey("appReviewAsked")

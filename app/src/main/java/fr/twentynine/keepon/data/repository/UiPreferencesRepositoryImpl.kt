@@ -2,10 +2,12 @@ package fr.twentynine.keepon.data.repository
 
 import fr.twentynine.keepon.data.enums.DataStoreSourceType
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.DISMISSED_TIPS
+import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.ICON_TRANSITION_ANIMATION
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.QSTILE_ADDED
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.TIMEOUT_ICON_STYLE
 import fr.twentynine.keepon.data.local.PreferenceDataStoreHelper
 import fr.twentynine.keepon.domain.model.DismissedTips
+import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
 import kotlinx.coroutines.Dispatchers
@@ -60,6 +62,47 @@ class UiPreferencesRepositoryImpl @Inject constructor(
             preferenceDataStoreHelper.putPreference(
                 TIMEOUT_ICON_STYLE,
                 Json.encodeToString(timeoutIconStyle),
+                DataStoreSourceType.DATA_SOURCE_BACKED_UP
+            )
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override suspend fun getIconTransitionAnimationFlow(): Flow<IconTransitionAnimation> =
+        withContext(ioDispatcher) {
+            preferenceDataStoreHelper.getPreference(
+                ICON_TRANSITION_ANIMATION,
+                DataStoreSourceType.DATA_SOURCE_BACKED_UP
+            )
+                .transformLatest { iconTransitionAnimationJson ->
+                    emit(
+                        if (iconTransitionAnimationJson.isNullOrEmpty()) {
+                            IconTransitionAnimation()
+                        } else {
+                            Json.decodeFromString<IconTransitionAnimation>(iconTransitionAnimationJson)
+                        }
+                    )
+                }
+                .distinctUntilChanged()
+        }
+
+    override suspend fun getIconTransitionAnimation(): IconTransitionAnimation =
+        withContext(ioDispatcher) {
+            val iconTransitionAnimationJson = preferenceDataStoreHelper.getLastPreference(
+                ICON_TRANSITION_ANIMATION,
+                DataStoreSourceType.DATA_SOURCE_BACKED_UP
+            )
+            if (iconTransitionAnimationJson.isNullOrEmpty()) {
+                IconTransitionAnimation()
+            } else {
+                Json.decodeFromString<IconTransitionAnimation>(iconTransitionAnimationJson)
+            }
+        }
+
+    override suspend fun setIconTransitionAnimation(iconTransitionAnimation: IconTransitionAnimation) =
+        withContext(ioDispatcher) {
+            preferenceDataStoreHelper.putPreference(
+                ICON_TRANSITION_ANIMATION,
+                Json.encodeToString(iconTransitionAnimation),
                 DataStoreSourceType.DATA_SOURCE_BACKED_UP
             )
         }

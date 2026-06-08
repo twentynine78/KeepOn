@@ -8,6 +8,7 @@ import fr.twentynine.keepon.ui.mapper.ScreenTimeoutUIToScreenTimeoutMapper
 import fr.twentynine.keepon.ui.producer.MainViewStateProducer
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
+import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
@@ -19,6 +20,7 @@ import fr.twentynine.keepon.domain.usecase.app.SetIsFirstLaunchUseCase
 import fr.twentynine.keepon.domain.usecase.preferences.DismissTipUseCase
 import fr.twentynine.keepon.domain.usecase.preferences.SetQSTileAddedUseCase
 import fr.twentynine.keepon.domain.usecase.preferences.SetResetTimeoutWhenScreenOffUseCase
+import fr.twentynine.keepon.domain.usecase.preferences.UpdateIconTransitionAnimationUseCase
 import fr.twentynine.keepon.domain.usecase.preferences.UpdateTimeoutIconStyleUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.SetDefaultScreenTimeoutUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.SetNextSystemScreenTimeoutUseCase
@@ -43,6 +45,7 @@ class MainViewModel @Inject constructor(
     private val toggleScreenTimeoutSelectionUseCase: ToggleScreenTimeoutSelectionUseCase,
     private val setResetTimeoutWhenScreenOffUseCase: SetResetTimeoutWhenScreenOffUseCase,
     private val updateTimeoutIconStyleUseCase: UpdateTimeoutIconStyleUseCase,
+    private val updateIconTransitionAnimationUseCase: UpdateIconTransitionAnimationUseCase,
     private val dismissTipUseCase: DismissTipUseCase,
     private val setQSTileAddedUseCase: SetQSTileAddedUseCase,
     private val incrementAppLaunchCountUseCase: IncrementAppLaunchCountUseCase,
@@ -81,6 +84,8 @@ class MainViewModel @Inject constructor(
             is MainUIEvent.ToggleScreenTimeoutSelection -> toggleScreenTimeoutSelection(event.screenTimeoutUI)
             is MainUIEvent.SetDefaultScreenTimeout -> setDefaultScreenTimeout(event.timeout)
             is MainUIEvent.UpdateTimeoutIconStyle -> updateTimeoutIconStyle(event.timeoutIconStyle)
+            is MainUIEvent.UpdateIconTransitionAnimation ->
+                updateIconTransitionAnimation(event.iconTransitionAnimation)
             is MainUIEvent.DismissTips -> setDismissedTips(event.tipsId)
 
             // Permission request/check events are handled by the host Activity.
@@ -134,6 +139,12 @@ class MainViewModel @Inject constructor(
     private fun updateTimeoutIconStyle(timeoutIconStyle: TimeoutIconStyle) {
         viewModelScope.launch {
             updateTimeoutIconStyleUseCase(timeoutIconStyle)
+        }
+    }
+
+    private fun updateIconTransitionAnimation(iconTransitionAnimation: IconTransitionAnimation) {
+        viewModelScope.launch {
+            updateIconTransitionAnimationUseCase(iconTransitionAnimation)
         }
     }
 

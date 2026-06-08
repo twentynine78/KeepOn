@@ -6,6 +6,7 @@ import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.TIMEOUT_ICON
 import fr.twentynine.keepon.data.local.PreferenceDataStoreHelper
 import fr.twentynine.keepon.data.migration.LegacyPreferencesRepository
 import fr.twentynine.keepon.domain.model.DismissedTips
+import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
 import kotlinx.coroutines.Dispatchers
@@ -72,6 +73,16 @@ class MigratingUiPreferencesRepository @Inject constructor(
 
     override suspend fun setTimeoutIconStyle(timeoutIconStyle: TimeoutIconStyle) =
         delegate.setTimeoutIconStyle(timeoutIconStyle)
+
+    // No legacy representation for the icon transition (introduced fresh) — pass through.
+    override suspend fun getIconTransitionAnimationFlow(): Flow<IconTransitionAnimation> =
+        delegate.getIconTransitionAnimationFlow()
+
+    override suspend fun getIconTransitionAnimation(): IconTransitionAnimation =
+        delegate.getIconTransitionAnimation()
+
+    override suspend fun setIconTransitionAnimation(iconTransitionAnimation: IconTransitionAnimation) =
+        delegate.setIconTransitionAnimation(iconTransitionAnimation)
 
     override suspend fun getQSTileAddedFlow(): Flow<Boolean> =
         delegate.getQSTileAddedFlow()

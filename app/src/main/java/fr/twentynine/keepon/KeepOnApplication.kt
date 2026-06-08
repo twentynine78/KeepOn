@@ -13,6 +13,7 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.HiltAndroidApp
 import fr.twentynine.keepon.domain.usecase.app.RunAppMigrationUseCase
 import fr.twentynine.keepon.domain.gateway.WidgetUpdater
+import fr.twentynine.keepon.ui.widget.component.clearWidgetTransitionCache
 import fr.twentynine.keepon.core.coil.TimeoutIconDataFetcher
 import fr.twentynine.keepon.core.coil.TimeoutIconDataKeyer
 import fr.twentynine.keepon.di.entrypoint.StringResourceProviderEntryPoint
@@ -51,6 +52,13 @@ class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configura
             runAppMigrationUseCase()
             widgetUpdater.requestUpdateWidgetPreview()
         }
+    }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        // Release the transition's out-of-Coil bitmap holders on any memory-pressure signal; they
+        // rebuild lazily on the next draw (Coil trims its own cache via its ComponentCallbacks2).
+        clearWidgetTransitionCache()
     }
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {

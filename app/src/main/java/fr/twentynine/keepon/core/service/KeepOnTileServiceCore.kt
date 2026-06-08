@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.IBinder
@@ -23,6 +24,10 @@ import coil3.toBitmap
 import fr.twentynine.keepon.di.qualifier.ApplicationScope
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.domain.catalog.IconTransitionCatalog
+import fr.twentynine.keepon.domain.model.IconTransition
+import fr.twentynine.keepon.domain.model.IconTransitionAnimation
+import fr.twentynine.keepon.domain.model.IconTransitionTiming
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconData
 import fr.twentynine.keepon.domain.model.TimeoutIconSize
@@ -33,6 +38,7 @@ import fr.twentynine.keepon.domain.usecase.app.GetKeepOnStatusUseCase
 import fr.twentynine.keepon.domain.usecase.preferences.SetQSTileAddedUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.SetNextSystemScreenTimeoutUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.ShouldRouteToAppUseCase
+import fr.twentynine.keepon.core.transition.TransitionPlayer
 import fr.twentynine.keepon.core.util.BundleScrubber
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import kotlin.time.Duration.Companion.seconds
@@ -88,6 +94,13 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
     // redraws on every change, so the tile stays correct as long as it is visible.
     private var listeningJob: Job? = null
 
+    // Last crisp icon + timeout drawn: lets a redraw animate from the previous icon and tell a
+    // real timeout change apart from the first render / QS-panel reopen / a pure style change.
+    // Volatile: cleared from the main thread in onTrimMemory, read/written on the Default collector.
+    @Volatile
+    private var lastIconBitmap: Bitmap? = null
+    private var lastShownTimeout: ScreenTimeout? = null
+
     private val imageRequestBuilder by lazy {
         ImageRequest.Builder(this)
             .size(Size.ORIGINAL)
@@ -112,13 +125,12 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
                 timeoutPreferencesRepository.getCurrentScreenTimeoutFlow(),
                 uiPreferencesRepository.getTimeoutIconStyleFlow(),
                 getKeepOnStatusUseCase(),
-            ) { currentTimeout, iconStyle, keepOnIsActive ->
-                Triple(currentTimeout, iconStyle, keepOnIsActive)
+                uiPreferencesRepository.getIconTransitionAnimationFlow(),
+            ) { currentTimeout, iconStyle, keepOnIsActive, transition ->
+                TileRenderState(currentTimeout, iconStyle, keepOnIsActive, transition)
             }
                 .distinctUntilChanged()
-                .collect { (currentTimeout, iconStyle, keepOnIsActive) ->
-                    updateQSTile(currentTimeout, iconStyle, keepOnIsActive)
-                }
+                .collect { state -> updateQSTile(state) }
         }
     }
 
@@ -142,7 +154,8 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
                     startMainActivityAndCollapse()
                 }
             } else {
-                // The listening collector redraws the tile once the new timeout is persisted.
+                // The listening collector redraws (and animates) the tile once the new
+                // timeout is persisted.
                 setNextSystemScreenTimeoutUseCase()
             }
         }
@@ -180,15 +193,18 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
         serviceJob.cancel()
     }
 
-    private suspend fun updateQSTile(
-        currentScreenTimeout: ScreenTimeout,
-        timeoutIconStyle: TimeoutIconStyle,
-        keepOnIsActive: Boolean,
-    ) {
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        // Drop the cached previous icon under memory pressure; the next redraw re-fetches it from
+        // Coil (a real timeout change then renders without the from→to animation, which is fine).
+        lastIconBitmap = null
+    }
+
+    private suspend fun updateQSTile(state: TileRenderState) {
         val newTimeoutIconData = TimeoutIconData(
-            currentScreenTimeout,
+            state.currentScreenTimeout,
             iconSize,
-            timeoutIconStyle
+            state.timeoutIconStyle
         )
 
         val request = imageRequestBuilder
@@ -201,10 +217,26 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
                     val timeoutDisplay =
                         newTimeoutIconData.iconTimeout.getFullDisplayTimeout(stringResourceProvider)
 
-                    tile.icon = result.image.toBitmap().toIcon()
-                    tile.state = if (keepOnIsActive) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
+                    tile.state = if (state.keepOnIsActive) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
                     tile.label = "${getString(R.string.qs_service_name)} - $timeoutDisplay"
-                    tile.updateTile()
+
+                    val newBitmap = result.image.toBitmap()
+                    val previousBitmap = lastIconBitmap
+                    // Animate only a real timeout change (a previous icon exists and the value
+                    // actually changed): excludes the first render, QS-panel reopen and pure
+                    // style changes, which update instantly.
+                    val timeoutChanged = lastShownTimeout != null &&
+                        state.currentScreenTimeout != lastShownTimeout
+                    if (state.transition.enabled && previousBitmap != null && timeoutChanged) {
+                        val transition = IconTransitionCatalog.fromId(state.transition.typeId)
+                        val durationMs = IconTransitionTiming.durationMs(state.transition.durationStep)
+                        playTransition(tile, previousBitmap, newBitmap, transition, durationMs)
+                    } else {
+                        tile.icon = newBitmap.toIcon()
+                        tile.updateTile()
+                    }
+                    lastIconBitmap = newBitmap
+                    lastShownTimeout = state.currentScreenTimeout
                 }
             }
 
@@ -224,6 +256,39 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
             }
         }
     }
+
+    /**
+     * Plays the configured transition by pushing successive composite frames through
+     * [Tile.updateTile] (ease-out over [IconTransitionTiming.FRAME_COUNT] frames), then settles
+     * on the crisp target icon.
+     */
+    private suspend fun playTransition(
+        tile: Tile,
+        oldBitmap: Bitmap,
+        newBitmap: Bitmap,
+        transition: IconTransition,
+        durationMs: Int,
+    ) {
+        TransitionPlayer.play(
+            transition = transition,
+            from = oldBitmap,
+            to = newBitmap,
+            durationMs = durationMs,
+            maxFrames = IconTransitionTiming.FRAME_COUNT,
+        ) { frame ->
+            tile.icon = frame.toIcon()
+            tile.updateTile()
+        }
+        tile.icon = newBitmap.toIcon()
+        tile.updateTile()
+    }
+
+    private data class TileRenderState(
+        val currentScreenTimeout: ScreenTimeout,
+        val timeoutIconStyle: TimeoutIconStyle,
+        val keepOnIsActive: Boolean,
+        val transition: IconTransitionAnimation,
+    )
 
     private fun requestQSTileUpdate() {
         requestListeningState(

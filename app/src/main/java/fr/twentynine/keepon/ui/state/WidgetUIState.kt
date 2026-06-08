@@ -1,6 +1,7 @@
 package fr.twentynine.keepon.ui.state
 
 import androidx.compose.runtime.Immutable
+import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 
@@ -14,5 +15,6 @@ sealed interface WidgetUIState {
         val keepOnIsActive: Boolean,
         val timeoutIconStyle: TimeoutIconStyle,
         val canCycleTimeout: Boolean,
+        val iconTransitionAnimation: IconTransitionAnimation = IconTransitionAnimation(),
     ) : WidgetUIState
 }

@@ -211,6 +211,7 @@ private fun KeepOnView(
         currentScreenTimeout = uiState.currentScreenTimeout,
         currentTimeoutDisplay = uiState.currentTimeoutDisplay,
         timeoutIconStyle = uiState.timeoutIconStyle,
+        iconTransitionAnimation = uiState.iconTransitionAnimation,
         fabOnClick = fabOnClick,
         scrollBehavior = bottomBarScrollBehavior,
         navigateToTopLevelDestination = navigationActions::navigateTo,
@@ -239,6 +240,7 @@ private fun KeepOnView(
                         currentScreenTimeout = uiState.currentScreenTimeout,
                         currentTimeoutDisplay = uiState.currentTimeoutDisplay,
                         timeoutIconStyle = uiState.timeoutIconStyle,
+                        iconTransitionAnimation = uiState.iconTransitionAnimation,
                         onClick = fabOnClick,
                     )
                 }

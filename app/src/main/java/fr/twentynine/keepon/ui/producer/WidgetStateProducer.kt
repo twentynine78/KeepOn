@@ -20,14 +20,20 @@ class WidgetStateProducer @Inject constructor(
     private val uiPreferencesRepository: UiPreferencesRepository,
     private val getKeepOnStatusUseCase: GetKeepOnStatusUseCase,
 ) {
-    suspend operator fun invoke(): Flow<WidgetUIState> =
-        combine(
+    suspend operator fun invoke(): Flow<WidgetUIState> {
+        // Merge the two icon-presentation flows so the combine stays within its 5-flow typed arity.
+        val iconPresentationFlow = combine(
+            uiPreferencesRepository.getTimeoutIconStyleFlow(),
+            uiPreferencesRepository.getIconTransitionAnimationFlow(),
+        ) { iconStyle, iconTransitionAnimation -> iconStyle to iconTransitionAnimation }
+
+        return combine(
             timeoutPreferencesRepository.getCurrentScreenTimeoutFlow(),
             getKeepOnStatusUseCase(),
-            uiPreferencesRepository.getTimeoutIconStyleFlow(),
+            iconPresentationFlow,
             timeoutPreferencesRepository.getSelectedScreenTimeoutFlow(),
             timeoutPreferencesRepository.getDefaultScreenTimeoutFlow(),
-        ) { currentScreenTimeout, keepOnIsActive, timeoutIconStyle, selectedTimeouts, defaultTimeout ->
+        ) { currentScreenTimeout, keepOnIsActive, (timeoutIconStyle, iconTransitionAnimation), selectedTimeouts, defaultTimeout ->
             WidgetUIState.Success(
                 currentScreenTimeout = currentScreenTimeout,
                 keepOnIsActive = keepOnIsActive,
@@ -37,8 +43,10 @@ class WidgetStateProducer @Inject constructor(
                     defaultTimeout = defaultTimeout,
                     currentTimeout = currentScreenTimeout,
                 ),
+                iconTransitionAnimation = iconTransitionAnimation,
             ) as WidgetUIState
         }.catch { error ->
             emit(WidgetUIState.Error(error.message ?: error.toString()))
         }
+    }
 }

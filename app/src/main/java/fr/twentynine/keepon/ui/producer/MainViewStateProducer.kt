@@ -51,14 +51,21 @@ class MainViewStateProducer @Inject constructor(
             PermissionFlags(canWrite, battery, canPost)
         }
 
+        // Merge the two icon-presentation flows so the outer combine stays within its 5-flow
+        // typed arity while feeding both the icon style and the transition config.
+        val iconPresentationFlow = combine(
+            uiPreferencesRepository.getTimeoutIconStyleFlow(),
+            uiPreferencesRepository.getIconTransitionAnimationFlow(),
+        ) { iconStyle, transition -> iconStyle to transition }
+
         val mainPreferencesFlow = combine(
             timeoutPreferencesRepository.getResetTimeoutWhenScreenOffFlow(),
             timeoutPreferencesRepository.getCurrentScreenTimeoutFlow(),
             getKeepOnStatusUseCase(),
             appPreferencesRepository.getIsFirstLaunchFlow(),
-            uiPreferencesRepository.getTimeoutIconStyleFlow(),
-        ) { reset, current, keepOnIsActive, isFirstLaunch, iconStyle ->
-            MainPreferences(reset, current, keepOnIsActive, isFirstLaunch, iconStyle)
+            iconPresentationFlow,
+        ) { reset, current, keepOnIsActive, isFirstLaunch, (iconStyle, transition) ->
+            MainPreferences(reset, current, keepOnIsActive, isFirstLaunch, iconStyle, transition)
         }
 
         return combine(
@@ -78,6 +85,7 @@ class MainViewStateProducer @Inject constructor(
                 keepOnIsActive = preferences.keepOnIsActive,
                 isFirstLaunch = preferences.isFirstLaunch,
                 timeoutIconStyle = preferences.timeoutIconStyle,
+                iconTransitionAnimation = preferences.iconTransitionAnimation,
                 tipsList = tipsList,
                 screenTimeouts = screenTimeouts,
                 appInfo = appInfo,

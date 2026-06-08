@@ -12,17 +12,12 @@ import androidx.compose.material3.FloatingActionButtonElevation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
+import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.ScreenTimeout
-import fr.twentynine.keepon.domain.model.TimeoutIconData
-import fr.twentynine.keepon.domain.model.TimeoutIconSize
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.theme.KeepOnCardCornerRadius
-import fr.twentynine.keepon.ui.util.rememberTimeoutIconModel
 
 private val FabShape = RoundedCornerShape(KeepOnCardCornerRadius)
 private val FabSize = 68.dp
@@ -39,16 +34,12 @@ fun TimeoutFab(
     currentScreenTimeout: ScreenTimeout,
     currentTimeoutDisplay: String,
     timeoutIconStyle: TimeoutIconStyle,
+    iconTransitionAnimation: IconTransitionAnimation,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     animationDurationMs: Int = FAB_DEFAULT_ANIMATION_DURATION_MS,
     elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation(),
 ) {
-    val imageData = remember(currentScreenTimeout, timeoutIconStyle) {
-        TimeoutIconData(currentScreenTimeout, TimeoutIconSize.LARGE, timeoutIconStyle)
-    }
-    val imageModel = rememberTimeoutIconModel(imageData)
-
     val colorScheme = MaterialTheme.colorScheme
     val fabBackgroundColor by animateColorAsState(
         targetValue = if (keepOnIsActive) colorScheme.primaryContainer else colorScheme.background,
@@ -76,13 +67,14 @@ fun TimeoutFab(
         elevation = elevation,
         shape = FabShape,
     ) {
-        AsyncImage(
-            modifier = Modifier
-                .size(FabIconSize)
-                .padding(bottom = 2.dp),
-            model = imageModel,
-            colorFilter = ColorFilter.tint(fabContentColor),
+        AnimatedTimeoutIcon(
+            currentScreenTimeout = currentScreenTimeout,
+            timeoutIconStyle = timeoutIconStyle,
+            animation = iconTransitionAnimation,
+            tint = fabContentColor,
             contentDescription = currentTimeoutDisplay,
+            iconSize = FabIconSize,
+            modifier = Modifier.padding(bottom = 2.dp),
         )
     }
 }

@@ -1,5 +1,6 @@
 package fr.twentynine.keepon.ui.producer
 
+import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 
@@ -13,4 +14,5 @@ internal data class MainPreferences(
     val keepOnIsActive: Boolean,
     val isFirstLaunch: Boolean,
     val timeoutIconStyle: TimeoutIconStyle,
+    val iconTransitionAnimation: IconTransitionAnimation,
 )

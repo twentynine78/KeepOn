@@ -67,6 +67,17 @@
     <string name="font_style_parameters_appearance_subtitle">Font appearance</string>
     <string name="font_style_parameters_appearance_outlined">Outline only</string>
 
+    <string name="icon_transition_tile">Change animation</string>
+    <string name="icon_transition_text">Play a short animation on the timeout icon whenever the screen timeout changes, so the value transitions smoothly instead of switching instantly.</string>
+    <string name="icon_transition_enable">Enable transition animation</string>
+    <string name="icon_transition_duration">Animation duration</string>
+    <string name="icon_transition_type_liquid_morph">Liquid morph</string>
+    <string name="icon_transition_type_warp">Turbulent warp</string>
+    <string name="icon_transition_type_particles">Particles</string>
+    <string name="icon_transition_type_fade_through">Fade through</string>
+    <string name="icon_transition_type_flip">Flip</string>
+    <string name="icon_transition_type_swipe_down">Swipe down</string>
+
     <string name="select_tasker_timeouts_title">Select timeout</string>
     <string name="select_tasker_timeouts_text">Select the timeout value that will be use for the automation action.</string>
     <string name="tasker_dynamic_value_text">Dynamic values</string>

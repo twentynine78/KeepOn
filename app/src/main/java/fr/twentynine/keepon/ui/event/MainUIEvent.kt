@@ -1,5 +1,6 @@
 package fr.twentynine.keepon.ui.event
 
+import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
@@ -18,5 +19,8 @@ sealed interface MainUIEvent {
     data class ToggleScreenTimeoutSelection(val screenTimeoutUI: ScreenTimeoutUI) : MainUIEvent
     data class SetDefaultScreenTimeout(val timeout: ScreenTimeout) : MainUIEvent
     data class UpdateTimeoutIconStyle(val timeoutIconStyle: TimeoutIconStyle) : MainUIEvent
+    data class UpdateIconTransitionAnimation(
+        val iconTransitionAnimation: IconTransitionAnimation,
+    ) : MainUIEvent
     data class DismissTips(val tipsId: Int) : MainUIEvent
 }
