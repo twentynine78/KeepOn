@@ -98,6 +98,8 @@ dependencies {
     implementation(libs.androidx.glance)
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
+    implementation(libs.androidx.glance.preview)
+    debugImplementation(libs.androidx.glance.appwidget.preview)
     implementation(libs.coil.compose)
     implementation(libs.coil.core)
     implementation(libs.org.jetbrains.kotlinx.collections.immutable)

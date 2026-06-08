@@ -67,9 +67,11 @@ com-google-dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-co
 androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "androidXHiltVersion" }
 androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "androidXHiltVersion" }
 # Glance App Widget
-androidx-glance = { group = "androidx.glance", name = "glance", version = "glanceAppWidgetVersion" }
-androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version = "glanceAppWidgetVersion" }
+androidx-glance = { group = "androidx.glance", name = "glance", version.ref = "glanceAppWidgetVersion" }
+androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glanceAppWidgetVersion" }
 androidx-glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glanceAppWidgetVersion" }
+androidx-glance-preview = { group = "androidx.glance", name = "glance-preview", version.ref = "glanceAppWidgetVersion" }
+androidx-glance-appwidget-preview = { group = "androidx.glance", name = "glance-appwidget-preview", version.ref = "glanceAppWidgetVersion" }
 # Image Loading (Coil)
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose-android", version.ref = "coilVersion" }
 coil-core = { group = "io.coil-kt.coil3", name = "coil-core", version.ref = "coilVersion" }
