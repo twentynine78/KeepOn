@@ -22,12 +22,12 @@ object IconTransitionCatalog {
         id = "liquid_morph",
     )
 
-    val warp = WarpTransition(
-        id = "warp",
-    )
-
     val particles = ParticleTransition(
         id = "particles",
+    )
+
+    val warp = WarpTransition(
+        id = "warp",
     )
 
     val fadeThrough = AffineTransition(
@@ -51,9 +51,9 @@ object IconTransitionCatalog {
     )
 
     val all: List<IconTransition> =
-        listOf(particles, liquidMorph, warp, fadeThrough, flip, swipeDown)
+        listOf(liquidMorph, particles, warp, fadeThrough, flip, swipeDown)
 
-    val default: IconTransition = particles
+    val default: IconTransition = liquidMorph
 
     fun fromId(id: String): IconTransition = all.firstOrNull { it.id == id } ?: default
 }
