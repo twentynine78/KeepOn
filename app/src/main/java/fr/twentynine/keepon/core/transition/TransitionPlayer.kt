@@ -11,9 +11,9 @@ import kotlin.coroutines.EmptyCoroutineContext
 /**
  * Plays a prepared icon-change transition as a frame sequence, shared by every surface (the QS tile,
  * the widget and the FAB). It derives the frame count from [durationMs] (~60 fps, capped at the
- * surface's [maxFrames]), composites frames `1 until frameCount` with an ease-out progress, emitting
- * each through [emitFrame] and suspending evenly between them. The caller settles on the crisp target
- * icon afterwards (each surface pushes its settle frame differently).
+ * surface's [maxFrames]), composites frames `1 until frameCount` with a smooth in-out progress,
+ * emitting each through [emitFrame] and suspending evenly between them. The caller settles on the
+ * crisp target icon afterwards (each surface pushes its settle frame differently).
  *
  * Compositing runs on [renderContext] so a surface whose collector is on the main thread (the FAB)
  * keeps the per-pixel work off it; the tile and widget already collect on a background dispatcher
@@ -21,10 +21,15 @@ import kotlin.coroutines.EmptyCoroutineContext
  */
 object TransitionPlayer {
 
-    /** Ease-out progress for [frame] (in `1 until frameCount`); decelerates toward the settled icon. */
+    /**
+     * Smooth in-out progress for [frame] (in `1 until frameCount`): the cubic smoothstep eases the
+     * motion away from rest at the start and decelerates into the settled icon at the end, matching
+     * the FAB affine path's `FastOutSlowIn` feel (an ease-out alone starts at full speed, which reads
+     * as a lurch on the first frame). Shared by every composited effect so all surfaces move alike.
+     */
     fun easedProgress(frame: Int, frameCount: Int): Float {
-        val linear = frame.toFloat() / frameCount
-        return 1f - (1f - linear) * (1f - linear)
+        val t = frame.toFloat() / frameCount
+        return t * t * (3f - 2f * t)
     }
 
     @Suppress("LongParameterList")
