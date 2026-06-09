@@ -1,7 +1,11 @@
 package fr.twentynine.keepon.ui.producer
 
+import fr.twentynine.keepon.ui.catalog.CreditLabelCatalog
+import fr.twentynine.keepon.ui.catalog.IconTransitionLabelCatalog
 import fr.twentynine.keepon.ui.catalog.TipsCatalog
 import fr.twentynine.keepon.ui.catalog.TipsInfo
+import fr.twentynine.keepon.domain.catalog.CreditCatalog
+import fr.twentynine.keepon.domain.catalog.IconTransitionCatalog
 import fr.twentynine.keepon.domain.catalog.ScreenTimeoutCatalog
 import fr.twentynine.keepon.domain.model.DismissedTips
 import fr.twentynine.keepon.domain.model.TipsConstraintState
@@ -12,6 +16,9 @@ import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
 import fr.twentynine.keepon.domain.usecase.app.CheckIfRateTipNeededUseCase
 import fr.twentynine.keepon.domain.usecase.app.GetKeepOnStatusUseCase
+import fr.twentynine.keepon.ui.model.CreditInfoUI
+import fr.twentynine.keepon.ui.model.CreditSectionUI
+import fr.twentynine.keepon.ui.model.IconTransitionOptionUI
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.ui.state.MainViewUIState
 import kotlinx.coroutines.flow.Flow
@@ -35,6 +42,37 @@ class MainViewStateProducer @Inject constructor(
 ) {
     // App metadata is static; read it once and reuse it across state emissions.
     private val appInfo by lazy { appInfoProvider.getAppInfo() }
+
+    // The transition options (catalog set + order, with their labels resolved through the provider)
+    // don't depend on any flow, so resolve them once and reuse the same instance across emissions.
+    private val iconTransitionOptions by lazy {
+        IconTransitionCatalog.all.map { transition ->
+            IconTransitionOptionUI(
+                id = transition.id,
+                label = stringResourceProvider.getString(
+                    IconTransitionLabelCatalog.labelResFor(transition.id)
+                ),
+            )
+        }
+    }
+
+    // The About-screen credits are static too; resolve their labels (section names + versions) once.
+    private val creditSections by lazy {
+        CreditCatalog.creditInfoMap.map { (type, credits) ->
+            CreditSectionUI(
+                typeName = stringResourceProvider.getString(CreditLabelCatalog.typeNameResFor(type)),
+                credits = credits.map { credit ->
+                    CreditInfoUI(
+                        name = credit.name,
+                        author = credit.author,
+                        url = credit.url,
+                        version = CreditLabelCatalog.versionResFor(credit)
+                            ?.let { stringResourceProvider.getString(it) },
+                    )
+                },
+            )
+        }
+    }
 
     suspend operator fun invoke(
         canWriteSystemSettingFlow: Flow<Boolean>,
@@ -86,9 +124,11 @@ class MainViewStateProducer @Inject constructor(
                 isFirstLaunch = preferences.isFirstLaunch,
                 timeoutIconStyle = preferences.timeoutIconStyle,
                 iconTransitionAnimation = preferences.iconTransitionAnimation,
+                iconTransitionOptions = iconTransitionOptions,
                 tipsList = tipsList,
                 screenTimeouts = screenTimeouts,
                 appInfo = appInfo,
+                creditSections = creditSections,
             )
         }
     }

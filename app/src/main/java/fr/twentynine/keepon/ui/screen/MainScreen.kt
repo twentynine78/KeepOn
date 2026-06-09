@@ -409,6 +409,7 @@ private fun KeepOnNavHost(
         ) {
             AboutRoute(
                 appInfo = uiState.appInfo,
+                creditSections = uiState.creditSections,
                 navType = navType,
                 paddingValue = paddingValue,
             )

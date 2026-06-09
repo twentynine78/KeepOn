@@ -36,11 +36,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.domain.catalog.CreditInfoType
+import fr.twentynine.keepon.ui.model.CreditInfoUI
+import fr.twentynine.keepon.ui.model.CreditSectionUI
 import fr.twentynine.keepon.ui.model.ItemPosition
-import fr.twentynine.keepon.domain.catalog.CreditInfo
 import fr.twentynine.keepon.domain.model.AppInfo
-import fr.twentynine.keepon.domain.catalog.CreditCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.screenContentModifier
@@ -52,16 +51,13 @@ import fr.twentynine.keepon.ui.component.ItemCard
 @Composable
 fun AboutRoute(
     appInfo: AppInfo,
+    creditSections: List<CreditSectionUI>,
     navType: KeepOnNavigationType,
     paddingValue: PaddingValues,
 ) {
-    val creditInfoMap = remember {
-        CreditCatalog.creditInfoMap
-    }
-
     AboutScreen(
         appInfo = appInfo,
-        creditInfoMap = creditInfoMap,
+        creditSections = creditSections,
         navType = navType,
         paddingValue = paddingValue,
     )
@@ -70,7 +66,7 @@ fun AboutRoute(
 @Composable
 fun AboutScreen(
     appInfo: AppInfo,
-    creditInfoMap: Map<CreditInfoType, List<CreditInfo>>,
+    creditSections: List<CreditSectionUI>,
     navType: KeepOnNavigationType,
     paddingValue: PaddingValues,
 ) {
@@ -95,13 +91,13 @@ fun AboutScreen(
             }
         }
 
-        creditInfoMap.entries.forEachIndexed { mapIndex, (creditInfoType, creditInfoForType) ->
-            val topPadding = if (mapIndex == 0) 0.dp else 12.dp
+        creditSections.forEachIndexed { sectionIndex, section ->
+            val topPadding = if (sectionIndex == 0) 0.dp else 12.dp
 
-            item(key = "section_${creditInfoType.name}") {
+            item(key = "section_${section.typeName}") {
                 Column(modifier = maxWidthModifier) {
                     Text(
-                        text = stringResource(creditInfoType.typeNameId),
+                        text = section.typeName,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = SUBTITLE_CONTENT_ALPHA),
                         modifier = Modifier
@@ -111,16 +107,16 @@ fun AboutScreen(
             }
 
             itemsIndexed(
-                items = creditInfoForType,
-                key = { _, creditInfo -> "credit_${creditInfoType.name}_${creditInfo.url}" }
-            ) { index, creditInfo ->
-                val itemPosition = remember(index, creditInfoForType.size) {
-                    ItemPosition.getItemPosition(index, creditInfoForType.size)
+                items = section.credits,
+                key = { _, credit -> "credit_${section.typeName}_${credit.url}" }
+            ) { index, credit ->
+                val itemPosition = remember(index, section.credits.size) {
+                    ItemPosition.getItemPosition(index, section.credits.size)
                 }
 
                 CreditInfoCardRow(
                     itemPosition = itemPosition,
-                    creditInfo = creditInfo,
+                    credit = credit,
                     modifier = maxWidthModifier,
                 )
             }
@@ -246,7 +242,7 @@ fun AppInfoCard(
 
 @Composable
 fun CreditInfoCardRow(
-    creditInfo: CreditInfo,
+    credit: CreditInfoUI,
     itemPosition: ItemPosition,
     modifier: Modifier = Modifier,
 ) {
@@ -275,7 +271,7 @@ fun CreditInfoCardRow(
                     fontWeight = FontWeight.SemiBold,
                 )
 
-                creditInfo.versionResId?.let {
+                credit.version?.let {
                     Text(
                         modifier = Modifier.padding(horizontal = 8.dp),
                         text = stringResource(R.string.app_info_version_text),
@@ -304,20 +300,20 @@ fun CreditInfoCardRow(
             ) {
                 Text(
                     modifier = Modifier.padding(horizontal = 8.dp),
-                    text = creditInfo.name,
+                    text = credit.name,
                     fontWeight = FontWeight.SemiBold,
                 )
 
-                creditInfo.versionResId?.let {
+                credit.version?.let { version ->
                     Text(
                         modifier = Modifier.padding(horizontal = 8.dp),
-                        text = stringResource(creditInfo.versionResId),
+                        text = version,
                     )
                 }
 
                 Text(
                     modifier = Modifier.padding(horizontal = 8.dp),
-                    text = creditInfo.author,
+                    text = credit.author,
                 )
 
                 Row(
@@ -335,7 +331,7 @@ fun CreditInfoCardRow(
                             .focusRequester(focusRequester)
                             .focusable()
                             .clickable { focusRequester.requestFocus() },
-                        text = creditInfo.url,
+                        text = credit.url,
                     )
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.ExitToApp,
@@ -346,7 +342,7 @@ fun CreditInfoCardRow(
                             .clickable {
                                 val webIntent = Intent(
                                     Intent.ACTION_VIEW,
-                                    creditInfo.url.toUri()
+                                    credit.url.toUri()
                                 )
                                 context.startActivity(webIntent)
                             }

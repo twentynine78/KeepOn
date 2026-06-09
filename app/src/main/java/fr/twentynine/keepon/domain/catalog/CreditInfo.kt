@@ -1,19 +1,15 @@
 package fr.twentynine.keepon.domain.catalog
 
-import fr.twentynine.keepon.R
-
 sealed class CreditInfo(
     val name: String,
     val author: String,
     val url: String,
-    val versionResId: Int? = null,
     val type: CreditInfoType
 ) {
     data object Coil : CreditInfo(
         name = "Coil",
         author = "Instacart team",
         url = "https://github.com/coil-kt/coil",
-        versionResId = R.string.coil_version,
         type = CreditInfoType.Library
     )
     data object Roboto : CreditInfo(

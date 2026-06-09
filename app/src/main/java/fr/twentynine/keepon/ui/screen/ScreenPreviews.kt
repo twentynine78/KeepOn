@@ -4,12 +4,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import fr.twentynine.keepon.domain.catalog.CreditCatalog
 import fr.twentynine.keepon.domain.model.AppInfo
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
 import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
+import fr.twentynine.keepon.ui.model.CreditInfoUI
+import fr.twentynine.keepon.ui.model.CreditSectionUI
+import fr.twentynine.keepon.ui.model.IconTransitionOptionUI
 import fr.twentynine.keepon.ui.model.NeededPermission
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.ui.theme.KeepOnTheme
@@ -22,6 +24,30 @@ private val previewScreenTimeouts = listOf(
     ScreenTimeoutUI(value = 30000, displayName = "30 s", isSelected = true, isDefault = true, isCurrent = true, isLocked = false),
     ScreenTimeoutUI(value = 120000, displayName = "2 min", isSelected = true, isDefault = false, isCurrent = false, isLocked = false),
     ScreenTimeoutUI(value = Int.MAX_VALUE, displayName = "∞", isSelected = false, isDefault = false, isCurrent = false, isLocked = true),
+)
+
+private val previewCreditSections = listOf(
+    CreditSectionUI(
+        typeName = "Library",
+        credits = listOf(
+            CreditInfoUI(name = "Coil", author = "Instacart team", url = "https://github.com/coil-kt/coil", version = "2.5.0"),
+        ),
+    ),
+    CreditSectionUI(
+        typeName = "Font",
+        credits = listOf(
+            CreditInfoUI(name = "Roboto", author = "Christian Robertson", url = "https://fonts.google.com/specimen/Roboto", version = null),
+        ),
+    ),
+)
+
+private val previewIconTransitionOptions = listOf(
+    IconTransitionOptionUI(id = "liquid_morph", label = "Liquid morph"),
+    IconTransitionOptionUI(id = "particles", label = "Particles"),
+    IconTransitionOptionUI(id = "warp", label = "Turbulent warp"),
+    IconTransitionOptionUI(id = "vortex", label = "Vortex"),
+    IconTransitionOptionUI(id = "flip", label = "Flip"),
+    IconTransitionOptionUI(id = "swipe_down", label = "Reel"),
 )
 
 @Preview(showBackground = true)
@@ -48,6 +74,7 @@ private fun StyleScreenPreview() {
         StyleScreen(
             timeoutIconStyle = TimeoutIconStyle(),
             iconTransitionAnimation = IconTransitionAnimation(),
+            iconTransitionOptions = previewIconTransitionOptions,
             onEvent = {},
             navType = KeepOnNavigationType.BOTTOM_NAVIGATION,
             paddingValue = PaddingValues(0.dp),
@@ -65,7 +92,7 @@ private fun AboutScreenPreview() {
                 author = "TwentyNine",
                 sourceCodeUrl = "https://github.com/TwentyNine78/KeepOn",
             ),
-            creditInfoMap = CreditCatalog.creditInfoMap,
+            creditSections = previewCreditSections,
             navType = KeepOnNavigationType.BOTTOM_NAVIGATION,
             paddingValue = PaddingValues(0.dp),
         )

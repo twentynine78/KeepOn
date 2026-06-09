@@ -47,6 +47,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.ui.model.IconTransitionOptionUI
 import fr.twentynine.keepon.ui.model.ItemPosition
 import fr.twentynine.keepon.domain.catalog.IconFontFamily
 import fr.twentynine.keepon.ui.event.MainUIEvent
@@ -55,7 +56,6 @@ import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.IconTransitionTiming
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.domain.catalog.IconFontFamilyCatalog
-import fr.twentynine.keepon.domain.catalog.IconTransitionCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.defaultCardHorizontalPadding
@@ -80,6 +80,7 @@ fun StyleRoute(
     StyleScreen(
         timeoutIconStyle = uiState.timeoutIconStyle,
         iconTransitionAnimation = uiState.iconTransitionAnimation,
+        iconTransitionOptions = uiState.iconTransitionOptions,
         onEvent = onEvent,
         navType = navType,
         paddingValue = paddingValue,
@@ -90,6 +91,7 @@ fun StyleRoute(
 fun StyleScreen(
     timeoutIconStyle: TimeoutIconStyle,
     iconTransitionAnimation: IconTransitionAnimation,
+    iconTransitionOptions: List<IconTransitionOptionUI>,
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
     paddingValue: PaddingValues,
@@ -110,6 +112,7 @@ fun StyleScreen(
         item(key = "transitionCard") {
             IconTransitionAnimationCard(
                 iconTransitionAnimation = iconTransitionAnimation,
+                iconTransitionOptions = iconTransitionOptions,
                 onEvent = onEvent,
                 modifier = maxWidthModifier,
             )
@@ -174,6 +177,7 @@ private const val DISABLED_CONTENT_ALPHA = 0.38f
 @Composable
 fun IconTransitionAnimationCard(
     iconTransitionAnimation: IconTransitionAnimation,
+    iconTransitionOptions: List<IconTransitionOptionUI>,
     onEvent: (MainUIEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -226,12 +230,12 @@ fun IconTransitionAnimationCard(
                         .padding(horizontal = StyleContentInset)
                         .alpha(if (animationsEnabled) 1f else DISABLED_CONTENT_ALPHA),
                 )
-                IconTransitionCatalog.all.forEach { transition ->
+                iconTransitionOptions.forEach { option ->
                     LabeledControlRow(
                         onClick = {
                             onEvent(
                                 MainUIEvent.UpdateIconTransitionAnimation(
-                                    iconTransitionAnimation.copy(typeId = transition.id)
+                                    iconTransitionAnimation.copy(typeId = option.id)
                                 )
                             )
                         },
@@ -239,7 +243,7 @@ fun IconTransitionAnimationCard(
                         leadingGlyphInset = StyleRadioGlyphInset,
                         leading = {
                             RadioButton(
-                                selected = transition.id == iconTransitionAnimation.typeId,
+                                selected = option.id == iconTransitionAnimation.typeId,
                                 onClick = null,
                                 enabled = animationsEnabled,
                             )
@@ -247,7 +251,7 @@ fun IconTransitionAnimationCard(
                         label = {
                             Text(
                                 modifier = Modifier.alpha(if (animationsEnabled) 1f else DISABLED_CONTENT_ALPHA),
-                                text = stringResource(transitionLabelRes(transition.id)),
+                                text = option.label,
                             )
                         },
                     )
@@ -273,15 +277,6 @@ fun IconTransitionAnimationCard(
             }
         }
     }
-}
-
-private fun transitionLabelRes(id: String): Int = when (id) {
-    IconTransitionCatalog.liquidMorph.id -> R.string.icon_transition_type_liquid_morph
-    IconTransitionCatalog.warp.id -> R.string.icon_transition_type_warp
-    IconTransitionCatalog.vortex.id -> R.string.icon_transition_type_vortex
-    IconTransitionCatalog.flip.id -> R.string.icon_transition_type_flip
-    IconTransitionCatalog.swipeDown.id -> R.string.icon_transition_type_swipe_down
-    else -> R.string.icon_transition_type_particles
 }
 
 /**

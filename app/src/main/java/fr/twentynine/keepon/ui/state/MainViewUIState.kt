@@ -5,6 +5,8 @@ import fr.twentynine.keepon.ui.catalog.TipsInfo
 import fr.twentynine.keepon.domain.model.AppInfo
 import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.ScreenTimeout
+import fr.twentynine.keepon.ui.model.CreditSectionUI
+import fr.twentynine.keepon.ui.model.IconTransitionOptionUI
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 
@@ -25,7 +27,9 @@ sealed interface MainViewUIState {
         val keepOnIsActive: Boolean,
         val timeoutIconStyle: TimeoutIconStyle,
         val iconTransitionAnimation: IconTransitionAnimation,
+        val iconTransitionOptions: List<IconTransitionOptionUI>,
         val isFirstLaunch: Boolean,
         val appInfo: AppInfo,
+        val creditSections: List<CreditSectionUI>,
     ) : MainViewUIState
 }
