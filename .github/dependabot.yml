@@ -1,0 +1,9 @@
+version: 2
+updates:
+  # Keep the GitHub Actions (pinned by SHA in .github/workflows) up to date.
+  # Dependabot reads the "# vX.Y.Z" comment next to each SHA and bumps both the
+  # SHA and the comment, so the refs stay immutable AND current.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
