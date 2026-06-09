@@ -15,6 +15,11 @@ sealed interface IconTransition {
 /**
  * Rigid-layer transition: the [enterAway]/[exitAway] transforms describe the "fully absent" state of
  * the incoming and outgoing icon, and the motion is the interpolation between that and identity.
+ *
+ * This is the general affine path — any translate / scale / `rotationX` / alpha layer motion,
+ * animated natively by `graphicsLayer` on the FAB (vs the per-frame compositing of a
+ * [RenderedTransition]). The catalog currently uses it only for `flip`, but it is the home for any
+ * such rigid-transform effect, so it stays named for the mechanism rather than that one entry.
  */
 data class AffineTransition(
     override val id: String,
@@ -108,4 +113,6 @@ data class VortexTransition(
 data class ReelTransition(
     override val id: String,
     val arcDegrees: Float = 105f,
+    /** Camera distance as a multiple of the drum radius; smaller = stronger 3D bulge. Must be > 1. */
+    val camera: Float = 2.2f,
 ) : RenderedTransition
