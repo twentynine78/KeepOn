@@ -49,7 +49,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.ui.catalog.TipsInfo
+import fr.twentynine.keepon.ui.component.PrefetchTimeoutIcons
 import fr.twentynine.keepon.ui.component.TimeoutFab
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
@@ -204,11 +206,30 @@ private fun KeepOnView(
         }
     }
 
+    // Warm the LARGE icon cache for the timeouts the FAB cycles through, so a tap animates without
+    // waiting for the incoming icon to be generated (the list chips only cache the MEDIUM size).
+    val cycleTimeouts = remember(uiState.screenTimeouts) {
+        uiState.screenTimeouts.filter { it.isSelected }.map { ScreenTimeout(it.value) }
+    }
+    PrefetchTimeoutIcons(cycleTimeouts, uiState.timeoutIconStyle)
+
+    // The timeout the FAB would cycle to next, used as the interposed glyph in the icon-animation
+    // preview (current -> next -> current). Derived from the selected list, so it is already prefetched.
+    val previewNextTimeout = remember(cycleTimeouts, uiState.currentScreenTimeout) {
+        val idx = cycleTimeouts.indexOf(uiState.currentScreenTimeout)
+        when {
+            cycleTimeouts.isEmpty() -> uiState.currentScreenTimeout
+            idx == -1 -> cycleTimeouts.first()
+            else -> cycleTimeouts[(idx + 1) % cycleTimeouts.size]
+        }
+    }
+
     KeepOnNavigationWrapper(
         topLevelDestinations = topLevelDestinations,
         selectedDestination = selectedDestination,
         keepOnIsActive = uiState.keepOnIsActive,
         currentScreenTimeout = uiState.currentScreenTimeout,
+        nextScreenTimeout = previewNextTimeout,
         currentTimeoutDisplay = uiState.currentTimeoutDisplay,
         timeoutIconStyle = uiState.timeoutIconStyle,
         iconTransitionAnimation = uiState.iconTransitionAnimation,
@@ -238,6 +259,7 @@ private fun KeepOnView(
                     TimeoutFab(
                         keepOnIsActive = uiState.keepOnIsActive,
                         currentScreenTimeout = uiState.currentScreenTimeout,
+                        nextScreenTimeout = previewNextTimeout,
                         currentTimeoutDisplay = uiState.currentTimeoutDisplay,
                         timeoutIconStyle = uiState.timeoutIconStyle,
                         iconTransitionAnimation = uiState.iconTransitionAnimation,

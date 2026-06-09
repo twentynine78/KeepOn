@@ -40,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -194,8 +195,8 @@ fun IconTransitionAnimationCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
+                    .padding(bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 LabeledControlRow(
                     onClick = {
@@ -218,9 +219,8 @@ fun IconTransitionAnimationCard(
                 )
 
                 val animationsEnabled = iconTransitionAnimation.enabled
-                Text(
+                StyleSubtitle(
                     text = stringResource(R.string.icon_transition_type_subtitle),
-                    style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .align(Alignment.Start)
                         .padding(horizontal = StyleContentInset)
@@ -282,6 +282,26 @@ private fun transitionLabelRes(id: String): Int = when (id) {
     IconTransitionCatalog.flip.id -> R.string.icon_transition_type_flip
     IconTransitionCatalog.swipeDown.id -> R.string.icon_transition_type_swipe_down
     else -> R.string.icon_transition_type_particles
+}
+
+/**
+ * A subsection label inside a settings card (e.g. "Animation type", "Animation duration"). Bold and
+ * tinted with the accent color so it reads as a heading above its controls, a clear tier between the
+ * card header and the plain option labels.
+ */
+@Composable
+private fun StyleSubtitle(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyLarge,
+        fontWeight = FontWeight.Bold,
+        color = lerp(
+            start = MaterialTheme.colorScheme.onSurface,
+            stop = MaterialTheme.colorScheme.primary,
+            fraction = 0.6f
+        ),
+        modifier = modifier,
+    )
 }
 
 @Composable
@@ -372,7 +392,7 @@ fun FontStyleCard(
 
     Column(
         modifier = modifier
-            .padding(top = 28.dp, bottom = 12.dp),
+            .padding(top = 28.dp),
     ) {
         CardHeader(
             iconVector = Icons.Rounded.FormatColorText,
@@ -390,9 +410,8 @@ fun FontStyleCard(
                     .fillMaxWidth()
                     .padding(top = 8.dp, bottom = 16.dp),
             ) {
-                Text(
+                StyleSubtitle(
                     text = stringResource(R.string.font_style_parameters_subtitle),
-                    style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .padding(horizontal = StyleContentInset, vertical = 8.dp)
                         .align(Alignment.Start),
@@ -421,9 +440,8 @@ fun FontStyleCard(
                     )
                 }
 
-                Text(
+                StyleSubtitle(
                     text = stringResource(R.string.font_style_parameters_appearance_subtitle),
-                    style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
                         .align(Alignment.Start)
                         .padding(start = StyleContentInset, end = StyleContentInset, top = 24.dp),
@@ -572,10 +590,10 @@ private fun FontOptionSlider(
             bottom = bottomPadding,
         )
     ) {
-        Text(
+        StyleSubtitle(
             text = label,
             modifier = Modifier
-                .padding(bottom = 8.dp)
+                .padding(bottom = 24.dp)
                 .alpha(if (enabled) 1f else DISABLED_CONTENT_ALPHA),
         )
         Slider(

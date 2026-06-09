@@ -69,7 +69,7 @@
 
     <string name="icon_transition_tile">Animation de l\'icône</string>
     <string name="icon_transition_text">Joue une courte animation sur l\'icône du délai à chaque changement du délai d\'expiration de l\'écran, pour une transition fluide plutôt qu\'un changement instantané.</string>
-    <string name="icon_transition_enable">Activer l\'animation de transition</string>
+    <string name="icon_transition_enable">Animer l\'icône à chaque changement de délai</string>
     <string name="icon_transition_duration">Durée de l\'animation</string>
     <string name="icon_transition_type_subtitle">Type d\'animation</string>
     <string name="icon_transition_type_liquid_morph">Métamorphose fluide</string>

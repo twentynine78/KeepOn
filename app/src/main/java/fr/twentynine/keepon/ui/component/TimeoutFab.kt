@@ -32,6 +32,7 @@ private const val FAB_DEFAULT_ANIMATION_DURATION_MS = 50
 fun TimeoutFab(
     keepOnIsActive: Boolean,
     currentScreenTimeout: ScreenTimeout,
+    nextScreenTimeout: ScreenTimeout,
     currentTimeoutDisplay: String,
     timeoutIconStyle: TimeoutIconStyle,
     iconTransitionAnimation: IconTransitionAnimation,
@@ -69,6 +70,7 @@ fun TimeoutFab(
     ) {
         AnimatedTimeoutIcon(
             currentScreenTimeout = currentScreenTimeout,
+            nextScreenTimeout = nextScreenTimeout,
             timeoutIconStyle = timeoutIconStyle,
             animation = iconTransitionAnimation,
             tint = fabContentColor,

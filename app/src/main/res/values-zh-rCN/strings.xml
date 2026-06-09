@@ -69,7 +69,7 @@
 
     <string name="icon_transition_tile">图标动画</string>
     <string name="icon_transition_text">每当屏幕超时变化时，在超时图标上播放一段短动画，让数值平滑过渡，而不是瞬间切换。</string>
-    <string name="icon_transition_enable">启用过渡动画</string>
+    <string name="icon_transition_enable">超时变化时为图标添加动画</string>
     <string name="icon_transition_duration">动画时长</string>
     <string name="icon_transition_type_subtitle">动画类型</string>
     <string name="icon_transition_type_liquid_morph">流体变形</string>
