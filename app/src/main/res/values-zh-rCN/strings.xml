@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">KeepOn</string>
-
     <string name="qs_service_name">保持亮屏</string>
     <string name="screen_off_monitoring_service_name">屏幕状态监控服务</string>
 
@@ -11,20 +9,16 @@
     <string name="qs_short_second">s</string>
     <string name="qs_short_minute">m</string>
     <string name="qs_short_hour">h</string>
-    <string name="qs_short_infinite" translatable="false">∞</string>
 
     <string name="qs_long_infinite">无限期</string>
 
     <plurals name="qs_long_second">
-        <item quantity="one">%d 秒</item>
         <item quantity="other">%d 秒</item>
     </plurals>
     <plurals name="qs_long_minute">
-        <item quantity="one">%d 分</item>
         <item quantity="other">%d 分</item>
     </plurals>
     <plurals name="qs_long_hour">
-        <item quantity="one">%d 时</item>
         <item quantity="other">%d 时</item>
     </plurals>
 
