@@ -8,6 +8,11 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
+/**
+ * Hourly safety net that re-arms the content-triggered [MonitorSystemScreenTimeoutWork]. The monitor
+ * is one-shot and can be dropped by the system (process death, trigger loss); this periodic worker
+ * re-schedules it so timeout monitoring keeps working even if the monitor was lost.
+ */
 @HiltWorker
 class GuardianSystemScreenTimeoutWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,

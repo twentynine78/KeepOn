@@ -22,6 +22,7 @@ import fr.twentynine.keepon.domain.gateway.UserNotifier
 import fr.twentynine.keepon.core.system.UserNotifierImpl
 import javax.inject.Singleton
 
+/** Binds the singleton gateways that wrap Android system services (timeout, policy, version, etc.). */
 @Module
 @InstallIn(SingletonComponent::class)
 interface SystemModule {

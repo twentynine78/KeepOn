@@ -11,6 +11,11 @@ import dagger.hilt.android.qualifiers.ActivityContext
 import fr.twentynine.keepon.R
 import javax.inject.Inject
 
+/**
+ * Requests the runtime POST_NOTIFICATIONS permission (Android 13+) through a caller-supplied
+ * launcher. Also owns the screen-monitor notification channel definition, since the channel must
+ * exist before the foreground service posts its notification.
+ */
 interface PostNotificationPermissionManager {
     fun requestPostNotificationPermission(
         requestPostNotificationPermissionLauncher: ActivityResultLauncher<String>
@@ -20,6 +25,7 @@ interface PostNotificationPermissionManager {
         const val NOTIFICATION_CHANNEL_SCREEN_MONITOR_ID = "keepon_screen_monitor"
         const val NOTIFICATION_GROUP_KEY = "keepon_notification"
 
+        /** Creates (idempotently) the minimal-importance, badge-less channel for the screen-monitor service. */
         fun createNotificationChannel(context: Context) {
             val notificationManager = context.getSystemService(NotificationManager::class.java) ?: return
             val channel = NotificationChannel(
@@ -36,6 +42,7 @@ interface PostNotificationPermissionManager {
     }
 }
 
+/** Activity-scoped impl that ensures the channel exists on creation and launches the 13+ prompt. */
 class PostNotificationPermissionManagerImpl @Inject constructor(
     @param:ActivityContext private val context: Context
 ) : PostNotificationPermissionManager {

@@ -1,5 +1,6 @@
 package fr.twentynine.keepon.domain.catalog
 
+/** One credited third-party work (library or font): its name, author, project [url] and [type]. */
 sealed class CreditInfo(
     val name: String,
     val author: String,

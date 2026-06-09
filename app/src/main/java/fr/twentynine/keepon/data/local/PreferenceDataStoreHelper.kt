@@ -55,11 +55,18 @@ private val Context.dataStore by preferencesDataStore(
     },
 )
 
+/**
+ * Thin typed wrapper over the two Preferences DataStores ([DataStoreSourceType] picks which), giving
+ * the repositories read/write/remove access without touching DataStore directly. `getPreference`
+ * returns a reactive [Flow] that re-emits on every change; `getLastPreference` reads the current
+ * value once. IO errors reading the store are swallowed and surface as the default / empty value.
+ */
 interface PreferenceDataStoreHelper {
     suspend fun <T> putPreference(key: Preferences.Key<T>, value: T, dataStoreSourceType: DataStoreSourceType)
     suspend fun <T> removePreference(key: Preferences.Key<T>, dataStoreSourceType: DataStoreSourceType)
     fun <T> getPreference(key: Preferences.Key<T>, defaultValue: T, dataStoreSourceType: DataStoreSourceType): Flow<T>
     fun <T> getPreference(key: Preferences.Key<T>, dataStoreSourceType: DataStoreSourceType): Flow<T?>
+    /** One-shot read of the current value, or [defaultValue] when the key is unset. */
     suspend fun <T> getLastPreference(
         key: Preferences.Key<T>,
         defaultValue: T,
@@ -73,6 +80,10 @@ interface PreferenceDataStoreHelper {
     }
 }
 
+/**
+ * DataStore-backed [PreferenceDataStoreHelper]. Owns the two `preferencesDataStore` delegates and
+ * their one-time SharedPreferences migrations (carrying the original app's keys into DataStore).
+ */
 class PreferenceDataStoreHelperImpl @Inject constructor(@param:ApplicationContext private val context: Context) : PreferenceDataStoreHelper {
 
     private fun getDataSource(dataStoreSourceType: DataStoreSourceType): DataStore<Preferences> {

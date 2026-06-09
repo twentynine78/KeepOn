@@ -36,6 +36,12 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
+/**
+ * ViewModel for the main activity. Exposes a single [MainViewUIState] StateFlow built by
+ * [MainViewStateProducer] (combining preferences, permissions and derived UI lists), and turns the
+ * [MainUIEvent]s the UI emits into the matching use-case calls (cycling/selecting timeouts, toggling
+ * reset-on-screen-off, updating the icon style/transition, dismissing tips, adding the QS tile…).
+ */
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val mainViewStateProducer: MainViewStateProducer,

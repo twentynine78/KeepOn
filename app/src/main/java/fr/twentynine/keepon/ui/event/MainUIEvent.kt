@@ -5,6 +5,7 @@ import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 
+/** The user actions the main screen emits to its ViewModel (permissions, timeout changes, style/tip updates). */
 sealed interface MainUIEvent {
     data object RequestWriteSystemSettingPermission : MainUIEvent
     data object RequestDisableBatteryOptimization : MainUIEvent

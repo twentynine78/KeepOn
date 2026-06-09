@@ -20,6 +20,7 @@ private fun VectorPreview() {
 
 private var iconStyleFilled: ImageVector? = null
 
+/** Filled "Style" nav icon (shown when the Style destination is selected). */
 val IconStyleFilled: ImageVector
     get() {
         if (iconStyleFilled != null) {

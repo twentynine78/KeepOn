@@ -70,6 +70,7 @@ import fr.twentynine.keepon.ui.component.ItemCard
 import fr.twentynine.keepon.ui.component.LabeledControlRow
 import kotlin.math.ceil
 
+/** Style destination, stateful wrapper: feeds the icon style/transition slices of [uiState] to [StyleScreen]. */
 @Composable
 fun StyleRoute(
     uiState: MainViewUIState.Success,
@@ -87,6 +88,11 @@ fun StyleRoute(
     )
 }
 
+/**
+ * Style destination content (stateless): lets the user configure the icon-change transition and the
+ * timeout-icon typography (font family, size, spacing, bold/italic/underline, outlined), with a live
+ * preview. User changes are emitted as [MainUIEvent]s through [onEvent].
+ */
 @Composable
 fun StyleScreen(
     timeoutIconStyle: TimeoutIconStyle,

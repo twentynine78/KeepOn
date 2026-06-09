@@ -42,6 +42,11 @@ import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.component.TimeoutFab
 import fr.twentynine.keepon.ui.util.KeepOnNavigationContentPosition
 
+/**
+ * Adaptive navigation host: picks a bottom navigation bar or a navigation rail from the current
+ * window size/posture and wraps [content] in a [KeepOnNavSuiteScope] exposing that choice. The rail
+ * variant hosts the timeout FAB itself (the bar variant gets it from the Scaffold instead).
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun KeepOnNavigationWrapper(
@@ -111,6 +116,7 @@ fun KeepOnNavigationWrapper(
     }
 }
 
+/** Compact-width navigation: the bottom app bar of top-level destinations (the FAB sits in the Scaffold). */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomNavigationBar(
@@ -164,6 +170,7 @@ fun BottomNavigationBar(
     }
 }
 
+/** Medium/expanded-width navigation: the side rail of top-level destinations, hosting the timeout FAB. */
 @Composable
 fun KeepOnNavigationRail(
     topLevelDestinations: List<NavigationDestinationWithBadge>,
@@ -261,6 +268,7 @@ fun KeepOnNavigationRail(
     }
 }
 
+/** A nav item's icon that cross-fades between the destination's filled (selected) and outlined icon. */
 @Composable
 fun NavigationBarItemIcon(
     isSelected: Boolean,

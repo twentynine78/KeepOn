@@ -12,6 +12,11 @@ import fr.twentynine.keepon.di.entrypoint.SetNextTimeoutActionCallbackEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+/**
+ * Glance action run when the widget is tapped: re-checks at click time whether the timeout can be
+ * cycled (the rendered action may be stale) and either advances to the next timeout or opens the app
+ * if it can't or a permission is missing — mirroring the QS tile.
+ */
 class SetNextTimeoutActionCallback : ActionCallback {
     override suspend fun onAction(
         context: Context,

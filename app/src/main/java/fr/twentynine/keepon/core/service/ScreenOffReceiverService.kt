@@ -22,6 +22,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * Foreground service that keeps a dynamically-registered [ScreenOffReceiver] alive while KeepOn is
+ * resetting the timeout on screen-off (a manifest-registered receiver wouldn't get `SCREEN_OFF`). Its
+ * notification offers "open" and "stop" actions; the stop action and the manager's stop command both
+ * route through [onStartCommand]. The on-screen-off reset runs on the application scope so it finishes
+ * its system write even as the service stops.
+ */
 @AndroidEntryPoint
 class ScreenOffReceiverService : LifecycleService() {
 

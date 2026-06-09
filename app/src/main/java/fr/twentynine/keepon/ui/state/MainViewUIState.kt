@@ -10,6 +10,11 @@ import fr.twentynine.keepon.ui.model.IconTransitionOptionUI
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 
+/**
+ * The immutable UI state the main activity renders: [Loading] before the first emission, [Error] on a
+ * failure, and [Success] holding everything the screens need (permission flags, the timeout lists and
+ * current value, tips, icon style/transition, app info and credits).
+ */
 sealed interface MainViewUIState {
     data object Loading : MainViewUIState
     data class Error(val error: String) : MainViewUIState

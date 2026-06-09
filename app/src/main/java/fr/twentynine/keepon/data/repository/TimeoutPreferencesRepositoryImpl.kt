@@ -21,6 +21,13 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
+/**
+ * DataStore-backed [TimeoutPreferencesRepository]: persists the default / current / previous timeouts
+ * and the selected-timeout list, all on the IO dispatcher. The default self-initializes from the live
+ * system value when unset and is validated against the device policy; the selected list seeds itself
+ * from the catalog on a fresh install. Legacy-key fallbacks are layered on by
+ * [MigratingTimeoutPreferencesRepository], not here.
+ */
 class TimeoutPreferencesRepositoryImpl @Inject constructor(
     private val preferenceDataStoreHelper: PreferenceDataStoreHelper,
     private val systemScreenTimeoutController: SystemScreenTimeoutController,

@@ -10,6 +10,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.model.TipsConstraintState
 
+/**
+ * A contextual tip shown on the Home screen: its texts/icon, primary [buttonAction], and a
+ * [constraint] predicate over the current [TipsConstraintState] that decides whether it is relevant
+ * right now. The stable [id] is what gets persisted when the user dismisses it.
+ */
 @Immutable
 sealed class TipsInfo(
     val id: Int,

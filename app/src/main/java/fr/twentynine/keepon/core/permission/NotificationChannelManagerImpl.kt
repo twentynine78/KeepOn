@@ -6,6 +6,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.domain.gateway.NotificationChannelManager
 import javax.inject.Inject
 
+/** Deletes the obsolete "keepon_services" notification channel left by older app versions. */
 class NotificationChannelManagerImpl @Inject constructor(
     @param:ApplicationContext private val context: Context,
 ) : NotificationChannelManager {

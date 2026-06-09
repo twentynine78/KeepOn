@@ -10,6 +10,11 @@ import fr.twentynine.keepon.ui.state.WidgetUIState
 import fr.twentynine.keepon.ui.widget.theme.KeepOnWidgetTheme
 import fr.twentynine.keepon.ui.widget.theme.rememberWidgetColors
 
+/**
+ * The static widget preview shown in the launcher's widget picker: the same layout as the live widget
+ * but using the app icon as a stand-in bitmap and the inactive palette (there's no live state to drive
+ * it), and with no click action.
+ */
 @Composable
 fun KeepOnWidgetPreview(
     widgetUIState: WidgetUIState,

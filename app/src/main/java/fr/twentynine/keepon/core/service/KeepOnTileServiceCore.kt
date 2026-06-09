@@ -53,6 +53,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * Shared implementation of the quick-settings tile, made `open` so the manifest-declared
+ * [fr.twentynine.keepon.services.KeepOnTileService] can subclass it. It owns its own lifecycle (to
+ * drive Coil), reactively reflects the current timeout and active state on the tile, cycles to the
+ * next timeout (or routes to the app) on click, and plays the icon-change transition between tile
+ * icons. The icon bitmaps are produced by the same Coil pipeline as the rest of the app.
+ */
 open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
 
     @Inject

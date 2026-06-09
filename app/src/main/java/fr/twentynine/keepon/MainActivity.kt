@@ -25,6 +25,12 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
+/**
+ * The app's single Compose activity. Holds the splash screen until the [MainViewModel] state leaves
+ * Loading, hosts [MainScreen], and routes permission-request events to the
+ * [BasePermissionActivity] wiring. On resume it starts the screen-off service when KeepOn is active
+ * and configured to reset on screen-off.
+ */
 @AndroidEntryPoint
 class MainActivity : BasePermissionActivity() {
 

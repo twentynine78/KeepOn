@@ -11,6 +11,12 @@ import fr.twentynine.keepon.domain.usecase.timeout.SynchronizeSystemTimeoutUseCa
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+/**
+ * The core "watch the system timeout" worker. It is triggered by a content-URI observer on the
+ * `SCREEN_OFF_TIMEOUT` setting (see [MonitorSystemScreenTimeoutWorkScheduler]), so it wakes whenever
+ * the value changes; [SynchronizeSystemTimeoutUseCase] then reconciles the app's state with the new
+ * value. It re-schedules itself each run, since a content-trigger worker is one-shot.
+ */
 @HiltWorker
 class MonitorSystemScreenTimeoutWork @AssistedInject constructor(
     @Assisted private val appContext: Context,

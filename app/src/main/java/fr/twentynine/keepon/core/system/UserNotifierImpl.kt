@@ -9,6 +9,7 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.gateway.UserNotifier
 import javax.inject.Inject
 
+/** Shows the user-facing [UserNotifier] messages as Toasts, posted onto the main thread. */
 class UserNotifierImpl @Inject constructor(
     @param:ApplicationContext private val context: Context,
 ) : UserNotifier {

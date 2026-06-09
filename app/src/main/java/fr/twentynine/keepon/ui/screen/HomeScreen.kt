@@ -55,6 +55,10 @@ import fr.twentynine.keepon.ui.component.TimeoutIconChip
 import fr.twentynine.keepon.ui.component.TipsSection
 import kotlinx.coroutines.launch
 
+/**
+ * Home destination, stateful wrapper: bumps the app-launch count on first composition and forwards
+ * the relevant slices of [uiState] to the stateless [HomeScreen].
+ */
 @Composable
 fun HomeRoute(
     uiState: MainViewUIState.Success,
@@ -78,6 +82,10 @@ fun HomeRoute(
     )
 }
 
+/**
+ * Home destination content (stateless): the tips section, the "reset on screen off" toggle, and the
+ * scrollable list of selectable timeouts. Emits user actions as [MainUIEvent]s through [onEvent].
+ */
 @Composable
 fun HomeScreen(
     tipsList: List<TipsInfo>,

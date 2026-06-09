@@ -48,6 +48,7 @@ import fr.twentynine.keepon.ui.theme.SUBTITLE_CONTENT_ALPHA
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.ItemCard
 
+/** About destination, stateful wrapper: passes the app info and credits through to [AboutScreen]. */
 @Composable
 fun AboutRoute(
     appInfo: AppInfo,
@@ -63,6 +64,10 @@ fun AboutRoute(
     )
 }
 
+/**
+ * About destination content (stateless): the app header (version), and the third-party credits
+ * grouped into sections, each opening its project URL.
+ */
 @Composable
 fun AboutScreen(
     appInfo: AppInfo,

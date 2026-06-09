@@ -25,6 +25,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * The application entry point. Beyond Hilt setup it: schedules the screen-timeout monitor and
+ * guardian workers and runs the one-time app migration on startup; provides the Coil [ImageLoader]
+ * configured for the fully-generated timeout icons; provides the WorkManager configuration backed by
+ * the Hilt worker factory; and releases the widget transition's bitmap holders on memory pressure.
+ */
 @HiltAndroidApp
 class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configuration.Provider {
 

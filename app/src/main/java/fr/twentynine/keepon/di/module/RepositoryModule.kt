@@ -16,6 +16,11 @@ import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
 import javax.inject.Singleton
 
+/**
+ * Binds the persistence layer: the DataStore helper, the legacy-key repository, and each domain
+ * preferences repository to its `Migrating*` decorator (so callers get the lazy legacy-key migration
+ * transparently).
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 interface RepositoryModule {

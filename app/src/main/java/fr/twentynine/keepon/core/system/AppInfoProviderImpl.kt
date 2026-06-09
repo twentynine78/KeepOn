@@ -6,6 +6,7 @@ import fr.twentynine.keepon.domain.gateway.AppInfoProvider
 import fr.twentynine.keepon.domain.model.AppInfo
 import javax.inject.Inject
 
+/** Supplies [AppInfo] from the package's version name plus the compiled-in author and source URL. */
 class AppInfoProviderImpl @Inject constructor(
     @param:ApplicationContext private val context: Context,
 ) : AppInfoProvider {

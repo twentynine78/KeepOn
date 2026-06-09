@@ -13,6 +13,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * Starts/stops/restarts the [ScreenOffReceiverService], guarding the start on the required permissions
+ * and the tracked running state (so it isn't started twice or without permission), and toasting the
+ * outcome where relevant.
+ */
 class ScreenOffReceiverServiceManagerImpl @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val permissionStateGateway: PermissionStateGateway,

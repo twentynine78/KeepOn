@@ -165,6 +165,13 @@ private fun <T : Parcelable> AnimateSwipeableItemCardEffect(
     }
 }
 
+/**
+ * Generic list card that is both clickable and swipeable, with [backgroundContent] revealed under the
+ * swipe and the card's corners shaped by its [itemPosition] in the list. Can play a one-off hint
+ * animation (auto-swipe via [animateSwipeCondition], or a first-display nudge via
+ * [animateFirstDisplayCondition]); a custom swipe state suppresses fling so the gesture only triggers
+ * past [swipeThresholdFraction].
+ */
 @Composable
 fun <T : Parcelable> SwipeableItemCard(
     item: T?,

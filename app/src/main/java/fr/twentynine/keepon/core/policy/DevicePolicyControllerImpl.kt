@@ -7,6 +7,11 @@ import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.gateway.DevicePolicyController
 import javax.inject.Inject
 
+/**
+ * Enforces the device-admin maximum-time-to-lock policy via [DevicePolicyManager]: exposes the cap
+ * (treating "no limit" as effectively unbounded) and filters/validates timeouts against it, so the
+ * app never offers or applies a value a managed device would reject.
+ */
 class DevicePolicyControllerImpl @Inject constructor(@param:ApplicationContext private val context: Context) : DevicePolicyController {
 
     private val devicePolicyManager by lazy {

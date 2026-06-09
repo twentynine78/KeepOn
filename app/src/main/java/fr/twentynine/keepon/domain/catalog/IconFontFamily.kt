@@ -2,6 +2,10 @@ package fr.twentynine.keepon.domain.catalog
 
 import fr.twentynine.keepon.R
 
+/**
+ * A bundled font the timeout icon can use, bundling the four typeface resources for its style combos.
+ * [name] is the stable persisted key (never localize it); [displayName] is shown in the picker.
+ */
 sealed class IconFontFamily(
     val name: String,
     val displayName: String,

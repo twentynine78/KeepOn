@@ -13,6 +13,11 @@ import fr.twentynine.keepon.core.util.BundleScrubber
 import fr.twentynine.keepon.domain.usecase.timeout.ScheduleTaskerScreenTimeoutUseCase
 import javax.inject.Inject
 
+/**
+ * Tasker/Locale plug-in "fire setting" receiver: when a Tasker action runs, it validates the incoming
+ * intent and bundle, then schedules the configured timeout via [ScheduleTaskerScreenTimeoutUseCase],
+ * toasting if the requested value is invalid.
+ */
 @AndroidEntryPoint
 class FireReceiver : BroadcastReceiver() {
 

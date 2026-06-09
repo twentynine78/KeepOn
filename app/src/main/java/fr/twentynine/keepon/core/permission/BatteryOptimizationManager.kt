@@ -8,10 +8,12 @@ import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ActivityContext
 import javax.inject.Inject
 
+/** Requests the user to exempt the app from battery optimization (needed for reliable background work). */
 interface BatteryOptimizationManager {
     fun requestDisableBatteryOptimization()
 }
 
+/** Opens the system "ignore battery optimizations" request for this package. Activity-scoped. */
 class BatteryOptimizationManagerImpl @Inject constructor(
     @param:ActivityContext private val context: Context
 ) : BatteryOptimizationManager {

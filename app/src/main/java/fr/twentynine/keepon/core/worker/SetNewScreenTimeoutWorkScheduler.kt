@@ -11,6 +11,11 @@ import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import java.time.Duration
 
+/**
+ * Enqueues [SetNewScreenTimeoutWork] to apply a new timeout, passing the value and "record previous"
+ * flag as input data. Uses APPEND_OR_REPLACE on a unique work name so rapid successive requests run in
+ * order rather than clobbering one another.
+ */
 class SetNewScreenTimeoutWorkScheduler {
 
     private val workRequestConstraints = Constraints.Builder().build()

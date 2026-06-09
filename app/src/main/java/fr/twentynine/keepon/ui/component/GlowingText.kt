@@ -22,6 +22,10 @@ import androidx.compose.ui.unit.TextUnit
 private const val GLOW_ALPHA_ANIMATION_DURATION_MS = 600
 private const val MAX_GLOW_ALPHA_VALUE = 0.6f
 
+/**
+ * Text with a soft colored glow behind it (a blurred shadow), whose intensity animates in/out with
+ * [showGlow]. Used to draw attention to the active timeout value.
+ */
 @Composable
 fun GlowingText(
     text: String,

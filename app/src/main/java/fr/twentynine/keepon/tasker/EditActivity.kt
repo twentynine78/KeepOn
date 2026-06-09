@@ -20,6 +20,11 @@ import fr.twentynine.keepon.core.tasker.PluginBundleManager
 import fr.twentynine.keepon.core.tasker.TaskerIntent
 import fr.twentynine.keepon.core.util.BundleScrubber
 
+/**
+ * Tasker/Locale plug-in "edit setting" activity: lets the user pick a timeout for a Tasker action and
+ * returns it in the plug-in result bundle (with a display blurb). Validates the incoming intent
+ * (action, package, bundle) and pre-selects the forwarded timeout when editing an existing action.
+ */
 @AndroidEntryPoint
 class EditActivity : BasePermissionActivity() {
 

@@ -10,6 +10,12 @@ import androidx.work.WorkRequest
 import fr.twentynine.keepon.core.util.uuid
 import java.time.Duration
 
+/**
+ * Schedules the [MonitorSystemScreenTimeoutWork] as unique one-shot work, constrained by a
+ * content-URI trigger on the `SCREEN_OFF_TIMEOUT` setting so it fires as soon as the value changes.
+ * [scheduleWork] is a no-op when the work is already pending unless [requeueIfRunning] forces a
+ * replace (used by the worker to re-arm itself after each run).
+ */
 object MonitorSystemScreenTimeoutWorkScheduler {
 
     private const val SYSTEM_SCREEN_TIMEOUT_WORKER = "system_screen_timeout_worker"

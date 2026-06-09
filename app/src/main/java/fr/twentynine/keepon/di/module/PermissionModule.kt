@@ -12,6 +12,7 @@ import fr.twentynine.keepon.core.permission.PostNotificationPermissionManagerImp
 import fr.twentynine.keepon.core.permission.SystemSettingPermissionManager
 import fr.twentynine.keepon.core.permission.SystemSettingPermissionManagerImpl
 
+/** Binds the activity-scoped permission managers (battery, post-notifications, write-settings). */
 @Module
 @InstallIn(ActivityComponent::class)
 interface PermissionModule {

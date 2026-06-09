@@ -9,6 +9,11 @@ import fr.twentynine.keepon.core.util.goAsync
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
+/**
+ * Resets the system screen timeout to its default when the screen turns off, so a long/never timeout
+ * the user set doesn't persist past the current session. Registered dynamically by the screen-off
+ * service; the reset runs asynchronously via [goAsync].
+ */
 @AndroidEntryPoint
 class ScreenOffReceiver : BroadcastReceiver() {
 

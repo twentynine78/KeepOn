@@ -16,6 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
+/**
+ * An icon that continuously pulses (scales up and down) driven by the supplied [infiniteTransition],
+ * so several pulsing elements can share one clock. Used to draw the eye to call-to-action icons.
+ */
 @Composable
 fun PulsatingIcon(
     infiniteTransition: InfiniteTransition,

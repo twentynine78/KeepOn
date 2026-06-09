@@ -16,6 +16,13 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import java.util.concurrent.LinkedBlockingQueue
 
+/**
+ * Anti-collision queue for app-initiated screen-timeout writes. It records each requested value as
+ * "desired" before writing it and then waits for the system to actually reflect it, so the monitor
+ * worker can recognize the change as app-initiated (via [getDesiredScreenTimeout]) rather than a
+ * user edit in system settings. A mutex serializes overlapping requests, and writes that the system
+ * never adopts (some OEM ROMs accept the call but keep the old value) are reported as not applied.
+ */
 object DesiredScreenTimeoutController {
     // Max time to wait for the system to reflect the written value before considering it
     // rejected. Successful writes converge in ~100 ms, so this ceiling is only reached on

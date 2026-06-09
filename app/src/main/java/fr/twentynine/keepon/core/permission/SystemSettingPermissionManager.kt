@@ -15,10 +15,16 @@ import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration.Companion.milliseconds
 import javax.inject.Inject
 
+/** Requests the WRITE_SETTINGS permission, which the app needs to change the system screen timeout. */
 interface SystemSettingPermissionManager {
     fun requestWriteSystemSettingsPermission()
 }
 
+/**
+ * Activity-scoped impl: opens the "Modify system settings" screen, then polls (up to ~60s) for the
+ * permission to be granted and bounces the activity back to the foreground as soon as it is, since
+ * that system screen gives no result callback.
+ */
 class SystemSettingPermissionManagerImpl @Inject constructor(@param:ActivityContext private val context: Context) : SystemSettingPermissionManager {
 
     private var checkPermissionJob: Job? = null

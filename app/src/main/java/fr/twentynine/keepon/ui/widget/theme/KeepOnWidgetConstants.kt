@@ -1,5 +1,8 @@
 package fr.twentynine.keepon.ui.widget.theme
 
+// Ratios used to derive the widget's dimensions from its current size, plus background tuning
+// constants. The "*_RATIO" values divide the widget's min dimension to size corners/padding/border.
+
 const val CORNER_RADIUS_RATIO = 2
 const val OUTER_BOX_PADDING_RATIO = 30
 const val BORDER_SIZE_RATIO = 2

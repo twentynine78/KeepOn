@@ -12,6 +12,11 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
+/**
+ * DataStore-backed [LegacyPreferencesRepository]: reads and clears the legacy `OLD_*` preference keys
+ * on the IO dispatcher. Each `get` decodes the old stored format (returning null/empty when absent);
+ * the paired `remove` lets the migrating repositories drop a key once its value has been carried over.
+ */
 class LegacyPreferencesRepositoryImpl @Inject constructor(
     private val preferenceDataStoreHelper: PreferenceDataStoreHelper,
 ) : LegacyPreferencesRepository {

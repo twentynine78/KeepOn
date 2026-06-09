@@ -10,6 +10,12 @@ import coil3.request.Options
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import fr.twentynine.keepon.domain.model.TimeoutIconData
 
+/**
+ * Coil [Fetcher] that generates the timeout-icon bitmap from a [TimeoutIconData] instead of loading
+ * it from disk/network: it draws the icon via [TimeoutIconGenerator] and returns it as an in-memory
+ * [ImageFetchResult], so Coil's decode stage is bypassed entirely. The [Factory] is registered on the
+ * app's [ImageLoader].
+ */
 class TimeoutIconDataFetcher(
     private val data: TimeoutIconData,
     private val options: Options,

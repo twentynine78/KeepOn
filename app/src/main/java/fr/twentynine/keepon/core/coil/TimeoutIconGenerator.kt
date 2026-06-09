@@ -14,6 +14,12 @@ import fr.twentynine.keepon.domain.catalog.IconFontFamilyCatalog
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import fr.twentynine.keepon.core.util.px
 
+/**
+ * Draws the timeout icon as a bitmap: the short timeout label rendered onto a transparent canvas with
+ * the chosen [IconFontFamily] and style (size, spacing, bold/italic/underline, outlined), scaled for
+ * the requested [TimeoutIconSize]. The single source of the generated icon for the FAB, QS tile and
+ * widget (all routed through Coil).
+ */
 object TimeoutIconGenerator {
 
     private const val STROKE_WIDTH = 1f

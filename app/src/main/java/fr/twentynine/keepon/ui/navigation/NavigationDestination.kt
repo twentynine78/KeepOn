@@ -11,6 +11,11 @@ import fr.twentynine.keepon.ui.theme.icons.HomeOutlined
 import fr.twentynine.keepon.ui.theme.icons.IconStyleFilled
 import fr.twentynine.keepon.ui.theme.icons.IconStyleOutlined
 
+/**
+ * The top-level navigation destinations (Home, Style, About), each bundling its [route], label and
+ * the selected/unselected icons the navigation bar/rail shows. [TOP_LEVEL_DESTINATIONS] is the
+ * ordered list rendered in the navigation UI.
+ */
 sealed class NavigationDestination(
     val route: String,
     @param:StringRes val iconTextId: Int,

@@ -14,6 +14,7 @@ import fr.twentynine.keepon.ui.widget.theme.applyRootBackground
 import fr.twentynine.keepon.ui.widget.theme.rememberLegacyCircleBackground
 import fr.twentynine.keepon.ui.widget.theme.rememberWidgetDimens
 
+/** The widget's loading state: a centered progress indicator on the rounded widget background. */
 @Composable
 fun KeepOnWidgetLoading(
     modifier: GlanceModifier = GlanceModifier,

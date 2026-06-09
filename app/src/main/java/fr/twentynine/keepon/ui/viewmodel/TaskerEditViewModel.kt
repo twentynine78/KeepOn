@@ -23,6 +23,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for the Tasker plug-in edit activity. Exposes a [TaskerEditUIState] StateFlow (the
+ * selectable timeouts plus the permission state) and tracks the user's pick, which the activity reads
+ * back when saving the Tasker action.
+ */
 @HiltViewModel
 class TaskerEditViewModel @Inject constructor(
     private val taskerEditStateProducer: TaskerEditStateProducer,

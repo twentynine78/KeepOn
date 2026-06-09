@@ -12,6 +12,11 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * DataStore-backed [AppPreferencesRepository]: reads/writes the app-level flags (first launch, launch
+ * count, last-run version) on the IO dispatcher. Plain persistence only — the legacy "skipIntro"
+ * fallback is layered on by [MigratingAppPreferencesRepository], not here.
+ */
 class AppPreferencesRepositoryImpl @Inject constructor(
     private val preferenceDataStoreHelper: PreferenceDataStoreHelper,
 ) : AppPreferencesRepository {

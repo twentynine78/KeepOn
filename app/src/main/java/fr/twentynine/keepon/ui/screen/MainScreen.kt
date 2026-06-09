@@ -107,6 +107,12 @@ private enum class MainScreenState {
     KEEP_ON
 }
 
+/**
+ * Root composable of the main activity. Cross-fades/slides between the four top-level states derived
+ * from [uiState] — loading (empty), error, the permission-request flow, and the full KeepOn UI (the
+ * adaptive nav scaffold hosting the Home/Style/About destinations). All interactions are surfaced as
+ * [MainUIEvent]s through [onEvent].
+ */
 @Composable
 fun MainScreen(
     uiState: MainViewUIState,

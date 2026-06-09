@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
 
+/** Full-screen error state: a warning icon, title/explanation, and the [errorMessage] (with prefix). */
 @Composable
 fun ErrorScreen(
     modifier: Modifier = Modifier,

@@ -16,6 +16,7 @@ import fr.twentynine.keepon.domain.gateway.MemoryCacheManager
 import fr.twentynine.keepon.core.coil.MemoryCacheManagerImpl
 import javax.inject.Singleton
 
+/** Binds the singleton app-wide gateways (rating, notifications, permissions, strings, image cache). */
 @Module
 @InstallIn(SingletonComponent::class)
 interface AppModule {

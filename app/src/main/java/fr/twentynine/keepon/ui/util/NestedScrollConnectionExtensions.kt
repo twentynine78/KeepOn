@@ -5,6 +5,11 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.unit.Velocity
 
+/**
+ * Chains two [NestedScrollConnection]s into one: this connection gets first claim on each scroll/fling
+ * delta and the [other] sees the remainder, with their consumed amounts summed. Lets a single nested
+ * scroll drive both the top app bar and the bottom bar scroll behaviors at once.
+ */
 operator fun NestedScrollConnection.plus(other: NestedScrollConnection): NestedScrollConnection {
     // Optimization: if one of the connections is "empty" (our internal instance),
     // there's no need to create a delegation chain.

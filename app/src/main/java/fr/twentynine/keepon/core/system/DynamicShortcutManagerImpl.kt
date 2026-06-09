@@ -6,6 +6,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.domain.gateway.DynamicShortcutManager
 import javax.inject.Inject
 
+/** Clears the app's launcher dynamic shortcuts via the system [ShortcutManager]. */
 class DynamicShortcutManagerImpl @Inject constructor(
     @param:ApplicationContext private val context: Context,
 ) : DynamicShortcutManager {

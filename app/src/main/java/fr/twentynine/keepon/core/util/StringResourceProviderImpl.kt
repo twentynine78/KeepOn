@@ -5,6 +5,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import javax.inject.Inject
 
+/** Resolves [StringResourceProvider] against the application [Context]'s resources. */
 class StringResourceProviderImpl @Inject constructor(@param:ApplicationContext private val context: Context) : StringResourceProvider {
     private val resources by lazy { context.resources }
 

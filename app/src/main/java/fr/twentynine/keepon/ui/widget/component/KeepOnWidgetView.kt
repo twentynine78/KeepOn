@@ -30,8 +30,6 @@ import fr.twentynine.keepon.ui.widget.theme.rememberWidgetColors
 // Glance has no frame clock: the transition is played by mutating the displayed bitmap, each change
 // pushing a fresh RemoteViews. Launchers throttle widget updates, so it pushes the smaller
 // IconTransitionTiming.WIDGET_FRAME_COUNT and may still look coarse or be dropped on some launchers.
-// The widget-only changes and how to revert them are recorded in the "widget-transition-animation"
-// memory note.
 
 /**
  * Last icon + timeout each widget drew, kept at module level **per GlanceId** so the animation
@@ -75,6 +73,11 @@ private object WidgetTransitionState {
 /** Releases the widget transition's out-of-Coil cached bitmaps; called on a memory-pressure trim. */
 internal fun clearWidgetTransitionCache() = WidgetTransitionState.clear()
 
+/**
+ * Root Glance content of the home-screen widget. Renders the loading/error/success states, plays the
+ * experimental icon-change transition on a real timeout change (see the header above), and wires the
+ * click to either cycle the timeout (via the action callback) or open the app when nothing can cycle.
+ */
 @Composable
 fun KeepOnWidgetView(
     widgetUIState: WidgetUIState,

@@ -9,6 +9,10 @@ import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 
 private const val SCREEN_TIMEOUT_CARD_SWIPE_THRESHOLD = 0.30f
 
+/**
+ * A timeout row specialized on [SwipeableItemCard]: tap to toggle selection, swipe to set as default
+ * (revealing [SetDefaultDismissActionRow]). On first launch the first row animates its swipe hint.
+ */
 @Composable
 fun SwipeableScreenTimeoutCard(
     item: ScreenTimeoutUI,

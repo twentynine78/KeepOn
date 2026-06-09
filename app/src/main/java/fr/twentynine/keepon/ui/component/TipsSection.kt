@@ -47,6 +47,10 @@ import fr.twentynine.keepon.ui.catalog.TipsAction
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import kotlinx.coroutines.launch
 
+/**
+ * The dismissible tips carousel on the Home screen: pages through the relevant [tipsList], each tip
+ * offering its action and a dismiss control. Emits the corresponding [MainUIEvent]s through [onEvent].
+ */
 @Composable
 fun TipsSection(
     tipsList: List<TipsInfo>,

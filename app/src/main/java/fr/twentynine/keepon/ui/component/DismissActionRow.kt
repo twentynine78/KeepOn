@@ -14,6 +14,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
+/**
+ * The colored background revealed behind a swipe-to-dismiss card: an icon and label aligned to the
+ * swipe side ([horizontalArrangement]), shown only once the swipe has progressed ([contentVisible]).
+ */
 @Composable
 fun DismissActionRow(
     modifier: Modifier = Modifier,

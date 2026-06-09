@@ -5,7 +5,13 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
-// Use old key for compatibility
+/**
+ * The DataStore preference keys, split by store: the first group lives in the auto-backed-up store
+ * (user settings that should survive a reinstall), the second in the device-local store (state tied
+ * to this install). The `OLD_*` keys are the legacy key names still read by the migrating
+ * repositories to carry pre-existing values forward; the stored key strings keep their historical
+ * names for on-device compatibility regardless of the constant name.
+ */
 object PreferenceDataStoreConstants {
     // Backed up data
     val SELECTED_SCREEN_TIMEOUT = stringPreferencesKey("newSelectedTimeout")

@@ -20,6 +20,7 @@ private fun VectorPreview() {
 
 private var iconStyleOutlined: ImageVector? = null
 
+/** Outlined "Style" nav icon (shown when the Style destination is not selected). */
 val IconStyleOutlined: ImageVector
     get() {
         if (iconStyleOutlined != null) {

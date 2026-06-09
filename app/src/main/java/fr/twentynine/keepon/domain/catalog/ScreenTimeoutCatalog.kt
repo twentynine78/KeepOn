@@ -4,6 +4,11 @@ import fr.twentynine.keepon.domain.model.SpecialScreenTimeoutType
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import kotlinx.collections.immutable.toPersistentList
 
+/**
+ * The fixed set of timeouts the app offers. [screenTimeouts] are the real, selectable durations
+ * (15s → 1h, plus never-sleep); [specialScreenTimeouts] are the two sentinel actions
+ * ([SpecialScreenTimeoutType]) used by Tasker and the cycle logic. Both are immutable lists.
+ */
 object ScreenTimeoutCatalog {
     val screenTimeouts = listOf(
         ScreenTimeout(

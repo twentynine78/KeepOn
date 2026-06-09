@@ -24,6 +24,11 @@ import fr.twentynine.keepon.ui.widget.theme.applyRootBackground
 import fr.twentynine.keepon.ui.widget.theme.rememberLegacyWidgetBackground
 import fr.twentynine.keepon.ui.widget.theme.rememberWidgetDimens
 
+/**
+ * The widget's success layout: the generated timeout-icon [contentBitmap] centered on the themed,
+ * rounded widget background, tinted by the active/inactive palette and clickable via [onClickAction]
+ * (falls back to a progress indicator while the bitmap is null).
+ */
 @Composable
 fun KeepOnWidgetContent(
     borderColor: Color,

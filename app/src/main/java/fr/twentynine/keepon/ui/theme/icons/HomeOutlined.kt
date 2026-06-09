@@ -15,6 +15,7 @@ private fun VectorPreview() {
     Image(HomeOutlined, null)
 }
 
+/** Outlined "Home" nav icon (shown when the Home destination is not selected). */
 val HomeOutlined: ImageVector
     get() {
         if (_HomeOutlined != null) {

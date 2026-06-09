@@ -6,6 +6,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.domain.gateway.MemoryCacheManager
 import javax.inject.Inject
 
+/** Clears Coil's in-memory image cache (the generated timeout icons) via [MemoryCacheManager]. */
 class MemoryCacheManagerImpl @Inject constructor(@param:ApplicationContext private val context: Context) : MemoryCacheManager {
     override fun clear() {
         context.imageLoader.memoryCache?.clear()

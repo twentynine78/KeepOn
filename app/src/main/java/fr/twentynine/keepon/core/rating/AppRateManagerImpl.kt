@@ -8,6 +8,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.domain.gateway.AppRateManager
 import javax.inject.Inject
 
+/**
+ * Drives the "rate the app" flow against the Play Store: opens the store listing, reports whether a
+ * handler for the market intent exists (so the rate tip is hidden on devices without it), and exposes
+ * the install time used to gate when the tip first appears.
+ */
 class AppRateManagerImpl @Inject constructor(@param:ApplicationContext private val context: Context) : AppRateManager {
 
     private val packageName by lazy { context.packageName }

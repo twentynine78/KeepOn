@@ -108,6 +108,7 @@ private fun rememberNeededPermissions(
     }
 }
 
+/** Permission flow for the main activity: maps [uiState]'s permission gaps to [PermissionRequestScreen]. */
 @Composable
 fun MainPermissionScreen(
     uiState: MainViewUIState.Success,
@@ -131,6 +132,7 @@ fun MainPermissionScreen(
     )
 }
 
+/** Permission flow for the Tasker-edit activity: the [TaskerUIEvent] counterpart of [MainPermissionScreen]. */
 @Composable
 fun TaskerPermissionScreen(
     uiState: TaskerEditUIState.Success,
@@ -151,6 +153,10 @@ fun TaskerPermissionScreen(
     )
 }
 
+/**
+ * Stateless permission-onboarding screen: walks the user through the [neededPermissionList], each row
+ * triggering its own request, with a button to re-check ([updatePermissions]) once they've granted them.
+ */
 @Composable
 fun PermissionRequestScreen(
     neededPermissionList: List<NeededPermission>,

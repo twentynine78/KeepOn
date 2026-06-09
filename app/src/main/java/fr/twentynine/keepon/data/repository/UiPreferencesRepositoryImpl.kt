@@ -19,6 +19,11 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
+/**
+ * DataStore-backed [UiPreferencesRepository]: persists the icon style, icon-change transition, the
+ * dismissed-tips set and the "QS tile added" flag, all on the IO dispatcher (JSON-encoding the model
+ * values). Legacy icon-style/review fallbacks are layered on by [MigratingUiPreferencesRepository].
+ */
 class UiPreferencesRepositoryImpl @Inject constructor(
     private val preferenceDataStoreHelper: PreferenceDataStoreHelper,
 ) : UiPreferencesRepository {

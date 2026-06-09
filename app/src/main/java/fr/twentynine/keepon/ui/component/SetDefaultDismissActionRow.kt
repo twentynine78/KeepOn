@@ -18,6 +18,11 @@ import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 private const val CONTENT_COLOR_ANIMATION_DURATION_MS = 200
 private const val BACKGROUND_COLOR_ANIMATION_DURATION_MS = 400
 
+/**
+ * The swipe background specialized for the "set as default" gesture on a timeout row: it animates its
+ * colors/label by [dismissProgress] and shows whether the swipe will set this timeout as the default
+ * or is a no-op (already default / not swipeable).
+ */
 @Composable
 fun SetDefaultDismissActionRow(
     dismissDirection: SwipeToDismissBoxValue,

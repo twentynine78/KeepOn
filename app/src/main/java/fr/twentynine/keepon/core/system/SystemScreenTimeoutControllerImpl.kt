@@ -8,6 +8,11 @@ import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.gateway.SystemScreenTimeoutController
 import javax.inject.Inject
 
+/**
+ * Reads and writes the system `SCREEN_OFF_TIMEOUT` setting (requires WRITE_SETTINGS). App-initiated
+ * changes go through [DesiredScreenTimeoutController] so the monitor worker can tell them apart from
+ * the user changing the timeout in system settings. Reads fall back to a 1-minute default.
+ */
 class SystemScreenTimeoutControllerImpl @Inject constructor(@param:ApplicationContext private val context: Context) : SystemScreenTimeoutController {
 
     private val contentResolver by lazy { context.contentResolver }

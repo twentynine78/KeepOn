@@ -12,6 +12,7 @@ import fr.twentynine.keepon.domain.gateway.WidgetUpdater
 import fr.twentynine.keepon.ui.widget.WidgetUpdaterImpl
 import javax.inject.Singleton
 
+/** Binds the gateways that refresh external surfaces (widget, QS tile) after a state change. */
 @Module
 @InstallIn(SingletonComponent::class)
 interface ComponentUpdaterModule {

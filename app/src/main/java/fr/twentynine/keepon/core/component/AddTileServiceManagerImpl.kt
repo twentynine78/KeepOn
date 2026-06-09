@@ -12,6 +12,11 @@ import fr.twentynine.keepon.services.KeepOnTileService
 import java.util.concurrent.Executor
 import javax.inject.Inject
 
+/**
+ * Prompts the user (Android 13+) to add the KeepOn quick-settings tile via [StatusBarManager],
+ * reporting the outcome through the success/error callbacks. A no-op on older versions, where tiles
+ * can only be added manually.
+ */
 class AddTileServiceManagerImpl @Inject constructor(@param:ApplicationContext private val context: Context) : AddTileServiceManager {
 
     override fun requestAddTileService(successCallback: () -> Unit, errorCallback: (Int) -> Unit) {

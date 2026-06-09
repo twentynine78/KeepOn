@@ -20,6 +20,7 @@ import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.ui.state.WidgetUIState
 import fr.twentynine.keepon.ui.widget.theme.KeepOnWidgetColorScheme
 
+/** The widget's error state: the error message on the widget background, tapping it opens the app. */
 @Composable
 fun KeepOnWidgetError(
     widgetUIState: WidgetUIState.Error,

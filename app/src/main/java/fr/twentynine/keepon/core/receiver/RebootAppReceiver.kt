@@ -11,6 +11,11 @@ import fr.twentynine.keepon.core.util.goAsync
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
+/**
+ * Restores KeepOn after a reboot or an app update: on `BOOT_COMPLETED` it re-applies the default
+ * timeout, and on `MY_PACKAGE_REPLACED` it restores the saved state. Each handler runs asynchronously
+ * via [goAsync]; implicit/foreign intents are ignored.
+ */
 @AndroidEntryPoint
 class RebootAppReceiver : BroadcastReceiver() {
 

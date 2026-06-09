@@ -2,6 +2,8 @@ package fr.twentynine.keepon.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+// The Material 3 color palette tokens (light and dark) the KeepOn theme is built from.
+
 val md_theme_light_primary = Color(0xFF0060A9)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)
 val md_theme_light_primaryContainer = Color(0xFFD3E4FF)

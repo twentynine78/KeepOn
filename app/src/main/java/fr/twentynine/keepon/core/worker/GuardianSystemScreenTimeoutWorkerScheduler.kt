@@ -5,6 +5,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import java.util.concurrent.TimeUnit
 
+/** Enqueues the hourly unique periodic [GuardianSystemScreenTimeoutWorker] (kept if already scheduled). */
 object GuardianSystemScreenTimeoutWorkerScheduler {
 
     private const val GUARDIAN_SYSTEM_SCREEN_TIMEOUT_WORKER = "guardian_system_screen_timeout_worker"

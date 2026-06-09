@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
+/** Provides the application-lifetime [ApplicationScope] coroutine scope (see its qualifier). */
 @Module
 @InstallIn(SingletonComponent::class)
 object CoroutineScopeModule {

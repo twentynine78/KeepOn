@@ -15,6 +15,7 @@ private fun VectorPreview() {
     Image(HomeFilled, null)
 }
 
+/** Filled "Home" nav icon (shown when the Home destination is selected). */
 val HomeFilled: ImageVector
     get() {
         if (_HomeFilled != null) {

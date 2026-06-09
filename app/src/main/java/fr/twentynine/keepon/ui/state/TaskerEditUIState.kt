@@ -5,6 +5,10 @@ import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 
+/**
+ * The state the Tasker-edit screen renders: [Loading], [Error], or [Success] with the selectable
+ * timeouts (regular + special), the permission flags, and the user's current pick.
+ */
 sealed interface TaskerEditUIState {
     data object Loading : TaskerEditUIState
     data class Error(val error: String) : TaskerEditUIState

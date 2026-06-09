@@ -28,6 +28,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
 
+/**
+ * Section header inside a settings card: an optional leading icon and a [title]. When [descText] is
+ * given, an info icon appears and tapping the row toggles an expandable description below it.
+ */
 @Composable
 fun CardHeader(
     modifier: Modifier = Modifier,

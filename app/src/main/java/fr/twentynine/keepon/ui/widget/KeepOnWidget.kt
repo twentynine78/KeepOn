@@ -19,6 +19,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 
+/**
+ * The Glance app widget. Collects the reactive [WidgetUIState] (via the [WidgetEntryPoint], since a
+ * widget isn't Hilt-injected) and renders [KeepOnWidgetView]; also supplies the static preview. Uses
+ * a responsive size mode so it composes once per [WIDGET_SIZES] bucket.
+ */
 class KeepOnWidget : GlanceAppWidget() {
     override val sizeMode: SizeMode
         get() = SizeMode.Responsive(WIDGET_SIZES)

@@ -15,6 +15,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
+/**
+ * Holds the app's permission state (write-settings, battery-optimization exemption, post-notifications)
+ * as reactive [Flow]s the UI observes. The `refresh*` methods re-read the live system state into those
+ * flows, since these permissions can change outside the app with no callback.
+ */
 class PermissionStateGatewayImpl @Inject constructor(
     @param:ApplicationContext private val context: Context,
 ) : PermissionStateGateway {

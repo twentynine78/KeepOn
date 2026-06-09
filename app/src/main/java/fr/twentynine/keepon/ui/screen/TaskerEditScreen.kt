@@ -60,6 +60,11 @@ import fr.twentynine.keepon.ui.component.KeepOnRichTooltip
 import fr.twentynine.keepon.ui.component.TimeoutIconChip
 import kotlinx.coroutines.launch
 
+/**
+ * Root of the Tasker plug-in edit activity. Shows the error/permission states when needed, otherwise
+ * the [TaskerEditScreen] in a scaffold with a save affordance ([saveTaskerConfiguration] finishes the
+ * activity, returning the chosen timeout to Tasker).
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskerEditRoute(
@@ -158,6 +163,11 @@ fun TaskerEditRoute(
     }
 }
 
+/**
+ * Tasker-edit content (stateless): the list of regular timeouts plus the two special actions
+ * (restore-default, previous), with the current selection highlighted. Picking one emits a
+ * [TaskerUIEvent] through [onEvent].
+ */
 @Composable
 fun TaskerEditScreen(
     screenTimeouts: List<ScreenTimeoutUI>,

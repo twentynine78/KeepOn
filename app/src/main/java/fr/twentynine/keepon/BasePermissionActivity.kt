@@ -46,15 +46,23 @@ abstract class BasePermissionActivity : ComponentActivity() {
             }
         }
 
+    /** Sends the user to the system "Modify system settings" screen for this app. */
     protected fun requestWriteSystemSettingPermission() =
         systemSettingPermissionManager.requestWriteSystemSettingsPermission()
 
+    /** Opens the system dialog/screen to exempt the app from battery optimization. */
     protected fun requestDisableBatteryOptimization() =
         batteryOptimizationManager.requestDisableBatteryOptimization()
 
+    /** Launches the POST_NOTIFICATIONS runtime permission prompt (Android 13+). */
     protected fun requestPostNotificationPermission() =
         postNotificationPermissionManager.requestPostNotificationPermission(requestPostNotificationLauncher)
 
+    /**
+     * Re-reads the write-settings and battery-optimization permission state into the gateway. Unlike
+     * [onResume] it does not refresh the notification permission, since that one is observed via its
+     * own launcher result.
+     */
     protected fun checkNeededPermissions() {
         permissionStateGateway.refreshWriteSystemSettings()
         permissionStateGateway.refreshBatteryOptimization()

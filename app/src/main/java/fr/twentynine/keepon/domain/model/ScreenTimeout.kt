@@ -4,10 +4,16 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import kotlinx.serialization.Serializable
 
+/**
+ * A screen timeout, as the raw system value in milliseconds. Also carries the two special sentinel
+ * values ([SpecialScreenTimeoutType]) for "restore default" and "previous", and [Int.MAX_VALUE] for
+ * the never-sleep case, which the display formatters resolve to their own labels.
+ */
 @Serializable
 data class ScreenTimeout(
     val value: Int
 ) {
+    /** Long, spelled-out label (e.g. "2 minutes", "Infinite") used in menus and tooltips. */
     fun getFullDisplayTimeout(stringResourceProvider: StringResourceProvider): String {
         return when {
             value == Int.MAX_VALUE ->
@@ -31,6 +37,7 @@ data class ScreenTimeout(
         }
     }
 
+    /** Compact label (e.g. "2m", "30s", "∞") used on the generated timeout icon and the chip. */
     fun getShortDisplayTimeout(stringResourceProvider: StringResourceProvider): String {
         return when {
             value == Int.MAX_VALUE ->
