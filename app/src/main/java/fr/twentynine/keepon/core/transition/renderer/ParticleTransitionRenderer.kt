@@ -154,6 +154,6 @@ class ParticleTransitionRenderer(private val transition: ParticleTransition) : I
         const val CURL = 0.22f
         const val ARC_PEAK = 4f
 
-        val TWO_PI = (2.0 * Math.PI).toFloat()
+        const val TWO_PI = (2.0 * Math.PI).toFloat()
     }
 }

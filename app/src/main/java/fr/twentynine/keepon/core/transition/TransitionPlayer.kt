@@ -7,6 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Plays a prepared icon-change transition as a frame sequence, shared by every surface (the QS tile,
@@ -43,7 +44,7 @@ object TransitionPlayer {
         emitFrame: (Bitmap) -> Unit,
     ) {
         val frameCount = IconTransitionTiming.frameCount(durationMs, maxFrames)
-        val frameDelayMs = (durationMs / frameCount).toLong()
+        val frameDelayMs = (durationMs / frameCount).toLong().milliseconds
         val frames = withContext(renderContext) {
             IconTransitionRendererFactory.create(transition).prepare(from, to)
         }

@@ -21,6 +21,7 @@ import fr.twentynine.keepon.ui.viewmodel.MainViewModel
 import fr.twentynine.keepon.core.util.BundleScrubber
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
@@ -84,8 +85,8 @@ class MainActivity : BasePermissionActivity() {
         lifecycleScope.launch(Dispatchers.Default) {
             val successUIState = mainViewModel.uiState
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                .filter { state -> state is MainViewUIState.Success }
-                .firstOrNull() as? MainViewUIState.Success
+                .filterIsInstance<MainViewUIState.Success>()
+                .firstOrNull()
 
             if (successUIState != null && successUIState.keepOnIsActive && successUIState.resetTimeoutWhenScreenOff) {
                 screenOffReceiverServiceManager.startService()

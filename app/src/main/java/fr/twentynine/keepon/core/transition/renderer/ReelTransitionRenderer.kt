@@ -12,7 +12,7 @@ import fr.twentynine.keepon.domain.model.ReelTransition
 import kotlin.math.cos
 import kotlin.math.sin
 
-private val DEGREES_TO_RADIANS = (Math.PI / 180.0).toFloat()
+private const val DEGREES_TO_RADIANS = (Math.PI / 180.0).toFloat()
 
 /**
  * Cylindrical reel: rolls the drum one notch so the outgoing glyph wraps off the bottom while the
@@ -145,6 +145,6 @@ class ReelTransitionRenderer(private val transition: ReelTransition) : IconTrans
         // Camera floor: distance must exceed the radius (multiple > 1) or the projection diverges.
         const val MIN_CAMERA = 1.2f
 
-        val HALF_PI = (Math.PI / 2.0).toFloat()
+        const val HALF_PI = (Math.PI / 2.0).toFloat()
     }
 }

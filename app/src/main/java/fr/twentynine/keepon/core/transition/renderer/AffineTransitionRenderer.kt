@@ -13,7 +13,7 @@ import fr.twentynine.keepon.domain.model.AffineTransition
 import fr.twentynine.keepon.domain.model.LayerTransform
 import kotlin.math.cos
 
-private val DEGREES_TO_RADIANS = (Math.PI / 180.0).toFloat()
+private const val DEGREES_TO_RADIANS = (Math.PI / 180.0).toFloat()
 
 /**
  * Composites the outgoing and incoming layers with a translate/scale/alpha transform (plus a

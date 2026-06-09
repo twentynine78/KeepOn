@@ -105,10 +105,11 @@ fun KeepOnWidgetView(
                     WidgetTransitionState.markTimeout(widgetKey, currentState.currentScreenTimeout)
                     // Animate only on a real timeout change (a previous icon exists and the value
                     // changed) — never on the first render or a pure style change.
-                    if (currentState.iconTransitionAnimation.enabled &&
-                        previousBitmap != null &&
-                        previousTimeout != null &&
+                    val timeoutChanged = previousTimeout != null &&
                         currentState.currentScreenTimeout != previousTimeout
+                    if (currentState.iconTransitionAnimation.enabled &&
+                        timeoutChanged &&
+                        previousBitmap != null
                     ) {
                         playWidgetTransition(
                             previousBitmap,

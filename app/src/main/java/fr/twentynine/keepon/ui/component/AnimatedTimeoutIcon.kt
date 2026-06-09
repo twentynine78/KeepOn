@@ -47,6 +47,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val FLIP_CAMERA_DISTANCE = 16f
 
@@ -94,7 +95,7 @@ fun AnimatedTimeoutIcon(
         if (previewKey == lastPreviewKey) return@LaunchedEffect // first composition: nothing new to preview
         lastPreviewKey = previewKey
         previewFrame = null // show the crisp icon while the debounce settles
-        delay(PREVIEW_DEBOUNCE_MS)
+        delay(PREVIEW_DEBOUNCE_MS.milliseconds)
         val currentIcon = loadIconBitmap(context, currentScreenTimeout, timeoutIconStyle) ?: return@LaunchedEffect
         val nextIcon = if (nextScreenTimeout != currentScreenTimeout) {
             loadIconBitmap(context, nextScreenTimeout, timeoutIconStyle) ?: currentIcon
