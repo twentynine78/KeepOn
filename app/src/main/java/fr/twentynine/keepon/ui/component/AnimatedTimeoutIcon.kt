@@ -46,25 +46,20 @@ import fr.twentynine.keepon.ui.util.rememberTimeoutIconModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.milliseconds
 
 private const val FLIP_CAMERA_DISTANCE = 16f
-
-// Coalesces the rapid config changes of dragging the duration slider into a single preview play.
-private const val PREVIEW_DEBOUNCE_MS = 150L
 
 /**
  * The generated timeout icon with an optional change transition. When [animation] is enabled, a real
  * timeout change animates the previous and the new icon following its catalog entry (the same motion
  * the QS tile uses): an [AffineTransition] cross-animates the two layers (translation, scale, alpha
  * and a true 3D flip via `rotationX`) in Compose, while a [RenderedTransition] plays frames
- * composited by the shared renderer. Style changes and the first render update instantly.
+ * composited by the shared renderer. Style changes and the first render update instantly. (The
+ * settings preview of an effect lives in the Style screen's animation grid, not here.)
  */
 @Composable
 fun AnimatedTimeoutIcon(
     currentScreenTimeout: ScreenTimeout,
-    nextScreenTimeout: ScreenTimeout,
     timeoutIconStyle: TimeoutIconStyle,
     animation: IconTransitionAnimation,
     tint: Color,
@@ -73,61 +68,8 @@ fun AnimatedTimeoutIcon(
     modifier: Modifier = Modifier,
 ) {
     val colorFilter = remember(tint) { ColorFilter.tint(tint) }
-    val context = LocalContext.current
     val transition = remember(animation.typeId) { IconTransitionCatalog.fromId(animation.typeId) }
     val durationMs = remember(animation.durationStep) { IconTransitionTiming.durationMs(animation.durationStep) }
-
-    // Preview: replay the effect on the FAB whenever the user changes its type or duration, or enables
-    // the feature (not on disable), so it can be judged from the Style screen without cycling the
-    // timeout. It plays a double pass through the next timeout's glyph (current -> next -> current) for
-    // every type, settling back on the current icon. [previewKey] captures the triggering inputs and is
-    // null while disabled; a short debounce coalesces the rapid changes of dragging the duration slider.
-    // The icon style and the timeouts are effect keys but deliberately NOT part of [previewKey]:
-    // changing one mid-preview cancels the in-flight play (so it never finishes with stale glyphs)
-    // without replaying the preview — only animation-parameter changes replay it.
-    var previewFrame by remember { mutableStateOf<Bitmap?>(null) }
-    val previewKey = if (animation.enabled) "${animation.typeId}@${animation.durationStep}" else null
-    var lastPreviewKey by remember { mutableStateOf(previewKey) }
-    LaunchedEffect(previewKey, timeoutIconStyle, currentScreenTimeout, nextScreenTimeout) {
-        if (previewKey == null) {
-            // Disabled: no preview, and clear the key so a later re-enable replays it.
-            previewFrame = null
-            lastPreviewKey = null
-            return@LaunchedEffect
-        }
-        if (previewKey == lastPreviewKey) {
-            // First composition, or a style/timeout change relaunched the effect: nothing new to
-            // preview — just drop any in-flight preview frame so the icon reflects the fresh inputs.
-            previewFrame = null
-            return@LaunchedEffect
-        }
-        lastPreviewKey = previewKey
-        previewFrame = null // show the crisp icon while the debounce settles
-        delay(PREVIEW_DEBOUNCE_MS.milliseconds)
-        val currentIcon = loadIconBitmap(context, currentScreenTimeout, timeoutIconStyle) ?: return@LaunchedEffect
-        val nextIcon = if (nextScreenTimeout != currentScreenTimeout) {
-            loadIconBitmap(context, nextScreenTimeout, timeoutIconStyle) ?: currentIcon
-        } else {
-            currentIcon
-        }
-        // Double pass through the next timeout's glyph: every effect previews a real transition
-        // (current -> next -> current) and settles back on the current icon — morph/warp included,
-        // and the interposed glyph appears through the animation rather than popping in.
-        playPreview(transition, currentIcon, nextIcon, durationMs) { frame -> previewFrame = frame }
-        playPreview(transition, nextIcon, currentIcon, durationMs) { frame -> previewFrame = frame }
-        previewFrame = null
-    }
-
-    val preview = previewFrame
-    if (preview != null) {
-        Image(
-            bitmap = preview.asImageBitmap(),
-            contentDescription = contentDescription,
-            colorFilter = colorFilter,
-            modifier = modifier.size(iconSize),
-        )
-        return
-    }
 
     if (!animation.enabled) {
         TimeoutIcon(currentScreenTimeout, timeoutIconStyle, colorFilter, contentDescription, modifier.size(iconSize))
@@ -277,25 +219,8 @@ private fun RenderedFrameTimeoutIcon(
     }
 }
 
-/** Plays one preview pass of [transition] from [from] to [to], compositing frames off the main thread. */
-private suspend fun playPreview(
-    transition: IconTransition,
-    from: Bitmap,
-    to: Bitmap,
-    durationMs: Int,
-    emit: (Bitmap) -> Unit,
-) = TransitionPlayer.play(
-    transition = transition,
-    from = from,
-    to = to,
-    durationMs = durationMs,
-    maxFrames = IconTransitionTiming.FRAME_COUNT,
-    renderContext = Dispatchers.Default,
-    emitFrame = emit,
-)
-
 /** Loads the generated timeout-icon bitmap through Coil (served from cache once it has been shown). */
-private suspend fun loadIconBitmap(
+internal suspend fun loadIconBitmap(
     context: Context,
     screenTimeout: ScreenTimeout,
     timeoutIconStyle: TimeoutIconStyle,

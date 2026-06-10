@@ -50,6 +50,7 @@ import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
 import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.IconTransitionTiming
+import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.domain.catalog.IconFontFamilyCatalog
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
@@ -64,6 +65,7 @@ import fr.twentynine.keepon.ui.theme.StyleRadioGlyphInset
 import fr.twentynine.keepon.ui.theme.StyleSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.theme.StyleTopSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.component.CardHeader
+import fr.twentynine.keepon.ui.component.IconTransitionTypeGrid
 import fr.twentynine.keepon.ui.component.ItemCard
 import fr.twentynine.keepon.ui.component.LabeledControlRow
 import fr.twentynine.keepon.ui.component.SegmentedCheckboxGroup
@@ -84,6 +86,7 @@ fun StyleRoute(
         timeoutIconStyle = uiState.timeoutIconStyle,
         iconTransitionAnimation = uiState.iconTransitionAnimation,
         iconTransitionOptions = uiState.iconTransitionOptions,
+        currentScreenTimeout = uiState.currentScreenTimeout,
         onEvent = onEvent,
         navType = navType,
         paddingValue = paddingValue,
@@ -100,6 +103,7 @@ fun StyleScreen(
     timeoutIconStyle: TimeoutIconStyle,
     iconTransitionAnimation: IconTransitionAnimation,
     iconTransitionOptions: List<IconTransitionOptionUI>,
+    currentScreenTimeout: ScreenTimeout,
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
     paddingValue: PaddingValues,
@@ -121,6 +125,8 @@ fun StyleScreen(
             IconTransitionAnimationCard(
                 iconTransitionAnimation = iconTransitionAnimation,
                 iconTransitionOptions = iconTransitionOptions,
+                currentScreenTimeout = currentScreenTimeout,
+                timeoutIconStyle = timeoutIconStyle,
                 onEvent = onEvent,
                 modifier = maxWidthModifier,
             )
@@ -186,6 +192,8 @@ private const val DISABLED_CONTENT_ALPHA = 0.38f
 fun IconTransitionAnimationCard(
     iconTransitionAnimation: IconTransitionAnimation,
     iconTransitionOptions: List<IconTransitionOptionUI>,
+    currentScreenTimeout: ScreenTimeout,
+    timeoutIconStyle: TimeoutIconStyle,
     onEvent: (MainUIEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -232,32 +240,23 @@ fun IconTransitionAnimationCard(
                         .padding(bottom = 4.dp, start = StyleContentInset, end = StyleContentInset)
                         .alpha(if (animationsEnabled) 1f else DISABLED_CONTENT_ALPHA),
                 )
-                iconTransitionOptions.forEach { option ->
-                    LabeledControlRow(
-                        onClick = {
-                            onEvent(
-                                MainUIEvent.UpdateIconTransitionAnimation(
-                                    iconTransitionAnimation.copy(typeId = option.id)
-                                )
+                IconTransitionTypeGrid(
+                    options = iconTransitionOptions,
+                    animation = iconTransitionAnimation,
+                    currentScreenTimeout = currentScreenTimeout,
+                    timeoutIconStyle = timeoutIconStyle,
+                    onSelect = { id ->
+                        onEvent(
+                            MainUIEvent.UpdateIconTransitionAnimation(
+                                iconTransitionAnimation.copy(typeId = id)
                             )
-                        },
-                        enabled = animationsEnabled,
-                        leadingGlyphInset = StyleRadioGlyphInset,
-                        leading = {
-                            RadioButton(
-                                selected = option.id == iconTransitionAnimation.typeId,
-                                onClick = null,
-                                enabled = animationsEnabled,
-                            )
-                        },
-                        label = {
-                            Text(
-                                modifier = Modifier.alpha(if (animationsEnabled) 1f else DISABLED_CONTENT_ALPHA),
-                                text = option.label,
-                            )
-                        },
-                    )
-                }
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = StyleContentInset)
+                        .alpha(if (animationsEnabled) 1f else DISABLED_CONTENT_ALPHA),
+                )
 
                 FontOptionSlider(
                     label = stringResource(R.string.icon_transition_duration),

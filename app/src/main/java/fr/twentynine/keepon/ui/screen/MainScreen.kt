@@ -228,23 +228,11 @@ private fun KeepOnView(
     }
     PrefetchTimeoutIcons(cycleTimeouts, uiState.timeoutIconStyle)
 
-    // The timeout the FAB would cycle to next, used as the interposed glyph in the icon-animation
-    // preview (current -> next -> current). Derived from the selected list, so it is already prefetched.
-    val previewNextTimeout = remember(cycleTimeouts, uiState.currentScreenTimeout) {
-        val idx = cycleTimeouts.indexOf(uiState.currentScreenTimeout)
-        when {
-            cycleTimeouts.isEmpty() -> uiState.currentScreenTimeout
-            idx == -1 -> cycleTimeouts.first()
-            else -> cycleTimeouts[(idx + 1) % cycleTimeouts.size]
-        }
-    }
-
     KeepOnNavigationWrapper(
         topLevelDestinations = topLevelDestinations,
         selectedDestination = selectedDestination,
         keepOnIsActive = uiState.keepOnIsActive,
         currentScreenTimeout = uiState.currentScreenTimeout,
-        nextScreenTimeout = previewNextTimeout,
         currentTimeoutDisplay = uiState.currentTimeoutDisplay,
         timeoutIconStyle = uiState.timeoutIconStyle,
         iconTransitionAnimation = uiState.iconTransitionAnimation,
@@ -274,7 +262,6 @@ private fun KeepOnView(
                     TimeoutFab(
                         keepOnIsActive = uiState.keepOnIsActive,
                         currentScreenTimeout = uiState.currentScreenTimeout,
-                        nextScreenTimeout = previewNextTimeout,
                         currentTimeoutDisplay = uiState.currentTimeoutDisplay,
                         timeoutIconStyle = uiState.timeoutIconStyle,
                         iconTransitionAnimation = uiState.iconTransitionAnimation,
