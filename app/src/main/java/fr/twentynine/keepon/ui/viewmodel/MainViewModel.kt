@@ -139,6 +139,9 @@ class MainViewModel @Inject constructor(
     private fun setDefaultScreenTimeout(newScreenTimeout: ScreenTimeout) {
         viewModelScope.launch {
             setDefaultScreenTimeoutUseCase(newScreenTimeout)
+            // The user just used the swipe-to-set-default gesture: the first-launch swipe hint
+            // has served its purpose, stop replaying it on the next launches.
+            setIsFirstLaunchUseCase(false)
         }
     }
 
