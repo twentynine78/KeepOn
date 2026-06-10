@@ -26,7 +26,7 @@ object TimeoutIconGenerator {
     private const val DEFAULT_TEXT_SIZE = 20f
 
     private const val FONT_SIZE_STEP_COEF = 4
-    private const val HORIZONTAL_PADDING_STEP_COEF = 2
+    private const val HORIZONTAL_PADDING_STEP_COEF = 0.5f
     private const val VERTICAL_PADDING_STEP_COEF = 2
     private const val MAX_IMAGE_HEIGHT_PERCENT = 0.6f
 

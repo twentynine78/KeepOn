@@ -389,7 +389,12 @@ fun FontStyleCard(
                 Subtitle(
                     text = stringResource(R.string.font_style_parameters_subtitle),
                     modifier = Modifier
-                        .padding(horizontal = StyleContentInset, vertical = 8.dp)
+                        .padding(
+                            start = StyleContentInset,
+                            end = StyleContentInset,
+                            top = 8.dp,
+                            bottom = 18.dp
+                        )
                         .align(Alignment.Start),
                 )
                 SegmentedCheckboxGroup(
