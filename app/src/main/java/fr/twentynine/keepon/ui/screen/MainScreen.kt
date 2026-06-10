@@ -32,6 +32,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.material3.rememberBottomAppBarState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -61,6 +62,7 @@ import fr.twentynine.keepon.ui.navigation.NavigationDestinationWithBadge
 import fr.twentynine.keepon.ui.navigation.TOP_LEVEL_DESTINATIONS
 import fr.twentynine.keepon.ui.navigation.withBadge
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
+import fr.twentynine.keepon.ui.util.expand
 import fr.twentynine.keepon.ui.util.plus
 
 private fun NavigationSuiteType.toKeepOnNavType() = when (this) {
@@ -200,6 +202,14 @@ private fun KeepOnView(
     )
     val combinedNestedScrollConnection = remember(topBarScrollBehavior, bottomBarScrollBehavior) {
         topBarScrollBehavior.nestedScrollConnection + bottomBarScrollBehavior.nestedScrollConnection
+    }
+
+    // Re-deploy the bottom bar whenever we land back on Home (system back, back gesture, or tapping
+    // the Home tab): the scroll state that hides it is shared across destinations, so a bar collapsed
+    // by scrolling on Style/About would otherwise stay hidden on return.
+    val isOnHome = selectedDestination == NavigationDestination.Home.route
+    LaunchedEffect(isOnHome) {
+        if (isOnHome) bottomAppBarScrollState.expand()
     }
 
     val backgroundColor = MaterialTheme.colorScheme.background

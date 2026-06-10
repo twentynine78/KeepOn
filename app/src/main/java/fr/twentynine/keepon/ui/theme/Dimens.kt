@@ -38,4 +38,4 @@ val StyleControlRowVerticalPadding = 8.dp
 val StyleListRowVerticalPadding = 16.dp
 
 /** Vertical padding of a standalone switch row (matches the home behavior switch). */
-val StyleSwitchRowVerticalPadding = 16.dp
+val StyleSwitchRowVerticalPadding = 12.dp

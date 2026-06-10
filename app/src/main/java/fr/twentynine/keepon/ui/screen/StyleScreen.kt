@@ -40,7 +40,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -68,6 +67,7 @@ import fr.twentynine.keepon.ui.theme.StyleSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.ItemCard
 import fr.twentynine.keepon.ui.component.LabeledControlRow
+import fr.twentynine.keepon.ui.component.Subtitle
 import kotlin.math.ceil
 
 /** Style destination, stateful wrapper: feeds the icon style/transition slices of [uiState] to [StyleScreen]. */
@@ -205,7 +205,7 @@ fun IconTransitionAnimationCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                    .padding(top = 4.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 LabeledControlRow(
@@ -229,11 +229,11 @@ fun IconTransitionAnimationCard(
                 )
 
                 val animationsEnabled = iconTransitionAnimation.enabled
-                StyleSubtitle(
+                Subtitle(
                     text = stringResource(R.string.icon_transition_type_subtitle),
                     modifier = Modifier
                         .align(Alignment.Start)
-                        .padding(horizontal = StyleContentInset)
+                        .padding(top = 8.dp, bottom = 4.dp, start = StyleContentInset, end = StyleContentInset)
                         .alpha(if (animationsEnabled) 1f else DISABLED_CONTENT_ALPHA),
                 )
                 iconTransitionOptions.forEach { option ->
@@ -283,26 +283,6 @@ fun IconTransitionAnimationCard(
             }
         }
     }
-}
-
-/**
- * A subsection label inside a settings card (e.g. "Animation type", "Animation duration"). Bold and
- * tinted with the accent color so it reads as a heading above its controls, a clear tier between the
- * card header and the plain option labels.
- */
-@Composable
-private fun StyleSubtitle(text: String, modifier: Modifier = Modifier) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.bodyLarge,
-        fontWeight = FontWeight.Bold,
-        color = lerp(
-            start = MaterialTheme.colorScheme.onSurface,
-            stop = MaterialTheme.colorScheme.primary,
-            fraction = 0.6f
-        ),
-        modifier = modifier,
-    )
 }
 
 @Composable
@@ -411,7 +391,7 @@ fun FontStyleCard(
                     .fillMaxWidth()
                     .padding(top = 8.dp, bottom = 16.dp),
             ) {
-                StyleSubtitle(
+                Subtitle(
                     text = stringResource(R.string.font_style_parameters_subtitle),
                     modifier = Modifier
                         .padding(horizontal = StyleContentInset, vertical = 8.dp)
@@ -421,27 +401,30 @@ fun FontStyleCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = StyleContentInset - StyleRadioGlyphInset, end = StyleContentInset, bottom = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalArrangement = Arrangement.Start //spacedBy(48.dp), //SpaceBetween,
                 ) {
                     StyleCheckboxRow(
+                        modifier = Modifier.weight(1 / 3f),
                         text = stringResource(R.string.font_style_parameters_bold),
                         checked = timeoutIconStyle.iconStyleFontBold,
                         onCheckedChange = { onBoldChange(!timeoutIconStyle.iconStyleFontBold) }
                     )
                     StyleCheckboxRow(
+                        modifier = Modifier.weight(1 / 3f),
                         text = stringResource(R.string.font_style_parameters_italic),
                         checked = timeoutIconStyle.iconStyleFontItalic,
                         onCheckedChange = { onItalicChange(!timeoutIconStyle.iconStyleFontItalic) }
                     )
                     StyleCheckboxRow(
+                        modifier = Modifier.weight(1 / 3f),
                         text = stringResource(R.string.font_style_parameters_underline),
                         checked = timeoutIconStyle.iconStyleFontUnderline,
                         onCheckedChange = { onUnderlineChange(!timeoutIconStyle.iconStyleFontUnderline) }
                     )
                 }
 
-                StyleSubtitle(
+                Subtitle(
                     text = stringResource(R.string.font_style_parameters_appearance_subtitle),
                     modifier = Modifier
                         .align(Alignment.Start)
@@ -467,12 +450,13 @@ fun FontStyleCard(
 
 @Composable
 private fun StyleCheckboxRow(
+    modifier: Modifier = Modifier,
     text: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .clickable { onCheckedChange(!checked) }
             .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.Start,
@@ -591,10 +575,10 @@ private fun FontOptionSlider(
             bottom = bottomPadding,
         )
     ) {
-        StyleSubtitle(
+        Subtitle(
             text = label,
             modifier = Modifier
-                .padding(bottom = 24.dp)
+                .padding(top = 8.dp, bottom = 24.dp)
                 .alpha(if (enabled) 1f else DISABLED_CONTENT_ALPHA),
         )
         Slider(

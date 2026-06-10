@@ -22,7 +22,6 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -44,9 +43,9 @@ import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.screenContentModifier
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
-import fr.twentynine.keepon.ui.theme.SUBTITLE_CONTENT_ALPHA
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.ItemCard
+import fr.twentynine.keepon.ui.component.Subtitle
 
 /** About destination, stateful wrapper: passes the app info and credits through to [AboutScreen]. */
 @Composable
@@ -101,10 +100,8 @@ fun AboutScreen(
 
             item(key = "section_${section.typeName}") {
                 Column(modifier = maxWidthModifier) {
-                    Text(
+                    Subtitle(
                         text = section.typeName,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = SUBTITLE_CONTENT_ALPHA),
                         modifier = Modifier
                             .padding(start = 32.dp, end = 32.dp, top = topPadding, bottom = 8.dp),
                     )
@@ -166,7 +163,7 @@ fun AppInfoCard(
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(start = 12.dp, top = 16.dp, bottom = 16.dp),
+                        .padding(start = 8.dp, top = 16.dp, bottom = 16.dp),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.Start
                 ) {
@@ -265,8 +262,6 @@ fun CreditInfoCardRow(
             verticalAlignment = Alignment.Top
         ) {
             Column(
-                modifier = Modifier
-                    .padding(start = 4.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start
             ) {

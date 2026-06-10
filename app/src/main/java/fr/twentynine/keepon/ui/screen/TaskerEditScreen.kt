@@ -53,10 +53,10 @@ import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.component.TimeoutRowLabel
 import fr.twentynine.keepon.ui.util.screenContentModifier
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
-import fr.twentynine.keepon.ui.theme.SUBTITLE_CONTENT_ALPHA
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.ItemCard
 import fr.twentynine.keepon.ui.component.KeepOnRichTooltip
+import fr.twentynine.keepon.ui.component.Subtitle
 import fr.twentynine.keepon.ui.component.TimeoutIconChip
 import kotlinx.coroutines.launch
 
@@ -234,10 +234,15 @@ fun TaskerScreenTimeoutList(
 
         item(key = "dynamicTitle") {
             Column(modifier = maxWidthModifier) {
-                Text(
+                /*Text(
                     text = stringResource(R.string.tasker_dynamic_value_text),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = SUBTITLE_CONTENT_ALPHA),
+                    modifier = Modifier
+                        .padding(start = 32.dp, end = 32.dp, bottom = 8.dp),
+                )*/
+                Subtitle(
+                    text = stringResource(R.string.tasker_dynamic_value_text),
                     modifier = Modifier
                         .padding(start = 32.dp, end = 32.dp, bottom = 8.dp),
                 )
@@ -266,10 +271,15 @@ fun TaskerScreenTimeoutList(
 
         item(key = "staticTitle") {
             Column(modifier = maxWidthModifier) {
-                Text(
+                /*Text(
                     text = stringResource(R.string.tasker_static_value_text),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = SUBTITLE_CONTENT_ALPHA),
+                    modifier = Modifier
+                        .padding(start = 32.dp, end = 32.dp, top = 8.dp, bottom = 8.dp),
+                )*/
+                Subtitle(
+                    text = stringResource(R.string.tasker_static_value_text),
                     modifier = Modifier
                         .padding(start = 32.dp, end = 32.dp, top = 8.dp, bottom = 8.dp),
                 )
