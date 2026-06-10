@@ -9,6 +9,8 @@ import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -16,9 +18,10 @@ import javax.inject.Inject
  * Migrating decorator over [TimeoutPreferencesRepositoryImpl].
  *
  * Lazily migrates the deprecated selected-timeout list and "resetTimeoutOnScreenOff"
- * flag into their current keys on first read. Migration stays lazy (atomic per read) —
- * no startup race. The migrated reset value is written raw (no foreground-service
- * side effect): the service state is reconciled by normal operation / the monitor worker.
+ * flag into their current keys on first read, serialized by a mutex so concurrent
+ * first reads cannot interleave the check-then-act. The migrated reset value is
+ * written raw (no foreground-service side effect): the service state is reconciled
+ * by normal operation / the monitor worker.
  */
 class MigratingTimeoutPreferencesRepository @Inject constructor(
     private val delegate: TimeoutPreferencesRepositoryImpl,
@@ -27,6 +30,10 @@ class MigratingTimeoutPreferencesRepository @Inject constructor(
 ) : TimeoutPreferencesRepository {
 
     private val ioDispatcher = Dispatchers.IO
+
+    // Serializes the lazy migrations: without it a write landing between the
+    // "current is unset" check and the migration write could be clobbered.
+    private val migrationMutex = Mutex()
 
     // ----- Migrating getters -----
 
@@ -52,36 +59,40 @@ class MigratingTimeoutPreferencesRepository @Inject constructor(
 
     private suspend fun migrateSelectedScreenTimeoutsIfNeeded() =
         withContext(ioDispatcher) {
-            val current = preferenceDataStoreHelper.getLastPreference(
-                SELECTED_SCREEN_TIMEOUT,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-            if (current.isNullOrEmpty()) {
-                val old = legacyPreferencesRepository.getOldSelectedScreenTimeouts()
-                if (old.isNotEmpty()) {
-                    val migrated = intListFromStr(old).map { ScreenTimeout(it) }
-                    delegate.setSelectedScreenTimeouts(migrated)
-                    legacyPreferencesRepository.removeOldSelectedScreenTimeouts()
+            migrationMutex.withLock {
+                val current = preferenceDataStoreHelper.getLastPreference(
+                    SELECTED_SCREEN_TIMEOUT,
+                    DataStoreSourceType.DATA_SOURCE_BACKED_UP
+                )
+                if (current.isNullOrEmpty()) {
+                    val old = legacyPreferencesRepository.getOldSelectedScreenTimeouts()
+                    if (old.isNotEmpty()) {
+                        val migrated = intListFromStr(old).map { ScreenTimeout(it) }
+                        delegate.setSelectedScreenTimeouts(migrated)
+                        legacyPreferencesRepository.removeOldSelectedScreenTimeouts()
+                    }
                 }
             }
         }
 
     private suspend fun migrateResetTimeoutWhenScreenOffIfNeeded() =
         withContext(ioDispatcher) {
-            val current = preferenceDataStoreHelper.getLastPreference(
-                RESET_TIMEOUT_WHEN_SCREEN_OFF,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-            if (current == null) {
-                val old = legacyPreferencesRepository.getOldResetTimeoutWhenScreenOff()
-                if (old != null) {
-                    // The legacy flag had inverted semantics, hence !old.
-                    preferenceDataStoreHelper.putPreference(
-                        RESET_TIMEOUT_WHEN_SCREEN_OFF,
-                        !old,
-                        DataStoreSourceType.DATA_SOURCE_BACKED_UP
-                    )
-                    legacyPreferencesRepository.removeOldResetTimeoutWhenScreenOff()
+            migrationMutex.withLock {
+                val current = preferenceDataStoreHelper.getLastPreference(
+                    RESET_TIMEOUT_WHEN_SCREEN_OFF,
+                    DataStoreSourceType.DATA_SOURCE_BACKED_UP
+                )
+                if (current == null) {
+                    val old = legacyPreferencesRepository.getOldResetTimeoutWhenScreenOff()
+                    if (old != null) {
+                        // The legacy flag had inverted semantics, hence !old.
+                        preferenceDataStoreHelper.putPreference(
+                            RESET_TIMEOUT_WHEN_SCREEN_OFF,
+                            !old,
+                            DataStoreSourceType.DATA_SOURCE_BACKED_UP
+                        )
+                        legacyPreferencesRepository.removeOldResetTimeoutWhenScreenOff()
+                    }
                 }
             }
         }

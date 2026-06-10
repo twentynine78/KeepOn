@@ -7,6 +7,8 @@ import fr.twentynine.keepon.data.migration.LegacyPreferencesRepository
 import fr.twentynine.keepon.domain.repository.AppPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -15,7 +17,8 @@ import javax.inject.Inject
  *
  * Lazily migrates the deprecated "skipIntro" flag into the current isFirstLaunch
  * preference on first read, keeping migration concerns out of the pure repository
- * implementation. Migration stays lazy (atomic per read) — no startup race.
+ * implementation. The migration is serialized by a mutex so concurrent first reads
+ * cannot interleave the check-then-act.
  */
 class MigratingAppPreferencesRepository @Inject constructor(
     private val delegate: AppPreferencesRepositoryImpl,
@@ -25,6 +28,10 @@ class MigratingAppPreferencesRepository @Inject constructor(
 
     private val ioDispatcher = Dispatchers.IO
 
+    // Serializes the lazy migration: without it a write landing between the
+    // "current is unset" check and the migration write could be clobbered.
+    private val migrationMutex = Mutex()
+
     override suspend fun getIsFirstLaunchFlow(): Flow<Boolean> {
         migrateIsFirstLaunchIfNeeded()
         return delegate.getIsFirstLaunchFlow()
@@ -32,14 +39,16 @@ class MigratingAppPreferencesRepository @Inject constructor(
 
     private suspend fun migrateIsFirstLaunchIfNeeded() =
         withContext(ioDispatcher) {
-            val isFirstLaunch = preferenceDataStoreHelper.getLastPreference(
-                IS_FIRST_LAUNCH,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-            // Migrate from the deprecated "skipIntro" flag, once, when unset.
-            if (isFirstLaunch == null && legacyPreferencesRepository.getOldSkipIntro()) {
-                delegate.setIsFirstLaunch(false)
-                legacyPreferencesRepository.removeOldSkipIntro()
+            migrationMutex.withLock {
+                val isFirstLaunch = preferenceDataStoreHelper.getLastPreference(
+                    IS_FIRST_LAUNCH,
+                    DataStoreSourceType.DATA_SOURCE_BACKED_UP
+                )
+                // Migrate from the deprecated "skipIntro" flag, once, when unset.
+                if (isFirstLaunch == null && legacyPreferencesRepository.getOldSkipIntro()) {
+                    delegate.setIsFirstLaunch(false)
+                    legacyPreferencesRepository.removeOldSkipIntro()
+                }
             }
         }
 

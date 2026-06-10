@@ -11,6 +11,8 @@ import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -18,8 +20,8 @@ import javax.inject.Inject
  * Migrating decorator over [UiPreferencesRepositoryImpl].
  *
  * Lazily migrates the deprecated icon-style model and the "appReviewAsked" flag
- * into their current representations on first read. Migration stays lazy
- * (atomic per read) — no startup race.
+ * into their current representations on first read, serialized by a mutex so
+ * concurrent first reads cannot interleave the check-then-act.
  */
 class MigratingUiPreferencesRepository @Inject constructor(
     private val delegate: UiPreferencesRepositoryImpl,
@@ -28,6 +30,10 @@ class MigratingUiPreferencesRepository @Inject constructor(
 ) : UiPreferencesRepository {
 
     private val ioDispatcher = Dispatchers.IO
+
+    // Serializes the lazy migrations: without it a write landing between the
+    // "current is unset" check and the migration write could be clobbered.
+    private val migrationMutex = Mutex()
 
     override suspend fun getTimeoutIconStyleFlow(): Flow<TimeoutIconStyle> {
         migrateTimeoutIconStyleIfNeeded()
@@ -46,28 +52,32 @@ class MigratingUiPreferencesRepository @Inject constructor(
 
     private suspend fun migrateTimeoutIconStyleIfNeeded() =
         withContext(ioDispatcher) {
-            val current = preferenceDataStoreHelper.getLastPreference(
-                TIMEOUT_ICON_STYLE,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-            if (current.isNullOrEmpty()) {
-                val old = legacyPreferencesRepository.getOldTimeoutIconStyle()
-                if (old != null) {
-                    delegate.setTimeoutIconStyle(old.toTimeoutIconStyle)
-                    legacyPreferencesRepository.removeOldTimeoutIconStyle()
+            migrationMutex.withLock {
+                val current = preferenceDataStoreHelper.getLastPreference(
+                    TIMEOUT_ICON_STYLE,
+                    DataStoreSourceType.DATA_SOURCE_BACKED_UP
+                )
+                if (current.isNullOrEmpty()) {
+                    val old = legacyPreferencesRepository.getOldTimeoutIconStyle()
+                    if (old != null) {
+                        delegate.setTimeoutIconStyle(old.toTimeoutIconStyle)
+                        legacyPreferencesRepository.removeOldTimeoutIconStyle()
+                    }
                 }
             }
         }
 
     private suspend fun migrateDismissedTipsIfNeeded() =
         withContext(ioDispatcher) {
-            val current = preferenceDataStoreHelper.getLastPreference(
-                DISMISSED_TIPS,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-            if (current.isNullOrEmpty() && legacyPreferencesRepository.getOldAppReviewAsked()) {
-                delegate.setDismissedTip(DismissedTips(RATE_APP_TIP_ID))
-                legacyPreferencesRepository.removeOldAppReviewAsked()
+            migrationMutex.withLock {
+                val current = preferenceDataStoreHelper.getLastPreference(
+                    DISMISSED_TIPS,
+                    DataStoreSourceType.DATA_SOURCE_BACKED_UP
+                )
+                if (current.isNullOrEmpty() && legacyPreferencesRepository.getOldAppReviewAsked()) {
+                    delegate.setDismissedTip(DismissedTips(RATE_APP_TIP_ID))
+                    legacyPreferencesRepository.removeOldAppReviewAsked()
+                }
             }
         }
 
