@@ -32,8 +32,6 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 /**
@@ -61,12 +59,6 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var appLaunchIncremented = false
-
-    // Serializes FAB timeout cycling so rapid taps each advance from the freshly written current
-    // instead of racing on a stale read: without it, taps fired within one cycle's read-modify-write
-    // window all compute the same "next" value, so spamming the button (e.g. to jump to the 3rd
-    // selected timeout) stalls until the in-flight cycle settles. With it, every tap counts.
-    private val timeoutCycleMutex = Mutex()
 
     // The suspend producer is invoked lazily inside flow {} so this can be a single, eagerly
     // built StateFlow (one upstream subscription, shared via WhileSubscribed).
@@ -140,9 +132,7 @@ class MainViewModel @Inject constructor(
 
     private fun setNextSelectedSystemScreenTimeout() {
         viewModelScope.launch {
-            timeoutCycleMutex.withLock {
-                setNextSystemScreenTimeoutUseCase()
-            }
+            setNextSystemScreenTimeoutUseCase()
         }
     }
 
