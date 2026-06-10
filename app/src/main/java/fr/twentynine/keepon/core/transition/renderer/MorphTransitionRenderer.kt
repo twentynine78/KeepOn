@@ -11,6 +11,7 @@ import fr.twentynine.keepon.core.transition.util.ALPHA_OPAQUE
 import fr.twentynine.keepon.core.transition.util.ALPHA_THRESHOLD_FRACTION
 import fr.twentynine.keepon.core.transition.util.IconMask
 import fr.twentynine.keepon.core.transition.util.SignedDistanceField
+import fr.twentynine.keepon.core.transition.util.smoothstep
 import fr.twentynine.keepon.domain.model.MorphTransition
 import java.nio.ByteBuffer
 
@@ -125,7 +126,7 @@ class MorphTransitionRenderer(private val transition: MorphTransition) : IconTra
     /** Smoothstepped silhouette coverage: 1 inside the contour (field < 0), 0 outside, AA over a band. */
     private fun contourCoverage(field: Float, softness: Float): Float {
         val edge = ((softness - field) / (2f * softness)).coerceIn(0f, 1f)
-        return edge * edge * (3f - 2f * edge)
+        return smoothstep(edge)
     }
 
     /** Alpha-weighted centroid and ink height (bounding-box height of the above-threshold pixels). */

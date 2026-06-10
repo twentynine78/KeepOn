@@ -8,6 +8,7 @@ import fr.twentynine.keepon.core.transition.IconTransitionRenderer
 import fr.twentynine.keepon.core.transition.TransitionFrames
 import fr.twentynine.keepon.core.transition.util.ALPHA_OPAQUE
 import fr.twentynine.keepon.core.transition.util.IconMask
+import fr.twentynine.keepon.core.transition.util.smoothstep
 import fr.twentynine.keepon.domain.model.ReelTransition
 import kotlin.math.cos
 import kotlin.math.sin
@@ -124,9 +125,6 @@ class ReelTransitionRenderer(private val transition: ReelTransition) : IconTrans
     /** One-point perspective scale at drum angle [phi]: nearest (front, phi 0) projects largest. */
     private fun perspScale(phi: Float, radius: Float, camera: Float): Float =
         camera / (camera - radius * cos(phi))
-
-    /** Cubic ease-in-out, shaping each layer's roll so it eases off the rim and settles flat. */
-    private fun smoothstep(t: Float): Float = t * t * (3f - 2f * t)
 
     private companion object {
         // Rows carry the perspective sine curve (need to be smooth under the barrel), columns scale the

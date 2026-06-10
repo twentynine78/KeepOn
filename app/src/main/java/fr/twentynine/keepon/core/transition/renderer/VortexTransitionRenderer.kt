@@ -8,6 +8,7 @@ import fr.twentynine.keepon.core.transition.IconTransitionRenderer
 import fr.twentynine.keepon.core.transition.TransitionFrames
 import fr.twentynine.keepon.core.transition.util.ALPHA_OPAQUE
 import fr.twentynine.keepon.core.transition.util.IconMask
+import fr.twentynine.keepon.core.transition.util.smoothstep
 import fr.twentynine.keepon.domain.model.VortexTransition
 import kotlin.math.cos
 import kotlin.math.hypot
@@ -79,9 +80,6 @@ class VortexTransitionRenderer(private val transition: VortexTransition) : IconT
         paint.alpha = (alpha.coerceIn(0f, 1f) * ALPHA_OPAQUE).toInt()
         canvas.drawBitmapMesh(bitmap, MESH_CELLS, MESH_CELLS, verts, 0, null, 0, paint)
     }
-
-    /** Cubic ease-in-out, softening the fade knees at each half. */
-    private fun smoothstep(t: Float): Float = t * t * (3f - 2f * t)
 
     private companion object {
         const val MESH_CELLS = 16

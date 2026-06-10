@@ -1,6 +1,7 @@
 package fr.twentynine.keepon.core.transition
 
 import android.graphics.Bitmap
+import fr.twentynine.keepon.core.transition.util.smoothstep
 import fr.twentynine.keepon.domain.model.IconTransition
 import fr.twentynine.keepon.domain.model.IconTransitionTiming
 import kotlinx.coroutines.delay
@@ -29,8 +30,7 @@ object TransitionPlayer {
      * as a lurch on the first frame). Shared by every composited effect so all surfaces move alike.
      */
     fun easedProgress(frame: Int, frameCount: Int): Float {
-        val t = frame.toFloat() / frameCount
-        return t * t * (3f - 2f * t)
+        return smoothstep(frame.toFloat() / frameCount)
     }
 
     @Suppress("LongParameterList")

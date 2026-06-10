@@ -9,6 +9,7 @@ import fr.twentynine.keepon.core.transition.TransitionFrames
 import fr.twentynine.keepon.core.transition.util.ALPHA_OPAQUE
 import fr.twentynine.keepon.core.transition.util.IconMask
 import fr.twentynine.keepon.core.transition.util.ValueNoiseField
+import fr.twentynine.keepon.core.transition.util.smoothstep
 import fr.twentynine.keepon.domain.model.WarpTransition
 import kotlin.math.cos
 import kotlin.math.sin
@@ -83,9 +84,6 @@ class WarpTransitionRenderer(private val transition: WarpTransition) : IconTrans
         paint.alpha = (alpha.coerceIn(0f, 1f) * ALPHA_OPAQUE).toInt()
         canvas.drawBitmapMesh(bitmap, MESH_CELLS, MESH_CELLS, verts, 0, null, 0, paint)
     }
-
-    /** Cubic ease-in-out, used to soften the knees of the compressed cross-fade window. */
-    private fun smoothstep(t: Float): Float = t * t * (3f - 2f * t)
 
     private companion object {
         const val MESH_CELLS = 10
