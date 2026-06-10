@@ -45,7 +45,7 @@ import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.screenContentModifier
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
-import fr.twentynine.keepon.ui.theme.StyleSwitchRowVerticalPadding
+import fr.twentynine.keepon.ui.theme.StyleTopSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.GhostSizedText
 import fr.twentynine.keepon.ui.component.KeepOnRichTooltip
@@ -190,8 +190,7 @@ fun KeepOnBehaviorCard(
                     val newValue = !resetTimeoutWhenScreenOff
                     onEvent(MainUIEvent.SetResetTimeoutWhenScreenOff(newValue))
                 },
-                verticalPadding = StyleSwitchRowVerticalPadding,
-                modifier = Modifier.padding(vertical = 8.dp),
+                verticalPadding = StyleTopSwitchRowVerticalPadding,
                 leading = {
                     Switch(
                         checked = resetTimeoutWhenScreenOff,

@@ -57,5 +57,10 @@ val StyleControlRowVerticalPadding = 8.dp
 /** Vertical padding of a full-bleed list row (the font selection list). */
 val StyleListRowVerticalPadding = 16.dp
 
-/** Vertical padding of a standalone switch row (matches the home behavior switch). */
+/** Vertical padding of a mid-card switch row (the outlined toggle). */
 val StyleSwitchRowVerticalPadding = 12.dp
+
+/** Vertical padding of the switch row that opens a card (Home behavior / Style transition). The
+ *  full inset lives inside the row's clickable so the press ripple reaches the card edges, and the
+ *  shared value keeps the two switches aligned across screens. */
+val StyleTopSwitchRowVerticalPadding = 20.dp

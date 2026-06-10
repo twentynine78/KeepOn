@@ -66,6 +66,7 @@ import fr.twentynine.keepon.ui.theme.StyleContentInset
 import fr.twentynine.keepon.ui.theme.StyleListRowVerticalPadding
 import fr.twentynine.keepon.ui.theme.StyleRadioGlyphInset
 import fr.twentynine.keepon.ui.theme.StyleSwitchRowVerticalPadding
+import fr.twentynine.keepon.ui.theme.StyleTopSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.GhostSizedText
 import fr.twentynine.keepon.ui.component.ItemCard
@@ -214,7 +215,7 @@ fun IconTransitionAnimationCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 16.dp),
+                    .padding(bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 LabeledControlRow(
@@ -225,7 +226,7 @@ fun IconTransitionAnimationCard(
                             )
                         )
                     },
-                    verticalPadding = StyleSwitchRowVerticalPadding,
+                    verticalPadding = StyleTopSwitchRowVerticalPadding,
                     leading = {
                         Switch(
                             checked = iconTransitionAnimation.enabled,
@@ -252,7 +253,7 @@ fun IconTransitionAnimationCard(
                     text = stringResource(R.string.icon_transition_type_subtitle),
                     modifier = Modifier
                         .align(Alignment.Start)
-                        .padding(top = 8.dp, bottom = 4.dp, start = StyleContentInset, end = StyleContentInset)
+                        .padding(bottom = 4.dp, start = StyleContentInset, end = StyleContentInset)
                         .alpha(if (animationsEnabled) 1f else DISABLED_CONTENT_ALPHA),
                 )
                 iconTransitionOptions.forEach { option ->
