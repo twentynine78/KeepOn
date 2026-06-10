@@ -1,15 +1,11 @@
 package fr.twentynine.keepon.ui.screen
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,12 +16,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FormatBold
+import androidx.compose.material.icons.filled.FormatItalic
+import androidx.compose.material.icons.filled.FormatUnderlined
 import androidx.compose.material.icons.outlined.FontDownload
 import androidx.compose.material.icons.rounded.Animation
 import androidx.compose.material.icons.rounded.FormatColorText
 import androidx.compose.material.icons.rounded.LocationSearching
 import androidx.compose.material3.Card
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Label
 import androidx.compose.material3.MaterialTheme
@@ -73,6 +71,8 @@ import fr.twentynine.keepon.ui.component.GhostSizedText
 import fr.twentynine.keepon.ui.component.rememberBehaviorSwitchLabel
 import fr.twentynine.keepon.ui.component.ItemCard
 import fr.twentynine.keepon.ui.component.LabeledControlRow
+import fr.twentynine.keepon.ui.component.SegmentedCheckboxGroup
+import fr.twentynine.keepon.ui.component.SegmentedCheckboxOption
 import fr.twentynine.keepon.ui.component.Subtitle
 import kotlin.math.ceil
 
@@ -351,7 +351,6 @@ fun FontSelectionRow(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FontStyleCard(
     timeoutIconStyle: TimeoutIconStyle,
@@ -417,39 +416,32 @@ fun FontStyleCard(
                         .padding(horizontal = StyleContentInset, vertical = 8.dp)
                         .align(Alignment.Start),
                 )
-                FlowRow(
+                SegmentedCheckboxGroup(
+                    options = listOf(
+                        SegmentedCheckboxOption(
+                            label = stringResource(R.string.font_style_parameters_bold),
+                            checked = timeoutIconStyle.iconStyleFontBold,
+                            onCheckedChange = onBoldChange,
+                            glyph = Icons.Filled.FormatBold,
+                        ),
+                        SegmentedCheckboxOption(
+                            label = stringResource(R.string.font_style_parameters_italic),
+                            checked = timeoutIconStyle.iconStyleFontItalic,
+                            onCheckedChange = onItalicChange,
+                            glyph = Icons.Filled.FormatItalic,
+                        ),
+                        SegmentedCheckboxOption(
+                            label = stringResource(R.string.font_style_parameters_underline),
+                            checked = timeoutIconStyle.iconStyleFontUnderline,
+                            onCheckedChange = onUnderlineChange,
+                            glyph = Icons.Filled.FormatUnderlined,
+                        ),
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = StyleContentInset - StyleRadioGlyphInset, end = StyleContentInset, bottom = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    horizontalArrangement = Arrangement.Start //spacedBy(48.dp), //SpaceBetween,
-                ) {
-                    StyleCheckboxRow(
-                        modifier = Modifier.weight(1 / 3f),
-                        text = stringResource(R.string.font_style_parameters_bold),
-                        checked = timeoutIconStyle.iconStyleFontBold,
-                        onCheckedChange = { onBoldChange(!timeoutIconStyle.iconStyleFontBold) }
-                    )
-                    StyleCheckboxRow(
-                        modifier = Modifier.weight(1 / 3f),
-                        text = stringResource(R.string.font_style_parameters_italic),
-                        checked = timeoutIconStyle.iconStyleFontItalic,
-                        onCheckedChange = { onItalicChange(!timeoutIconStyle.iconStyleFontItalic) }
-                    )
-                    StyleCheckboxRow(
-                        modifier = Modifier.weight(1 / 3f),
-                        text = stringResource(R.string.font_style_parameters_underline),
-                        checked = timeoutIconStyle.iconStyleFontUnderline,
-                        onCheckedChange = { onUnderlineChange(!timeoutIconStyle.iconStyleFontUnderline) }
-                    )
-                }
-
-                Subtitle(
-                    text = stringResource(R.string.font_style_parameters_appearance_subtitle),
-                    modifier = Modifier
-                        .align(Alignment.Start)
-                        .padding(start = StyleContentInset, end = StyleContentInset, top = 24.dp),
+                        .padding(start = StyleContentInset, end = StyleContentInset, bottom = 8.dp),
                 )
+
                 LabeledControlRow(
                     onClick = { onOutlinedChange(!timeoutIconStyle.iconStyleTextOutlined) },
                     verticalPadding = StyleSwitchRowVerticalPadding,
@@ -465,31 +457,6 @@ fun FontStyleCard(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun StyleCheckboxRow(
-    modifier: Modifier = Modifier,
-    text: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Row(
-        modifier = modifier
-            .clickable { onCheckedChange(!checked) }
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Checkbox(
-            checked = checked,
-            onCheckedChange = null
-        )
-        Text(
-            text = text,
-            modifier = Modifier.padding(start = 8.dp)
-        )
     }
 }
 
