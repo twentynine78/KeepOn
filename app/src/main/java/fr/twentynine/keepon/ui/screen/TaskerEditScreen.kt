@@ -234,13 +234,6 @@ fun TaskerScreenTimeoutList(
 
         item(key = "dynamicTitle") {
             Column(modifier = maxWidthModifier) {
-                /*Text(
-                    text = stringResource(R.string.tasker_dynamic_value_text),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = SUBTITLE_CONTENT_ALPHA),
-                    modifier = Modifier
-                        .padding(start = 32.dp, end = 32.dp, bottom = 8.dp),
-                )*/
                 Subtitle(
                     text = stringResource(R.string.tasker_dynamic_value_text),
                     modifier = Modifier
@@ -271,13 +264,6 @@ fun TaskerScreenTimeoutList(
 
         item(key = "staticTitle") {
             Column(modifier = maxWidthModifier) {
-                /*Text(
-                    text = stringResource(R.string.tasker_static_value_text),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = SUBTITLE_CONTENT_ALPHA),
-                    modifier = Modifier
-                        .padding(start = 32.dp, end = 32.dp, top = 8.dp, bottom = 8.dp),
-                )*/
                 Subtitle(
                     text = stringResource(R.string.tasker_static_value_text),
                     modifier = Modifier

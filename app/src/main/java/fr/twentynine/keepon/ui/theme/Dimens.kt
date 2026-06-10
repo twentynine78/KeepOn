@@ -14,7 +14,27 @@ val KeepOnCardShape = RoundedCornerShape(KeepOnCardCornerRadius)
 /** Alpha applied to secondary (subtitle) text drawn over the background color. */
 const val SUBTITLE_CONTENT_ALPHA = 0.8f
 
+// Card header — paddings of the section header used inside every settings card.
+
+/** Padding around the header row (below it and on both sides). */
+val CardHeaderPadding = 20.dp
+
+/** Gap between the header's leading icon and its title. */
+val CardHeaderTitleSpacing = 6.dp
+
+/** Gap between the header's title and its trailing info icon. */
+val CardHeaderInfoIconSpacing = 12.dp
+
+/** Horizontal inset of the expandable description under the header. */
+val CardHeaderDescHorizontalPadding = 24.dp
+
+/** Bottom padding of the expandable description under the header. */
+val CardHeaderDescBottomPadding = 16.dp
+
 // Style screen — shared layout rails so every card lines its content up on two constant columns.
+
+/** Top inset of each Style card group above its header. */
+val StyleCardTopPadding = 28.dp
 
 /** Single left content rail shared by subtitles, slider labels/tracks and control rows. */
 val StyleContentInset = 16.dp

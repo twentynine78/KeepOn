@@ -60,6 +60,7 @@ import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.defaultCardHorizontalPadding
 import fr.twentynine.keepon.ui.util.screenContentModifier
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
+import fr.twentynine.keepon.ui.theme.StyleCardTopPadding
 import fr.twentynine.keepon.ui.theme.StyleContentInset
 import fr.twentynine.keepon.ui.theme.StyleListRowVerticalPadding
 import fr.twentynine.keepon.ui.theme.StyleRadioGlyphInset
@@ -127,7 +128,7 @@ fun StyleScreen(
         item(key = "headerCard") {
             Column(
                 modifier = maxWidthModifier
-                    .padding(top = 28.dp),
+                    .padding(top = StyleCardTopPadding),
             ) {
                 CardHeader(
                     iconVector = Icons.Outlined.FontDownload,
@@ -189,7 +190,7 @@ fun IconTransitionAnimationCard(
 ) {
     Column(
         modifier = modifier
-            .padding(top = 28.dp, bottom = 12.dp),
+            .padding(top = StyleCardTopPadding, bottom = 12.dp),
     ) {
         CardHeader(
             iconVector = Icons.Rounded.Animation,
@@ -373,7 +374,7 @@ fun FontStyleCard(
 
     Column(
         modifier = modifier
-            .padding(top = 28.dp),
+            .padding(top = StyleCardTopPadding),
     ) {
         CardHeader(
             iconVector = Icons.Rounded.FormatColorText,
@@ -482,7 +483,7 @@ fun FontOptionsCard(
 ) {
     Column(
         modifier = modifier
-            .padding(top = 28.dp, bottom = 12.dp),
+            .padding(top = StyleCardTopPadding, bottom = 12.dp),
     ) {
         CardHeader(
             iconVector = Icons.Rounded.LocationSearching,

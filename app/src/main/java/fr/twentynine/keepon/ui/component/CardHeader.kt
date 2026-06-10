@@ -27,6 +27,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.ui.theme.CardHeaderDescBottomPadding
+import fr.twentynine.keepon.ui.theme.CardHeaderDescHorizontalPadding
+import fr.twentynine.keepon.ui.theme.CardHeaderInfoIconSpacing
+import fr.twentynine.keepon.ui.theme.CardHeaderPadding
+import fr.twentynine.keepon.ui.theme.CardHeaderTitleSpacing
 
 /**
  * Section header inside a settings card: an optional leading icon and a [title]. When [descText] is
@@ -47,7 +52,7 @@ fun CardHeader(
     Column(modifier = modifier) {
         Row(
             modifier = Modifier
-                .padding(bottom = 20.dp, start = 20.dp, end = 20.dp)
+                .padding(bottom = CardHeaderPadding, start = CardHeaderPadding, end = CardHeaderPadding)
                 .clickable(
                     onClick = {
                         if (descText != null) {
@@ -79,7 +84,7 @@ fun CardHeader(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .padding(start = 6.dp)
+                    .padding(start = CardHeaderTitleSpacing)
                     .weight(1f)
             )
             if (descText != null) {
@@ -88,7 +93,7 @@ fun CardHeader(
                     contentDescription = moreInfoContentDesc,
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
-                        .padding(start = 12.dp)
+                        .padding(start = CardHeaderInfoIconSpacing)
                         .size(14.dp),
                 )
             }
@@ -102,7 +107,11 @@ fun CardHeader(
                 text = descText!!,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
-                    .padding(bottom = 16.dp, start = 24.dp, end = 24.dp),
+                    .padding(
+                        bottom = CardHeaderDescBottomPadding,
+                        start = CardHeaderDescHorizontalPadding,
+                        end = CardHeaderDescHorizontalPadding,
+                    ),
                 color = MaterialTheme.colorScheme.outline
             )
         }
