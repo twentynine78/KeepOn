@@ -37,7 +37,8 @@
     <string name="more_info_icon_desc">Plus d\'informations</string>
 
     <string name="general_behavior_title">Comportement</string>
-    <string name="general_behavior_short_text">Réinitialiser le délai d\'expiration de l\'écran à %s lorsqu\'il s\'éteint</string>
+    <string name="general_behavior_switch_title">Réinitialisation automatique</string>
+    <string name="general_behavior_short_text">Rétablir le délai d\'expiration sur %s lorsque l\'ecran s\'éteint</string>
     <string name="general_behavior_text">Choisissez si le délai d\'extinction de l\'écran doit être réinitialisé à sa valeur par défaut lorsque l\'écran s\'éteint.</string>
 
     <string name="select_timeouts_title">Délais d\'expiration de l\'écran</string>
@@ -64,12 +65,13 @@
     <string name="font_style_parameters_bold">Gras</string>
     <string name="font_style_parameters_italic">Italique</string>
     <string name="font_style_parameters_underline">Souligner</string>
-    <string name="font_style_parameters_appearance_subtitle">Apparence de la police</string>
     <string name="font_style_parameters_appearance_outlined">Contour uniquement</string>
+    <string name="font_style_parameters_appearance_outlined_desc">Dessiner l\'icône en trait, sans remplissage</string>
 
     <string name="icon_transition_tile">Animation de l\'icône</string>
     <string name="icon_transition_text">Joue une courte animation sur l\'icône du délai à chaque changement du délai d\'expiration de l\'écran, pour une transition fluide plutôt qu\'un changement instantané.</string>
-    <string name="icon_transition_enable">Animer l\'icône à chaque changement de délai</string>
+    <string name="icon_transition_enable">Animer au changement de délai</string>
+    <string name="icon_transition_enable_desc">Afficher une transition quand le délai change</string>
     <string name="icon_transition_duration">Durée de l\'animation</string>
     <string name="icon_transition_type_subtitle">Type d\'animation</string>
     <string name="icon_transition_type_liquid_morph">Métamorphose fluide</string>

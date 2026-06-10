@@ -31,7 +31,6 @@ import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -39,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -47,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.model.IconTransitionOptionUI
 import fr.twentynine.keepon.ui.model.ItemPosition
-import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.domain.catalog.IconFontFamily
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
@@ -67,13 +64,12 @@ import fr.twentynine.keepon.ui.theme.StyleRadioGlyphInset
 import fr.twentynine.keepon.ui.theme.StyleSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.theme.StyleTopSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.component.CardHeader
-import fr.twentynine.keepon.ui.component.GhostSizedText
-import fr.twentynine.keepon.ui.component.rememberBehaviorSwitchLabel
 import fr.twentynine.keepon.ui.component.ItemCard
 import fr.twentynine.keepon.ui.component.LabeledControlRow
 import fr.twentynine.keepon.ui.component.SegmentedCheckboxGroup
 import fr.twentynine.keepon.ui.component.SegmentedCheckboxOption
 import fr.twentynine.keepon.ui.component.Subtitle
+import fr.twentynine.keepon.ui.component.SwitchSettingRow
 import kotlin.math.ceil
 
 /** Style destination, stateful wrapper: feeds the icon style/transition slices of [uiState] to [StyleScreen]. */
@@ -88,9 +84,6 @@ fun StyleRoute(
         timeoutIconStyle = uiState.timeoutIconStyle,
         iconTransitionAnimation = uiState.iconTransitionAnimation,
         iconTransitionOptions = uiState.iconTransitionOptions,
-        defaultScreenTimeoutUI = remember(uiState.screenTimeouts) {
-            uiState.screenTimeouts.firstOrNull { it.isDefault } ?: uiState.screenTimeouts.first()
-        },
         onEvent = onEvent,
         navType = navType,
         paddingValue = paddingValue,
@@ -107,7 +100,6 @@ fun StyleScreen(
     timeoutIconStyle: TimeoutIconStyle,
     iconTransitionAnimation: IconTransitionAnimation,
     iconTransitionOptions: List<IconTransitionOptionUI>,
-    defaultScreenTimeoutUI: ScreenTimeoutUI,
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
     paddingValue: PaddingValues,
@@ -129,7 +121,6 @@ fun StyleScreen(
             IconTransitionAnimationCard(
                 iconTransitionAnimation = iconTransitionAnimation,
                 iconTransitionOptions = iconTransitionOptions,
-                defaultScreenTimeoutUI = defaultScreenTimeoutUI,
                 onEvent = onEvent,
                 modifier = maxWidthModifier,
             )
@@ -195,7 +186,6 @@ private const val DISABLED_CONTENT_ALPHA = 0.38f
 fun IconTransitionAnimationCard(
     iconTransitionAnimation: IconTransitionAnimation,
     iconTransitionOptions: List<IconTransitionOptionUI>,
-    defaultScreenTimeoutUI: ScreenTimeoutUI,
     onEvent: (MainUIEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -220,32 +210,18 @@ fun IconTransitionAnimationCard(
                     .padding(bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                LabeledControlRow(
-                    onClick = {
+                SwitchSettingRow(
+                    title = stringResource(R.string.icon_transition_enable),
+                    subtitle = stringResource(R.string.icon_transition_enable_desc),
+                    checked = iconTransitionAnimation.enabled,
+                    onCheckedChange = { enabled ->
                         onEvent(
                             MainUIEvent.UpdateIconTransitionAnimation(
-                                iconTransitionAnimation.copy(enabled = !iconTransitionAnimation.enabled)
+                                iconTransitionAnimation.copy(enabled = enabled)
                             )
                         )
                     },
                     verticalPadding = StyleTopSwitchRowVerticalPadding,
-                    leading = {
-                        Switch(
-                            checked = iconTransitionAnimation.enabled,
-                            onCheckedChange = null,
-                        )
-                    },
-                    label = {
-                        // The Home behavior switch label rides as a ghost so this row and the Home
-                        // one resolve to the same height and the two switches align across screens.
-                        // It must use the same builder (bold span included) so the reserved size matches.
-                        GhostSizedText(
-                            text = AnnotatedString(stringResource(R.string.icon_transition_enable)),
-                            ghostTexts = listOf(
-                                rememberBehaviorSwitchLabel(defaultScreenTimeoutUI.displayName)
-                            ),
-                        )
-                    },
                 )
 
                 val animationsEnabled = iconTransitionAnimation.enabled
@@ -442,18 +418,12 @@ fun FontStyleCard(
                         .padding(start = StyleContentInset, end = StyleContentInset, bottom = 8.dp),
                 )
 
-                LabeledControlRow(
-                    onClick = { onOutlinedChange(!timeoutIconStyle.iconStyleTextOutlined) },
+                SwitchSettingRow(
+                    title = stringResource(R.string.font_style_parameters_appearance_outlined),
+                    subtitle = stringResource(R.string.font_style_parameters_appearance_outlined_desc),
+                    checked = timeoutIconStyle.iconStyleTextOutlined,
+                    onCheckedChange = onOutlinedChange,
                     verticalPadding = StyleSwitchRowVerticalPadding,
-                    leading = {
-                        Switch(
-                            checked = timeoutIconStyle.iconStyleTextOutlined,
-                            onCheckedChange = null,
-                        )
-                    },
-                    label = {
-                        Text(text = stringResource(R.string.font_style_parameters_appearance_outlined))
-                    },
                 )
             }
         }

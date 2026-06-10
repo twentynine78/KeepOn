@@ -26,6 +26,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,7 +56,6 @@ import fr.twentynine.keepon.ui.util.screenContentModifier
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
 import fr.twentynine.keepon.ui.theme.StyleTopSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.component.CardHeader
-import fr.twentynine.keepon.ui.component.GhostSizedText
 import fr.twentynine.keepon.ui.component.rememberBehaviorSwitchLabel
 import fr.twentynine.keepon.ui.component.KeepOnRichTooltip
 import fr.twentynine.keepon.ui.component.LabeledControlRow
@@ -192,8 +192,6 @@ fun KeepOnBehaviorCard(
                 .align(alignment = Alignment.Start),
             shape = KeepOnCardShape,
         ) {
-            // Mirrors the Style screen's transition switch row (same paddings, slot and label
-            // width + cross ghost label) so the two switches sit at the same height on screen.
             LabeledControlRow(
                 onClick = {
                     val newValue = !resetTimeoutWhenScreenOff
@@ -207,10 +205,17 @@ fun KeepOnBehaviorCard(
                     )
                 },
                 label = {
-                    GhostSizedText(
-                        text = rememberBehaviorSwitchLabel(defaultScreenTimeoutUI.displayName),
-                        ghostTexts = listOf(AnnotatedString(stringResource(R.string.icon_transition_enable))),
-                    )
+                    Column {
+                        Text(
+                            modifier = Modifier.padding(bottom = 4.dp),
+                            text = stringResource(R.string.general_behavior_switch_title),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
+                        Text(
+                            text = rememberBehaviorSwitchLabel(defaultScreenTimeoutUI.displayName),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 },
             )
         }

@@ -37,6 +37,7 @@
     <string name="more_info_icon_desc">More information</string>
 
     <string name="general_behavior_title">Behavior</string>
+    <string name="general_behavior_switch_title">Auto-reset timeout</string>
     <string name="general_behavior_short_text">Reset the screen timeout to %s when it switches off</string>
     <string name="general_behavior_text">Choose if the screen timeout should be reset to its default value when the screen turns off.</string>
 
@@ -64,12 +65,13 @@
     <string name="font_style_parameters_bold">Bold</string>
     <string name="font_style_parameters_italic">Italic</string>
     <string name="font_style_parameters_underline">Underline</string>
-    <string name="font_style_parameters_appearance_subtitle">Font appearance</string>
     <string name="font_style_parameters_appearance_outlined">Outline only</string>
+    <string name="font_style_parameters_appearance_outlined_desc">Draw the icon as a stroke, not a fill</string>
 
     <string name="icon_transition_tile">Icon animation</string>
     <string name="icon_transition_text">Play a short animation on the timeout icon whenever the screen timeout changes, so the value transitions smoothly instead of switching instantly.</string>
-    <string name="icon_transition_enable">Animate the icon when the timeout changes</string>
+    <string name="icon_transition_enable">Animate on timeout change</string>
+    <string name="icon_transition_enable_desc">Show a transition when the timeout updates</string>
     <string name="icon_transition_duration">Animation duration</string>
     <string name="icon_transition_type_subtitle">Animation type</string>
     <string name="icon_transition_type_liquid_morph">Liquid morph</string>

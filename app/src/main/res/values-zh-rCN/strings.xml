@@ -31,6 +31,7 @@
     <string name="more_info_icon_desc">更多信息</string>
 
     <string name="general_behavior_title">行为</string>
+    <string name="general_behavior_switch_title">自动重置亮屏时长</string>
     <string name="general_behavior_short_text">屏幕关闭时将亮屏时长重置为%s</string>
     <string name="general_behavior_text">选择当屏幕关闭时，是否将亮屏时长重置为默认值。</string>
 
@@ -58,12 +59,13 @@
     <string name="font_style_parameters_bold">粗体</string>
     <string name="font_style_parameters_italic">斜体</string>
     <string name="font_style_parameters_underline">下划线</string>
-    <string name="font_style_parameters_appearance_subtitle">外观效果</string>
     <string name="font_style_parameters_appearance_outlined">仅轮廓</string>
+    <string name="font_style_parameters_appearance_outlined_desc">以描边而非填充的方式绘制图标</string>
 
     <string name="icon_transition_tile">图标动画</string>
     <string name="icon_transition_text">每当屏幕超时变化时，在超时图标上播放一段短动画，让数值平滑过渡，而不是瞬间切换。</string>
-    <string name="icon_transition_enable">超时变化时为图标添加动画</string>
+    <string name="icon_transition_enable">在超时发生时进行动画效果</string>
+    <string name="icon_transition_enable_desc">超时更新时显示过渡效果</string>
     <string name="icon_transition_duration">动画时长</string>
     <string name="icon_transition_type_subtitle">动画类型</string>
     <string name="icon_transition_type_liquid_morph">流体变形</string>
