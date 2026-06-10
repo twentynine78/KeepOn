@@ -6,11 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,7 +22,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,8 +45,11 @@ import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.screenContentModifier
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
+import fr.twentynine.keepon.ui.theme.StyleSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.component.CardHeader
+import fr.twentynine.keepon.ui.component.GhostSizedText
 import fr.twentynine.keepon.ui.component.KeepOnRichTooltip
+import fr.twentynine.keepon.ui.component.LabeledControlRow
 import fr.twentynine.keepon.ui.component.SwipeableScreenTimeoutCard
 import fr.twentynine.keepon.ui.component.TimeoutIconChip
 import fr.twentynine.keepon.ui.component.TipsSection
@@ -183,30 +183,31 @@ fun KeepOnBehaviorCard(
                 .align(alignment = Alignment.Start),
             shape = KeepOnCardShape,
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(onClick = {
-                        val newValue = !resetTimeoutWhenScreenOff
-                        onEvent(MainUIEvent.SetResetTimeoutWhenScreenOff(newValue))
-                    })
-                    .padding(horizontal = 16.dp, vertical = 16.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Switch(
-                    checked = resetTimeoutWhenScreenOff,
-                    onCheckedChange = null,
-                    modifier = Modifier.padding(end = 16.dp)
-                )
-
-                Text(
-                    text = stringResource(
-                        R.string.general_behavior_short_text,
-                        defaultScreenTimeoutUI.displayName,
+            // Mirrors the Style screen's transition switch row (same paddings, slot and label
+            // width + cross ghost label) so the two switches sit at the same height on screen.
+            LabeledControlRow(
+                onClick = {
+                    val newValue = !resetTimeoutWhenScreenOff
+                    onEvent(MainUIEvent.SetResetTimeoutWhenScreenOff(newValue))
+                },
+                verticalPadding = StyleSwitchRowVerticalPadding,
+                modifier = Modifier.padding(vertical = 8.dp),
+                leading = {
+                    Switch(
+                        checked = resetTimeoutWhenScreenOff,
+                        onCheckedChange = null,
                     )
-                )
-            }
+                },
+                label = {
+                    GhostSizedText(
+                        text = stringResource(
+                            R.string.general_behavior_short_text,
+                            defaultScreenTimeoutUI.displayName,
+                        ),
+                        ghostTexts = listOf(stringResource(R.string.icon_transition_enable)),
+                    )
+                },
+            )
         }
     }
 }

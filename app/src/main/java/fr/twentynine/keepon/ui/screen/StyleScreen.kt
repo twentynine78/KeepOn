@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.model.IconTransitionOptionUI
 import fr.twentynine.keepon.ui.model.ItemPosition
+import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.domain.catalog.IconFontFamily
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
@@ -66,6 +67,7 @@ import fr.twentynine.keepon.ui.theme.StyleListRowVerticalPadding
 import fr.twentynine.keepon.ui.theme.StyleRadioGlyphInset
 import fr.twentynine.keepon.ui.theme.StyleSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.component.CardHeader
+import fr.twentynine.keepon.ui.component.GhostSizedText
 import fr.twentynine.keepon.ui.component.ItemCard
 import fr.twentynine.keepon.ui.component.LabeledControlRow
 import fr.twentynine.keepon.ui.component.Subtitle
@@ -83,6 +85,9 @@ fun StyleRoute(
         timeoutIconStyle = uiState.timeoutIconStyle,
         iconTransitionAnimation = uiState.iconTransitionAnimation,
         iconTransitionOptions = uiState.iconTransitionOptions,
+        defaultScreenTimeoutUI = remember(uiState.screenTimeouts) {
+            uiState.screenTimeouts.firstOrNull { it.isDefault } ?: uiState.screenTimeouts.first()
+        },
         onEvent = onEvent,
         navType = navType,
         paddingValue = paddingValue,
@@ -99,6 +104,7 @@ fun StyleScreen(
     timeoutIconStyle: TimeoutIconStyle,
     iconTransitionAnimation: IconTransitionAnimation,
     iconTransitionOptions: List<IconTransitionOptionUI>,
+    defaultScreenTimeoutUI: ScreenTimeoutUI,
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
     paddingValue: PaddingValues,
@@ -120,6 +126,7 @@ fun StyleScreen(
             IconTransitionAnimationCard(
                 iconTransitionAnimation = iconTransitionAnimation,
                 iconTransitionOptions = iconTransitionOptions,
+                defaultScreenTimeoutUI = defaultScreenTimeoutUI,
                 onEvent = onEvent,
                 modifier = maxWidthModifier,
             )
@@ -185,6 +192,7 @@ private const val DISABLED_CONTENT_ALPHA = 0.38f
 fun IconTransitionAnimationCard(
     iconTransitionAnimation: IconTransitionAnimation,
     iconTransitionOptions: List<IconTransitionOptionUI>,
+    defaultScreenTimeoutUI: ScreenTimeoutUI,
     onEvent: (MainUIEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -206,7 +214,7 @@ fun IconTransitionAnimationCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 4.dp, bottom = 16.dp),
+                    .padding(top = 8.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 LabeledControlRow(
@@ -225,7 +233,17 @@ fun IconTransitionAnimationCard(
                         )
                     },
                     label = {
-                        Text(text = stringResource(R.string.icon_transition_enable))
+                        // The Home behavior switch label rides as a ghost so this row and the Home
+                        // one resolve to the same height and the two switches align across screens.
+                        GhostSizedText(
+                            text = stringResource(R.string.icon_transition_enable),
+                            ghostTexts = listOf(
+                                stringResource(
+                                    R.string.general_behavior_short_text,
+                                    defaultScreenTimeoutUI.displayName,
+                                )
+                            ),
+                        )
                     },
                 )
 
@@ -374,7 +392,7 @@ fun FontStyleCard(
 
     Column(
         modifier = modifier
-            .padding(top = StyleCardTopPadding),
+            .padding(top = StyleCardTopPadding, bottom = 12.dp),
     ) {
         CardHeader(
             iconVector = Icons.Rounded.FormatColorText,
