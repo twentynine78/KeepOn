@@ -147,4 +147,5 @@
     <string name="toast_screen_off_service_error">Erreur, service de surveillance de l\'écran indisponible !</string>
     <string name="toast_invalid_screen_timeout">Erreur, délai d\'expiration de l\'écran invalide !</string>
     <string name="screen_timeout_change_rejected">Votre appareil a bloqué la modification du délai d\'écran</string>
+    <string name="battery_optimization_request_unavailable">Les paramètres d\'optimisation de la batterie ne sont pas disponibles sur cet appareil</string>
 </resources>

@@ -147,4 +147,5 @@
     <string name="toast_screen_off_service_error">Error, screen monitoring service unavailable!</string>
     <string name="toast_invalid_screen_timeout">Error, invalid screen timeout!</string>
     <string name="screen_timeout_change_rejected">Your device blocked the screen timeout change</string>
+    <string name="battery_optimization_request_unavailable">Battery optimization settings are not available on this device</string>
 </resources>

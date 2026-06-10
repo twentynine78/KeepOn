@@ -1,11 +1,13 @@
 package fr.twentynine.keepon.core.permission
 
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ActivityContext
+import fr.twentynine.keepon.domain.gateway.UserNotifier
 import javax.inject.Inject
 
 /** Requests the user to exempt the app from battery optimization (needed for reliable background work). */
@@ -15,7 +17,8 @@ interface BatteryOptimizationManager {
 
 /** Opens the system "ignore battery optimizations" request for this package. Activity-scoped. */
 class BatteryOptimizationManagerImpl @Inject constructor(
-    @param:ActivityContext private val context: Context
+    @param:ActivityContext private val context: Context,
+    private val userNotifier: UserNotifier,
 ) : BatteryOptimizationManager {
 
     @SuppressLint("BatteryLife")
@@ -27,6 +30,11 @@ class BatteryOptimizationManagerImpl @Inject constructor(
             .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 
-        context.startActivity(batteryOptimizationIntent)
+        try {
+            context.startActivity(batteryOptimizationIntent)
+        } catch (_: ActivityNotFoundException) {
+            // Some OEM ROMs ship without a handler for this settings screen.
+            userNotifier.notifyBatteryOptimizationRequestUnavailable()
+        }
     }
 }

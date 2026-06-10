@@ -12,4 +12,10 @@ interface UserNotifier {
      * changes).
      */
     fun notifyScreenTimeoutNotApplied()
+
+    /**
+     * Notifies the user that the system battery-optimization request screen could not
+     * be opened (some OEM ROMs ship without a handler for it).
+     */
+    fun notifyBatteryOptimizationRequestUnavailable()
 }

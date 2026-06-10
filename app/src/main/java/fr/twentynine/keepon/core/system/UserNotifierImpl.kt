@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
+import androidx.annotation.StringRes
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.gateway.UserNotifier
@@ -17,14 +18,18 @@ class UserNotifierImpl @Inject constructor(
     private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun notifyScreenTimeoutNotApplied() {
+        showToast(R.string.screen_timeout_change_rejected)
+    }
+
+    override fun notifyBatteryOptimizationRequestUnavailable() {
+        showToast(R.string.battery_optimization_request_unavailable)
+    }
+
+    private fun showToast(@StringRes messageRes: Int) {
         // Toast must be posted on the main thread; this port is called from background
         // coroutines (tile, widget, worker, app).
         mainHandler.post {
-            Toast.makeText(
-                context,
-                R.string.screen_timeout_change_rejected,
-                Toast.LENGTH_LONG
-            ).show()
+            Toast.makeText(context, messageRes, Toast.LENGTH_LONG).show()
         }
     }
 }
