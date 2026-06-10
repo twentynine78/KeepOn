@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.model.ItemPosition
@@ -48,6 +49,7 @@ import fr.twentynine.keepon.ui.theme.KeepOnCardShape
 import fr.twentynine.keepon.ui.theme.StyleTopSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.GhostSizedText
+import fr.twentynine.keepon.ui.component.rememberBehaviorSwitchLabel
 import fr.twentynine.keepon.ui.component.KeepOnRichTooltip
 import fr.twentynine.keepon.ui.component.LabeledControlRow
 import fr.twentynine.keepon.ui.component.SwipeableScreenTimeoutCard
@@ -199,11 +201,8 @@ fun KeepOnBehaviorCard(
                 },
                 label = {
                     GhostSizedText(
-                        text = stringResource(
-                            R.string.general_behavior_short_text,
-                            defaultScreenTimeoutUI.displayName,
-                        ),
-                        ghostTexts = listOf(stringResource(R.string.icon_transition_enable)),
+                        text = rememberBehaviorSwitchLabel(defaultScreenTimeoutUI.displayName),
+                        ghostTexts = listOf(AnnotatedString(stringResource(R.string.icon_transition_enable))),
                     )
                 },
             )

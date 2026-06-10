@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -69,6 +70,7 @@ import fr.twentynine.keepon.ui.theme.StyleSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.theme.StyleTopSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.GhostSizedText
+import fr.twentynine.keepon.ui.component.rememberBehaviorSwitchLabel
 import fr.twentynine.keepon.ui.component.ItemCard
 import fr.twentynine.keepon.ui.component.LabeledControlRow
 import fr.twentynine.keepon.ui.component.Subtitle
@@ -236,13 +238,11 @@ fun IconTransitionAnimationCard(
                     label = {
                         // The Home behavior switch label rides as a ghost so this row and the Home
                         // one resolve to the same height and the two switches align across screens.
+                        // It must use the same builder (bold span included) so the reserved size matches.
                         GhostSizedText(
-                            text = stringResource(R.string.icon_transition_enable),
+                            text = AnnotatedString(stringResource(R.string.icon_transition_enable)),
                             ghostTexts = listOf(
-                                stringResource(
-                                    R.string.general_behavior_short_text,
-                                    defaultScreenTimeoutUI.displayName,
-                                )
+                                rememberBehaviorSwitchLabel(defaultScreenTimeoutUI.displayName)
                             ),
                         )
                     },
