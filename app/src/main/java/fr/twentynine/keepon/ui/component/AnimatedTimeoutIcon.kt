@@ -54,6 +54,15 @@ private const val FLIP_CAMERA_DISTANCE = 16f
 // Coalesces the rapid config changes of dragging the duration slider into a single preview play.
 private const val PREVIEW_DEBOUNCE_MS = 150L
 
+/** Everything the preview renders from; value equality keys the preview effect. */
+private data class PreviewInputs(
+    val typeId: String,
+    val durationStep: Int,
+    val style: TimeoutIconStyle,
+    val current: ScreenTimeout,
+    val next: ScreenTimeout,
+)
+
 /**
  * The generated timeout icon with an optional change transition. When [animation] is enabled, a real
  * timeout change animates the previous and the new icon following its catalog entry (the same motion
@@ -82,8 +91,14 @@ fun AnimatedTimeoutIcon(
     // timeout. It plays a double pass through the next timeout's glyph (current -> next -> current) for
     // every type, settling back on the current icon. [previewKey] captures the triggering inputs and is
     // null while disabled; a short debounce coalesces the rapid changes of dragging the duration slider.
+    // The icon style and the timeouts are part of the key so a mid-preview change of either cancels
+    // the in-flight play and replays with fresh glyphs instead of finishing with stale ones.
     var previewFrame by remember { mutableStateOf<Bitmap?>(null) }
-    val previewKey = if (animation.enabled) "${animation.typeId}@${animation.durationStep}" else null
+    val previewKey = if (animation.enabled) {
+        PreviewInputs(animation.typeId, animation.durationStep, timeoutIconStyle, currentScreenTimeout, nextScreenTimeout)
+    } else {
+        null
+    }
     var lastPreviewKey by remember { mutableStateOf(previewKey) }
     LaunchedEffect(previewKey) {
         if (previewKey == null) {
