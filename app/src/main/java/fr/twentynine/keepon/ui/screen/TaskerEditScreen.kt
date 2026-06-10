@@ -356,7 +356,6 @@ fun TaskerScreenTimeoutRow(
 
             TimeoutRowLabel(
                 text = item.displayName,
-                showGlow = isSelected,
                 modifier = Modifier.padding(start = 24.dp),
             )
 

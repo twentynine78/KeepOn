@@ -1,6 +1,9 @@
 package fr.twentynine.keepon.ui.screen
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.PlaylistAddCheck
 import androidx.compose.material.icons.outlined.Lock
@@ -25,10 +29,13 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -273,9 +280,15 @@ fun ScreenTimeoutRow(
                 modifier = Modifier.align(Alignment.CenterStart),
             )
 
+            CurrentTimeoutDot(
+                visible = item.isCurrent,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(start = 31.dp, top = 1.dp),
+            )
+
             TimeoutRowLabel(
                 text = item.displayName,
-                showGlow = item.isCurrent,
                 modifier = Modifier
                     .padding(start = 70.dp)
                     .align(Alignment.CenterStart),
@@ -343,5 +356,35 @@ fun ScreenTimeoutRow(
                 }
             }
         }
+    }
+}
+
+private val CurrentTimeoutDotSize = 8.dp
+private const val CURRENT_TIMEOUT_DOT_ANIMATION_MS = 350
+
+/**
+ * The accent dot marking the timeout currently configured on the system, shown just left of its row
+ * label. Fades and scales in/out with [visible] so it glides between rows when the current timeout
+ * changes (both the old and new rows are usually on screen, giving a cross-fade).
+ */
+@Composable
+private fun CurrentTimeoutDot(visible: Boolean, modifier: Modifier = Modifier) {
+    val progress by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(CURRENT_TIMEOUT_DOT_ANIMATION_MS),
+        label = "CurrentTimeoutDot",
+    )
+    if (progress > 0f) {
+        Box(
+            modifier = modifier
+                .size(CurrentTimeoutDotSize)
+                .graphicsLayer {
+                    alpha = progress
+                    scaleX = progress
+                    scaleY = progress
+                }
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primary),
+        )
     }
 }
