@@ -20,10 +20,14 @@ import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 // Sample data for the @Preview functions below. Generated timeout icons render blank in previews
 // (they need the Coil pipeline at runtime); previews are for layout/spacing/colors.
 private val previewScreenTimeouts = listOf(
-    ScreenTimeoutUI(value = 15000, displayName = "15 s", isSelected = false, isDefault = false, isCurrent = false, isLocked = false),
-    ScreenTimeoutUI(value = 30000, displayName = "30 s", isSelected = true, isDefault = true, isCurrent = true, isLocked = false),
-    ScreenTimeoutUI(value = 120000, displayName = "2 min", isSelected = true, isDefault = false, isCurrent = false, isLocked = false),
-    ScreenTimeoutUI(value = Int.MAX_VALUE, displayName = "∞", isSelected = false, isDefault = false, isCurrent = false, isLocked = true),
+    ScreenTimeoutUI(value = 15000, displayName = "15 seconds", isSelected = false, isDefault = false, isCurrent = false, isLocked = false),
+    ScreenTimeoutUI(value = 30000, displayName = "30 seconds", isSelected = true, isDefault = true, isCurrent = true, isLocked = false),
+    ScreenTimeoutUI(value = 60000, displayName = "1 minute", isSelected = true, isDefault = false, isCurrent = false, isLocked = false),
+    ScreenTimeoutUI(value = 120000, displayName = "2 minutes", isSelected = true, isDefault = false, isCurrent = false, isLocked = false),
+    ScreenTimeoutUI(value = 300000, displayName = "5 minutes", isSelected = true, isDefault = false, isCurrent = false, isLocked = false),
+    ScreenTimeoutUI(value = 1800000, displayName = "30 minutes", isSelected = true, isDefault = false, isCurrent = false, isLocked = false),
+    ScreenTimeoutUI(value = 3600000, displayName = "1 hour", isSelected = true, isDefault = false, isCurrent = false, isLocked = true),
+    ScreenTimeoutUI(value = Int.MAX_VALUE, displayName = "Indefinitely", isSelected = false, isDefault = false, isCurrent = false, isLocked = true),
 )
 
 private val previewCreditSections = listOf(

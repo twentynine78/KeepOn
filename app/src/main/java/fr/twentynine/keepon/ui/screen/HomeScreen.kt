@@ -56,6 +56,7 @@ import fr.twentynine.keepon.ui.util.screenContentModifier
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
 import fr.twentynine.keepon.ui.theme.StyleTopSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.component.CardHeader
+import fr.twentynine.keepon.ui.component.GhostSizedText
 import fr.twentynine.keepon.ui.component.rememberBehaviorSwitchLabel
 import fr.twentynine.keepon.ui.component.KeepOnRichTooltip
 import fr.twentynine.keepon.ui.component.LabeledControlRow
@@ -295,7 +296,7 @@ fun ScreenTimeoutRow(
             TimeoutRowLabel(
                 text = item.displayName,
                 modifier = Modifier
-                    .padding(start = 70.dp)
+                    .padding(start = 76.dp)
                     .align(Alignment.CenterStart),
             )
 
@@ -365,7 +366,7 @@ fun ScreenTimeoutRow(
 }
 
 private val CurrentTimeoutDotSize = 8.dp
-private const val CURRENT_TIMEOUT_DOT_ANIMATION_MS = 350
+private const val CURRENT_TIMEOUT_DOT_ANIMATION_MS = 450
 
 /**
  * The accent dot marking the timeout currently configured on the system, shown just left of its row
@@ -389,7 +390,7 @@ private fun CurrentTimeoutDot(visible: Boolean, modifier: Modifier = Modifier) {
                     scaleY = progress
                 }
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary),
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.75f)),
         )
     }
 }

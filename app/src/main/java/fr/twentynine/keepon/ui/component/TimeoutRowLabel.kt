@@ -18,7 +18,7 @@ fun TimeoutRowLabel(
     Text(
         text = text,
         modifier = modifier,
-        style = MaterialTheme.typography.labelMedium,
+        style = MaterialTheme.typography.titleSmall,
         fontSize = 17.sp,
         fontWeight = FontWeight.SemiBold,
     )
