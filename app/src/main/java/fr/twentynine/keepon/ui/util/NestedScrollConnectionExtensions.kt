@@ -11,20 +11,10 @@ import androidx.compose.ui.unit.Velocity
  * scroll drive both the top app bar and the bottom bar scroll behaviors at once.
  */
 operator fun NestedScrollConnection.plus(other: NestedScrollConnection): NestedScrollConnection {
-    // Optimization: if one of the connections is "empty" (our internal instance),
-    // there's no need to create a delegation chain.
-    // Note: This identity check will only work if you ensure
-    // that any "empty" connection uses `EmptyNestedScrollConnection`.
-    // Compose's default behaviors might return their own internal instance
-    // for an "empty" connection, so this optimization is limited.
-    // The main reason to keep it is to handle cases where you explicitly pass
-    // a connection you know is a no-op.
+    val self = this
+    val argument = other
 
-    // More general and robust case: return a new instance that delegates.
-    val self = this // Left-hand connection (this)
-    val argument = other // Right-hand connection (other)
-
-    // If both are identical, no need to combine them further (though this is rare for behavior instances)
+    // Chaining a connection with itself would double-apply it; just return it unchanged.
     if (self === argument) return self
 
     return object : NestedScrollConnection {

@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
@@ -28,9 +29,11 @@ fun PulsatingIcon(
     contentDescription: String?,
     modifier: Modifier = Modifier,
 ) {
+    // Pulse with a graphicsLayer scale (draw-time only) instead of animating the size, which
+    // would re-run layout on every frame.
     val pulsate by infiniteTransition.animateFloat(
-        initialValue = initialSize * 0.9f,
-        targetValue = initialSize * 1.49f,
+        initialValue = 0.9f,
+        targetValue = 1.49f,
         animationSpec = infiniteRepeatable(tween(1200), RepeatMode.Reverse)
     )
     Box(
@@ -43,7 +46,11 @@ fun PulsatingIcon(
             imageVector = imageVector,
             contentDescription = contentDescription,
             modifier = modifier
-                .size(pulsate.dp)
+                .size(initialSize.dp)
+                .graphicsLayer {
+                    scaleX = pulsate
+                    scaleY = pulsate
+                }
         )
     }
 }

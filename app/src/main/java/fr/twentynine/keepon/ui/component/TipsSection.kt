@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -154,7 +153,6 @@ fun TipsSection(
                                     initialSize = 14f,
                                     imageVector = tip.iconImageVector,
                                     contentDescription = stringResource(tip.titleId),
-                                    modifier = Modifier
                                 )
                                 Text(
                                     text = stringResource(tip.titleId),
@@ -216,7 +214,8 @@ fun TipsSection(
         enter = expandVertically(),
         exit = shrinkVertically(),
     ) {
-        LazyRow(
+        // A plain Row: at most a handful of static dots, no need for lazy machinery.
+        Row(
             modifier = Modifier
                 .wrapContentWidth()
                 .wrapContentHeight()
@@ -224,7 +223,7 @@ fun TipsSection(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            items(pagerState.pageCount) { index ->
+            repeat(pagerState.pageCount) { index ->
                 val isSelected = pagerState.currentPage == index
                 val color = if (isSelected) {
                     MaterialTheme.colorScheme.onBackground

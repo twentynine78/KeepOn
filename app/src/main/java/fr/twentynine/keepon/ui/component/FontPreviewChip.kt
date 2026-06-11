@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,16 +23,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.twentynine.keepon.R
+import fr.twentynine.keepon.ui.theme.CHIP_BACKGROUND_ALPHA
+import fr.twentynine.keepon.ui.theme.CHIP_BORDER_ALPHA
+import fr.twentynine.keepon.ui.theme.KeepOnChipShape
+import fr.twentynine.keepon.ui.theme.KeepOnChipSize
 import fr.twentynine.keepon.ui.theme.KeepOnTheme
 
-private val ChipShape = RoundedCornerShape(14.dp)
-private val ChipSize = 38.dp
 private val GlyphFontSize = 16.sp
 private const val CHIP_COLOR_ANIMATION_MS = 400
-
-// The card-chip surface treatment shared with TimeoutIconChip.
-private const val CHIP_BACKGROUND_ALPHA = 0.65f
-private const val CHIP_BORDER_ALPHA = 0.35f
 
 /**
  * The rounded chip that previews a selectable font as an "Aa" glyph drawn in that font, used by the
@@ -73,14 +70,14 @@ fun FontPreviewChip(
 
     Box(
         modifier = modifier
-            .clip(ChipShape)
+            .clip(KeepOnChipShape)
             .background(backgroundColor)
             .border(
                 width = 1.dp,
                 color = borderColor,
-                shape = ChipShape,
+                shape = KeepOnChipShape,
             )
-            .size(ChipSize),
+            .size(KeepOnChipSize),
         contentAlignment = Alignment.Center,
     ) {
         Text(

@@ -69,6 +69,9 @@ import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.catalog.IconTransitionGlyphCatalog
 import fr.twentynine.keepon.ui.model.IconTransitionOptionUI
+import fr.twentynine.keepon.ui.theme.CHIP_BACKGROUND_ALPHA
+import fr.twentynine.keepon.ui.theme.CHIP_BORDER_ALPHA
+import fr.twentynine.keepon.ui.theme.KeepOnChipShape
 import fr.twentynine.keepon.ui.theme.KeepOnTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -79,17 +82,12 @@ private val GridMinCellWidth = 104.dp
 private val TileShape = RoundedCornerShape(16.dp)
 private val TilePadding = 10.dp
 private val TileIconChipSize = 44.dp
-private val TileIconChipShape = RoundedCornerShape(14.dp)
 private val TileIconSize = 24.dp
 private val TileLabelSpacing = 6.dp
 private val TileBadgePadding = 6.dp
 private val TileBadgeSize = 18.dp
 private val TileBadgeIconSize = 12.dp
 private const val TILE_COLOR_ANIMATION_MS = 200
-
-// The card-chip surface treatment shared with TimeoutIconChip.
-private const val TILE_BACKGROUND_ALPHA = 0.65f
-private const val TILE_BORDER_ALPHA = 0.35f
 
 // Coalesces the rapid config changes of dragging the duration slider into a single preview play.
 private const val PREVIEW_DEBOUNCE_MS = 150L
@@ -118,7 +116,7 @@ fun IconTransitionTypeGrid(
     var replayTick by remember { mutableIntStateOf(0) }
 
     BoxWithConstraints(modifier = modifier) {
-        val columns = (maxWidth / GridMinCellWidth).toInt().coerceIn(2, options.size)
+        val columns = (maxWidth / GridMinCellWidth).toInt().coerceIn(2, maxOf(options.size, 2))
 
         Column(
             modifier = Modifier.selectableGroup(),
@@ -166,16 +164,16 @@ private fun IconTransitionTile(
         targetValue = if (selected) {
             colorScheme.primaryContainer
         } else {
-            colorScheme.surface.copy(alpha = TILE_BACKGROUND_ALPHA)
+            colorScheme.surface.copy(alpha = CHIP_BACKGROUND_ALPHA)
         },
         animationSpec = tween(TILE_COLOR_ANIMATION_MS),
         label = "TileContainerColor",
     )
     val borderColor by animateColorAsState(
         targetValue = if (selected) {
-            colorScheme.primary.copy(alpha = TILE_BORDER_ALPHA)
+            colorScheme.primary.copy(alpha = CHIP_BORDER_ALPHA)
         } else {
-            colorScheme.outline.copy(alpha = TILE_BORDER_ALPHA)
+            colorScheme.outline.copy(alpha = CHIP_BORDER_ALPHA)
         },
         animationSpec = tween(TILE_COLOR_ANIMATION_MS),
         label = "TileBorderColor",
@@ -215,7 +213,7 @@ private fun IconTransitionTile(
             Box(
                 modifier = Modifier
                     .size(TileIconChipSize)
-                    .clip(TileIconChipShape)
+                    .clip(KeepOnChipShape)
                     .background(chipColor),
                 contentAlignment = Alignment.Center,
             ) {

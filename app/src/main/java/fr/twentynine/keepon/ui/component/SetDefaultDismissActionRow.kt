@@ -9,7 +9,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import fr.twentynine.keepon.R
@@ -39,22 +38,13 @@ fun SetDefaultDismissActionRow(
     val enabledText = stringResource(R.string.select_timeouts_swipe_set_default_text)
     val disabledText = stringResource(R.string.select_timeouts_swipe_already_default_text)
 
-    val textSetDefault = remember(screenTimeoutUI.isDefault, enabledText, disabledText) {
-        if (!screenTimeoutUI.isDefault) enabledText else disabledText
-    }
-
-    val iconSetDefault = remember(screenTimeoutUI.isDefault) {
-        if (!screenTimeoutUI.isDefault) Icons.Rounded.PushPin else Icons.Rounded.Done
-    }
-    val currentContentTintForAnimation = remember(screenTimeoutUI.isDefault) {
-        if (!screenTimeoutUI.isDefault) contentEnabledTint else contentDisabledTint
-    }
-    val currentBackgroundColorForAnimation = remember(screenTimeoutUI.isDefault, swipeEnabledState) {
-        when {
-            !swipeEnabledState -> Color.Transparent
-            screenTimeoutUI.isDefault -> backgroundDisabledColor
-            else -> backgroundEnabledColor
-        }
+    val textSetDefault = if (!screenTimeoutUI.isDefault) enabledText else disabledText
+    val iconSetDefault = if (!screenTimeoutUI.isDefault) Icons.Rounded.PushPin else Icons.Rounded.Done
+    val currentContentTintForAnimation = if (!screenTimeoutUI.isDefault) contentEnabledTint else contentDisabledTint
+    val currentBackgroundColorForAnimation = when {
+        !swipeEnabledState -> Color.Transparent
+        screenTimeoutUI.isDefault -> backgroundDisabledColor
+        else -> backgroundEnabledColor
     }
 
     val animatedBackgroundColor by animateColorAsState(

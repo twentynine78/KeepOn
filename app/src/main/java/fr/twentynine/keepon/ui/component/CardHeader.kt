@@ -103,17 +103,19 @@ fun CardHeader(
             enter = expandVertically(expandFrom = Alignment.Top),
             exit = shrinkVertically(shrinkTowards = Alignment.Top),
         ) {
-            Text(
-                text = descText!!,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier
-                    .padding(
-                        bottom = CardHeaderDescBottomPadding,
-                        start = CardHeaderDescHorizontalPadding,
-                        end = CardHeaderDescHorizontalPadding,
-                    ),
-                color = MaterialTheme.colorScheme.outline
-            )
+            descText?.let { text ->
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .padding(
+                            bottom = CardHeaderDescBottomPadding,
+                            start = CardHeaderDescHorizontalPadding,
+                            end = CardHeaderDescHorizontalPadding,
+                        ),
+                    color = MaterialTheme.colorScheme.outline
+                )
+            }
         }
     }
 }

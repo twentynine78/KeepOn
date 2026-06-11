@@ -1,7 +1,6 @@
 package fr.twentynine.keepon.ui.navigation
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -28,11 +27,10 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
@@ -70,17 +68,11 @@ fun KeepOnNavigationWrapper(
         adaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(
             WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
         ) -> NavigationSuiteType.NavigationRail
-        adaptiveInfo.windowSizeClass.isWidthAtLeastBreakpoint(
-            WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND
-        ) -> NavigationSuiteType.NavigationRail
         else -> NavigationSuiteType.NavigationBar
     }
     val navContentPosition = when {
         adaptiveInfo.windowSizeClass.isHeightAtLeastBreakpoint(
             WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND
-        ) -> KeepOnNavigationContentPosition.CENTER
-        adaptiveInfo.windowSizeClass.isHeightAtLeastBreakpoint(
-            WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND
         ) -> KeepOnNavigationContentPosition.CENTER
         else -> KeepOnNavigationContentPosition.TOP
     }
@@ -129,15 +121,17 @@ fun BottomNavigationBar(
             .shadow(6.dp),
         scrollBehavior = scrollBehavior,
     ) {
+        // Fade the items out as the bar collapses, reading the scroll state at draw time so the
+        // per-frame fraction changes never recompose the bar content.
+        val itemAlphaModifier = Modifier.graphicsLayer {
+            alpha = (1f - scrollBehavior.state.collapsedFraction * 2f).coerceIn(0f, 1f)
+        }
         topLevelDestinations.forEach { topLevelDestination ->
             val isSelected = selectedDestination == topLevelDestination.destination.route
             val badgeAmount = topLevelDestination.badgeAmount
 
-            val itemAlpha by animateFloatAsState(1 - (scrollBehavior.state.collapsedFraction * 2))
-
             NavigationBarItem(
-                modifier = Modifier
-                    .alpha(itemAlpha),
+                modifier = itemAlphaModifier,
                 selected = isSelected,
                 onClick = { navigateToTopLevelDestination(topLevelDestination.destination) },
                 icon = {
@@ -194,7 +188,6 @@ fun KeepOnNavigationRail(
             Spacer(modifier = Modifier.weight(0.3f))
 
             Column(
-                modifier = Modifier,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
@@ -217,7 +210,6 @@ fun KeepOnNavigationRail(
             }
 
             Column(
-                modifier = Modifier,
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {

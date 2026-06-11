@@ -12,11 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import fr.twentynine.keepon.ui.model.ItemPosition
+import fr.twentynine.keepon.ui.util.bottomPaddingFor
+import fr.twentynine.keepon.ui.util.cardShapeFor
 import fr.twentynine.keepon.ui.util.defaultCardHorizontalPadding
-import fr.twentynine.keepon.ui.util.rememberBottomPadding
-import fr.twentynine.keepon.ui.util.rememberCardShape
-import fr.twentynine.keepon.ui.util.rememberItemBottomBorderPadding
-import fr.twentynine.keepon.ui.util.rememberTopPadding
+import fr.twentynine.keepon.ui.util.itemBottomBorderPaddingFor
+import fr.twentynine.keepon.ui.util.topPaddingFor
 
 /**
  * A list card positioned within a vertical group: applies the rounded-corner shape and the
@@ -29,10 +29,10 @@ fun PositionedCard(
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    val topPadding = rememberTopPadding(itemPosition = itemPosition)
-    val bottomPadding = rememberBottomPadding(itemPosition = itemPosition)
-    val itemBottomBorderPadding = rememberItemBottomBorderPadding(itemPosition = itemPosition)
-    val shape = rememberCardShape(itemPosition = itemPosition)
+    val topPadding = topPaddingFor(itemPosition)
+    val bottomPadding = bottomPaddingFor(itemPosition)
+    val itemBottomBorderPadding = itemBottomBorderPaddingFor(itemPosition)
+    val shape = cardShapeFor(itemPosition)
     val cardContainerColor = CardDefaults.cardColors().containerColor
 
     Box(

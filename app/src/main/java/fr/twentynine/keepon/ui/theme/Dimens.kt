@@ -14,6 +14,21 @@ val KeepOnCardShape = RoundedCornerShape(KeepOnCardCornerRadius)
 /** Alpha applied to secondary (subtitle) text drawn over the background color. */
 const val SUBTITLE_CONTENT_ALPHA = 0.8f
 
+// Icon chips — the small rounded chips sharing one surface treatment (timeout icon, font "Aa"
+// preview, transition-tile glyph).
+
+/** Shape of the icon chips. */
+val KeepOnChipShape = RoundedCornerShape(14.dp)
+
+/** Edge size of the standard square icon chip (the transition-tile chip is larger). */
+val KeepOnChipSize = 38.dp
+
+/** Alpha of a chip's surface fill drawn over the card background. */
+const val CHIP_BACKGROUND_ALPHA = 0.65f
+
+/** Alpha of a chip's outline border. */
+const val CHIP_BORDER_ALPHA = 0.35f
+
 // Card header — paddings of the section header used inside every settings card.
 
 /** Padding around the header row (below it and on both sides). */

@@ -60,8 +60,9 @@ class MainViewModel @Inject constructor(
 
     private var appLaunchIncremented = false
 
-    // The suspend producer is invoked lazily inside flow {} so this can be a single, eagerly
-    // built StateFlow (one upstream subscription, shared via WhileSubscribed).
+    // The producer is suspend (the repository flow getters are), so it is invoked lazily inside
+    // flow {} to keep this a single, eagerly built StateFlow (one upstream subscription, shared
+    // via WhileSubscribed).
     val uiState: StateFlow<MainViewUIState> =
         flow<MainViewUIState> {
             emitAll(

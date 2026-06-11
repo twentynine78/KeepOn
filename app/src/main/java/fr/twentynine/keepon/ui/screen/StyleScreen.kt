@@ -42,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.model.IconTransitionOptionUI
@@ -75,7 +76,7 @@ import fr.twentynine.keepon.ui.component.SegmentedCheckboxGroup
 import fr.twentynine.keepon.ui.component.SegmentedCheckboxOption
 import fr.twentynine.keepon.ui.component.Subtitle
 import fr.twentynine.keepon.ui.component.SwitchSettingRow
-import kotlin.math.ceil
+import kotlin.math.roundToInt
 
 /** Style destination, stateful wrapper: feeds the icon style/transition slices of [uiState] to [StyleScreen]. */
 @Composable
@@ -190,6 +191,10 @@ fun StyleScreen(
 
 // Material disabled-content opacity, applied to the animation choices when the toggle is off.
 private const val DISABLED_CONTENT_ALPHA = 0.38f
+
+// Font-size slider: 10 steps centered on 0 (-5..+5).
+private const val FONT_SIZE_SLIDER_STEPS = 10
+private val FontSizeSliderRange = -(FONT_SIZE_SLIDER_STEPS / 2f)..FONT_SIZE_SLIDER_STEPS / 2f
 
 @Composable
 fun IconTransitionAnimationCard(
@@ -470,9 +475,6 @@ fun FontOptionsCard(
                 .align(alignment = Alignment.Start),
             shape = KeepOnCardShape,
         ) {
-            val nbStep = remember { 10f }
-            val range = remember(nbStep) { ceil(nbStep / 2).unaryMinus()..ceil(nbStep / 2) }
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -490,8 +492,8 @@ fun FontOptionsCard(
                             )
                         )
                     },
-                    valueRange = range,
-                    steps = nbStep.toInt() - 1,
+                    valueRange = FontSizeSliderRange,
+                    steps = FONT_SIZE_SLIDER_STEPS - 1,
                     topPadding = 0.dp
                 )
 
@@ -534,8 +536,8 @@ private fun FontOptionSlider(
     onValueChange: (Int) -> Unit,
     valueRange: ClosedFloatingPointRange<Float>,
     steps: Int,
-    topPadding: androidx.compose.ui.unit.Dp = 12.dp,
-    bottomPadding: androidx.compose.ui.unit.Dp = 0.dp,
+    topPadding: Dp = 12.dp,
+    bottomPadding: Dp = 0.dp,
     enabled: Boolean = true,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -557,7 +559,9 @@ private fun FontOptionSlider(
         Slider(
             value = value.toFloat(),
             onValueChange = { rawValue ->
-                onValueChange(rawValue.toInt())
+                // roundToInt, not toInt: the snapped step values are approximate floats and
+                // truncation would drop e.g. 2.9999998 to 2.
+                onValueChange(rawValue.roundToInt())
             },
             steps = steps,
             valueRange = valueRange,

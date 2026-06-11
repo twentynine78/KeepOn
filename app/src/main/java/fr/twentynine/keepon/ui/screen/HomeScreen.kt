@@ -244,7 +244,6 @@ fun ScreenTimeoutRow(
         {
                 clickedItem ->
             if (clickedItem.isLocked || clickedItem.isDefault) {
-                // Ensure coroutineScope is stable or also part of the remember key if it can change
                 coroutineScope.launch { tooltipState.show() }
             } else {
                 onEvent(MainUIEvent.ToggleScreenTimeoutSelection(clickedItem))

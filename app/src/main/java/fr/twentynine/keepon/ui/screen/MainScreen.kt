@@ -34,7 +34,9 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -120,18 +122,27 @@ fun MainScreen(
     uiState: MainViewUIState,
     onEvent: (MainUIEvent) -> Unit,
 ) {
-    val targetScreenState = remember(uiState) {
-        when (uiState) {
-            is MainViewUIState.Error -> MainScreenState.ERROR
-            is MainViewUIState.Success -> {
-                if (!uiState.canWriteSystemSettings || !uiState.batteryIsNotOptimized) {
-                    MainScreenState.PERMISSION
-                } else {
-                    MainScreenState.KEEP_ON
-                }
+    val targetScreenState = when (uiState) {
+        is MainViewUIState.Error -> MainScreenState.ERROR
+        is MainViewUIState.Success -> {
+            if (!uiState.canWriteSystemSettings || !uiState.batteryIsNotOptimized) {
+                MainScreenState.PERMISSION
+            } else {
+                MainScreenState.KEEP_ON
             }
-            is MainViewUIState.Loading -> MainScreenState.EMPTY
         }
+        is MainViewUIState.Loading -> MainScreenState.EMPTY
+    }
+
+    // Keep the last state of each kind: the exiting AnimatedContent branch recomposes with the NEW
+    // uiState, which no longer matches it — without these the outgoing screen would render empty
+    // for the whole transition instead of fading out with its last data.
+    var lastSuccessState by remember { mutableStateOf(uiState as? MainViewUIState.Success) }
+    var lastErrorState by remember { mutableStateOf(uiState as? MainViewUIState.Error) }
+    when (uiState) {
+        is MainViewUIState.Success -> lastSuccessState = uiState
+        is MainViewUIState.Error -> lastErrorState = uiState
+        is MainViewUIState.Loading -> Unit
     }
 
     AnimatedContent(
@@ -148,27 +159,26 @@ fun MainScreen(
                 else -> defaultFade
             }
         },
-        contentKey = { targetScreenState -> targetScreenState.toString() },
         label = "MainScreenAnimation"
     ) { screenStateTarget ->
         when (screenStateTarget) {
             MainScreenState.ERROR -> {
-                if (uiState is MainViewUIState.Error) {
-                    ErrorScreen(errorMessage = uiState.error)
+                lastErrorState?.let { errorState ->
+                    ErrorScreen(errorMessage = errorState.error)
                 }
             }
             MainScreenState.PERMISSION -> {
-                if (uiState is MainViewUIState.Success) {
+                lastSuccessState?.let { successState ->
                     MainPermissionScreen(
-                        uiState = uiState,
+                        uiState = successState,
                         onEvent = onEvent,
                     )
                 }
             }
             MainScreenState.KEEP_ON -> {
-                if (uiState is MainViewUIState.Success) {
+                lastSuccessState?.let { successState ->
                     KeepOnView(
-                        uiState = uiState,
+                        uiState = successState,
                         onEvent = onEvent,
                     )
                 }

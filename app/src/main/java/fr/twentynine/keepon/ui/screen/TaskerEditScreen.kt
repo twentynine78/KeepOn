@@ -81,9 +81,7 @@ fun TaskerEditRoute(
                     onEvent = onEvent,
                 )
             } else {
-                val exitUntilCollapsedScrollBehavior =
-                    TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-                val scrollBehavior = remember { exitUntilCollapsedScrollBehavior }
+                val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
                 val combinedInsets = WindowInsets.safeDrawing.union(WindowInsets.captionBar)
 
@@ -179,23 +177,16 @@ fun TaskerEditScreen(
     onEvent: (TaskerUIEvent) -> Unit,
     paddingValue: PaddingValues,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        TaskerScreenTimeoutList(
-            screenTimeouts = screenTimeouts,
-            specialScreenTimeouts = specialScreenTimeouts,
-            defaultScreenTimeout = defaultScreenTimeout,
-            previousScreenTimeout = previousScreenTimeout,
-            selectedScreenTimeout = selectedScreenTimeout,
-            timeoutIconStyle = timeoutIconStyle,
-            onEvent = onEvent,
-            paddingValue = paddingValue,
-        )
-    }
+    TaskerScreenTimeoutList(
+        screenTimeouts = screenTimeouts,
+        specialScreenTimeouts = specialScreenTimeouts,
+        defaultScreenTimeout = defaultScreenTimeout,
+        previousScreenTimeout = previousScreenTimeout,
+        selectedScreenTimeout = selectedScreenTimeout,
+        timeoutIconStyle = timeoutIconStyle,
+        onEvent = onEvent,
+        paddingValue = paddingValue,
+    )
 }
 
 @Composable
@@ -317,7 +308,7 @@ fun TaskerScreenTimeoutRow(
     val coroutineScope = rememberCoroutineScope()
     val tooltipState = rememberTooltipState()
 
-    val isSelected = remember(item, selectedScreenTimeout) { item.value == selectedScreenTimeout?.value }
+    val isSelected = item.value == selectedScreenTimeout?.value
 
     ItemCard(
         itemPosition = itemPosition,

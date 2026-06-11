@@ -9,16 +9,18 @@ import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.appWidgetBackground
 import androidx.glance.appwidget.cornerRadius
-import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
-import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
+import androidx.glance.layout.size
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.ui.state.WidgetUIState
 import fr.twentynine.keepon.ui.widget.theme.KeepOnWidgetColorScheme
+import fr.twentynine.keepon.ui.widget.theme.applyRootBackground
+import fr.twentynine.keepon.ui.widget.theme.rememberLegacyCircleBackground
+import fr.twentynine.keepon.ui.widget.theme.rememberWidgetDimens
 
 /** The widget's error state: the error message on the widget background, tapping it opens the app. */
 @Composable
@@ -26,17 +28,21 @@ fun KeepOnWidgetError(
     widgetUIState: WidgetUIState.Error,
     modifier: GlanceModifier = GlanceModifier,
 ) {
+    val dimens = rememberWidgetDimens()
     val mainActivityIntent = Intent(LocalContext.current, MainActivity::class.java).apply {
-        this.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+        flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
     }
+    // On API < 31 cornerRadius() is a no-op; round the error circle with a bitmap fallback.
+    val legacyBackground = rememberLegacyCircleBackground(KeepOnWidgetColorScheme.colors.background)
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .fillMaxSize()
             .appWidgetBackground()
-            .clickable(actionStartActivity(mainActivityIntent))
-            .background(KeepOnWidgetColorScheme.colors.background)
-            .cornerRadius(10.dp),
+            .cornerRadius(dimens.cornerRadius)
+            .size(dimens.widgetMinSize)
+            .applyRootBackground(legacyBackground, KeepOnWidgetColorScheme.colors.background)
+            .clickable(actionStartActivity(mainActivityIntent)),
     ) {
         Text(
             text = widgetUIState.error,

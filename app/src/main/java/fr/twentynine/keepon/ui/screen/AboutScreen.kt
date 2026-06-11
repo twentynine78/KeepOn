@@ -203,39 +203,7 @@ fun AppInfoCard(
                         text = appInfo.author,
                     )
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        val context = LocalContext.current
-                        val focusRequester = remember { FocusRequester() }
-                        Text(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 8.dp)
-                                .basicMarquee(animationMode = MarqueeAnimationMode.WhileFocused)
-                                .focusRequester(focusRequester)
-                                .focusable()
-                                .clickable { focusRequester.requestFocus() },
-                            text = appInfo.sourceCodeUrl,
-                        )
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ExitToApp,
-                            contentDescription = stringResource(R.string.about_open_link_text),
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp)
-                                .size(16.dp)
-                                .clickable {
-                                    val webIntent = Intent(
-                                        Intent.ACTION_VIEW,
-                                        appInfo.sourceCodeUrl.toUri()
-                                    )
-                                    context.startActivity(webIntent)
-                                }
-                        )
-                    }
+                    MarqueeUrlRow(url = appInfo.sourceCodeUrl)
                 }
             }
         }
@@ -248,8 +216,6 @@ fun CreditInfoCardRow(
     itemPosition: ItemPosition,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     ItemCard(
         itemPosition = itemPosition,
         modifier = modifier
@@ -316,39 +282,47 @@ fun CreditInfoCardRow(
                     text = credit.author,
                 )
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    val focusRequester = remember { FocusRequester() }
-                    Text(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 8.dp)
-                            .basicMarquee(animationMode = MarqueeAnimationMode.WhileFocused)
-                            .focusRequester(focusRequester)
-                            .focusable()
-                            .clickable { focusRequester.requestFocus() },
-                        text = credit.url,
-                    )
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ExitToApp,
-                        contentDescription = stringResource(R.string.about_open_link_text),
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp)
-                            .size(16.dp)
-                            .clickable {
-                                val webIntent = Intent(
-                                    Intent.ACTION_VIEW,
-                                    credit.url.toUri()
-                                )
-                                context.startActivity(webIntent)
-                            }
-                    )
-                }
+                MarqueeUrlRow(url = credit.url)
             }
         }
+    }
+}
+
+/**
+ * A URL that marquee-scrolls while focused (tapping the text focuses it), with a trailing icon that
+ * opens it in the browser. Shared by the app-info card and the credit rows.
+ */
+@Composable
+private fun MarqueeUrlRow(url: String, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val focusRequester = remember { FocusRequester() }
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 8.dp)
+                .basicMarquee(animationMode = MarqueeAnimationMode.WhileFocused)
+                .focusRequester(focusRequester)
+                .focusable()
+                .clickable { focusRequester.requestFocus() },
+            text = url,
+        )
+        Icon(
+            imageVector = Icons.AutoMirrored.Rounded.ExitToApp,
+            contentDescription = stringResource(R.string.about_open_link_text),
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .size(16.dp)
+                .clickable {
+                    val webIntent = Intent(Intent.ACTION_VIEW, url.toUri())
+                    context.startActivity(webIntent)
+                }
+        )
     }
 }

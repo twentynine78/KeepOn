@@ -6,7 +6,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import fr.twentynine.keepon.ui.model.ItemPosition
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
@@ -32,8 +31,8 @@ fun SwipeableScreenTimeoutCard(
     onSwipeAction: ((SwipeToDismissBoxValue, ScreenTimeoutUI) -> Unit)?,
     content: @Composable (ScreenTimeoutUI?) -> Unit
 ) {
-    val isDefault = remember(item.isDefault) { item.isDefault }
-    val isFirst = remember(itemPosition) { itemPosition == ItemPosition.FIRST }
+    val isDefault = item.isDefault
+    val isFirst = itemPosition == ItemPosition.FIRST
 
     val containerColor by animateColorAsState(
         targetValue = CardDefaults.cardColors().containerColor,

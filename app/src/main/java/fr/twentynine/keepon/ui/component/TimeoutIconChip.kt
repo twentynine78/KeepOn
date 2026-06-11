@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -18,11 +17,11 @@ import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconData
 import fr.twentynine.keepon.domain.model.TimeoutIconSize
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
+import fr.twentynine.keepon.ui.theme.CHIP_BACKGROUND_ALPHA
+import fr.twentynine.keepon.ui.theme.CHIP_BORDER_ALPHA
+import fr.twentynine.keepon.ui.theme.KeepOnChipShape
+import fr.twentynine.keepon.ui.theme.KeepOnChipSize
 import fr.twentynine.keepon.ui.util.rememberTimeoutIconModel
-
-private val ChipShape = RoundedCornerShape(14.dp)
-private const val CHIP_BACKGROUND_ALPHA = 0.65f
-private const val CHIP_BORDER_ALPHA = 0.35f
 
 /**
  * The rounded chip that shows a generated timeout icon, shared by the home and Tasker rows.
@@ -42,14 +41,14 @@ fun TimeoutIconChip(
 
     Box(
         modifier = modifier
-            .clip(ChipShape)
+            .clip(KeepOnChipShape)
             .background(MaterialTheme.colorScheme.surface.copy(alpha = CHIP_BACKGROUND_ALPHA))
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.outline.copy(alpha = CHIP_BORDER_ALPHA),
-                shape = ChipShape,
+                shape = KeepOnChipShape,
             )
-            .size(38.dp),
+            .size(KeepOnChipSize),
         contentAlignment = Alignment.Center,
     ) {
         AsyncImage(
