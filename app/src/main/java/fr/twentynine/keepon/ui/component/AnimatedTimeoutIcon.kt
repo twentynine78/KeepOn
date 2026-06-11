@@ -224,10 +224,11 @@ internal suspend fun loadIconBitmap(
     context: Context,
     screenTimeout: ScreenTimeout,
     timeoutIconStyle: TimeoutIconStyle,
+    iconSize: TimeoutIconSize = TimeoutIconSize.LARGE,
 ): Bitmap? {
     val request = timeoutIconImageRequest(
         context,
-        TimeoutIconData(screenTimeout, TimeoutIconSize.MEDIUM, timeoutIconStyle),
+        TimeoutIconData(screenTimeout, iconSize, timeoutIconStyle),
     )
     return (context.imageLoader.execute(request) as? SuccessResult)?.image?.toBitmap()
 }
@@ -240,8 +241,9 @@ private fun TimeoutIcon(
     contentDescription: String,
     modifier: Modifier,
 ) {
+    // LARGE: this icon is only shown on the FAB (40dp), where the MEDIUM scale would be upscaled.
     val imageData = remember(screenTimeout, timeoutIconStyle) {
-        TimeoutIconData(screenTimeout, TimeoutIconSize.MEDIUM, timeoutIconStyle)
+        TimeoutIconData(screenTimeout, TimeoutIconSize.LARGE, timeoutIconStyle)
     }
     AsyncImage(
         modifier = modifier,

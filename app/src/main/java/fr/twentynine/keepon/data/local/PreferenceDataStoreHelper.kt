@@ -63,6 +63,14 @@ private val Context.dataStore by preferencesDataStore(
  */
 interface PreferenceDataStoreHelper {
     suspend fun <T> putPreference(key: Preferences.Key<T>, value: T, dataStoreSourceType: DataStoreSourceType)
+
+    /** Atomic read-modify-write of one key: [transform] receives the current value (null when unset). */
+    suspend fun <T> updatePreference(
+        key: Preferences.Key<T>,
+        dataStoreSourceType: DataStoreSourceType,
+        transform: (T?) -> T
+    )
+
     suspend fun <T> removePreference(key: Preferences.Key<T>, dataStoreSourceType: DataStoreSourceType)
     fun <T> getPreference(key: Preferences.Key<T>, defaultValue: T, dataStoreSourceType: DataStoreSourceType): Flow<T>
     fun <T> getPreference(key: Preferences.Key<T>, dataStoreSourceType: DataStoreSourceType): Flow<T?>
@@ -121,6 +129,16 @@ class PreferenceDataStoreHelperImpl @Inject constructor(@param:ApplicationContex
     ) {
         getDataSource(dataStoreSourceType).edit { preferences ->
             preferences[key] = value
+        }
+    }
+
+    override suspend fun <T> updatePreference(
+        key: Preferences.Key<T>,
+        dataStoreSourceType: DataStoreSourceType,
+        transform: (T?) -> T
+    ) {
+        getDataSource(dataStoreSourceType).edit { preferences ->
+            preferences[key] = transform(preferences[key])
         }
     }
 

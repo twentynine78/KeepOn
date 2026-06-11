@@ -66,6 +66,7 @@ import fr.twentynine.keepon.domain.model.IconTransition
 import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.IconTransitionTiming
 import fr.twentynine.keepon.domain.model.ScreenTimeout
+import fr.twentynine.keepon.domain.model.TimeoutIconSize
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.catalog.IconTransitionGlyphCatalog
 import fr.twentynine.keepon.ui.model.IconTransitionOptionUI
@@ -313,7 +314,9 @@ private fun TilePreviewIcon(
         lastPreviewKey = previewKey
         previewFrame = null // show the crisp glyph while the debounce settles
         delay(PREVIEW_DEBOUNCE_MS.milliseconds)
-        val timeoutIcon = loadIconBitmap(context, currentScreenTimeout, timeoutIconStyle) ?: return@LaunchedEffect
+        // MEDIUM: the preview chip renders at 24dp, and smaller layers keep the compositing cheap.
+        val timeoutIcon = loadIconBitmap(context, currentScreenTimeout, timeoutIconStyle, TimeoutIconSize.MEDIUM)
+            ?: return@LaunchedEffect
         val glyphBitmap = renderGlyphBitmap(glyphPainter, density, layoutDirection, timeoutIcon.width, timeoutIcon.height)
         // Double pass: the tile's glyph morphs into the current timeout icon and back, so the
         // effect previews a real transition in both directions and the tile settles on its glyph.

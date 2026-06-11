@@ -5,8 +5,8 @@ import fr.twentynine.keepon.domain.catalog.IconTransitionCatalog
 
 /**
  * Localized presentation labels for the domain [IconTransitionCatalog] transitions. Kept in the UI
- * layer (like [TipsInfo]) so the resource ids stay out of the domain; the label text is resolved
- * through the StringResourceProvider where the list is built.
+ * layer (like [TipsInfo]) so the presentation wording stays out of the domain catalog; the label
+ * text is resolved through the StringResourceProvider where the list is built.
  */
 object IconTransitionLabelCatalog {
     private val labelResById: Map<String, Int> = mapOf(

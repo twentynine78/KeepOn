@@ -51,7 +51,7 @@ class SetNextSystemScreenTimeoutUseCase @Inject constructor(
             )
         )
 
-        val sortedScreenTimeouts = screenTimeouts.sortedBy { it.value }.distinct()
+        val sortedScreenTimeouts = screenTimeouts.sortedBy { it.value }
         if (sortedScreenTimeouts.isEmpty()) {
             return currentTimeout
         }

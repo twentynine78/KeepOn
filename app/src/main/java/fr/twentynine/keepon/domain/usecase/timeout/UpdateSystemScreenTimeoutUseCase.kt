@@ -25,11 +25,11 @@ class UpdateSystemScreenTimeoutUseCase @Inject constructor(
     suspend operator fun invoke(newTimeout: ScreenTimeout, forceUpdatePreviousTimeout: Boolean = false) {
         val defaultTimeout = timeoutPreferencesRepository.getDefaultScreenTimeout()
         val currentTimeout = timeoutPreferencesRepository.getCurrentScreenTimeout()
-        val previousTimeout = timeoutPreferencesRepository.getPreviousScreenTimeout()
 
         val timeout = when (newTimeout.value) {
             SpecialScreenTimeoutType.DEFAULT_SCREEN_TIMEOUT_TYPE.value -> defaultTimeout
-            SpecialScreenTimeoutType.PREVIOUS_SCREEN_TIMEOUT_TYPE.value -> previousTimeout
+            SpecialScreenTimeoutType.PREVIOUS_SCREEN_TIMEOUT_TYPE.value ->
+                timeoutPreferencesRepository.getPreviousScreenTimeout()
             else -> newTimeout
         }
 
@@ -47,13 +47,15 @@ class UpdateSystemScreenTimeoutUseCase @Inject constructor(
             return
         }
 
-        updateDefaultScreenTimeoutIfNoResetTimeout(currentTimeout, defaultTimeout, newTimeout)
+        // Promote the RESOLVED value: a Tasker "default"/"previous" sentinel must never be
+        // persisted as the default timeout.
+        updateDefaultScreenTimeoutIfNoResetTimeout(currentTimeout, defaultTimeout, timeout)
     }
 
     private suspend fun updateDefaultScreenTimeoutIfNoResetTimeout(
         currentTimeout: ScreenTimeout,
         defaultTimeout: ScreenTimeout,
-        newTimeout: ScreenTimeout,
+        appliedTimeout: ScreenTimeout,
     ) {
         if (timeoutPreferencesRepository.getResetTimeoutWhenScreenOff()) {
             return
@@ -67,6 +69,6 @@ class UpdateSystemScreenTimeoutUseCase @Inject constructor(
             }
         }
 
-        timeoutPreferencesRepository.setDefaultScreenTimeout(newTimeout)
+        timeoutPreferencesRepository.setDefaultScreenTimeout(appliedTimeout)
     }
 }

@@ -6,8 +6,8 @@ import fr.twentynine.keepon.domain.catalog.CreditInfoType
 
 /**
  * Localized presentation labels for the domain credit catalog. Kept in the UI layer (like
- * [IconTransitionLabelCatalog]) so the resource ids stay out of the domain; the text is resolved
- * through the StringResourceProvider where the credit sections are built.
+ * [IconTransitionLabelCatalog]) so the presentation wording stays out of the domain catalog; the
+ * text is resolved through the StringResourceProvider where the credit sections are built.
  */
 object CreditLabelCatalog {
     private val typeNameResByType: Map<CreditInfoType, Int> = mapOf(

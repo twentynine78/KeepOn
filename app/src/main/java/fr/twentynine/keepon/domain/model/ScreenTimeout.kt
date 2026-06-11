@@ -37,7 +37,11 @@ data class ScreenTimeout(
         }
     }
 
-    /** Compact label (e.g. "2m", "30s", "∞") used on the generated timeout icon and the chip. */
+    /**
+     * Compact label (e.g. "2m", "30s", "∞") used on the generated timeout icon and the chip.
+     * Unlike [getFullDisplayTimeout] this expects a real duration: callers resolve the special
+     * sentinel values to their concrete timeout before rendering an icon.
+     */
     fun getShortDisplayTimeout(stringResourceProvider: StringResourceProvider): String {
         return when {
             value == Int.MAX_VALUE ->

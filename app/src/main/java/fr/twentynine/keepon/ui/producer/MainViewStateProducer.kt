@@ -119,7 +119,7 @@ class MainViewStateProducer @Inject constructor(
         return combine(
             permissionFlagsFlow,
             mainPreferencesFlow,
-            tipsListFlow(canPostNotificationFlow, batteryIsNotOptimizedFlow),
+            tipsListFlow(canPostNotificationFlow),
             screenTimeoutListFlow(),
         ) { permissions, preferences, tipsList, screenTimeouts ->
             MainViewUIState.Success(
@@ -145,18 +145,15 @@ class MainViewStateProducer @Inject constructor(
 
     private fun tipsListFlow(
         canPostNotificationFlow: Flow<Boolean>,
-        batteryIsNotOptimizedFlow: Flow<Boolean>,
     ): Flow<List<TipsInfo>> {
         return combine(
             uiPreferencesRepository.getDismissedTipsFlow(),
             canPostNotificationFlow,
-            batteryIsNotOptimizedFlow,
             uiPreferencesRepository.getQSTileAddedFlow(),
             appPreferencesRepository.getAppLaunchCountFlow(),
-        ) { dismissedTips, canPostNotification, batteryIsNotOptimized, tileServiceIsAdded, appLaunchCount ->
+        ) { dismissedTips, canPostNotification, tileServiceIsAdded, appLaunchCount ->
             val constraintState = TipsConstraintState(
                 canPostNotification = canPostNotification,
-                batteryIsNotOptimized = batteryIsNotOptimized,
                 tileServiceIsAdded = tileServiceIsAdded,
                 showRateApp = checkIfRateTipNeededUseCase(appLaunchCount),
             )

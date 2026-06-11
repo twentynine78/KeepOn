@@ -96,26 +96,14 @@ class UiPreferencesRepositoryImpl @Inject constructor(
             .distinctUntilChanged()
             .map(::decodeDismissedTips)
 
-    override suspend fun setDismissedTip(dismissedTips: DismissedTips) {
-        val dismissedTipList = getDismissedTips().toMutableList()
-        dismissedTipList.add(dismissedTips)
-        setDismissedTips(dismissedTipList)
-    }
-
-    private suspend fun getDismissedTips(): List<DismissedTips> =
-        decodeDismissedTips(
-            preferenceDataStoreHelper.getLastPreference(
-                DISMISSED_TIPS,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        )
-
-    private suspend fun setDismissedTips(dismissedTips: List<DismissedTips>) =
-        preferenceDataStoreHelper.putPreference(
+    override suspend fun setDismissedTip(dismissedTips: DismissedTips) =
+        // Atomic read-modify-write so two concurrent dismissals cannot drop one another.
+        preferenceDataStoreHelper.updatePreference(
             DISMISSED_TIPS,
-            PreferencesJson.encodeToString(dismissedTips),
             DataStoreSourceType.DATA_SOURCE_BACKED_UP
-        )
+        ) { storedJson ->
+            PreferencesJson.encodeToString(decodeDismissedTips(storedJson) + dismissedTips)
+        }
 
     private fun decodeTimeoutIconStyle(json: String?): TimeoutIconStyle =
         if (json.isNullOrEmpty()) {

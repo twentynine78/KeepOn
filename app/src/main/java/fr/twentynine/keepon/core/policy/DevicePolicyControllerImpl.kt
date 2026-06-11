@@ -26,7 +26,9 @@ class DevicePolicyControllerImpl @Inject constructor(@param:ApplicationContext p
     }
 
     override fun isValidTimeout(timeout: ScreenTimeout): Boolean {
-        return timeout.value <= getMaxAllowedScreenTimeout() && timeout.value != -1
+        // Only real durations are valid: this rejects the negative sentinel values (and the
+        // legacy -1 "unset" marker) as well as anything above the device-policy maximum.
+        return timeout.value > 0 && timeout.value <= getMaxAllowedScreenTimeout()
     }
 
     override fun removeNotAllowedScreenTimeout(timeouts: List<ScreenTimeout>): List<ScreenTimeout> {
