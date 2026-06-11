@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -65,6 +66,7 @@ import fr.twentynine.keepon.ui.theme.StyleRadioGlyphInset
 import fr.twentynine.keepon.ui.theme.StyleSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.theme.StyleTopSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.component.CardHeader
+import fr.twentynine.keepon.ui.component.FontPreviewChip
 import fr.twentynine.keepon.ui.component.IconPositionPad
 import fr.twentynine.keepon.ui.component.IconTransitionTypeGrid
 import fr.twentynine.keepon.ui.component.ItemCard
@@ -306,15 +308,25 @@ fun FontSelectionRow(
         }
     }
 
+    val selected = iconFontFamily.name == timeoutIconStyle.iconFontFamilyName
+
     ItemCard(modifier = modifier, itemPosition = itemPosition) {
         LabeledControlRow(
             onClick = onRowClick,
             verticalPadding = StyleListRowVerticalPadding,
-            leadingGlyphInset = StyleRadioGlyphInset,
             leading = {
+                FontPreviewChip(
+                    fontFamily = fontFamily,
+                    selected = selected,
+                )
+            },
+            trailing = {
                 RadioButton(
-                    selected = iconFontFamily.name == timeoutIconStyle.iconFontFamilyName,
+                    selected = selected,
                     onClick = null,
+                    // Cancels the passive radio's built-in padding so the glyph sits at the same
+                    // distance from the card's end edge as the chip from its start edge.
+                    modifier = Modifier.offset(x = StyleRadioGlyphInset),
                 )
             },
             label = {

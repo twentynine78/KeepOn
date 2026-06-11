@@ -62,6 +62,7 @@
 
     <string name="font_selection_tile">Icon font</string>
     <string name="font_selection_text">Select the font used to generate icons.</string>
+    <string name="font_preview_glyph" translatable="false">Aa</string>
 
     <string name="font_style_tile">Icon style</string>
     <string name="font_style_text">Choose the font style for the generated icons.</string>

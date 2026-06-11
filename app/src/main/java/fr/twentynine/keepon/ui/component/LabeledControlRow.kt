@@ -21,8 +21,9 @@ import fr.twentynine.keepon.ui.theme.StyleControlSlotWidth
  * A full-width, clickable settings row: a fixed-width leading slot followed by a label, so labels
  * share one column. The control is left-aligned in the slot and shifted left by [leadingGlyphInset]
  * so its glyph lands on the shared content rail — pass `StyleRadioGlyphInset` for radios/checkboxes
- * (Material insets them in a 48dp touch target) and 0 for switches. The control should be passive
- * (onClick / onCheckedChange = null) — the whole row handles the click.
+ * (Material insets them in a 48dp touch target) and 0 for switches. An optional [trailing] control
+ * sits at the end of the row. Controls should be passive (onClick / onCheckedChange = null) — the
+ * whole row handles the click.
  */
 @Composable
 fun LabeledControlRow(
@@ -32,6 +33,7 @@ fun LabeledControlRow(
     verticalPadding: Dp = StyleControlRowVerticalPadding,
     leadingGlyphInset: Dp = 0.dp,
     leading: @Composable () -> Unit,
+    trailing: (@Composable () -> Unit)? = null,
     label: @Composable () -> Unit,
 ) {
     Row(
@@ -52,5 +54,6 @@ fun LabeledControlRow(
         Box(modifier = Modifier.weight(1f).padding(start = StyleControlLabelSpacing)) {
             label()
         }
+        trailing?.invoke()
     }
 }
