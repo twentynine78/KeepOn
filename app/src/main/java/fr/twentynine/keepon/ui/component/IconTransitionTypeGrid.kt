@@ -320,6 +320,7 @@ private fun TilePreviewIcon(
         // Double pass: the tile's glyph morphs into the current timeout icon and back, so the
         // effect previews a real transition in both directions and the tile settles on its glyph.
         playPreviewPass(transition, glyphBitmap, timeoutIcon, durationMs) { frame -> previewFrame = frame }
+        delay(PREVIEW_DEBOUNCE_MS.milliseconds)
         playPreviewPass(transition, timeoutIcon, glyphBitmap, durationMs) { frame -> previewFrame = frame }
         previewFrame = null
     }
