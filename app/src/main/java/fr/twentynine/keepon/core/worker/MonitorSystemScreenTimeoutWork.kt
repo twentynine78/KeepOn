@@ -8,8 +8,6 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import fr.twentynine.keepon.domain.usecase.timeout.SynchronizeSystemTimeoutUseCase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 /**
  * The core "watch the system timeout" worker. It is triggered by a content-URI observer on the
@@ -27,20 +25,18 @@ class MonitorSystemScreenTimeoutWork @AssistedInject constructor(
     private val workManager = WorkManager.getInstance(appContext)
 
     override suspend fun doWork(): Result {
-        return withContext(Dispatchers.IO) {
-            return@withContext try {
-                synchronizeSystemTimeoutUseCase()
+        return try {
+            synchronizeSystemTimeoutUseCase()
 
-                // Re-schedule the worker
-                MonitorSystemScreenTimeoutWorkScheduler.scheduleWork(
-                    workManager = workManager,
-                    requeueIfRunning = true
-                )
+            // Re-schedule the worker
+            MonitorSystemScreenTimeoutWorkScheduler.scheduleWork(
+                workManager = workManager,
+                requeueIfRunning = true
+            )
 
-                Result.success()
-            } catch (_: Exception) {
-                Result.failure()
-            }
+            Result.success()
+        } catch (_: Exception) {
+            Result.failure()
         }
     }
 }

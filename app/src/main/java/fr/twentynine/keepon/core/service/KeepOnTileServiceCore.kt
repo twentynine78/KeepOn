@@ -16,10 +16,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ServiceLifecycleDispatcher
 import coil3.imageLoader
 import coil3.request.ErrorResult
-import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.request.lifecycle
-import coil3.size.Size
 import coil3.toBitmap
 import fr.twentynine.keepon.di.qualifier.ApplicationScope
 import fr.twentynine.keepon.MainActivity
@@ -38,6 +36,7 @@ import fr.twentynine.keepon.domain.usecase.app.GetKeepOnStatusUseCase
 import fr.twentynine.keepon.domain.usecase.preferences.SetQSTileAddedUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.SetNextSystemScreenTimeoutUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.ShouldRouteToAppUseCase
+import fr.twentynine.keepon.core.coil.timeoutIconImageRequest
 import fr.twentynine.keepon.core.transition.TransitionPlayer
 import fr.twentynine.keepon.core.util.BundleScrubber
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
@@ -106,13 +105,9 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
     // Volatile: cleared from the main thread in onTrimMemory, read/written on the Default collector.
     @Volatile
     private var lastIconBitmap: Bitmap? = null
-    private var lastShownTimeout: ScreenTimeout? = null
 
-    private val imageRequestBuilder by lazy {
-        ImageRequest.Builder(this)
-            .size(Size.ORIGINAL)
-            .lifecycle(lifecycle)
-    }
+    @Volatile
+    private var lastShownTimeout: ScreenTimeout? = null
 
     override fun onCreate() {
         lifecycleDispatcher.onServicePreSuperOnCreate()
@@ -214,8 +209,9 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
             state.timeoutIconStyle
         )
 
-        val request = imageRequestBuilder
-            .data(newTimeoutIconData)
+        val request = timeoutIconImageRequest(this, newTimeoutIconData)
+            .newBuilder()
+            .lifecycle(lifecycle)
             .build()
 
         when (val result = imageLoader.execute(request)) {
@@ -319,18 +315,11 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        val startActivityAction = {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                startActivityAndCollapse(mainPendingIntent)
-            } else {
-                startActivityAndCollapse(mainIntent)
-            }
-        }
-
-        if (isLocked) {
-            unlockAndRun { startActivityAction() }
+        // onClick ignores clicks while the device is locked, so no unlockAndRun path is needed here.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startActivityAndCollapse(mainPendingIntent)
         } else {
-            startActivityAction()
+            startActivityAndCollapse(mainIntent)
         }
     }
 

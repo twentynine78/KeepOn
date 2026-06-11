@@ -8,9 +8,10 @@ import javax.inject.Inject
 /** Implements [ScreenTimeoutScheduler] by enqueuing [SetNewScreenTimeoutWork] through WorkManager. */
 class ScreenTimeoutSchedulerImpl @Inject constructor(
     @param:ApplicationContext private val context: Context,
+    private val setNewScreenTimeoutWorkScheduler: SetNewScreenTimeoutWorkScheduler,
 ) : ScreenTimeoutScheduler {
 
     override fun schedule(newScreenTimeout: Int, updatePreviousTimeout: Boolean) {
-        SetNewScreenTimeoutWorkScheduler().scheduleWork(newScreenTimeout, context, updatePreviousTimeout)
+        setNewScreenTimeoutWorkScheduler.scheduleWork(newScreenTimeout, context, updatePreviousTimeout)
     }
 }

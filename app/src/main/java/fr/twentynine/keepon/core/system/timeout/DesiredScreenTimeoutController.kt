@@ -6,9 +6,6 @@ import fr.twentynine.keepon.core.util.removeUntil
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -32,11 +29,9 @@ object DesiredScreenTimeoutController {
     private val defaultDispatchers = Dispatchers.Default
     private val screenTimeoutProcessingLock = Mutex()
 
-    @Volatile
-    private var pendingTimeouts = LinkedBlockingQueue<ScreenTimeout>()
+    private val pendingTimeouts = LinkedBlockingQueue<ScreenTimeout>()
 
-    @Volatile
-    private var desiredScreenTimeouts = mutableListOf<ScreenTimeout>()
+    private val desiredScreenTimeouts = mutableListOf<ScreenTimeout>()
 
     fun getDesiredScreenTimeout(currentTimeout: ScreenTimeout): ScreenTimeout? {
         synchronized(desiredScreenTimeouts) {
@@ -64,17 +59,10 @@ object DesiredScreenTimeoutController {
                     val requestedTimeout = pendingTimeouts.poll()
 
                     if (requestedTimeout != null) {
-                        coroutineScope {
-                            val deferreds = listOf(
-                                async {
-                                    synchronized(desiredScreenTimeouts) { desiredScreenTimeouts.add(requestedTimeout) }
-                                },
-                                async {
-                                    systemScreenTimeoutController.setSystemScreenTimeout(requestedTimeout)
-                                }
-                            )
-                            deferreds.awaitAll()
-                        }
+                        // Record the desired value before the system write, so the monitor worker
+                        // can never observe the change ahead of its "app-initiated" marker.
+                        synchronized(desiredScreenTimeouts) { desiredScreenTimeouts.add(requestedTimeout) }
+                        systemScreenTimeoutController.setSystemScreenTimeout(requestedTimeout)
 
                         withTimeoutOrNull(WAIT_TIME_FOR_TIMEOUT_APPLIED) {
                             while (requestedTimeout != systemScreenTimeoutController.getSystemScreenTimeout()) {

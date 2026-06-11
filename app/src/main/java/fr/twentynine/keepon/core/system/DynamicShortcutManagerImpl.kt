@@ -13,10 +13,6 @@ class DynamicShortcutManagerImpl @Inject constructor(
 
     override fun removeAllDynamicShortcuts() {
         val shortcutManager = context.getSystemService(Context.SHORTCUT_SERVICE) as ShortcutManager
-        val dynamicShortcutsId = shortcutManager.dynamicShortcuts.map { shortcut -> shortcut.id }
-
-        if (dynamicShortcutsId.isNotEmpty()) {
-            shortcutManager.removeDynamicShortcuts(dynamicShortcutsId)
-        }
+        shortcutManager.removeAllDynamicShortcuts()
     }
 }

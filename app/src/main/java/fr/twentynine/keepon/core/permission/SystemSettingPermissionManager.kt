@@ -11,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration.Companion.milliseconds
 import javax.inject.Inject
 
@@ -51,18 +50,12 @@ class SystemSettingPermissionManagerImpl @Inject constructor(@param:ActivityCont
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
             checkPermissionJob = context.lifecycleScope.launch(Dispatchers.Default) {
-                withTimeout(waitTime * maxCheckRepeat) {
-                    repeat(maxCheckRepeat) {
-                        if (Settings.System.canWrite(context)) {
-                            try {
-                                context.startActivity(restartActivityIntent)
-                            } finally {
-                                checkPermissionJob?.cancel()
-                            }
-                        } else {
-                            delay(waitTime)
-                        }
+                repeat(maxCheckRepeat) {
+                    if (Settings.System.canWrite(context)) {
+                        context.startActivity(restartActivityIntent)
+                        return@launch
                     }
+                    delay(waitTime)
                 }
             }
         }

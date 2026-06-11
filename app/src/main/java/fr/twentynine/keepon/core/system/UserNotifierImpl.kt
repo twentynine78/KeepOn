@@ -25,6 +25,14 @@ class UserNotifierImpl @Inject constructor(
         showToast(R.string.battery_optimization_request_unavailable)
     }
 
+    override fun notifyMissingPermission() {
+        showToast(R.string.toast_missing_permission)
+    }
+
+    override fun notifyScreenOffServiceError() {
+        showToast(R.string.toast_screen_off_service_error)
+    }
+
     private fun showToast(@StringRes messageRes: Int) {
         // Toast must be posted on the main thread; this port is called from background
         // coroutines (tile, widget, worker, app).

@@ -32,20 +32,23 @@ class ParticleTransitionRenderer(private val transition: ParticleTransition) : I
         val scatterPx = transition.scatter * maxOf(width, height)
         val old = buildCloud(IconMask.readAlpha(IconMask.toAlphaMask(from, width, height)), width, height, grainPx, scatterPx)
         val new = buildCloud(IconMask.readAlpha(IconMask.toAlphaMask(to, width, height)), width, height, grainPx, scatterPx)
-        return TransitionFrames { progress -> buildFrame(old, new, grainPx, width, height, progress) }
+        // Reused across this playback's frames (a prepared instance is never composited concurrently).
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        return TransitionFrames { progress -> buildFrame(old, new, grainPx, width, height, paint, progress) }
     }
 
+    @Suppress("LongParameterList")
     private fun buildFrame(
         old: ParticleCloud,
         new: ParticleCloud,
         grainPx: Float,
         width: Int,
         height: Int,
+        paint: Paint,
         progress: Float,
     ): Bitmap {
         val output = createBitmap(width, height, Bitmap.Config.ALPHA_8)
         val canvas = Canvas(output)
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
         val outPhase = (progress / PHASE).coerceIn(0f, 1f)
         drawCloud(canvas, paint, old, grainPx, phase = outPhase, entering = false)

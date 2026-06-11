@@ -152,14 +152,12 @@ class ScreenOffReceiverService : LifecycleService() {
         val intentFilter = IntentFilter()
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF)
 
-        try {
-            ContextCompat.registerReceiver(
-                this,
-                screenOffReceiver,
-                intentFilter,
-                ContextCompat.RECEIVER_NOT_EXPORTED
-            )
-        } catch (_: IllegalArgumentException) {}
+        ContextCompat.registerReceiver(
+            this,
+            screenOffReceiver,
+            intentFilter,
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
     }
 
     private fun unregisterScreenOffReceiver() {

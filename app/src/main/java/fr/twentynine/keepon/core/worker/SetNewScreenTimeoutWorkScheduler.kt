@@ -10,13 +10,14 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import java.time.Duration
+import javax.inject.Inject
 
 /**
  * Enqueues [SetNewScreenTimeoutWork] to apply a new timeout, passing the value and "record previous"
  * flag as input data. Uses APPEND_OR_REPLACE on a unique work name so rapid successive requests run in
  * order rather than clobbering one another.
  */
-class SetNewScreenTimeoutWorkScheduler {
+class SetNewScreenTimeoutWorkScheduler @Inject constructor() {
 
     private val workRequestConstraints = Constraints.Builder().build()
 

@@ -9,6 +9,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import fr.twentynine.keepon.core.util.uuid
 import java.time.Duration
+import kotlinx.coroutines.flow.first
 
 /**
  * Schedules the [MonitorSystemScreenTimeoutWork] as unique one-shot work, constrained by a
@@ -35,8 +36,8 @@ object MonitorSystemScreenTimeoutWorkScheduler {
         .setBackoffCriteria(BackoffPolicy.LINEAR, Duration.ofMillis(WorkRequest.MIN_BACKOFF_MILLIS))
         .build()
 
-    fun scheduleWork(workManager: WorkManager, requeueIfRunning: Boolean = false) {
-        val workInfo = workManager.getWorkInfoById(SYSTEM_SCREEN_TIMEOUT_WORKER_ID).get()
+    suspend fun scheduleWork(workManager: WorkManager, requeueIfRunning: Boolean = false) {
+        val workInfo = workManager.getWorkInfoByIdFlow(SYSTEM_SCREEN_TIMEOUT_WORKER_ID).first()
         if (workInfo == null || workInfo.state.isFinished || requeueIfRunning) {
             workManager.enqueueUniqueWork(
                 SYSTEM_SCREEN_TIMEOUT_WORKER,

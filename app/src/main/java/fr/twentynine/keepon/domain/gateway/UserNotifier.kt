@@ -18,4 +18,13 @@ interface UserNotifier {
      * be opened (some OEM ROMs ship without a handler for it).
      */
     fun notifyBatteryOptimizationRequestUnavailable()
+
+    /**
+     * Notifies the user that an action was skipped because a required permission
+     * (write-settings or battery-optimization exemption) is missing or was revoked.
+     */
+    fun notifyMissingPermission()
+
+    /** Notifies the user that the screen-off monitoring service failed to start or stop. */
+    fun notifyScreenOffServiceError()
 }

@@ -2,33 +2,30 @@ package fr.twentynine.keepon.core.service
 
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
-import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
-import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.gateway.ScreenOffReceiverServiceManager
 import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import fr.twentynine.keepon.domain.gateway.UserNotifier
 import javax.inject.Inject
 
 /**
  * Starts/stops/restarts the [ScreenOffReceiverService], guarding the start on the required permissions
- * and the tracked running state (so it isn't started twice or without permission), and toasting the
+ * and the tracked running state (so it isn't started twice or without permission), and notifying the
  * outcome where relevant.
  */
 class ScreenOffReceiverServiceManagerImpl @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val permissionStateGateway: PermissionStateGateway,
     private val screenOffServiceState: ScreenOffServiceState,
+    private val userNotifier: UserNotifier,
 ) : ScreenOffReceiverServiceManager {
     override suspend fun startService() {
         if (screenOffServiceState.isRunning) {
             return
         }
         if (!permissionStateGateway.areRequiredPermissionsGranted()) {
-            showToast(R.string.toast_missing_permission)
+            userNotifier.notifyMissingPermission()
             return
         }
         try {
@@ -39,7 +36,7 @@ class ScreenOffReceiverServiceManagerImpl @Inject constructor(
         } catch (_: Exception) {
             // Permissions are granted, so this is a start failure (e.g. the Android 12+
             // foreground-service background-start restriction), not a missing permission.
-            showToast(R.string.toast_screen_off_service_error)
+            userNotifier.notifyScreenOffServiceError()
         }
     }
 
@@ -57,7 +54,7 @@ class ScreenOffReceiverServiceManagerImpl @Inject constructor(
                 }
             )
         } catch (_: Exception) {
-            showToast(R.string.toast_screen_off_service_error)
+            userNotifier.notifyScreenOffServiceError()
         }
     }
 
@@ -74,17 +71,7 @@ class ScreenOffReceiverServiceManagerImpl @Inject constructor(
                 Intent(context.applicationContext, ScreenOffReceiverService::class.java)
             )
         } catch (_: Exception) {
-            showToast(R.string.toast_screen_off_service_error)
-        }
-    }
-
-    private suspend fun showToast(@StringRes messageId: Int) {
-        withContext(Dispatchers.Main) {
-            Toast.makeText(
-                context.applicationContext,
-                context.getString(messageId),
-                Toast.LENGTH_SHORT
-            ).show()
+            userNotifier.notifyScreenOffServiceError()
         }
     }
 
