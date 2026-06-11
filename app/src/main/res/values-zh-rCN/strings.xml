@@ -44,6 +44,8 @@
     <string name="default_screen_timeout_tooltip_when_active">默认值\n滑动可更改</string>
     <string name="default_screen_timeout_tooltip_when_inactive">当前值</string>
 
+    <string name="default_timeout_badge_text">默认</string>
+
     <string name="font_options_title">图标布局</string>
     <string name="font_options_text">更改字体大小和图标位置。</string>
     <string name="font_options_size_subtitle">字体大小</string>

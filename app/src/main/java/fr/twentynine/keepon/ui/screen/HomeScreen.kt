@@ -4,11 +4,13 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.PlaylistAddCheck
 import androidx.compose.material.icons.outlined.Lock
@@ -38,7 +41,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.model.ItemPosition
@@ -292,12 +294,18 @@ fun ScreenTimeoutRow(
                     .padding(start = 31.dp, top = 1.dp),
             )
 
-            TimeoutRowLabel(
-                text = item.displayName,
+            Row(
                 modifier = Modifier
                     .padding(start = 76.dp)
                     .align(Alignment.CenterStart),
-            )
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                TimeoutRowLabel(text = item.displayName)
+                DefaultTimeoutBadge(
+                    visible = item.isDefault,
+                    modifier = Modifier.padding(start = 16.dp),
+                )
+            }
 
             when {
                 item.isLocked -> {
@@ -365,7 +373,9 @@ fun ScreenTimeoutRow(
 }
 
 private val CurrentTimeoutDotSize = 8.dp
-private const val CURRENT_TIMEOUT_DOT_ANIMATION_MS = 450
+
+/** Shared fade/scale duration of the row markers (current dot, default badge) so they glide together. */
+private const val ROW_MARKER_ANIMATION_MS = 450
 
 /**
  * The accent dot marking the timeout currently configured on the system, shown just left of its row
@@ -376,7 +386,7 @@ private const val CURRENT_TIMEOUT_DOT_ANIMATION_MS = 450
 private fun CurrentTimeoutDot(visible: Boolean, modifier: Modifier = Modifier) {
     val progress by animateFloatAsState(
         targetValue = if (visible) 1f else 0f,
-        animationSpec = tween(CURRENT_TIMEOUT_DOT_ANIMATION_MS),
+        animationSpec = tween(ROW_MARKER_ANIMATION_MS),
         label = "CurrentTimeoutDot",
     )
     if (progress > 0f) {
@@ -390,6 +400,40 @@ private fun CurrentTimeoutDot(visible: Boolean, modifier: Modifier = Modifier) {
                 }
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.75f)),
+        )
+    }
+}
+
+private val DefaultTimeoutBadgeShape = RoundedCornerShape(50)
+
+/** Constant dim of the whole badge (border + text) so it stays secondary next to the row label. */
+private const val DEFAULT_TIMEOUT_BADGE_ALPHA = 0.8f
+
+/**
+ * The outlined pill marking the default timeout, shown after its row label. Fades and scales in/out
+ * with [visible] so it glides between rows when the default timeout changes, like [CurrentTimeoutDot].
+ */
+@Composable
+private fun DefaultTimeoutBadge(visible: Boolean, modifier: Modifier = Modifier) {
+    val progress by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(ROW_MARKER_ANIMATION_MS),
+        label = "DefaultTimeoutBadge",
+    )
+    if (progress > 0f) {
+        Text(
+            text = stringResource(R.string.default_timeout_badge_text),
+            modifier = modifier
+                .graphicsLayer {
+                    alpha = progress * DEFAULT_TIMEOUT_BADGE_ALPHA
+                    scaleX = progress
+                    scaleY = progress
+                }
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, DefaultTimeoutBadgeShape)
+                .padding(horizontal = 8.dp, vertical = 2.dp),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
         )
     }
 }

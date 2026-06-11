@@ -50,6 +50,8 @@
     <string name="default_screen_timeout_tooltip_when_active">Valeur par défaut\nBalayez pour modifier</string>
     <string name="default_screen_timeout_tooltip_when_inactive">Valeur actuelle</string>
 
+    <string name="default_timeout_badge_text">Par défaut</string>
+
     <string name="font_options_title">Placement de l\'icône</string>
     <string name="font_options_text">Modifiez la taille de la police d\'écriture et l\'emplacement de l\'icône.</string>
     <string name="font_options_size_subtitle">Taille</string>

@@ -50,6 +50,8 @@
     <string name="default_screen_timeout_tooltip_when_active">Default value\nSwipe to change</string>
     <string name="default_screen_timeout_tooltip_when_inactive">Current value</string>
 
+    <string name="default_timeout_badge_text">Default</string>
+
     <string name="font_options_title">Icon placement</string>
     <string name="font_options_text">Change the size of the font and the location of the icon.</string>
     <string name="font_options_size_subtitle">Size</string>
