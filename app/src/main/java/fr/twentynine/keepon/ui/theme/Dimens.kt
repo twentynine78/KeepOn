@@ -52,7 +52,7 @@ val CardHeaderDescBottomPadding = 16.dp
 val StyleCardTopPadding = 28.dp
 
 /** Single left content rail shared by subtitles, slider labels/tracks and control rows. */
-val StyleContentInset = 16.dp
+val StyleContentInset = 14.dp
 
 /** Fixed leading-slot width so control labels share one column. */
 val StyleControlSlotWidth = 56.dp
@@ -65,10 +65,10 @@ val StyleControlRowVerticalPadding = 8.dp
 
 /** Vertical padding of a full-bleed list row (the font selection list) — matches the Home timeout
  *  rows' density (12dp around the same 38dp chip). */
-val StyleListRowVerticalPadding = 16.dp
+val StyleListRowVerticalPadding = 14.dp
 
 /** Vertical padding of a mid-card switch row (the outlined toggle). */
-val StyleSwitchRowVerticalPadding = 12.dp
+val StyleSwitchRowVerticalPadding = 14.dp
 
 /** Vertical padding of the switch row that opens a card (Home behavior / Style transition). The
  *  full inset lives inside the row's clickable so the press ripple reaches the card edges, and the

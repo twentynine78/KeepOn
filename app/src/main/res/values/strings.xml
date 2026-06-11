@@ -78,6 +78,7 @@
     <string name="icon_transition_enable">Animate on timeout change</string>
     <string name="icon_transition_enable_desc">Show a transition when the timeout updates</string>
     <string name="icon_transition_duration">Animation duration</string>
+    <string name="icon_transition_duration_ms">%1$d ms</string>
     <string name="icon_transition_type_subtitle">Animation type</string>
     <string name="icon_transition_type_liquid_morph">Liquid morph</string>
     <string name="icon_transition_type_warp">Turbulent warp</string>

@@ -132,9 +132,9 @@ fun TipsSection(
                         Column(
                             modifier = Modifier
                                 .padding(
-                                    start = 16.dp,
-                                    end = 16.dp,
-                                    top = 16.dp,
+                                    start = 14.dp,
+                                    end = 14.dp,
+                                    top = 14.dp,
                                     bottom = 8.dp
                                 ),
                             horizontalAlignment = Alignment.Start,

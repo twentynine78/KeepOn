@@ -1,11 +1,13 @@
 package fr.twentynine.keepon.ui.screen
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,11 +39,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.model.IconTransitionOptionUI
@@ -190,6 +198,10 @@ fun StyleScreen(
 // Material disabled-content opacity, applied to the animation choices when the toggle is off.
 private const val DISABLED_CONTENT_ALPHA = 0.38f
 
+/** Duration label rounded to the nearest 10 ms (display only — the animation keeps the exact value). */
+private fun durationMsRoundedForDisplay(durationStep: Int): Int =
+    (IconTransitionTiming.durationMs(durationStep) / 10f).roundToInt() * 10
+
 // Font-size slider: 10 steps centered on 0 (-5..+5).
 private const val FONT_SIZE_SLIDER_STEPS = 10
 private val FontSizeSliderRange = -(FONT_SIZE_SLIDER_STEPS / 2f)..FONT_SIZE_SLIDER_STEPS / 2f
@@ -221,7 +233,7 @@ fun IconTransitionAnimationCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                    .padding(bottom = 14.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 SwitchSettingRow(
@@ -266,6 +278,10 @@ fun IconTransitionAnimationCard(
 
                 FontOptionSlider(
                     label = stringResource(R.string.icon_transition_duration),
+                    valueText = stringResource(
+                        R.string.icon_transition_duration_ms,
+                        durationMsRoundedForDisplay(iconTransitionAnimation.durationStep),
+                    ),
                     value = iconTransitionAnimation.durationStep,
                     onValueChange = { newValue ->
                         onEvent(
@@ -397,7 +413,7 @@ fun FontStyleCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 16.dp),
+                    .padding(top = 8.dp, bottom = 14.dp),
             ) {
                 Subtitle(
                     text = stringResource(R.string.font_style_parameters_subtitle),
@@ -473,13 +489,15 @@ fun FontOptionsCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 16.dp),
+                    .padding(top = 8.dp, bottom = 14.dp),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.Start
             ) {
+                val fontSize = timeoutIconStyle.iconStyleFontSize
                 FontOptionSlider(
                     label = stringResource(R.string.font_options_size_subtitle),
-                    value = timeoutIconStyle.iconStyleFontSize,
+                    valueText = remember(fontSize) { if (fontSize > 0) "+$fontSize" else fontSize.toString() },
+                    value = fontSize,
                     onValueChange = { newValue ->
                         onEvent(
                             MainUIEvent.UpdateTimeoutIconStyle(
@@ -527,6 +545,7 @@ fun FontOptionsCard(
 @Composable
 private fun FontOptionSlider(
     label: String,
+    valueText: String,
     value: Int,
     onValueChange: (Int) -> Unit,
     valueRange: ClosedFloatingPointRange<Float>,
@@ -545,12 +564,17 @@ private fun FontOptionSlider(
             bottom = bottomPadding,
         )
     ) {
-        Subtitle(
-            text = label,
+        Row(
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(top = 8.dp, bottom = 24.dp)
                 .alpha(if (enabled) 1f else DISABLED_CONTENT_ALPHA),
-        )
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Subtitle(text = label)
+            Subtitle(text = valueText)
+        }
         Slider(
             value = value.toFloat(),
             onValueChange = { rawValue ->
@@ -565,6 +589,16 @@ private fun FontOptionSlider(
                 .fillMaxWidth()
                 .height(32.dp),
             interactionSource = interactionSource,
+            // Centered track: the default sits mid-range (0), so the fill grows from the
+            // centre toward the thumb and the bar stays uncolored at the default.
+            track = { _ ->
+                CenterFilledSliderTrack(
+                    value = value,
+                    valueRange = valueRange,
+                    steps = steps,
+                    enabled = enabled,
+                )
+            },
             thumb = {
                 Label(
                     label = {
@@ -585,7 +619,7 @@ private fun FontOptionSlider(
                                     modifier = Modifier
                                         .padding(8.dp)
                                         .wrapContentWidth(),
-                                    text = value.toString(),
+                                    text = valueText,
                                     fontWeight = FontWeight.Bold,
                                     style = MaterialTheme.typography.bodyLarge
                                 )
@@ -601,5 +635,101 @@ private fun FontOptionSlider(
                 }
             }
         )
+    }
+}
+
+// Centered-track geometry, mirroring the M3 expressive CenteredTrack metrics (that composable is
+// internal in material3 1.4.0, so it is re-implemented here): 16dp bar, 6dp gap each side of the
+// 4dp-wide thumb, 2dp corners on the cut edges, 4dp tick dots.
+private val SliderTrackHeight = 16.dp
+private val SliderThumbTrackGap = 6.dp
+private val SliderThumbHalfWidth = 2.dp
+private val SliderTrackInsideCornerRadius = 2.dp
+private val SliderTickDiameter = 4.dp
+
+/**
+ * Slider track whose active fill grows from the **centre** of the range toward the thumb (both
+ * directions), so a slider whose default sits mid-range shows no fill at the default. Drawn as the
+ * full-width inactive bar split around the thumb gap, the active pill layered from the centre to the
+ * thumb, and the step ticks on top (active-colored inside the fill), matching the M3 track styling.
+ */
+@Composable
+private fun CenterFilledSliderTrack(
+    value: Int,
+    valueRange: ClosedFloatingPointRange<Float>,
+    steps: Int,
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val colors = SliderDefaults.colors()
+    val activeColor = if (enabled) colors.activeTrackColor else colors.disabledActiveTrackColor
+    val inactiveColor = if (enabled) colors.inactiveTrackColor else colors.disabledInactiveTrackColor
+    val activeTickColor = if (enabled) colors.activeTickColor else colors.disabledActiveTickColor
+    val inactiveTickColor = if (enabled) colors.inactiveTickColor else colors.disabledInactiveTickColor
+
+    Canvas(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(SliderTrackHeight)
+    ) {
+        val width = size.width
+        val height = size.height
+        val outerRadius = CornerRadius(height / 2f)
+        val insideRadius = CornerRadius(SliderTrackInsideCornerRadius.toPx())
+        val gap = (SliderThumbHalfWidth + SliderThumbTrackGap).toPx()
+
+        val rangeWidth = valueRange.endInclusive - valueRange.start
+        val rawFraction = if (rangeWidth > 0f) (value - valueRange.start) / rangeWidth else 0.5f
+        val fraction = if (layoutDirection == LayoutDirection.Ltr) rawFraction else 1f - rawFraction
+
+        val thumbX = width * fraction
+        val centerX = width / 2f
+
+        fun drawTrackPiece(left: Float, right: Float, color: Color, leftRadius: CornerRadius, rightRadius: CornerRadius) {
+            if (right - left <= 0f) return
+            val piece = Path().apply {
+                addRoundRect(
+                    RoundRect(
+                        left = left,
+                        top = 0f,
+                        right = right,
+                        bottom = height,
+                        topLeftCornerRadius = leftRadius,
+                        topRightCornerRadius = rightRadius,
+                        bottomRightCornerRadius = rightRadius,
+                        bottomLeftCornerRadius = leftRadius,
+                    )
+                )
+            }
+            drawPath(piece, color)
+        }
+
+        // Inactive bar, split around the thumb gap.
+        drawTrackPiece(0f, thumbX - gap, inactiveColor, outerRadius, insideRadius)
+        drawTrackPiece(thumbX + gap, width, inactiveColor, insideRadius, outerRadius)
+
+        // Active fill from the centre to the thumb-gap edge, layered over the inactive bar; a pill
+        // end at the centre, the inside corner toward the thumb. Nothing when the thumb is centred.
+        if (thumbX > centerX + gap) {
+            drawTrackPiece(centerX, thumbX - gap, activeColor, outerRadius, insideRadius)
+        } else if (thumbX < centerX - gap) {
+            drawTrackPiece(thumbX + gap, centerX, activeColor, insideRadius, outerRadius)
+        }
+
+        // Step ticks (ends included), skipping those hidden by the thumb gap; ticks within the
+        // active fill flip to the contrasting active tick color.
+        val tickRadius = SliderTickDiameter.toPx() / 2f
+        val activeLeft = minOf(centerX, thumbX)
+        val activeRight = maxOf(centerX, thumbX)
+        for (i in 0..steps + 1) {
+            val tickX = width * i / (steps + 1f)
+            if (tickX in (thumbX - gap)..(thumbX + gap)) continue
+            val inActiveFill = tickX in activeLeft..activeRight
+            drawCircle(
+                color = if (inActiveFill) activeTickColor else inactiveTickColor,
+                radius = tickRadius,
+                center = Offset(tickX, height / 2f),
+            )
+        }
     }
 }

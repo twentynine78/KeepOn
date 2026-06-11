@@ -71,6 +71,7 @@
     <string name="icon_transition_enable">在超时发生时进行动画效果</string>
     <string name="icon_transition_enable_desc">超时更新时显示过渡效果</string>
     <string name="icon_transition_duration">动画时长</string>
+    <string name="icon_transition_duration_ms">%1$d ms</string>
     <string name="icon_transition_type_subtitle">动画类型</string>
     <string name="icon_transition_type_liquid_morph">流体变形</string>
     <string name="icon_transition_type_warp">湍流扭曲</string>

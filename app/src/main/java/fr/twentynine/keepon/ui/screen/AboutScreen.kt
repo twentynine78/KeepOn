@@ -163,7 +163,7 @@ fun AppInfoCard(
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(start = 8.dp, top = 16.dp, bottom = 16.dp),
+                        .padding(start = 8.dp, top = 12.dp, bottom = 14.dp),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.Start
                 ) {
@@ -189,7 +189,7 @@ fun AppInfoCard(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(end = 8.dp, top = 16.dp, bottom = 16.dp),
+                        .padding(end = 8.dp, top = 12.dp, bottom = 14.dp),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.Start
                 ) {
@@ -223,7 +223,7 @@ fun CreditInfoCardRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp, horizontal = 8.dp),
+                .padding(vertical = 14.dp, horizontal = 8.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.Top
         ) {

@@ -77,6 +77,7 @@
     <string name="icon_transition_enable">Animer au changement de délai</string>
     <string name="icon_transition_enable_desc">Afficher une transition quand le délai change</string>
     <string name="icon_transition_duration">Durée de l\'animation</string>
+    <string name="icon_transition_duration_ms">%1$d ms</string>
     <string name="icon_transition_type_subtitle">Type d\'animation</string>
     <string name="icon_transition_type_liquid_morph">Métamorphose fluide</string>
     <string name="icon_transition_type_warp">Distorsion turbulente</string>

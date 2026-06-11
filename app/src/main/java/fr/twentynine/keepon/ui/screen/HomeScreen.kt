@@ -216,6 +216,7 @@ fun KeepOnBehaviorCard(
                         Text(
                             text = rememberBehaviorSwitchLabel(defaultScreenTimeoutUI.displayName),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium,
                         )
                     }
                 },
@@ -281,7 +282,7 @@ fun ScreenTimeoutRow(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(14.dp),
             contentAlignment = Alignment.CenterStart
         ) {
             TimeoutIconChip(
@@ -307,7 +308,7 @@ fun ScreenTimeoutRow(
                 TimeoutRowLabel(text = item.displayName)
                 DefaultTimeoutBadge(
                     visible = item.isDefault && resetTimeoutWhenScreenOff,
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier.padding(start = 24.dp),
                 )
             }
 
