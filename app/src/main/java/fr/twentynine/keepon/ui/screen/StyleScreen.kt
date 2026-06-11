@@ -65,6 +65,7 @@ import fr.twentynine.keepon.ui.theme.StyleRadioGlyphInset
 import fr.twentynine.keepon.ui.theme.StyleSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.theme.StyleTopSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.component.CardHeader
+import fr.twentynine.keepon.ui.component.IconPositionPad
 import fr.twentynine.keepon.ui.component.IconTransitionTypeGrid
 import fr.twentynine.keepon.ui.component.ItemCard
 import fr.twentynine.keepon.ui.component.LabeledControlRow
@@ -320,6 +321,7 @@ fun FontSelectionRow(
                 Text(
                     text = iconFontFamily.displayName,
                     fontFamily = fontFamily,
+                    fontWeight = FontWeight.SemiBold,
                 )
             },
         )
@@ -481,33 +483,31 @@ fun FontOptionsCard(
                     topPadding = 0.dp
                 )
 
-                FontOptionSlider(
-                    label = stringResource(R.string.font_options_horizontal_position_subtitle),
-                    value = timeoutIconStyle.iconStyleFontHorizontalSpacing,
-                    onValueChange = { newValue ->
-                        onEvent(
-                            MainUIEvent.UpdateTimeoutIconStyle(
-                                timeoutIconStyle.copy(iconStyleFontHorizontalSpacing = newValue)
-                            )
-                        )
-                    },
-                    valueRange = range,
-                    steps = nbStep.toInt() - 1
+                Subtitle(
+                    text = stringResource(R.string.font_options_position_subtitle),
+                    modifier = Modifier.padding(
+                        start = StyleContentInset,
+                        end = StyleContentInset,
+                        top = 20.dp,
+                        bottom = 12.dp,
+                    ),
                 )
-
-                FontOptionSlider(
-                    label = stringResource(R.string.font_options_vertical_position_subtitle),
-                    value = timeoutIconStyle.iconStyleFontVerticalSpacing,
-                    onValueChange = { newValue ->
+                IconPositionPad(
+                    horizontal = timeoutIconStyle.iconStyleFontHorizontalSpacing,
+                    vertical = timeoutIconStyle.iconStyleFontVerticalSpacing,
+                    onPositionChange = { newHorizontal, newVertical ->
                         onEvent(
                             MainUIEvent.UpdateTimeoutIconStyle(
-                                timeoutIconStyle.copy(iconStyleFontVerticalSpacing = newValue)
+                                timeoutIconStyle.copy(
+                                    iconStyleFontHorizontalSpacing = newHorizontal,
+                                    iconStyleFontVerticalSpacing = newVertical,
+                                )
                             )
                         )
                     },
-                    valueRange = range,
-                    steps = nbStep.toInt() - 1,
-                    bottomPadding = 8.dp
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = StyleContentInset, end = StyleContentInset, bottom = 8.dp),
                 )
             }
         }

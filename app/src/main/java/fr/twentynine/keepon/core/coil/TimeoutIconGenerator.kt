@@ -26,9 +26,15 @@ object TimeoutIconGenerator {
     private const val DEFAULT_TEXT_SIZE = 20f
 
     private const val FONT_SIZE_STEP_COEF = 4
-    private const val HORIZONTAL_PADDING_STEP_COEF = 0.5f
-    private const val VERTICAL_PADDING_STEP_COEF = 2
     private const val MAX_IMAGE_HEIGHT_PERCENT = 0.6f
+
+    // Steps each side of center on the position pad; the extreme steps land the glyph on the edge.
+    private const val POSITION_STEP_RANGE = 5f
+
+    // Extra horizontal travel beyond the edge (fraction of the canvas width) granted to the extreme
+    // steps, so the glyph visibly bleeds off-canvas even when it spans the full width (free space ~0)
+    // and the extreme position reads as a genuinely different placement.
+    private const val HORIZONTAL_EDGE_OVERSHOOT_FRACTION = 0.1f
 
     fun getBitmapFromText(
         context: Context,
@@ -80,9 +86,15 @@ object TimeoutIconGenerator {
             textBounds,
         )
 
-        // Calculate Text Position
-        val horizontalPaddingPx = (horizontalPadding * HORIZONTAL_PADDING_STEP_COEF).px / scaleRatio
-        val verticalPaddingPx = (verticalPadding * VERTICAL_PADDING_STEP_COEF).px / scaleRatio
+        // Calculate Text Position. Each position step moves the glyph by a fraction of the free
+        // space around it once centered, so the extreme steps put it flush against the canvas edge
+        // whatever its rendered size (a fixed per-step distance under-shoots for small glyphs).
+        // Free space is measured in canvas pixels, so it needs no extra scaleRatio correction.
+        val freeSpaceX = ((imageWidth - textBounds.width()) / 2f).coerceAtLeast(0f) +
+            imageWidth * HORIZONTAL_EDGE_OVERSHOOT_FRACTION
+        val freeSpaceY = ((imageHeight - textBounds.height()) / 2f).coerceAtLeast(0f)
+        val horizontalPaddingPx = horizontalPadding / POSITION_STEP_RANGE * freeSpaceX
+        val verticalPaddingPx = verticalPadding / POSITION_STEP_RANGE * freeSpaceY
         val centerX = (imageWidth / 2).toFloat()
         val centerY = (imageHeight / 2).toFloat()
         val textX = centerX - textBounds.centerX() + horizontalPaddingPx

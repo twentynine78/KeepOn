@@ -53,8 +53,10 @@
     <string name="font_options_title">Icon placement</string>
     <string name="font_options_text">Change the size of the font and the location of the icon.</string>
     <string name="font_options_size_subtitle">Size</string>
-    <string name="font_options_horizontal_position_subtitle">Horizontal position</string>
-    <string name="font_options_vertical_position_subtitle">Vertical position</string>
+    <string name="font_options_position_subtitle">Position</string>
+    <string name="font_options_position_horizontal">Horizontal</string>
+    <string name="font_options_position_vertical">Vertical</string>
+    <string name="font_options_position_drag_hint">Drag to place</string>
 
     <string name="font_selection_tile">Icon font</string>
     <string name="font_selection_text">Select the font used to generate icons.</string>

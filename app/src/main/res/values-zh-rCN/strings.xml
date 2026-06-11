@@ -47,8 +47,10 @@
     <string name="font_options_title">图标布局</string>
     <string name="font_options_text">更改字体大小和图标位置。</string>
     <string name="font_options_size_subtitle">字体大小</string>
-    <string name="font_options_horizontal_position_subtitle">水平位置</string>
-    <string name="font_options_vertical_position_subtitle">垂直位置</string>
+    <string name="font_options_position_subtitle">位置</string>
+    <string name="font_options_position_horizontal">水平</string>
+    <string name="font_options_position_vertical">垂直</string>
+    <string name="font_options_position_drag_hint">拖动以定位</string>
 
     <string name="font_selection_tile">图标字体</string>
     <string name="font_selection_text">选择用于生成图标的字体。</string>
