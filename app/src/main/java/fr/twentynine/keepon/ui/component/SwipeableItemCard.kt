@@ -178,6 +178,7 @@ fun <T : Parcelable> SwipeableItemCard(
     itemPosition: ItemPosition,
     modifier: Modifier = Modifier,
     swipeEnabled: Boolean = true,
+    containerColor: Color = CardDefaults.cardColors().containerColor,
     animateSwipeCondition: Boolean = false,
     animateFirstDisplayCondition: Boolean = false,
     onClickAction: ((T) -> Unit)?,
@@ -197,8 +198,6 @@ fun <T : Parcelable> SwipeableItemCard(
     val swipeToDismissState = rememberNoFlingSwipeToDismissBoxState(
         positionalThreshold = { it * swipeThresholdFraction }
     )
-
-    val cardContainerColor = CardDefaults.cardColors().containerColor
 
     val cardModifier = remember(onClickAction, item) {
         if (onClickAction != null && item != null) {
@@ -259,7 +258,7 @@ fun <T : Parcelable> SwipeableItemCard(
                                 translationX = animatedTranslationX.value
                             }
                             .fillMaxSize()
-                            .background(cardContainerColor, shape),
+                            .background(containerColor, shape),
                         contentAlignment = Alignment.CenterStart
                     ) {
                         content(item)
