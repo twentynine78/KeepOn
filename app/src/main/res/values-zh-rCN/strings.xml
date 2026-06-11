@@ -50,6 +50,7 @@
     <string name="font_options_text">更改字体大小和图标位置。</string>
     <string name="font_options_size_subtitle">字体大小</string>
     <string name="font_options_position_subtitle">位置</string>
+    <string name="font_options_position_toggle_desc">显示或隐藏位置触控板</string>
     <string name="font_options_position_horizontal">水平</string>
     <string name="font_options_position_vertical">垂直</string>
     <string name="font_options_position_drag_hint">拖动以定位</string>

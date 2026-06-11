@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.ui.model.ItemPosition
+import fr.twentynine.keepon.ui.theme.KeepOnCardElevation
 import fr.twentynine.keepon.ui.util.bottomPaddingFor
 import fr.twentynine.keepon.ui.util.cardShapeFor
 import fr.twentynine.keepon.ui.util.defaultCardHorizontalPadding
@@ -253,6 +254,9 @@ fun <T : Parcelable> SwipeableItemCard(
                 .padding(bottom = itemBottomBorderPadding),
             colors = CardDefaults.cardColors().copy(containerColor = Color.Transparent),
             shape = shape,
+            // The container is transparent (the swipe content paints its own background), but the
+            // shadow comes from the shape outline, so it stays on the card bounds during a swipe.
+            elevation = CardDefaults.cardElevation(defaultElevation = KeepOnCardElevation),
         ) {
             SwipeToDismissBox(
                 modifier = cardModifier,

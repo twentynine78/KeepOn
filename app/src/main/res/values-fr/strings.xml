@@ -56,6 +56,7 @@
     <string name="font_options_text">Modifiez la taille de la police d\'écriture et l\'emplacement de l\'icône.</string>
     <string name="font_options_size_subtitle">Taille</string>
     <string name="font_options_position_subtitle">Position</string>
+    <string name="font_options_position_toggle_desc">Afficher ou masquer le pad de position</string>
     <string name="font_options_position_horizontal">Horizontal</string>
     <string name="font_options_position_vertical">Vertical</string>
     <string name="font_options_position_drag_hint">Glissez pour placer</string>

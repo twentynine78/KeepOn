@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import fr.twentynine.keepon.ui.model.ItemPosition
+import fr.twentynine.keepon.ui.theme.KeepOnCardElevation
 import fr.twentynine.keepon.ui.util.bottomPaddingFor
 import fr.twentynine.keepon.ui.util.cardShapeFor
 import fr.twentynine.keepon.ui.util.defaultCardHorizontalPadding
@@ -50,6 +51,9 @@ fun PositionedCard(
                 .padding(bottom = itemBottomBorderPadding),
             colors = CardDefaults.cardColors().copy(containerColor = Color.Transparent),
             shape = shape,
+            // The container is transparent (the inner Box paints the background on the same
+            // shape), but the shadow comes from the shape outline, so it still casts.
+            elevation = CardDefaults.cardElevation(defaultElevation = KeepOnCardElevation),
         ) {
             Box(
                 modifier = Modifier

@@ -56,6 +56,7 @@
     <string name="font_options_text">Change the size of the font and the location of the icon.</string>
     <string name="font_options_size_subtitle">Size</string>
     <string name="font_options_position_subtitle">Position</string>
+    <string name="font_options_position_toggle_desc">Show or hide the position pad</string>
     <string name="font_options_position_horizontal">Horizontal</string>
     <string name="font_options_position_vertical">Vertical</string>
     <string name="font_options_position_drag_hint">Drag to place</string>

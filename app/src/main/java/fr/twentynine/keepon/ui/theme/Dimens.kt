@@ -11,6 +11,9 @@ val KeepOnCardCornerRadius = 24.dp
 /** Shape of the app's fully-rounded content cards. */
 val KeepOnCardShape = RoundedCornerShape(KeepOnCardCornerRadius)
 
+/** Resting elevation (soft drop shadow) shared by every card-based component. */
+val KeepOnCardElevation = 2.dp
+
 /** Alpha applied to secondary (subtitle) text drawn over the background color. */
 const val SUBTITLE_CONTENT_ALPHA = 0.8f
 

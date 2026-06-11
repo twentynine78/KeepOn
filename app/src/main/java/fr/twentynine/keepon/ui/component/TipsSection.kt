@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import fr.twentynine.keepon.ui.theme.KeepOnCardElevation
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
 import fr.twentynine.keepon.ui.catalog.TipsInfo
 import fr.twentynine.keepon.ui.catalog.TipsAction
@@ -127,6 +128,7 @@ fun TipsSection(
                             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                             contentColor = MaterialTheme.colorScheme.onTertiaryContainer
                         ),
+                        elevation = CardDefaults.elevatedCardElevation(defaultElevation = KeepOnCardElevation),
                         shape = KeepOnCardShape,
                     ) {
                         Column(

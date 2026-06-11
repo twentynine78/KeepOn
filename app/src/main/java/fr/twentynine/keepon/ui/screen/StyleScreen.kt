@@ -1,8 +1,19 @@
 package fr.twentynine.keepon.ui.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,9 +35,12 @@ import androidx.compose.material.icons.filled.FormatUnderlined
 import androidx.compose.material.icons.outlined.FontDownload
 import androidx.compose.material.icons.rounded.Animation
 import androidx.compose.material.icons.rounded.FormatColorText
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.LocationSearching
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Label
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
@@ -35,10 +49,15 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.RoundRect
@@ -66,6 +85,7 @@ import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.defaultCardHorizontalPadding
 import fr.twentynine.keepon.ui.util.screenContentModifier
+import fr.twentynine.keepon.ui.theme.KeepOnCardElevation
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
 import fr.twentynine.keepon.ui.theme.StyleCardTopPadding
 import fr.twentynine.keepon.ui.theme.StyleContentInset
@@ -83,6 +103,8 @@ import fr.twentynine.keepon.ui.component.SegmentedCheckboxOption
 import fr.twentynine.keepon.ui.component.Subtitle
 import fr.twentynine.keepon.ui.component.SwitchSettingRow
 import kotlin.math.roundToInt
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 /** Style destination, stateful wrapper: feeds the icon style/transition slices of [uiState] to [StyleScreen]. */
 @Composable
@@ -202,6 +224,12 @@ private const val DISABLED_CONTENT_ALPHA = 0.38f
 private fun durationMsRoundedForDisplay(durationStep: Int): Int =
     (IconTransitionTiming.durationMs(durationStep) / 10f).roundToInt() * 10
 
+/** Formats a step value with an explicit sign ("+2", "-2", "0"), matching the position-pad readouts. */
+private fun signedStep(value: Int): String = if (value > 0) "+$value" else value.toString()
+
+// Shared duration of the position-pad expand/collapse, its chevron rotation and the summary fade.
+private const val POSITION_PAD_ANIMATION_MS = 300
+
 // Font-size slider: 10 steps centered on 0 (-5..+5).
 private const val FONT_SIZE_SLIDER_STEPS = 10
 private val FontSizeSliderRange = -(FONT_SIZE_SLIDER_STEPS / 2f)..FONT_SIZE_SLIDER_STEPS / 2f
@@ -229,6 +257,7 @@ fun IconTransitionAnimationCard(
                 .padding(horizontal = defaultCardHorizontalPadding)
                 .align(alignment = Alignment.Start),
             shape = KeepOnCardShape,
+            elevation = CardDefaults.cardElevation(defaultElevation = KeepOnCardElevation),
         ) {
             Column(
                 modifier = Modifier
@@ -409,6 +438,7 @@ fun FontStyleCard(
                 .padding(horizontal = defaultCardHorizontalPadding)
                 .align(alignment = Alignment.Start),
             shape = KeepOnCardShape,
+            elevation = CardDefaults.cardElevation(defaultElevation = KeepOnCardElevation),
         ) {
             Column(
                 modifier = Modifier
@@ -485,18 +515,19 @@ fun FontOptionsCard(
                 .padding(horizontal = defaultCardHorizontalPadding)
                 .align(alignment = Alignment.Start),
             shape = KeepOnCardShape,
+            elevation = CardDefaults.cardElevation(defaultElevation = KeepOnCardElevation),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 14.dp),
+                    .padding(top = 8.dp),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.Start
             ) {
                 val fontSize = timeoutIconStyle.iconStyleFontSize
                 FontOptionSlider(
                     label = stringResource(R.string.font_options_size_subtitle),
-                    valueText = remember(fontSize) { if (fontSize > 0) "+$fontSize" else fontSize.toString() },
+                    valueText = remember(fontSize) { signedStep(fontSize) },
                     value = fontSize,
                     onValueChange = { newValue ->
                         onEvent(
@@ -510,32 +541,104 @@ fun FontOptionsCard(
                     topPadding = 0.dp
                 )
 
-                Subtitle(
-                    text = stringResource(R.string.font_options_position_subtitle),
-                    modifier = Modifier.padding(
-                        start = StyleContentInset,
-                        end = StyleContentInset,
-                        top = 20.dp,
-                        bottom = 12.dp,
-                    ),
+                // The pad is collapsed by default: it grabs taps and vertical drags meant for the
+                // page scroll, so it only unfolds on demand (and folds back when leaving the Style
+                // destination, since this plain `remember` does not survive the NavHost disposal).
+                var positionPadExpanded by remember { mutableStateOf(false) }
+                val chevronRotation by animateFloatAsState(
+                    targetValue = if (positionPadExpanded) 180f else 0f,
+                    animationSpec = tween(POSITION_PAD_ANIMATION_MS),
+                    label = "positionPadChevron",
                 )
-                IconPositionPad(
-                    horizontal = timeoutIconStyle.iconStyleFontHorizontalSpacing,
-                    vertical = timeoutIconStyle.iconStyleFontVerticalSpacing,
-                    onPositionChange = { newHorizontal, newVertical ->
-                        onEvent(
-                            MainUIEvent.UpdateTimeoutIconStyle(
-                                timeoutIconStyle.copy(
-                                    iconStyleFontHorizontalSpacing = newHorizontal,
-                                    iconStyleFontVerticalSpacing = newVertical,
-                                )
-                            )
-                        )
-                    },
+                // The card's bottom inset lives inside this clickable while the block is the card's
+                // last element (pad collapsed), so the press ripple reaches the card's bottom edge;
+                // expanded, the inset moves below the pad and the block keeps its usual spacing.
+                val toggleBottomPadding by animateDpAsState(
+                    targetValue = if (positionPadExpanded) 12.dp else 26.dp,
+                    animationSpec = tween(POSITION_PAD_ANIMATION_MS),
+                    label = "positionPadTogglePadding",
+                )
+
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = StyleContentInset, end = StyleContentInset, bottom = 8.dp),
-                )
+                        .clickable { positionPadExpanded = !positionPadExpanded }
+                        .padding(
+                            start = StyleContentInset,
+                            end = StyleContentInset,
+                            top = 20.dp,
+                            bottom = toggleBottomPadding,
+                        ),
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Subtitle(text = stringResource(R.string.font_options_position_subtitle))
+                        Icon(
+                            imageVector = Icons.Rounded.KeyboardArrowDown,
+                            contentDescription = stringResource(R.string.font_options_position_toggle_desc),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.rotate(chevronRotation),
+                        )
+                    }
+                    // Collapsed one-line summary; the pad's own readouts replace it once expanded.
+                    AnimatedVisibility(
+                        visible = !positionPadExpanded,
+                        enter = expandVertically(animationSpec = tween(POSITION_PAD_ANIMATION_MS)) +
+                            fadeIn(animationSpec = tween(POSITION_PAD_ANIMATION_MS)),
+                        exit = shrinkVertically(animationSpec = tween(POSITION_PAD_ANIMATION_MS)) +
+                            fadeOut(animationSpec = tween(POSITION_PAD_ANIMATION_MS)),
+                    ) {
+                        Text(
+                            // H/V match the pad's own legend, deliberately not localized.
+                            text = stringResource(R.string.font_options_position_horizontal) +
+                                " ${signedStep(timeoutIconStyle.iconStyleFontHorizontalSpacing)}" +
+                                " · " +
+                                stringResource(R.string.font_options_position_vertical) +
+                                " ${signedStep(timeoutIconStyle.iconStyleFontVerticalSpacing)}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 2.dp),
+                        )
+                    }
+                }
+
+                val bringPadIntoViewRequester = remember { BringIntoViewRequester() }
+                LaunchedEffect(positionPadExpanded) {
+                    if (positionPadExpanded) {
+                        // Wait out the expansion so the scroll targets the pad's final bounds.
+                        delay(POSITION_PAD_ANIMATION_MS.milliseconds)
+                        bringPadIntoViewRequester.bringIntoView()
+                    }
+                }
+                AnimatedVisibility(
+                    visible = positionPadExpanded,
+                    enter = expandVertically(animationSpec = tween(POSITION_PAD_ANIMATION_MS)) +
+                        fadeIn(animationSpec = tween(POSITION_PAD_ANIMATION_MS)),
+                    exit = shrinkVertically(animationSpec = tween(POSITION_PAD_ANIMATION_MS)) +
+                        fadeOut(animationSpec = tween(POSITION_PAD_ANIMATION_MS)),
+                ) {
+                    IconPositionPad(
+                        horizontal = timeoutIconStyle.iconStyleFontHorizontalSpacing,
+                        vertical = timeoutIconStyle.iconStyleFontVerticalSpacing,
+                        onPositionChange = { newHorizontal, newVertical ->
+                            onEvent(
+                                MainUIEvent.UpdateTimeoutIconStyle(
+                                    timeoutIconStyle.copy(
+                                        iconStyleFontHorizontalSpacing = newHorizontal,
+                                        iconStyleFontVerticalSpacing = newVertical,
+                                    )
+                                )
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = StyleContentInset, end = StyleContentInset, bottom = 22.dp)
+                            .bringIntoViewRequester(bringPadIntoViewRequester),
+                    )
+                }
             }
         }
     }
@@ -717,12 +820,15 @@ private fun CenterFilledSliderTrack(
         }
 
         // Step ticks (ends included), skipping those hidden by the thumb gap; ticks within the
-        // active fill flip to the contrasting active tick color.
+        // active fill flip to the contrasting active tick color. The tick row is inset by the
+        // corner radius so the end dots sit centred inside the bar's rounded caps (as M3 does)
+        // instead of straddling the curved edge.
         val tickRadius = SliderTickDiameter.toPx() / 2f
+        val tickInset = height / 2f
         val activeLeft = minOf(centerX, thumbX)
         val activeRight = maxOf(centerX, thumbX)
         for (i in 0..steps + 1) {
-            val tickX = width * i / (steps + 1f)
+            val tickX = tickInset + (width - 2f * tickInset) * i / (steps + 1f)
             if (tickX in (thumbX - gap)..(thumbX + gap)) continue
             val inActiveFill = tickX in activeLeft..activeRight
             drawCircle(
