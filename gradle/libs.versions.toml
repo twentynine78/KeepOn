@@ -21,6 +21,7 @@ glanceAppWidgetVersion = "1.2.0-rc01"
 kotlinXCoroutinesVersion = "1.11.0"
 windowVersion = "1.5.1"
 coilVersion = "3.4.0"
+foundationLayoutVersion = "1.11.2"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -80,3 +81,4 @@ org-jetbrains-kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx",
 org-jetbrains-kotlinx-coroutines-bom = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-bom", version.ref = "kotlinXCoroutinesVersion" }
 org-jetbrains-kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android" }
 org-jetbrains-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinXSerializationJsonVersion" }
+androidx-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayoutVersion" }

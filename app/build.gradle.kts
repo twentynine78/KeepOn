@@ -46,6 +46,12 @@ android {
         }
     }
 
+    androidResources {
+        // Keep only the app's locales: the androidx/material libraries ship their strings in
+        // ~85 languages, which would otherwise all land in resources.arsc.
+        localeFilters += listOf("en", "fr", "zh-rCN")
+    }
+
     buildFeatures {
         compose = true
         resValues = true
@@ -71,6 +77,7 @@ composeCompiler {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.foundation.layout)
     ksp(libs.org.jetbrains.kotlin.metadata.jvm)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.lifecycle.service)
