@@ -85,6 +85,7 @@ private fun <T : Parcelable> AnimateSwipeableItemCardEffect(
     animateFirstDisplayCondition: Boolean = false,
     swipeToDismissDirection: SwipeToDismissBoxValue,
     animatedTranslationX: Animatable<Float, AnimationVector1D>,
+    onFirstDisplayAnimationPlayed: (() -> Unit)? = null,
 ) {
     val density = LocalDensity.current
 
@@ -112,6 +113,7 @@ private fun <T : Parcelable> AnimateSwipeableItemCardEffect(
         var playSnapBackAnimation = true
         var snapBackDampingRatio = Spring.DampingRatioMediumBouncy
         val springStiffness = Spring.StiffnessMediumLow
+        var firstDisplayAnimationPlayed = false
 
         if (isFirstEverAnimationCycleForThisItem) {
             isFirstEverAnimationCycleForThisItem = false
@@ -119,6 +121,7 @@ private fun <T : Parcelable> AnimateSwipeableItemCardEffect(
             when {
                 animateFirstDisplayCondition && originalFirstDisplayCondition -> {
                     originalFirstDisplayCondition = false
+                    firstDisplayAnimationPlayed = true
                     // First display animation sequence
                     animatedTranslationX.snapTo(0f)
                     animatedTranslationX.animateTo(
@@ -161,6 +164,11 @@ private fun <T : Parcelable> AnimateSwipeableItemCardEffect(
                 animatedTranslationX.snapTo(0f)
             }
             animationTriggerHandled = true
+            // Notified after the snap-back has settled: reporting earlier would let the caller
+            // update the condition inputs and restart this effect mid-animation.
+            if (firstDisplayAnimationPlayed) {
+                onFirstDisplayAnimationPlayed?.invoke()
+            }
         }
     }
 }
@@ -181,6 +189,7 @@ fun <T : Parcelable> SwipeableItemCard(
     containerColor: Color = CardDefaults.cardColors().containerColor,
     animateSwipeCondition: Boolean = false,
     animateFirstDisplayCondition: Boolean = false,
+    onFirstDisplayAnimationPlayed: (() -> Unit)? = null,
     onClickAction: ((T) -> Unit)?,
     onSwipeAction: ((SwipeToDismissBoxValue, T) -> Unit)?,
     swipeThresholdFraction: Float = DEFAULT_SWIPE_THRESHOLD_FRACTION,
@@ -219,6 +228,7 @@ fun <T : Parcelable> SwipeableItemCard(
             animateFirstDisplayCondition = animateFirstDisplayCondition,
             swipeToDismissDirection = swipeToDismissState.dismissDirection,
             animatedTranslationX = animatedTranslationX,
+            onFirstDisplayAnimationPlayed = onFirstDisplayAnimationPlayed,
         )
     }
 

@@ -86,7 +86,7 @@ fun HomeRoute(
         resetTimeoutWhenScreenOff = uiState.resetTimeoutWhenScreenOff,
         screenTimeouts = uiState.screenTimeouts,
         timeoutIconStyle = uiState.timeoutIconStyle,
-        isFirstLaunch = uiState.isFirstLaunch,
+        showFirstLaunchHint = uiState.showFirstLaunchHint,
         onEvent = onEvent,
         navType = navType,
         paddingValue = paddingValue,
@@ -103,7 +103,7 @@ fun HomeScreen(
     resetTimeoutWhenScreenOff: Boolean,
     screenTimeouts: List<ScreenTimeoutUI>,
     timeoutIconStyle: TimeoutIconStyle,
-    isFirstLaunch: Boolean,
+    showFirstLaunchHint: Boolean,
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
     paddingValue: PaddingValues,
@@ -159,7 +159,7 @@ fun HomeScreen(
                 itemPosition = itemPosition,
                 timeoutIconStyle = timeoutIconStyle,
                 resetTimeoutWhenScreenOff = resetTimeoutWhenScreenOff,
-                isFirstLaunch = isFirstLaunch,
+                showFirstLaunchHint = showFirstLaunchHint,
                 onEvent = onEvent,
                 modifier = baseMaxWidthModifier,
             )
@@ -231,7 +231,7 @@ fun ScreenTimeoutRow(
     itemPosition: ItemPosition,
     timeoutIconStyle: TimeoutIconStyle,
     resetTimeoutWhenScreenOff: Boolean,
-    isFirstLaunch: Boolean,
+    showFirstLaunchHint: Boolean,
     onEvent: (MainUIEvent) -> Unit,
     modifier: Modifier,
 ) {
@@ -263,13 +263,18 @@ fun ScreenTimeoutRow(
         }
     }
 
+    val onFirstLaunchHintPlayed = remember(onEvent) {
+        { onEvent(MainUIEvent.FirstLaunchHintPlayed) }
+    }
+
     SwipeableScreenTimeoutCard(
         modifier = modifier
             .fillMaxSize(),
         item = item,
         itemPosition = itemPosition,
         swipeEnabled = swipeEnable,
-        isFirstLaunch = isFirstLaunch,
+        showFirstLaunchHint = showFirstLaunchHint,
+        onFirstLaunchHintPlayed = onFirstLaunchHintPlayed,
         onClickAction = onClickAction,
         onSwipeAction = onSwipeAction,
     ) {

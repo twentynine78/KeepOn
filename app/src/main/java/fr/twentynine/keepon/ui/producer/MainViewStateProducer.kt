@@ -20,6 +20,7 @@ import fr.twentynine.keepon.ui.model.CreditInfoUI
 import fr.twentynine.keepon.ui.model.CreditSectionUI
 import fr.twentynine.keepon.ui.model.IconTransitionOptionUI
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
+import fr.twentynine.keepon.ui.state.FirstLaunchHintGate
 import fr.twentynine.keepon.ui.state.MainViewUIState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -39,6 +40,7 @@ class MainViewStateProducer @Inject constructor(
     private val buildScreenTimeoutUiListProducer: BuildScreenTimeoutUiListProducer,
     private val stringResourceProvider: StringResourceProvider,
     private val appInfoProvider: AppInfoProvider,
+    private val firstLaunchHintGate: FirstLaunchHintGate,
 ) {
     // App metadata is static; read it once and reuse it across state emissions.
     private val appInfo by lazy { appInfoProvider.getAppInfo() }
@@ -96,14 +98,22 @@ class MainViewStateProducer @Inject constructor(
             uiPreferencesRepository.getIconTransitionAnimationFlow(),
         ) { iconStyle, transition -> iconStyle to transition }
 
+        // The first-launch swipe hint must play at most once per process: gate the persisted
+        // flag with the session state, so re-enabling the reset option or recreating the
+        // activity cannot replay it.
+        val showFirstLaunchHintFlow = combine(
+            appPreferencesRepository.getIsFirstLaunchFlow(),
+            firstLaunchHintGate.hintPlayed,
+        ) { isFirstLaunch, hintPlayed -> isFirstLaunch && !hintPlayed }
+
         val mainPreferencesFlow = combine(
             timeoutPreferencesRepository.getResetTimeoutWhenScreenOffFlow(),
             timeoutPreferencesRepository.getCurrentScreenTimeoutFlow(),
             getKeepOnStatusUseCase(),
-            appPreferencesRepository.getIsFirstLaunchFlow(),
+            showFirstLaunchHintFlow,
             iconPresentationFlow,
-        ) { reset, current, keepOnIsActive, isFirstLaunch, (iconStyle, transition) ->
-            MainPreferences(reset, current, keepOnIsActive, isFirstLaunch, iconStyle, transition)
+        ) { reset, current, keepOnIsActive, showFirstLaunchHint, (iconStyle, transition) ->
+            MainPreferences(reset, current, keepOnIsActive, showFirstLaunchHint, iconStyle, transition)
         }
 
         return combine(
@@ -121,7 +131,7 @@ class MainViewStateProducer @Inject constructor(
                 currentTimeoutDisplay = preferences.currentScreenTimeout
                     .getFullDisplayTimeout(stringResourceProvider),
                 keepOnIsActive = preferences.keepOnIsActive,
-                isFirstLaunch = preferences.isFirstLaunch,
+                showFirstLaunchHint = preferences.showFirstLaunchHint,
                 timeoutIconStyle = preferences.timeoutIconStyle,
                 iconTransitionAnimation = preferences.iconTransitionAnimation,
                 iconTransitionOptions = iconTransitionOptions,

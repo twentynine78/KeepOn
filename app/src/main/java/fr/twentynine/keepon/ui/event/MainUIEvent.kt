@@ -11,6 +11,7 @@ sealed interface MainUIEvent {
     data object RequestDisableBatteryOptimization : MainUIEvent
     data object SetNextSelectedSystemScreenTimeout : MainUIEvent
     data object UpdateIsFirstLaunch : MainUIEvent
+    data object FirstLaunchHintPlayed : MainUIEvent
     data object RequestPostNotification : MainUIEvent
     data object RequestAddTileService : MainUIEvent
     data object RequestAppRate : MainUIEvent

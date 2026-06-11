@@ -12,7 +12,7 @@ internal data class MainPreferences(
     val resetTimeoutWhenScreenOff: Boolean,
     val currentScreenTimeout: ScreenTimeout,
     val keepOnIsActive: Boolean,
-    val isFirstLaunch: Boolean,
+    val showFirstLaunchHint: Boolean,
     val timeoutIconStyle: TimeoutIconStyle,
     val iconTransitionAnimation: IconTransitionAnimation,
 )

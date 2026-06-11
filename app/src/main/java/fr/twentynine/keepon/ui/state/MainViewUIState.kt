@@ -33,7 +33,7 @@ sealed interface MainViewUIState {
         val timeoutIconStyle: TimeoutIconStyle,
         val iconTransitionAnimation: IconTransitionAnimation,
         val iconTransitionOptions: List<IconTransitionOptionUI>,
-        val isFirstLaunch: Boolean,
+        val showFirstLaunchHint: Boolean,
         val appInfo: AppInfo,
         val creditSections: List<CreditSectionUI>,
     ) : MainViewUIState

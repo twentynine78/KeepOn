@@ -7,6 +7,7 @@ import fr.twentynine.keepon.ui.catalog.TipsInfo
 import fr.twentynine.keepon.ui.mapper.ScreenTimeoutUIToScreenTimeoutMapper
 import fr.twentynine.keepon.ui.producer.MainViewStateProducer
 import fr.twentynine.keepon.ui.event.MainUIEvent
+import fr.twentynine.keepon.ui.state.FirstLaunchHintGate
 import fr.twentynine.keepon.ui.state.MainViewUIState
 import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.ScreenTimeout
@@ -54,6 +55,7 @@ class MainViewModel @Inject constructor(
     private val setQSTileAddedUseCase: SetQSTileAddedUseCase,
     private val incrementAppLaunchCountUseCase: IncrementAppLaunchCountUseCase,
     private val setIsFirstLaunchUseCase: SetIsFirstLaunchUseCase,
+    private val firstLaunchHintGate: FirstLaunchHintGate,
 ) : ViewModel() {
 
     private var appLaunchIncremented = false
@@ -78,6 +80,7 @@ class MainViewModel @Inject constructor(
         when (event) {
             MainUIEvent.SetNextSelectedSystemScreenTimeout -> setNextSelectedSystemScreenTimeout()
             MainUIEvent.UpdateIsFirstLaunch -> updateIsFirstLaunch()
+            MainUIEvent.FirstLaunchHintPlayed -> firstLaunchHintGate.markHintPlayed()
             MainUIEvent.RequestAddTileService -> requestAddTileService()
             MainUIEvent.RequestAppRate -> requestAppRate()
             MainUIEvent.IncrementAppLaunchCount -> incrementAppLaunchCount()
