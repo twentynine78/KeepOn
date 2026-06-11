@@ -10,14 +10,14 @@ import kotlinx.coroutines.flow.Flow
  * The implementation is pure; legacy migration is applied by a decorator.
  */
 interface UiPreferencesRepository {
-    suspend fun getTimeoutIconStyleFlow(): Flow<TimeoutIconStyle>
+    fun getTimeoutIconStyleFlow(): Flow<TimeoutIconStyle>
     suspend fun getTimeoutIconStyle(): TimeoutIconStyle
     suspend fun setTimeoutIconStyle(timeoutIconStyle: TimeoutIconStyle)
-    suspend fun getIconTransitionAnimationFlow(): Flow<IconTransitionAnimation>
+    fun getIconTransitionAnimationFlow(): Flow<IconTransitionAnimation>
     suspend fun getIconTransitionAnimation(): IconTransitionAnimation
     suspend fun setIconTransitionAnimation(iconTransitionAnimation: IconTransitionAnimation)
-    suspend fun getQSTileAddedFlow(): Flow<Boolean>
+    fun getQSTileAddedFlow(): Flow<Boolean>
     suspend fun setQSTileAdded(isAdded: Boolean)
-    suspend fun getDismissedTipsFlow(): Flow<List<DismissedTips>>
+    fun getDismissedTipsFlow(): Flow<List<DismissedTips>>
     suspend fun setDismissedTip(dismissedTips: DismissedTips)
 }

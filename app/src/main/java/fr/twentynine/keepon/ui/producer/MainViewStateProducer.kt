@@ -74,7 +74,7 @@ class MainViewStateProducer @Inject constructor(
         }
     }
 
-    suspend operator fun invoke(
+    operator fun invoke(
         canWriteSystemSettingFlow: Flow<Boolean>,
         batteryIsNotOptimizedFlow: Flow<Boolean>,
         canPostNotificationFlow: Flow<Boolean>,
@@ -133,7 +133,7 @@ class MainViewStateProducer @Inject constructor(
         }
     }
 
-    private suspend fun tipsListFlow(
+    private fun tipsListFlow(
         canPostNotificationFlow: Flow<Boolean>,
         batteryIsNotOptimizedFlow: Flow<Boolean>,
     ): Flow<List<TipsInfo>> {
@@ -158,7 +158,7 @@ class MainViewStateProducer @Inject constructor(
         }
     }
 
-    private suspend fun screenTimeoutListFlow(): Flow<List<ScreenTimeoutUI>> {
+    private fun screenTimeoutListFlow(): Flow<List<ScreenTimeoutUI>> {
         return combine(
             timeoutPreferencesRepository.getSelectedScreenTimeoutFlow(),
             timeoutPreferencesRepository.getDefaultScreenTimeoutFlow(),

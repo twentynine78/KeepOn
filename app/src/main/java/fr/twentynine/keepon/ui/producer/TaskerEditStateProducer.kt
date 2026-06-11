@@ -19,7 +19,7 @@ class TaskerEditStateProducer @Inject constructor(
     private val uiPreferencesRepository: UiPreferencesRepository,
     private val buildScreenTimeoutUiListProducer: BuildScreenTimeoutUiListProducer,
 ) {
-    suspend operator fun invoke(
+    operator fun invoke(
         canWriteSystemSettingFlow: Flow<Boolean>,
         batteryIsNotOptimizedFlow: Flow<Boolean>,
         canPostNotificationFlow: Flow<Boolean>,

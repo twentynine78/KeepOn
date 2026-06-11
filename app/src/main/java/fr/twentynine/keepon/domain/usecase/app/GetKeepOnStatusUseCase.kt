@@ -13,7 +13,7 @@ import javax.inject.Inject
 class GetKeepOnStatusUseCase @Inject constructor(
     private val timeoutPreferencesRepository: TimeoutPreferencesRepository,
 ) {
-    suspend operator fun invoke(): Flow<Boolean> =
+    operator fun invoke(): Flow<Boolean> =
         combine(
             timeoutPreferencesRepository.getCurrentScreenTimeoutFlow(),
             timeoutPreferencesRepository.getDefaultScreenTimeoutFlow(),

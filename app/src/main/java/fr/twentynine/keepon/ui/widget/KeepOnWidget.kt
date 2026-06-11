@@ -32,9 +32,8 @@ class KeepOnWidget : GlanceAppWidget() {
         get() = SizeMode.Responsive(WIDGET_SIZES)
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val widgetUIStateFlow = withContext(Dispatchers.IO) {
-            widgetStateProducer(context).invoke()
-        }
+        // Building the pipeline is cheap; nothing runs until collection inside provideContent.
+        val widgetUIStateFlow = widgetStateProducer(context).invoke()
 
         provideContent {
             val widgetUIState by widgetUIStateFlow.collectAsState(initial = WidgetUIState.Loading)

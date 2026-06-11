@@ -28,8 +28,6 @@ import fr.twentynine.keepon.domain.usecase.timeout.ToggleScreenTimeoutSelectionU
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -60,20 +58,16 @@ class MainViewModel @Inject constructor(
 
     private var appLaunchIncremented = false
 
-    // The producer is suspend (the repository flow getters are), so it is invoked lazily inside
-    // flow {} to keep this a single, eagerly built StateFlow (one upstream subscription, shared
-    // via WhileSubscribed).
+    // A single eagerly built StateFlow: the producer only assembles the combine pipeline (nothing
+    // runs until collection), and the upstream subscription is shared via WhileSubscribed. The
+    // explicit type on catch upcasts Flow<Success> so the error state can be emitted.
     val uiState: StateFlow<MainViewUIState> =
-        flow<MainViewUIState> {
-            emitAll(
-                mainViewStateProducer(
-                    canWriteSystemSettingFlow = permissionStateGateway.canWriteSystemSetting,
-                    batteryIsNotOptimizedFlow = permissionStateGateway.batteryIsNotOptimized,
-                    canPostNotificationFlow = permissionStateGateway.canPostNotification,
-                )
-            )
-        }
-            .catch { error -> emit(MainViewUIState.Error(error.message ?: error.toString())) }
+        mainViewStateProducer(
+            canWriteSystemSettingFlow = permissionStateGateway.canWriteSystemSetting,
+            batteryIsNotOptimizedFlow = permissionStateGateway.batteryIsNotOptimized,
+            canPostNotificationFlow = permissionStateGateway.canPostNotification,
+        )
+            .catch<MainViewUIState> { error -> emit(MainViewUIState.Error(error.message ?: error.toString())) }
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5000),

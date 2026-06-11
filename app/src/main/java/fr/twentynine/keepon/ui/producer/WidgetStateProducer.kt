@@ -20,7 +20,7 @@ class WidgetStateProducer @Inject constructor(
     private val uiPreferencesRepository: UiPreferencesRepository,
     private val getKeepOnStatusUseCase: GetKeepOnStatusUseCase,
 ) {
-    suspend operator fun invoke(): Flow<WidgetUIState> {
+    operator fun invoke(): Flow<WidgetUIState> {
         // Merge the two icon-presentation flows so the combine stays within its 5-flow typed arity.
         val iconPresentationFlow = combine(
             uiPreferencesRepository.getTimeoutIconStyleFlow(),

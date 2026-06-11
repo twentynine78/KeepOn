@@ -9,6 +9,8 @@ import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -18,10 +20,10 @@ import javax.inject.Inject
  * Migrating decorator over [TimeoutPreferencesRepositoryImpl].
  *
  * Lazily migrates the deprecated selected-timeout list and "resetTimeoutOnScreenOff"
- * flag into their current keys on first read, serialized by a mutex so concurrent
- * first reads cannot interleave the check-then-act. The migrated reset value is
- * written raw (no foreground-service side effect): the service state is reconciled
- * by normal operation / the monitor worker.
+ * flag into their current keys on first use (first collection of their flows, or first
+ * one-shot read), serialized by a mutex so concurrent first reads cannot interleave the
+ * check-then-act. The migrated reset value is written raw (no foreground-service side
+ * effect): the service state is reconciled by normal operation / the monitor worker.
  */
 class MigratingTimeoutPreferencesRepository @Inject constructor(
     private val delegate: TimeoutPreferencesRepositoryImpl,
@@ -35,11 +37,17 @@ class MigratingTimeoutPreferencesRepository @Inject constructor(
     // "current is unset" check and the migration write could be clobbered.
     private val migrationMutex = Mutex()
 
+    // Fast paths: once a migration has been checked once, later uses skip the DataStore
+    // read entirely. Safe because the repository is bound as a @Singleton.
+    @Volatile private var selectedTimeoutsMigrated = false
+
+    @Volatile private var resetTimeoutWhenScreenOffMigrated = false
+
     // ----- Migrating getters -----
 
-    override suspend fun getSelectedScreenTimeoutFlow(): Flow<List<ScreenTimeout>> {
+    override fun getSelectedScreenTimeoutFlow(): Flow<List<ScreenTimeout>> = flow {
         migrateSelectedScreenTimeoutsIfNeeded()
-        return delegate.getSelectedScreenTimeoutFlow()
+        emitAll(delegate.getSelectedScreenTimeoutFlow())
     }
 
     override suspend fun getSelectedScreenTimeouts(): List<ScreenTimeout> {
@@ -47,9 +55,9 @@ class MigratingTimeoutPreferencesRepository @Inject constructor(
         return delegate.getSelectedScreenTimeouts()
     }
 
-    override suspend fun getResetTimeoutWhenScreenOffFlow(): Flow<Boolean> {
+    override fun getResetTimeoutWhenScreenOffFlow(): Flow<Boolean> = flow {
         migrateResetTimeoutWhenScreenOffIfNeeded()
-        return delegate.getResetTimeoutWhenScreenOffFlow()
+        emitAll(delegate.getResetTimeoutWhenScreenOffFlow())
     }
 
     override suspend fun getResetTimeoutWhenScreenOff(): Boolean {
@@ -57,9 +65,11 @@ class MigratingTimeoutPreferencesRepository @Inject constructor(
         return delegate.getResetTimeoutWhenScreenOff()
     }
 
-    private suspend fun migrateSelectedScreenTimeoutsIfNeeded() =
+    private suspend fun migrateSelectedScreenTimeoutsIfNeeded() {
+        if (selectedTimeoutsMigrated) return
         withContext(ioDispatcher) {
             migrationMutex.withLock {
+                if (selectedTimeoutsMigrated) return@withLock
                 val current = preferenceDataStoreHelper.getLastPreference(
                     SELECTED_SCREEN_TIMEOUT,
                     DataStoreSourceType.DATA_SOURCE_BACKED_UP
@@ -72,12 +82,16 @@ class MigratingTimeoutPreferencesRepository @Inject constructor(
                         legacyPreferencesRepository.removeOldSelectedScreenTimeouts()
                     }
                 }
+                selectedTimeoutsMigrated = true
             }
         }
+    }
 
-    private suspend fun migrateResetTimeoutWhenScreenOffIfNeeded() =
+    private suspend fun migrateResetTimeoutWhenScreenOffIfNeeded() {
+        if (resetTimeoutWhenScreenOffMigrated) return
         withContext(ioDispatcher) {
             migrationMutex.withLock {
+                if (resetTimeoutWhenScreenOffMigrated) return@withLock
                 val current = preferenceDataStoreHelper.getLastPreference(
                     RESET_TIMEOUT_WHEN_SCREEN_OFF,
                     DataStoreSourceType.DATA_SOURCE_BACKED_UP
@@ -94,8 +108,10 @@ class MigratingTimeoutPreferencesRepository @Inject constructor(
                         legacyPreferencesRepository.removeOldResetTimeoutWhenScreenOff()
                     }
                 }
+                resetTimeoutWhenScreenOffMigrated = true
             }
         }
+    }
 
     private fun intListFromStr(stringIntList: String?): List<Int> {
         val resultList = ArrayList<Int>()
@@ -107,7 +123,7 @@ class MigratingTimeoutPreferencesRepository @Inject constructor(
 
     // ----- Pure delegations -----
 
-    override suspend fun getDefaultScreenTimeoutFlow(): Flow<ScreenTimeout> =
+    override fun getDefaultScreenTimeoutFlow(): Flow<ScreenTimeout> =
         delegate.getDefaultScreenTimeoutFlow()
 
     override suspend fun getDefaultScreenTimeout(): ScreenTimeout =
@@ -116,7 +132,7 @@ class MigratingTimeoutPreferencesRepository @Inject constructor(
     override suspend fun setDefaultScreenTimeout(timeout: ScreenTimeout) =
         delegate.setDefaultScreenTimeout(timeout)
 
-    override suspend fun getCurrentScreenTimeoutFlow(): Flow<ScreenTimeout> =
+    override fun getCurrentScreenTimeoutFlow(): Flow<ScreenTimeout> =
         delegate.getCurrentScreenTimeoutFlow()
 
     override suspend fun getCurrentScreenTimeout(): ScreenTimeout =
@@ -125,7 +141,7 @@ class MigratingTimeoutPreferencesRepository @Inject constructor(
     override suspend fun setCurrentScreenTimeout(timeout: ScreenTimeout) =
         delegate.setCurrentScreenTimeout(timeout)
 
-    override suspend fun getPreviousScreenTimeoutFlow(): Flow<ScreenTimeout> =
+    override fun getPreviousScreenTimeoutFlow(): Flow<ScreenTimeout> =
         delegate.getPreviousScreenTimeoutFlow()
 
     override suspend fun getPreviousScreenTimeout(): ScreenTimeout =

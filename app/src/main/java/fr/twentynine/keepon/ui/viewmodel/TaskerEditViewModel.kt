@@ -16,8 +16,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -39,21 +37,17 @@ class TaskerEditViewModel @Inject constructor(
 
     private val selectedScreenTimeoutUI: MutableStateFlow<ScreenTimeoutUI?> = MutableStateFlow(null)
 
-    // The producer is suspend (the repository flow getters are), so it is invoked lazily inside
-    // flow {} to keep this a single, eagerly built StateFlow (one upstream subscription, shared
-    // via WhileSubscribed).
+    // A single eagerly built StateFlow: the producer only assembles the combine pipeline (nothing
+    // runs until collection), and the upstream subscription is shared via WhileSubscribed. The
+    // explicit type on catch upcasts Flow<Success> so the error state can be emitted.
     val uiState: StateFlow<TaskerEditUIState> =
-        flow<TaskerEditUIState> {
-            emitAll(
-                taskerEditStateProducer(
-                    canWriteSystemSettingFlow = permissionStateGateway.canWriteSystemSetting,
-                    batteryIsNotOptimizedFlow = permissionStateGateway.batteryIsNotOptimized,
-                    canPostNotificationFlow = permissionStateGateway.canPostNotification,
-                    selectedScreenTimeoutFlow = selectedScreenTimeoutUI,
-                )
-            )
-        }
-            .catch { error -> emit(TaskerEditUIState.Error(error.message ?: error.toString())) }
+        taskerEditStateProducer(
+            canWriteSystemSettingFlow = permissionStateGateway.canWriteSystemSetting,
+            batteryIsNotOptimizedFlow = permissionStateGateway.batteryIsNotOptimized,
+            canPostNotificationFlow = permissionStateGateway.canPostNotification,
+            selectedScreenTimeoutFlow = selectedScreenTimeoutUI,
+        )
+            .catch<TaskerEditUIState> { error -> emit(TaskerEditUIState.Error(error.message ?: error.toString())) }
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5000),

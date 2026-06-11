@@ -16,6 +16,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -39,25 +42,24 @@ class TimeoutPreferencesRepositoryImpl @Inject constructor(
     // ----- Default (self-initializing from system, device-policy validated) -----
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun getDefaultScreenTimeoutFlow(): Flow<ScreenTimeout> =
-        withContext(ioDispatcher) {
-            val defaultValue = -1
-            preferenceDataStoreHelper.getPreference(
-                DEFAULT_SCREEN_TIMEOUT,
-                defaultValue,
-                DataStoreSourceType.DATA_SOURCE
-            )
-                .transformLatest { storedValue ->
-                    val currentScreenTimeout = ScreenTimeout(storedValue)
+    override fun getDefaultScreenTimeoutFlow(): Flow<ScreenTimeout> {
+        val defaultValue = -1
+        return preferenceDataStoreHelper.getPreference(
+            DEFAULT_SCREEN_TIMEOUT,
+            defaultValue,
+            DataStoreSourceType.DATA_SOURCE
+        )
+            .transformLatest { storedValue ->
+                val currentScreenTimeout = ScreenTimeout(storedValue)
 
-                    when {
-                        storedValue == defaultValue -> emit(initDefaultScreenTimeout())
-                        !devicePolicyController.isValidTimeout(currentScreenTimeout) -> emit(setDefaultToMaxAllowedValue())
-                        else -> emit(currentScreenTimeout)
-                    }
+                when {
+                    storedValue == defaultValue -> emit(initDefaultScreenTimeout())
+                    !devicePolicyController.isValidTimeout(currentScreenTimeout) -> emit(setDefaultToMaxAllowedValue())
+                    else -> emit(currentScreenTimeout)
                 }
-                .distinctUntilChanged()
-        }
+            }
+            .distinctUntilChanged()
+    }
 
     override suspend fun getDefaultScreenTimeout(): ScreenTimeout =
         withContext(ioDispatcher) {
@@ -108,18 +110,18 @@ class TimeoutPreferencesRepositoryImpl @Inject constructor(
 
     // ----- Current -----
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun getCurrentScreenTimeoutFlow(): Flow<ScreenTimeout> =
-        withContext(ioDispatcher) {
-            val defaultValue = systemScreenTimeoutController.getSystemScreenTimeout()
+    override fun getCurrentScreenTimeoutFlow(): Flow<ScreenTimeout> = flow {
+        // Resolved at collection time, so every new collector seeds from a fresh system value.
+        val defaultValue = systemScreenTimeoutController.getSystemScreenTimeout()
+        emitAll(
             preferenceDataStoreHelper.getPreference(
                 CURRENT_SCREEN_TIMEOUT,
                 defaultValue.value,
                 DataStoreSourceType.DATA_SOURCE
             )
-                .transformLatest { emit(ScreenTimeout(it)) }
-                .distinctUntilChanged()
-        }
+                .map { ScreenTimeout(it) }
+        )
+    }.distinctUntilChanged()
 
     override suspend fun getCurrentScreenTimeout(): ScreenTimeout =
         withContext(ioDispatcher) {
@@ -145,18 +147,16 @@ class TimeoutPreferencesRepositoryImpl @Inject constructor(
 
     // ----- Previous -----
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun getPreviousScreenTimeoutFlow(): Flow<ScreenTimeout> =
-        withContext(ioDispatcher) {
-            val defaultValue = -1
-            preferenceDataStoreHelper.getPreference(
-                PREVIOUS_SCREEN_TIMEOUT,
-                defaultValue,
-                DataStoreSourceType.DATA_SOURCE
-            )
-                .transformLatest { emit(ScreenTimeout(it)) }
-                .distinctUntilChanged()
-        }
+    override fun getPreviousScreenTimeoutFlow(): Flow<ScreenTimeout> {
+        val defaultValue = -1
+        return preferenceDataStoreHelper.getPreference(
+            PREVIOUS_SCREEN_TIMEOUT,
+            defaultValue,
+            DataStoreSourceType.DATA_SOURCE
+        )
+            .map { ScreenTimeout(it) }
+            .distinctUntilChanged()
+    }
 
     override suspend fun getPreviousScreenTimeout(): ScreenTimeout =
         withContext(ioDispatcher) {
@@ -182,22 +182,20 @@ class TimeoutPreferencesRepositoryImpl @Inject constructor(
     // ----- Selected (device-policy filtered) -----
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun getSelectedScreenTimeoutFlow(): Flow<List<ScreenTimeout>> =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.getPreference(
-                SELECTED_SCREEN_TIMEOUT,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-                .transformLatest { strList ->
-                    val screenTimeoutList = if (strList.isNullOrEmpty()) {
-                        defaultSelectedScreenTimeouts()
-                    } else {
-                        Json.decodeFromString<List<ScreenTimeout>>(strList)
-                    }
-                    emit(devicePolicyController.removeNotAllowedScreenTimeout(screenTimeoutList))
+    override fun getSelectedScreenTimeoutFlow(): Flow<List<ScreenTimeout>> =
+        preferenceDataStoreHelper.getPreference(
+            SELECTED_SCREEN_TIMEOUT,
+            DataStoreSourceType.DATA_SOURCE_BACKED_UP
+        )
+            .transformLatest { strList ->
+                val screenTimeoutList = if (strList.isNullOrEmpty()) {
+                    defaultSelectedScreenTimeouts()
+                } else {
+                    Json.decodeFromString<List<ScreenTimeout>>(strList)
                 }
-                .distinctUntilChanged()
-        }
+                emit(devicePolicyController.removeNotAllowedScreenTimeout(screenTimeoutList))
+            }
+            .distinctUntilChanged()
 
     override suspend fun getSelectedScreenTimeouts(): List<ScreenTimeout> =
         withContext(ioDispatcher) {
@@ -231,15 +229,13 @@ class TimeoutPreferencesRepositoryImpl @Inject constructor(
 
     // ----- Reset when screen off -----
 
-    override suspend fun getResetTimeoutWhenScreenOffFlow(): Flow<Boolean> =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.getPreference(
-                RESET_TIMEOUT_WHEN_SCREEN_OFF,
-                true,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-                .distinctUntilChanged()
-        }
+    override fun getResetTimeoutWhenScreenOffFlow(): Flow<Boolean> =
+        preferenceDataStoreHelper.getPreference(
+            RESET_TIMEOUT_WHEN_SCREEN_OFF,
+            true,
+            DataStoreSourceType.DATA_SOURCE_BACKED_UP
+        )
+            .distinctUntilChanged()
 
     override suspend fun getResetTimeoutWhenScreenOff(): Boolean =
         withContext(ioDispatcher) {

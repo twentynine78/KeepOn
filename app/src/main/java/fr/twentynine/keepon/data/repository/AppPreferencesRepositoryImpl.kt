@@ -24,15 +24,13 @@ class AppPreferencesRepositoryImpl @Inject constructor(
     private val ioDispatcher = Dispatchers.IO
 
     /** Pure read: defaults to true when unset. Legacy migration is applied by the decorator. */
-    override suspend fun getIsFirstLaunchFlow(): Flow<Boolean> =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.getPreference(
-                IS_FIRST_LAUNCH,
-                true,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-                .distinctUntilChanged()
-        }
+    override fun getIsFirstLaunchFlow(): Flow<Boolean> =
+        preferenceDataStoreHelper.getPreference(
+            IS_FIRST_LAUNCH,
+            true,
+            DataStoreSourceType.DATA_SOURCE_BACKED_UP
+        )
+            .distinctUntilChanged()
 
     override suspend fun setIsFirstLaunch(isFirstLaunch: Boolean) =
         withContext(ioDispatcher) {
@@ -43,15 +41,12 @@ class AppPreferencesRepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun getAppLaunchCountFlow(): Flow<Long> =
-        withContext(ioDispatcher) {
-            val defaultValue = 0L
-            preferenceDataStoreHelper.getPreference(
-                APP_LAUNCH_COUNT,
-                defaultValue,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+    override fun getAppLaunchCountFlow(): Flow<Long> =
+        preferenceDataStoreHelper.getPreference(
+            APP_LAUNCH_COUNT,
+            0L,
+            DataStoreSourceType.DATA_SOURCE_BACKED_UP
+        )
 
     override suspend fun getAppLaunchCount(): Long =
         withContext(ioDispatcher) {

@@ -11,10 +11,9 @@ import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.transformLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -30,24 +29,19 @@ class UiPreferencesRepositoryImpl @Inject constructor(
 
     private val ioDispatcher = Dispatchers.IO
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun getTimeoutIconStyleFlow(): Flow<TimeoutIconStyle> =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.getPreference(
-                TIMEOUT_ICON_STYLE,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-                .transformLatest { timeoutIconStyleJson ->
-                    emit(
-                        if (timeoutIconStyleJson.isNullOrEmpty()) {
-                            TimeoutIconStyle()
-                        } else {
-                            Json.decodeFromString<TimeoutIconStyle>(timeoutIconStyleJson)
-                        }
-                    )
+    override fun getTimeoutIconStyleFlow(): Flow<TimeoutIconStyle> =
+        preferenceDataStoreHelper.getPreference(
+            TIMEOUT_ICON_STYLE,
+            DataStoreSourceType.DATA_SOURCE_BACKED_UP
+        )
+            .map { timeoutIconStyleJson ->
+                if (timeoutIconStyleJson.isNullOrEmpty()) {
+                    TimeoutIconStyle()
+                } else {
+                    Json.decodeFromString<TimeoutIconStyle>(timeoutIconStyleJson)
                 }
-                .distinctUntilChanged()
-        }
+            }
+            .distinctUntilChanged()
 
     override suspend fun getTimeoutIconStyle(): TimeoutIconStyle =
         withContext(ioDispatcher) {
@@ -71,24 +65,19 @@ class UiPreferencesRepositoryImpl @Inject constructor(
             )
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun getIconTransitionAnimationFlow(): Flow<IconTransitionAnimation> =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.getPreference(
-                ICON_TRANSITION_ANIMATION,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-                .transformLatest { iconTransitionAnimationJson ->
-                    emit(
-                        if (iconTransitionAnimationJson.isNullOrEmpty()) {
-                            IconTransitionAnimation()
-                        } else {
-                            Json.decodeFromString<IconTransitionAnimation>(iconTransitionAnimationJson)
-                        }
-                    )
+    override fun getIconTransitionAnimationFlow(): Flow<IconTransitionAnimation> =
+        preferenceDataStoreHelper.getPreference(
+            ICON_TRANSITION_ANIMATION,
+            DataStoreSourceType.DATA_SOURCE_BACKED_UP
+        )
+            .map { iconTransitionAnimationJson ->
+                if (iconTransitionAnimationJson.isNullOrEmpty()) {
+                    IconTransitionAnimation()
+                } else {
+                    Json.decodeFromString<IconTransitionAnimation>(iconTransitionAnimationJson)
                 }
-                .distinctUntilChanged()
-        }
+            }
+            .distinctUntilChanged()
 
     override suspend fun getIconTransitionAnimation(): IconTransitionAnimation =
         withContext(ioDispatcher) {
@@ -112,15 +101,12 @@ class UiPreferencesRepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun getQSTileAddedFlow(): Flow<Boolean> =
-        withContext(ioDispatcher) {
-            val defaultValue = false
-            preferenceDataStoreHelper.getPreference(
-                QSTILE_ADDED,
-                defaultValue,
-                DataStoreSourceType.DATA_SOURCE
-            )
-        }
+    override fun getQSTileAddedFlow(): Flow<Boolean> =
+        preferenceDataStoreHelper.getPreference(
+            QSTILE_ADDED,
+            false,
+            DataStoreSourceType.DATA_SOURCE
+        )
 
     override suspend fun setQSTileAdded(isAdded: Boolean) =
         withContext(ioDispatcher) {
@@ -131,24 +117,19 @@ class UiPreferencesRepositoryImpl @Inject constructor(
             )
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun getDismissedTipsFlow(): Flow<List<DismissedTips>> =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.getPreference(
-                DISMISSED_TIPS,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-                .transformLatest { dismissedTipsStr ->
-                    emit(
-                        if (dismissedTipsStr.isNullOrEmpty()) {
-                            emptyList()
-                        } else {
-                            Json.decodeFromString<List<DismissedTips>>(dismissedTipsStr)
-                        }
-                    )
+    override fun getDismissedTipsFlow(): Flow<List<DismissedTips>> =
+        preferenceDataStoreHelper.getPreference(
+            DISMISSED_TIPS,
+            DataStoreSourceType.DATA_SOURCE_BACKED_UP
+        )
+            .map { dismissedTipsStr ->
+                if (dismissedTipsStr.isNullOrEmpty()) {
+                    emptyList()
+                } else {
+                    Json.decodeFromString<List<DismissedTips>>(dismissedTipsStr)
                 }
-                .distinctUntilChanged()
-        }
+            }
+            .distinctUntilChanged()
 
     override suspend fun setDismissedTip(dismissedTips: DismissedTips) =
         withContext(ioDispatcher) {

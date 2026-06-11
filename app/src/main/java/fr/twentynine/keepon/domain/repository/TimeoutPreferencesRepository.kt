@@ -12,19 +12,19 @@ import kotlinx.coroutines.flow.Flow
  * deprecated keys is applied by a decorator, not here.
  */
 interface TimeoutPreferencesRepository {
-    suspend fun getDefaultScreenTimeoutFlow(): Flow<ScreenTimeout>
+    fun getDefaultScreenTimeoutFlow(): Flow<ScreenTimeout>
     suspend fun getDefaultScreenTimeout(): ScreenTimeout
     suspend fun setDefaultScreenTimeout(timeout: ScreenTimeout)
-    suspend fun getCurrentScreenTimeoutFlow(): Flow<ScreenTimeout>
+    fun getCurrentScreenTimeoutFlow(): Flow<ScreenTimeout>
     suspend fun getCurrentScreenTimeout(): ScreenTimeout
     suspend fun setCurrentScreenTimeout(timeout: ScreenTimeout)
-    suspend fun getPreviousScreenTimeoutFlow(): Flow<ScreenTimeout>
+    fun getPreviousScreenTimeoutFlow(): Flow<ScreenTimeout>
     suspend fun getPreviousScreenTimeout(): ScreenTimeout
     suspend fun setPreviousScreenTimeout(timeout: ScreenTimeout)
-    suspend fun getSelectedScreenTimeoutFlow(): Flow<List<ScreenTimeout>>
+    fun getSelectedScreenTimeoutFlow(): Flow<List<ScreenTimeout>>
     suspend fun getSelectedScreenTimeouts(): List<ScreenTimeout>
     suspend fun setSelectedScreenTimeouts(selectedTimeouts: List<ScreenTimeout>)
-    suspend fun getResetTimeoutWhenScreenOffFlow(): Flow<Boolean>
+    fun getResetTimeoutWhenScreenOffFlow(): Flow<Boolean>
     suspend fun getResetTimeoutWhenScreenOff(): Boolean
     suspend fun setResetTimeoutWhenScreenOff(resetWhenScreenOff: Boolean)
 }
