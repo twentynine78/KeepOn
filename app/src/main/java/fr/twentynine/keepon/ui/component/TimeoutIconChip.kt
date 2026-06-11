@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconData
 import fr.twentynine.keepon.domain.model.TimeoutIconSize
@@ -21,7 +20,6 @@ import fr.twentynine.keepon.ui.theme.CHIP_BACKGROUND_ALPHA
 import fr.twentynine.keepon.ui.theme.CHIP_BORDER_ALPHA
 import fr.twentynine.keepon.ui.theme.KeepOnChipShape
 import fr.twentynine.keepon.ui.theme.KeepOnChipSize
-import fr.twentynine.keepon.ui.util.rememberTimeoutIconModel
 
 /**
  * The rounded chip that shows a generated timeout icon, shared by the home and Tasker rows.
@@ -37,7 +35,6 @@ fun TimeoutIconChip(
     val imageData = remember(screenTimeout, timeoutIconStyle) {
         TimeoutIconData(screenTimeout, TimeoutIconSize.MEDIUM, timeoutIconStyle)
     }
-    val imageModel = rememberTimeoutIconModel(imageData)
 
     Box(
         modifier = modifier
@@ -51,11 +48,11 @@ fun TimeoutIconChip(
             .size(KeepOnChipSize),
         contentAlignment = Alignment.Center,
     ) {
-        AsyncImage(
-            modifier = Modifier.size(20.dp),
-            model = imageModel,
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
+        TimeoutIconAsyncImage(
+            data = imageData,
             contentDescription = contentDescription,
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
+            modifier = Modifier.size(20.dp),
         )
     }
 }

@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.Dp
 import coil3.imageLoader
 import coil3.request.SuccessResult
 import coil3.toBitmap
-import coil3.compose.AsyncImage
 import fr.twentynine.keepon.core.coil.timeoutIconImageRequest
 import fr.twentynine.keepon.core.transition.TransitionPlayer
 import fr.twentynine.keepon.domain.catalog.IconTransitionCatalog
@@ -42,7 +41,6 @@ import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconData
 import fr.twentynine.keepon.domain.model.TimeoutIconSize
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
-import fr.twentynine.keepon.ui.util.rememberTimeoutIconModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -245,10 +243,10 @@ private fun TimeoutIcon(
     val imageData = remember(screenTimeout, timeoutIconStyle) {
         TimeoutIconData(screenTimeout, TimeoutIconSize.LARGE, timeoutIconStyle)
     }
-    AsyncImage(
-        modifier = modifier,
-        model = rememberTimeoutIconModel(imageData),
-        colorFilter = colorFilter,
+    TimeoutIconAsyncImage(
+        data = imageData,
         contentDescription = contentDescription,
+        colorFilter = colorFilter,
+        modifier = modifier,
     )
 }
