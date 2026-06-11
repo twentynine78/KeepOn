@@ -301,7 +301,7 @@ fun ScreenTimeoutRow(
             ) {
                 TimeoutRowLabel(text = item.displayName)
                 DefaultTimeoutBadge(
-                    visible = item.isDefault,
+                    visible = item.isDefault && resetTimeoutWhenScreenOff,
                     modifier = Modifier.padding(start = 16.dp),
                 )
             }
