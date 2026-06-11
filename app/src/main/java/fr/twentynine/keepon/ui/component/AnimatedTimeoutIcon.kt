@@ -227,7 +227,7 @@ internal suspend fun loadIconBitmap(
 ): Bitmap? {
     val request = timeoutIconImageRequest(
         context,
-        TimeoutIconData(screenTimeout, TimeoutIconSize.LARGE, timeoutIconStyle),
+        TimeoutIconData(screenTimeout, TimeoutIconSize.MEDIUM, timeoutIconStyle),
     )
     return (context.imageLoader.execute(request) as? SuccessResult)?.image?.toBitmap()
 }
@@ -241,7 +241,7 @@ private fun TimeoutIcon(
     modifier: Modifier,
 ) {
     val imageData = remember(screenTimeout, timeoutIconStyle) {
-        TimeoutIconData(screenTimeout, TimeoutIconSize.LARGE, timeoutIconStyle)
+        TimeoutIconData(screenTimeout, TimeoutIconSize.MEDIUM, timeoutIconStyle)
     }
     AsyncImage(
         modifier = modifier,
