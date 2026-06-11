@@ -21,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.PlaylistAddCheck
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Card
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -59,6 +58,7 @@ import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.rememberBehaviorSwitchLabel
 import fr.twentynine.keepon.ui.component.KeepOnRichTooltip
 import fr.twentynine.keepon.ui.component.LabeledControlRow
+import fr.twentynine.keepon.ui.component.RoundedCheckbox
 import fr.twentynine.keepon.ui.component.SwipeableScreenTimeoutCard
 import fr.twentynine.keepon.ui.component.TimeoutIconChip
 import fr.twentynine.keepon.ui.component.TipsSection
@@ -339,7 +339,7 @@ fun ScreenTimeoutRow(
                             text = stringResource(tooltipTextId),
                             tooltipState = tooltipState,
                         ) {
-                            Checkbox(
+                            RoundedCheckbox(
                                 checked = item.isSelected,
                                 enabled = false,
                                 onCheckedChange = null,
@@ -350,7 +350,7 @@ fun ScreenTimeoutRow(
                     }
                 }
                 else -> {
-                    Checkbox(
+                    RoundedCheckbox(
                         checked = item.isSelected,
                         enabled = true,
                         onCheckedChange = null,
