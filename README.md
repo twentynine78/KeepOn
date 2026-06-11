@@ -1,6 +1,6 @@
 # KeepOn
 
-<img src=".github/banner.jpg?raw=true"
+<img src=".github/banner.webp?raw=true"
 style="display: block; margin: 0 auto"
 alt="KeepOn - Keep your screen on smartly and easily with Quick Settings">
 
@@ -50,17 +50,20 @@ You can read / audit code and compile your own apk if you want!
 - Poppins: *https://fonts.google.com/specimen/Poppins?query=Poppins*
 - Lora: *https://fonts.google.com/specimen/Lora?query=Lora*
 
+The bundled fonts are subset to the glyphs the app renders (internal family names carry a
+"Subset" suffix, as the SIL OFL requires for modified fonts); see [scripts/subset_fonts.py](scripts/subset_fonts.py).
+
 ## Screenshots
 
-<img src=".github/screenshot1.jpg?raw=true"
+<img src=".github/screenshot1.webp?raw=true"
 width=480
 alt="Easy to use, thanks to Quick Settings">
-<img src=".github/screenshot2.jpg?raw=true"
+<img src=".github/screenshot2.webp?raw=true"
 width=480
 alt="Dynamic theme, adapted to your preferences">
-<img src=".github/screenshot3.jpg?raw=true"
+<img src=".github/screenshot3.webp?raw=true"
 width=480
 alt="Customizable icon, choose the icon you like">
-<img src=".github/screenshot4.jpg?raw=true"
+<img src=".github/screenshot4.webp?raw=true"
 width=480
 alt="Automation integrations, user with Tasker, MacroDroid or Automate apps">
