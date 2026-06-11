@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -63,7 +62,6 @@ import fr.twentynine.keepon.ui.theme.KeepOnCardShape
 import fr.twentynine.keepon.ui.theme.StyleCardTopPadding
 import fr.twentynine.keepon.ui.theme.StyleContentInset
 import fr.twentynine.keepon.ui.theme.StyleListRowVerticalPadding
-import fr.twentynine.keepon.ui.theme.StyleRadioGlyphInset
 import fr.twentynine.keepon.ui.theme.StyleSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.theme.StyleTopSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.component.CardHeader
@@ -329,9 +327,6 @@ fun FontSelectionRow(
                 RadioButton(
                     selected = selected,
                     onClick = null,
-                    // Cancels the passive radio's built-in padding so the glyph sits at the same
-                    // distance from the card's end edge as the chip from its start edge.
-                    modifier = Modifier.offset(x = StyleRadioGlyphInset),
                 )
             },
             label = {
@@ -478,7 +473,7 @@ fun FontOptionsCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .padding(top = 8.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.Start
             ) {

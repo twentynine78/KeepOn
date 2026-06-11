@@ -54,12 +54,6 @@ val StyleCardTopPadding = 28.dp
 /** Single left content rail shared by subtitles, slider labels/tracks and control rows. */
 val StyleContentInset = 16.dp
 
-/** Negative offset that cancels a passive radio/checkbox's built-in 2dp padding so its glyph lands
- *  exactly on the content rail (passive controls keep their drawn size — no 48dp touch target — so
- *  the inset is small). In the rounded list cards this gives the radio the same start margin as its
- *  top/bottom padding. */
-val StyleRadioGlyphInset = 2.dp
-
 /** Fixed leading-slot width so control labels share one column. */
 val StyleControlSlotWidth = 56.dp
 
