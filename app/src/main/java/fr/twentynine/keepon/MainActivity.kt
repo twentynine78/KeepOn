@@ -20,7 +20,6 @@ import fr.twentynine.keepon.ui.screen.MainScreen
 import fr.twentynine.keepon.ui.viewmodel.MainViewModel
 import fr.twentynine.keepon.core.util.BundleScrubber
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
