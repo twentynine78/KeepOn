@@ -3,8 +3,8 @@ package fr.twentynine.keepon.ui.component
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material.icons.rounded.PushPin
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.runtime.Composable
@@ -44,7 +44,7 @@ fun SetDefaultDismissActionRow(
     }
 
     val iconSetDefault = remember(screenTimeoutUI.isDefault) {
-        if (!screenTimeoutUI.isDefault) Icons.Rounded.Build else Icons.Rounded.Done
+        if (!screenTimeoutUI.isDefault) Icons.Rounded.PushPin else Icons.Rounded.Done
     }
     val currentContentTintForAnimation = remember(screenTimeoutUI.isDefault) {
         if (!screenTimeoutUI.isDefault) contentEnabledTint else contentDisabledTint

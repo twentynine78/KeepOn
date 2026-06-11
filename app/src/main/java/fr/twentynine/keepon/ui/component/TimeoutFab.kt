@@ -41,8 +41,10 @@ fun TimeoutFab(
     elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation(),
 ) {
     val colorScheme = MaterialTheme.colorScheme
+    // Inactive container sits two tonal-elevation steps above the cards (surfaceContainerLow), so
+    // the FAB reads as floating over the page instead of blending into it.
     val fabBackgroundColor by animateColorAsState(
-        targetValue = if (keepOnIsActive) colorScheme.primaryContainer else colorScheme.background,
+        targetValue = if (keepOnIsActive) colorScheme.primaryContainer else colorScheme.surfaceContainerHigh,
         animationSpec = tween(animationDurationMs),
         label = "fabBackgroundColor",
     )
@@ -52,7 +54,7 @@ fun TimeoutFab(
         label = "fabBorderColor",
     )
     val fabContentColor by animateColorAsState(
-        targetValue = if (keepOnIsActive) colorScheme.onPrimaryContainer else colorScheme.onBackground,
+        targetValue = if (keepOnIsActive) colorScheme.onPrimaryContainer else colorScheme.onSurface,
         animationSpec = tween(animationDurationMs),
         label = "fabContentColor",
     )

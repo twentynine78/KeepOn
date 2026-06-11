@@ -3,20 +3,15 @@ package fr.twentynine.keepon.ui.component
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.compositeOver
 import fr.twentynine.keepon.ui.model.ItemPosition
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 
 private const val SCREEN_TIMEOUT_CARD_SWIPE_THRESHOLD = 0.30f
-
-/** Alpha of the primary wash composited over the base card color of selected (incl. default) rows. */
-private const val SELECTED_ROW_TINT_ALPHA = 0.02f
 
 /** Duration of the selected-row tint fade, in step with the Home row markers (dot, badge). */
 private const val SELECTED_ROW_TINT_ANIMATION_MS = 450
@@ -40,13 +35,8 @@ fun SwipeableScreenTimeoutCard(
     val isDefault = remember(item.isDefault) { item.isDefault }
     val isFirst = remember(itemPosition) { itemPosition == ItemPosition.FIRST }
 
-    val baseContainerColor = CardDefaults.cardColors().containerColor
     val containerColor by animateColorAsState(
-        targetValue = if (item.isSelected) {
-            MaterialTheme.colorScheme.primary.copy(alpha = SELECTED_ROW_TINT_ALPHA).compositeOver(baseContainerColor)
-        } else {
-            baseContainerColor
-        },
+        targetValue = CardDefaults.cardColors().containerColor,
         animationSpec = tween(SELECTED_ROW_TINT_ANIMATION_MS),
         label = "SelectedRowTint",
     )

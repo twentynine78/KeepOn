@@ -173,7 +173,7 @@ private fun IconTransitionTile(
     )
     val borderColor by animateColorAsState(
         targetValue = if (selected) {
-            colorScheme.primary
+            colorScheme.primary.copy(alpha = TILE_BORDER_ALPHA)
         } else {
             colorScheme.outline.copy(alpha = TILE_BORDER_ALPHA)
         },

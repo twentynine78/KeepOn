@@ -47,7 +47,7 @@ private val RoundedCheckboxCornerRadius = 4.dp
 
 private const val SNAP_ANIMATION_DELAY = 100
 private val CheckboxDefaultPadding = 2.dp
-private val CheckboxSize = 18.dp
+private val CheckboxSize = 22.dp
 private val CheckboxRippleRadius = 20.dp
 
 // The standard MotionScheme springs the stock checkbox resolves to (MaterialTheme.motionScheme is
