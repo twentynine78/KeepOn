@@ -156,7 +156,7 @@ private fun Segment(
 ) {
     val containerColor by animateColorAsState(
         targetValue = if (option.checked) {
-            MaterialTheme.colorScheme.primaryContainer
+            MaterialTheme.colorScheme.primary
         } else {
             Color.Transparent
         },
@@ -165,7 +165,7 @@ private fun Segment(
     )
     val contentColor by animateColorAsState(
         targetValue = if (option.checked) {
-            MaterialTheme.colorScheme.onPrimaryContainer
+            MaterialTheme.colorScheme.onPrimary
         } else {
             MaterialTheme.colorScheme.onSurface
         },
