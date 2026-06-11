@@ -71,7 +71,7 @@ val StyleControlRowVerticalPadding = 8.dp
 
 /** Vertical padding of a full-bleed list row (the font selection list) — matches the Home timeout
  *  rows' density (12dp around the same 38dp chip). */
-val StyleListRowVerticalPadding = 12.dp
+val StyleListRowVerticalPadding = 16.dp
 
 /** Vertical padding of a mid-card switch row (the outlined toggle). */
 val StyleSwitchRowVerticalPadding = 12.dp

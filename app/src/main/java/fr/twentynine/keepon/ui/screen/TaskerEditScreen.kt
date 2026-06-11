@@ -327,7 +327,7 @@ fun TaskerScreenTimeoutRow(
         Row(
             modifier = Modifier
                 .clickable(onClick = clickLambda)
-                .padding(12.dp),
+                .padding(16.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {

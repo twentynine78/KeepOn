@@ -281,7 +281,7 @@ fun ScreenTimeoutRow(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(12.dp),
+                .padding(16.dp),
             contentAlignment = Alignment.CenterStart
         ) {
             TimeoutIconChip(
@@ -300,7 +300,7 @@ fun ScreenTimeoutRow(
 
             Row(
                 modifier = Modifier
-                    .padding(start = 76.dp)
+                    .padding(start = 72.dp)
                     .align(Alignment.CenterStart),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
