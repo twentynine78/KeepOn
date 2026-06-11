@@ -7,6 +7,7 @@ import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.PREVIOUS_SCR
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.RESET_TIMEOUT_WHEN_SCREEN_OFF
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.SELECTED_SCREEN_TIMEOUT
 import fr.twentynine.keepon.data.local.PreferenceDataStoreHelper
+import fr.twentynine.keepon.data.local.PreferencesJson
 import fr.twentynine.keepon.domain.catalog.ScreenTimeoutCatalog
 import fr.twentynine.keepon.domain.gateway.DevicePolicyController
 import fr.twentynine.keepon.domain.gateway.SystemScreenTimeoutController
@@ -21,15 +22,14 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 /**
  * DataStore-backed [TimeoutPreferencesRepository]: persists the default / current / previous timeouts
- * and the selected-timeout list, all on the IO dispatcher. The default self-initializes from the live
- * system value when unset and is validated against the device policy; the selected list seeds itself
- * from the catalog on a fresh install. Legacy-key fallbacks are layered on by
- * [MigratingTimeoutPreferencesRepository], not here.
+ * and the selected-timeout list. The default self-initializes from the live system value when unset
+ * and is validated against the device policy; the selected list seeds itself from the catalog on a
+ * fresh install (also the fallback when the stored list no longer decodes). Legacy-key fallbacks are
+ * layered on by [MigratingTimeoutPreferencesRepository], not here.
  */
 class TimeoutPreferencesRepositoryImpl @Inject constructor(
     private val preferenceDataStoreHelper: PreferenceDataStoreHelper,
@@ -61,36 +61,33 @@ class TimeoutPreferencesRepositoryImpl @Inject constructor(
             .distinctUntilChanged()
     }
 
-    override suspend fun getDefaultScreenTimeout(): ScreenTimeout =
-        withContext(ioDispatcher) {
-            val defaultValue = -1
-            val persistedTimeoutValue = preferenceDataStoreHelper.getLastPreference(
-                DEFAULT_SCREEN_TIMEOUT,
-                defaultValue,
-                DataStoreSourceType.DATA_SOURCE
-            )
+    override suspend fun getDefaultScreenTimeout(): ScreenTimeout {
+        val defaultValue = -1
+        val persistedTimeoutValue = preferenceDataStoreHelper.getLastPreference(
+            DEFAULT_SCREEN_TIMEOUT,
+            defaultValue,
+            DataStoreSourceType.DATA_SOURCE
+        )
 
-            var defaultScreenTimeout = if (persistedTimeoutValue == defaultValue) {
-                initDefaultScreenTimeout()
-            } else {
-                ScreenTimeout(persistedTimeoutValue)
-            }
-
-            if (!devicePolicyController.isValidTimeout(defaultScreenTimeout)) {
-                defaultScreenTimeout = setDefaultToMaxAllowedValue()
-            }
-
-            defaultScreenTimeout
+        var defaultScreenTimeout = if (persistedTimeoutValue == defaultValue) {
+            initDefaultScreenTimeout()
+        } else {
+            ScreenTimeout(persistedTimeoutValue)
         }
+
+        if (!devicePolicyController.isValidTimeout(defaultScreenTimeout)) {
+            defaultScreenTimeout = setDefaultToMaxAllowedValue()
+        }
+
+        return defaultScreenTimeout
+    }
 
     override suspend fun setDefaultScreenTimeout(timeout: ScreenTimeout) =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.putPreference(
-                DEFAULT_SCREEN_TIMEOUT,
-                timeout.value,
-                DataStoreSourceType.DATA_SOURCE
-            )
-        }
+        preferenceDataStoreHelper.putPreference(
+            DEFAULT_SCREEN_TIMEOUT,
+            timeout.value,
+            DataStoreSourceType.DATA_SOURCE
+        )
 
     private suspend fun initDefaultScreenTimeout(): ScreenTimeout =
         withContext(ioDispatcher) {
@@ -123,27 +120,24 @@ class TimeoutPreferencesRepositoryImpl @Inject constructor(
         )
     }.distinctUntilChanged()
 
-    override suspend fun getCurrentScreenTimeout(): ScreenTimeout =
-        withContext(ioDispatcher) {
-            val defaultValue = systemScreenTimeoutController.getSystemScreenTimeout()
+    override suspend fun getCurrentScreenTimeout(): ScreenTimeout {
+        val defaultValue = systemScreenTimeoutController.getSystemScreenTimeout()
 
-            ScreenTimeout(
-                preferenceDataStoreHelper.getLastPreference(
-                    CURRENT_SCREEN_TIMEOUT,
-                    defaultValue.value,
-                    DataStoreSourceType.DATA_SOURCE
-                )
-            )
-        }
-
-    override suspend fun setCurrentScreenTimeout(timeout: ScreenTimeout) =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.putPreference(
+        return ScreenTimeout(
+            preferenceDataStoreHelper.getLastPreference(
                 CURRENT_SCREEN_TIMEOUT,
-                timeout.value,
+                defaultValue.value,
                 DataStoreSourceType.DATA_SOURCE
             )
-        }
+        )
+    }
+
+    override suspend fun setCurrentScreenTimeout(timeout: ScreenTimeout) =
+        preferenceDataStoreHelper.putPreference(
+            CURRENT_SCREEN_TIMEOUT,
+            timeout.value,
+            DataStoreSourceType.DATA_SOURCE
+        )
 
     // ----- Previous -----
 
@@ -159,25 +153,20 @@ class TimeoutPreferencesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getPreviousScreenTimeout(): ScreenTimeout =
-        withContext(ioDispatcher) {
-            val defaultValue = -1
-            ScreenTimeout(
-                preferenceDataStoreHelper.getLastPreference(
-                    PREVIOUS_SCREEN_TIMEOUT,
-                    defaultValue,
-                    DataStoreSourceType.DATA_SOURCE
-                )
-            )
-        }
-
-    override suspend fun setPreviousScreenTimeout(timeout: ScreenTimeout) =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.putPreference(
+        ScreenTimeout(
+            preferenceDataStoreHelper.getLastPreference(
                 PREVIOUS_SCREEN_TIMEOUT,
-                timeout.value,
+                -1,
                 DataStoreSourceType.DATA_SOURCE
             )
-        }
+        )
+
+    override suspend fun setPreviousScreenTimeout(timeout: ScreenTimeout) =
+        preferenceDataStoreHelper.putPreference(
+            PREVIOUS_SCREEN_TIMEOUT,
+            timeout.value,
+            DataStoreSourceType.DATA_SOURCE
+        )
 
     // ----- Selected (device-policy filtered) -----
 
@@ -188,37 +177,34 @@ class TimeoutPreferencesRepositoryImpl @Inject constructor(
             DataStoreSourceType.DATA_SOURCE_BACKED_UP
         )
             .transformLatest { strList ->
-                val screenTimeoutList = if (strList.isNullOrEmpty()) {
-                    defaultSelectedScreenTimeouts()
-                } else {
-                    Json.decodeFromString<List<ScreenTimeout>>(strList)
-                }
-                emit(devicePolicyController.removeNotAllowedScreenTimeout(screenTimeoutList))
+                emit(devicePolicyController.removeNotAllowedScreenTimeout(decodeSelectedScreenTimeouts(strList)))
             }
             .distinctUntilChanged()
 
     override suspend fun getSelectedScreenTimeouts(): List<ScreenTimeout> =
-        withContext(ioDispatcher) {
-            val strList = preferenceDataStoreHelper.getLastPreference(
-                SELECTED_SCREEN_TIMEOUT,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
+        devicePolicyController.removeNotAllowedScreenTimeout(
+            decodeSelectedScreenTimeouts(
+                preferenceDataStoreHelper.getLastPreference(
+                    SELECTED_SCREEN_TIMEOUT,
+                    DataStoreSourceType.DATA_SOURCE_BACKED_UP
+                )
             )
-            devicePolicyController.removeNotAllowedScreenTimeout(
-                if (strList.isNullOrEmpty()) {
-                    defaultSelectedScreenTimeouts()
-                } else {
-                    Json.decodeFromString<List<ScreenTimeout>>(strList)
-                }
-            )
-        }
+        )
 
     override suspend fun setSelectedScreenTimeouts(selectedTimeouts: List<ScreenTimeout>) =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.putPreference(
-                SELECTED_SCREEN_TIMEOUT,
-                Json.encodeToString(selectedTimeouts),
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
+        preferenceDataStoreHelper.putPreference(
+            SELECTED_SCREEN_TIMEOUT,
+            PreferencesJson.encodeToString(selectedTimeouts),
+            DataStoreSourceType.DATA_SOURCE_BACKED_UP
+        )
+
+    /** Decodes the stored list, falling back to the computed default when unset or unreadable. */
+    private suspend fun decodeSelectedScreenTimeouts(strList: String?): List<ScreenTimeout> =
+        if (strList.isNullOrEmpty()) {
+            defaultSelectedScreenTimeouts()
+        } else {
+            runCatching { PreferencesJson.decodeFromString<List<ScreenTimeout>>(strList) }
+                .getOrElse { defaultSelectedScreenTimeouts() }
         }
 
     /** Fresh-install default: every catalog timeout at or above the current one. */
@@ -238,20 +224,16 @@ class TimeoutPreferencesRepositoryImpl @Inject constructor(
             .distinctUntilChanged()
 
     override suspend fun getResetTimeoutWhenScreenOff(): Boolean =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.getLastPreference(
-                RESET_TIMEOUT_WHEN_SCREEN_OFF,
-                true,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        preferenceDataStoreHelper.getLastPreference(
+            RESET_TIMEOUT_WHEN_SCREEN_OFF,
+            true,
+            DataStoreSourceType.DATA_SOURCE_BACKED_UP
+        )
 
     override suspend fun setResetTimeoutWhenScreenOff(resetWhenScreenOff: Boolean) =
-        withContext(ioDispatcher) {
-            preferenceDataStoreHelper.putPreference(
-                RESET_TIMEOUT_WHEN_SCREEN_OFF,
-                resetWhenScreenOff,
-                DataStoreSourceType.DATA_SOURCE_BACKED_UP
-            )
-        }
+        preferenceDataStoreHelper.putPreference(
+            RESET_TIMEOUT_WHEN_SCREEN_OFF,
+            resetWhenScreenOff,
+            DataStoreSourceType.DATA_SOURCE_BACKED_UP
+        )
 }

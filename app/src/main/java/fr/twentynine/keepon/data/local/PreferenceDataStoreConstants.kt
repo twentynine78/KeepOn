@@ -26,11 +26,13 @@ object PreferenceDataStoreConstants {
     val OLD_APP_REVIEW_ASKED = booleanPreferencesKey("appReviewAsked")
     val OLD_SKIP_INTRO = booleanPreferencesKey("skipIntro")
     val IS_FIRST_LAUNCH = booleanPreferencesKey("isFirstLaunch")
-    val LAST_RUN_VERSION_CODE = longPreferencesKey("lastRunVersionCode")
 
     // No backed up data
     val DEFAULT_SCREEN_TIMEOUT = intPreferencesKey("originalTimeout")
     val CURRENT_SCREEN_TIMEOUT = intPreferencesKey("newValue")
     val PREVIOUS_SCREEN_TIMEOUT = intPreferencesKey("previousValue")
     val QSTILE_ADDED = booleanPreferencesKey("tileAdded")
+    // Device-local on purpose: a restored install starts back at 0, so the version-gated app
+    // migrations re-run over the restored data.
+    val LAST_RUN_VERSION_CODE = longPreferencesKey("lastRunVersionCode")
 }

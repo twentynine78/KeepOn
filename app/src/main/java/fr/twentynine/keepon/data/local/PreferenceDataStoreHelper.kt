@@ -94,41 +94,26 @@ class PreferenceDataStoreHelperImpl @Inject constructor(@param:ApplicationContex
     }
 
     override fun <T> getPreference(key: Preferences.Key<T>, defaultValue: T, dataStoreSourceType: DataStoreSourceType):
-        Flow<T> = getDataSource(dataStoreSourceType).data.catch { exception ->
-        if (exception is IOException) {
-            emit(emptyPreferences())
-        } else {
-            throw exception
-        }
-    }.map { preferences ->
-        val result = preferences[key] ?: defaultValue
-        result
-    }
+        Flow<T> = getDataSource(dataStoreSourceType).data
+        .orEmptyOnIoError()
+        .map { preferences -> preferences[key] ?: defaultValue }
 
     override fun <T> getPreference(key: Preferences.Key<T>, dataStoreSourceType: DataStoreSourceType):
-        Flow<T?> = getDataSource(dataStoreSourceType).data.catch { exception ->
-        if (exception is IOException) {
-            emit(emptyPreferences())
-        } else {
-            throw exception
-        }
-    }.map { preferences ->
-        preferences[key]
-    }
+        Flow<T?> = getDataSource(dataStoreSourceType).data
+        .orEmptyOnIoError()
+        .map { preferences -> preferences[key] }
 
-    // Returns the last saved value of the key
     override suspend fun <T> getLastPreference(
         key: Preferences.Key<T>,
         defaultValue: T,
         dataStoreSourceType: DataStoreSourceType
-    ): T = getDataSource(dataStoreSourceType).data.firstOrNull()?.get(key) ?: defaultValue
+    ): T = getDataSource(dataStoreSourceType).data.orEmptyOnIoError().firstOrNull()?.get(key) ?: defaultValue
 
     override suspend fun <T> getLastPreference(
         key: Preferences.Key<T>,
         dataStoreSourceType: DataStoreSourceType
-    ): T? = getDataSource(dataStoreSourceType).data.firstOrNull()?.get(key)
+    ): T? = getDataSource(dataStoreSourceType).data.orEmptyOnIoError().firstOrNull()?.get(key)
 
-    // Sets the value based on the value passed in value parameter
     override suspend fun <T> putPreference(
         key: Preferences.Key<T>,
         value: T,
@@ -139,10 +124,18 @@ class PreferenceDataStoreHelperImpl @Inject constructor(@param:ApplicationContex
         }
     }
 
-    // This Function removes the Key Value pair from the datastore, hereby removing it completely.
     override suspend fun <T> removePreference(key: Preferences.Key<T>, dataStoreSourceType: DataStoreSourceType) {
         getDataSource(dataStoreSourceType).edit { preferences ->
             preferences.remove(key)
         }
+    }
+}
+
+/** IO failures reading a store surface as an empty snapshot, so reads fall back to their defaults. */
+private fun Flow<Preferences>.orEmptyOnIoError(): Flow<Preferences> = catch { exception ->
+    if (exception is IOException) {
+        emit(emptyPreferences())
+    } else {
+        throw exception
     }
 }

@@ -28,11 +28,12 @@ data class OldTimeoutIconStyle(
     /** Maps this legacy style onto the current [TimeoutIconStyle]. */
     val toTimeoutIconStyle: TimeoutIconStyle
         get() {
-            val newFontFamilyName = when {
-                this.iconStyleTypefaceSansSerif -> IconFontFamily.Roboto.name
-                this.iconStyleTypefaceSerif -> IconFontFamily.Bitter.name
-                this.iconStyleTypefaceMonospace -> IconFontFamily.Roboto.name
-                else -> IconFontFamily.Roboto.name
+            // Monospace was dropped from the catalog, so only serif keeps a distinct family;
+            // sans-serif, monospace and the unset case all land on Roboto.
+            val newFontFamilyName = if (this.iconStyleTypefaceSerif) {
+                IconFontFamily.Bitter.name
+            } else {
+                IconFontFamily.Roboto.name
             }
 
             return TimeoutIconStyle(
