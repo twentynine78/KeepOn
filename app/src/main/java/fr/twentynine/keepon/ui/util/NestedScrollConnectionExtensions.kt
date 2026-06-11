@@ -12,16 +12,15 @@ import androidx.compose.ui.unit.Velocity
  */
 operator fun NestedScrollConnection.plus(other: NestedScrollConnection): NestedScrollConnection {
     val self = this
-    val argument = other
 
     // Chaining a connection with itself would double-apply it; just return it unchanged.
-    if (self === argument) return self
+    if (self === other) return self
 
     return object : NestedScrollConnection {
         override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
             val selfConsumed = self.onPreScroll(available, source)
             val remainingForArgument = available - selfConsumed
-            val argumentConsumed = argument.onPreScroll(remainingForArgument, source)
+            val argumentConsumed = other.onPreScroll(remainingForArgument, source)
             return selfConsumed + argumentConsumed
         }
 
@@ -33,7 +32,7 @@ operator fun NestedScrollConnection.plus(other: NestedScrollConnection): NestedS
             val selfConsumedPost = self.onPostScroll(consumed, available, source)
             val remainingForArgument = available - selfConsumedPost
             // The argument sees what 'self' consumed in post-scroll added to what the child consumed
-            val argumentConsumedPost = argument.onPostScroll(
+            val argumentConsumedPost = other.onPostScroll(
                 consumed = consumed + selfConsumedPost, // The argument sees what the child AND 'self' consumed
                 available = remainingForArgument,
                 source = source
@@ -44,14 +43,14 @@ operator fun NestedScrollConnection.plus(other: NestedScrollConnection): NestedS
         override suspend fun onPreFling(available: Velocity): Velocity {
             val selfConsumed = self.onPreFling(available)
             val remainingForArgument = available - selfConsumed
-            val argumentConsumed = argument.onPreFling(remainingForArgument)
+            val argumentConsumed = other.onPreFling(remainingForArgument)
             return selfConsumed + argumentConsumed
         }
 
         override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
             val selfConsumedPost = self.onPostFling(consumed, available)
             val remainingForArgument = available - selfConsumedPost
-            val argumentConsumedPost = argument.onPostFling(
+            val argumentConsumedPost = other.onPostFling(
                 // The argument sees what the child AND 'self' consumed in post-fling
                 consumed = consumed + selfConsumedPost,
                 available = remainingForArgument

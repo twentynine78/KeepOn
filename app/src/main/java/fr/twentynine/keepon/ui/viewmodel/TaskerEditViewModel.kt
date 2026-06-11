@@ -28,11 +28,11 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class TaskerEditViewModel @Inject constructor(
-    private val taskerEditStateProducer: TaskerEditStateProducer,
+    taskerEditStateProducer: TaskerEditStateProducer,
+    permissionStateGateway: PermissionStateGateway,
     private val buildScreenTimeoutUiListProducer: BuildScreenTimeoutUiListProducer,
     private val getMaxAllowedScreenTimeoutUseCase: GetMaxAllowedScreenTimeoutUseCase,
     private val setIsFirstLaunchUseCase: SetIsFirstLaunchUseCase,
-    private val permissionStateGateway: PermissionStateGateway,
 ) : ViewModel() {
 
     private val selectedScreenTimeoutUI: MutableStateFlow<ScreenTimeoutUI?> = MutableStateFlow(null)

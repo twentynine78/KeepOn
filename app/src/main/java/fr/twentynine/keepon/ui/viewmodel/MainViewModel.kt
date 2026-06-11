@@ -41,7 +41,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val mainViewStateProducer: MainViewStateProducer,
+    mainViewStateProducer: MainViewStateProducer,
     private val permissionStateGateway: PermissionStateGateway,
     private val appRateHelper: AppRateManager,
     private val addTileServiceManager: AddTileServiceManager,
