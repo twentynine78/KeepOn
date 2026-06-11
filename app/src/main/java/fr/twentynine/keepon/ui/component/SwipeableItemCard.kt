@@ -118,56 +118,62 @@ private fun <T : Parcelable> AnimateSwipeableItemCardEffect(
         if (isFirstEverAnimationCycleForThisItem) {
             isFirstEverAnimationCycleForThisItem = false
 
-            when {
-                animateFirstDisplayCondition && originalFirstDisplayCondition -> {
-                    originalFirstDisplayCondition = false
-                    firstDisplayAnimationPlayed = true
-                    // First display animation sequence
-                    animatedTranslationX.snapTo(0f)
-                    animatedTranslationX.animateTo(
-                        targetValue = initialTranslationPx + (initialTranslationPx / 2),
-                        animationSpec = tween(INITIAL_ANIMATION_DURATION)
-                    )
-                    delay(initialAnimationDelay)
-                    snapBackDampingRatio = Spring.DampingRatioHighBouncy
-                }
-
-                animateSwipeCondition && !originalFirstDisplayCondition -> {
-                    originalFirstDisplayCondition = false
-                    // Swipe animation sequence.
-                    val offset = if (swipeToDismissDirection == SwipeToDismissBoxValue.EndToStart) {
-                        initialTranslationPx * -1
-                    } else {
-                        initialTranslationPx
+            try {
+                when {
+                    animateFirstDisplayCondition && originalFirstDisplayCondition -> {
+                        originalFirstDisplayCondition = false
+                        firstDisplayAnimationPlayed = true
+                        // First display animation sequence
+                        animatedTranslationX.snapTo(0f)
+                        animatedTranslationX.animateTo(
+                            targetValue = initialTranslationPx + (initialTranslationPx / 2),
+                            animationSpec = tween(INITIAL_ANIMATION_DURATION)
+                        )
+                        delay(initialAnimationDelay)
+                        snapBackDampingRatio = Spring.DampingRatioHighBouncy
                     }
-                    animatedTranslationX.snapTo(offset)
+
+                    animateSwipeCondition && !originalFirstDisplayCondition -> {
+                        originalFirstDisplayCondition = false
+                        // Swipe animation sequence.
+                        val offset = if (swipeToDismissDirection == SwipeToDismissBoxValue.EndToStart) {
+                            initialTranslationPx * -1
+                        } else {
+                            initialTranslationPx
+                        }
+                        animatedTranslationX.snapTo(offset)
+                    }
+
+                    else -> {
+                        originalFirstDisplayCondition = false
+                        // No animation at all (neither first display nor swipe-in).
+                        animatedTranslationX.snapTo(0f)
+                        playSnapBackAnimation = false
+                    }
                 }
 
-                else -> {
-                    originalFirstDisplayCondition = false
-                    // No animation at all (neither first display nor swipe-in).
-                    animatedTranslationX.snapTo(0f)
-                    playSnapBackAnimation = false
-                }
-            }
-
-            // Subsequent "Snap Back" or "Return" animation
-            if (playSnapBackAnimation) {
-                animatedTranslationX.animateTo(
-                    targetValue = 0f,
-                    animationSpec = spring(
-                        dampingRatio = snapBackDampingRatio,
-                        stiffness = springStiffness
+                // Subsequent "Snap Back" or "Return" animation
+                if (playSnapBackAnimation) {
+                    animatedTranslationX.animateTo(
+                        targetValue = 0f,
+                        animationSpec = spring(
+                            dampingRatio = snapBackDampingRatio,
+                            stiffness = springStiffness
+                        )
                     )
-                )
-            } else {
-                animatedTranslationX.snapTo(0f)
-            }
-            animationTriggerHandled = true
-            // Notified after the snap-back has settled: reporting earlier would let the caller
-            // update the condition inputs and restart this effect mid-animation.
-            if (firstDisplayAnimationPlayed) {
-                onFirstDisplayAnimationPlayed?.invoke()
+                } else {
+                    animatedTranslationX.snapTo(0f)
+                }
+                animationTriggerHandled = true
+            } finally {
+                // Notified once the first-display hint has been shown, in a finally so a
+                // cancellation mid-animation (e.g. the swipe rows being disabled while the long
+                // snap-back spring is still settling) still counts as shown. Not reported before
+                // the animation: the caller's state update would restart this effect and cut the
+                // hint short.
+                if (firstDisplayAnimationPlayed) {
+                    onFirstDisplayAnimationPlayed?.invoke()
+                }
             }
         }
     }
