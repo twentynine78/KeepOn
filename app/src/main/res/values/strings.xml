@@ -86,7 +86,7 @@
     <string name="icon_transition_type_swipe_down">Reel</string>
 
     <string name="select_tasker_timeouts_title">Select timeout</string>
-    <string name="select_tasker_timeouts_text">Select the timeout value that will be use for the automation action.</string>
+    <string name="select_tasker_timeouts_text">Select the timeout value that will be used for the automation action.</string>
     <string name="tasker_dynamic_value_text">Dynamic values</string>
     <string name="tasker_static_value_text">Static values</string>
 
@@ -144,7 +144,7 @@
     <string name="permissions_screen_battery_optimization_subtitle">This prevents the system from stopping KeepOn and allows it to run in background. This won\'t affect the battery.</string>
 
     <string name="permissions_screen_write_setting_title">Allow modification of system parameters</string>
-    <string name="permissions_screen_write_setting_subtitle">This allows KeepOn to modifying screen timeout according to your preference.</string>
+    <string name="permissions_screen_write_setting_subtitle">This allows KeepOn to modify screen timeout according to your preference.</string>
 
     <string name="permission_screen_request_icon_desc">Request permission</string>
     <string name="permission_screen_check_icon_desc">Permission validated</string>
