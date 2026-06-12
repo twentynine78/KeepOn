@@ -9,6 +9,7 @@ import fr.twentynine.keepon.ui.producer.MainViewStateProducer
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.FirstLaunchHintGate
 import fr.twentynine.keepon.ui.state.MainViewUIState
+import fr.twentynine.keepon.ui.state.StylePositionPadState
 import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
@@ -56,6 +57,7 @@ class MainViewModel @Inject constructor(
     private val incrementAppLaunchCountUseCase: IncrementAppLaunchCountUseCase,
     private val setIsFirstLaunchUseCase: SetIsFirstLaunchUseCase,
     private val firstLaunchHintGate: FirstLaunchHintGate,
+    private val stylePositionPadState: StylePositionPadState,
 ) : ViewModel() {
 
     private var appLaunchIncremented = false
@@ -90,6 +92,7 @@ class MainViewModel @Inject constructor(
             is MainUIEvent.UpdateTimeoutIconStyle -> updateTimeoutIconStyle(event.timeoutIconStyle)
             is MainUIEvent.UpdateIconTransitionAnimation ->
                 updateIconTransitionAnimation(event.iconTransitionAnimation)
+            is MainUIEvent.SetStylePositionPadExpanded -> stylePositionPadState.setExpanded(event.expanded)
             is MainUIEvent.DismissTips -> setDismissedTips(event.tipsId)
 
             // Permission request/check events are handled by the host Activity.

@@ -34,6 +34,7 @@ sealed interface MainViewUIState {
         val iconTransitionAnimation: IconTransitionAnimation,
         val iconTransitionOptions: List<IconTransitionOptionUI>,
         val showFirstLaunchHint: Boolean,
+        val stylePositionPadExpanded: Boolean,
         val appInfo: AppInfo,
         val creditSections: List<CreditSectionUI>,
     ) : MainViewUIState

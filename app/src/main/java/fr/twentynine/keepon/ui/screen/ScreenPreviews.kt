@@ -80,6 +80,7 @@ private fun StyleScreenPreview() {
             iconTransitionAnimation = IconTransitionAnimation(),
             iconTransitionOptions = previewIconTransitionOptions,
             currentScreenTimeout = ScreenTimeout(30000),
+            positionPadExpanded = false,
             onEvent = {},
             navType = KeepOnNavigationType.BOTTOM_NAVIGATION,
             paddingValue = PaddingValues(0.dp),

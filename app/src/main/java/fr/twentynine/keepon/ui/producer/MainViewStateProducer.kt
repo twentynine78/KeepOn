@@ -22,6 +22,7 @@ import fr.twentynine.keepon.ui.model.IconTransitionOptionUI
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
 import fr.twentynine.keepon.ui.state.FirstLaunchHintGate
 import fr.twentynine.keepon.ui.state.MainViewUIState
+import fr.twentynine.keepon.ui.state.StylePositionPadState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
@@ -41,6 +42,7 @@ class MainViewStateProducer @Inject constructor(
     private val stringResourceProvider: StringResourceProvider,
     private val appInfoProvider: AppInfoProvider,
     private val firstLaunchHintGate: FirstLaunchHintGate,
+    private val stylePositionPadState: StylePositionPadState,
 ) {
     // App metadata is static; read it once and reuse it across state emissions.
     private val appInfo by lazy { appInfoProvider.getAppInfo() }
@@ -121,7 +123,8 @@ class MainViewStateProducer @Inject constructor(
             mainPreferencesFlow,
             tipsListFlow(canPostNotificationFlow),
             screenTimeoutListFlow(),
-        ) { permissions, preferences, tipsList, screenTimeouts ->
+            stylePositionPadState.expanded,
+        ) { permissions, preferences, tipsList, screenTimeouts, stylePositionPadExpanded ->
             MainViewUIState.Success(
                 canWriteSystemSettings = permissions.canWriteSystemSettings,
                 batteryIsNotOptimized = permissions.batteryIsNotOptimized,
@@ -132,6 +135,7 @@ class MainViewStateProducer @Inject constructor(
                     .getFullDisplayTimeout(stringResourceProvider),
                 keepOnIsActive = preferences.keepOnIsActive,
                 showFirstLaunchHint = preferences.showFirstLaunchHint,
+                stylePositionPadExpanded = stylePositionPadExpanded,
                 timeoutIconStyle = preferences.timeoutIconStyle,
                 iconTransitionAnimation = preferences.iconTransitionAnimation,
                 iconTransitionOptions = iconTransitionOptions,

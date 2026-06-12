@@ -1,5 +1,6 @@
 package fr.twentynine.keepon.ui.screen
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -49,6 +50,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,14 +62,18 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
@@ -85,6 +91,7 @@ import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.defaultCardHorizontalPadding
 import fr.twentynine.keepon.ui.util.screenContentModifier
+import fr.twentynine.keepon.ui.util.stableViewportHeight
 import fr.twentynine.keepon.ui.theme.KeepOnCardElevation
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
 import fr.twentynine.keepon.ui.theme.StyleCardTopPadding
@@ -119,6 +126,7 @@ fun StyleRoute(
         iconTransitionAnimation = uiState.iconTransitionAnimation,
         iconTransitionOptions = uiState.iconTransitionOptions,
         currentScreenTimeout = uiState.currentScreenTimeout,
+        positionPadExpanded = uiState.stylePositionPadExpanded,
         onEvent = onEvent,
         navType = navType,
         paddingValue = paddingValue,
@@ -136,6 +144,7 @@ fun StyleScreen(
     iconTransitionAnimation: IconTransitionAnimation,
     iconTransitionOptions: List<IconTransitionOptionUI>,
     currentScreenTimeout: ScreenTimeout,
+    positionPadExpanded: Boolean,
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
     paddingValue: PaddingValues,
@@ -143,6 +152,10 @@ fun StyleScreen(
     val fontFamilies = remember {
         IconFontFamilyCatalog.iconFontFamilies.values.toList()
     }
+
+    // Worst-case visible area (bars expanded): caps the position pad and anchors its centering
+    // scroll; stable while scrolling, recomputed on rotation/resize.
+    val viewportHeight = stableViewportHeight(navType)
 
     LazyColumn(
         modifier = Modifier
@@ -205,7 +218,9 @@ fun StyleScreen(
         item(key = "optionsCard") {
             FontOptionsCard(
                 timeoutIconStyle = timeoutIconStyle,
+                positionPadExpanded = positionPadExpanded,
                 onEvent = onEvent,
+                viewportHeight = viewportHeight,
                 modifier = maxWidthModifier,
             )
         }
@@ -229,6 +244,13 @@ private fun signedStep(value: Int): String = if (value > 0) "+$value" else value
 
 // Shared duration of the position-pad expand/collapse, its chevron rotation and the summary fade.
 private const val POSITION_PAD_ANIMATION_MS = 300
+
+// Vertical room kept alongside the pad surface so the surface plus its readout row fit the
+// stable viewport at once (readout ~30dp at default font scale, plus breathing margin).
+private val PadViewportAllowance = 56.dp
+
+// Usability floor for pathological windows (tiny split screen); below it the screen scrolls.
+private val PadMinHeight = 120.dp
 
 // Font-size slider: 10 steps centered on 0 (-5..+5).
 private const val FONT_SIZE_SLIDER_STEPS = 10
@@ -499,7 +521,9 @@ fun FontStyleCard(
 @Composable
 fun FontOptionsCard(
     timeoutIconStyle: TimeoutIconStyle,
+    positionPadExpanded: Boolean,
     onEvent: (MainUIEvent) -> Unit,
+    viewportHeight: Dp,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -543,9 +567,19 @@ fun FontOptionsCard(
                 )
 
                 // The pad is collapsed by default: it grabs taps and vertical drags meant for the
-                // page scroll, so it only unfolds on demand (and folds back when leaving the Style
-                // destination, since this plain `remember` does not survive the NavHost disposal).
-                var positionPadExpanded by remember { mutableStateOf(false) }
+                // page scroll, so it only unfolds on demand. Its expansion lives in a
+                // process-lifetime holder (StylePositionPadState, surfaced through the UI state) so
+                // it survives the activity recreation of a rotation while the pad is on screen;
+                // any other way of leaving the composition folds it back here, since both the
+                // LazyColumn and the NavHost would otherwise restore it on scroll-back/tab-return.
+                val activity = LocalActivity.current
+                DisposableEffect(Unit) {
+                    onDispose {
+                        if (activity?.isChangingConfigurations != true) {
+                            onEvent(MainUIEvent.SetStylePositionPadExpanded(false))
+                        }
+                    }
+                }
                 val chevronRotation by animateFloatAsState(
                     targetValue = if (positionPadExpanded) 180f else 0f,
                     animationSpec = tween(POSITION_PAD_ANIMATION_MS),
@@ -566,7 +600,7 @@ fun FontOptionsCard(
                         .padding(
                             top = 10.dp,
                         )
-                        .clickable { positionPadExpanded = !positionPadExpanded }
+                        .clickable { onEvent(MainUIEvent.SetStylePositionPadExpanded(!positionPadExpanded)) }
                         .padding(
                             start = StyleContentInset,
                             end = StyleContentInset,
@@ -609,12 +643,31 @@ fun FontOptionsCard(
                     }
                 }
 
+                // Cap the pad surface so the whole pad always fits the worst-case viewport.
+                val padMaxHeight = (viewportHeight - PadViewportAllowance).coerceAtLeast(PadMinHeight)
+
+                val density = LocalDensity.current
+                // Only read inside the coroutine below, so size changes never recompose.
+                var padComponentSize by remember { mutableStateOf(IntSize.Zero) }
                 val bringPadIntoViewRequester = remember { BringIntoViewRequester() }
                 LaunchedEffect(positionPadExpanded) {
                     if (positionPadExpanded) {
                         // Wait out the expansion so the scroll targets the pad's final bounds.
                         delay(POSITION_PAD_ANIMATION_MS.milliseconds)
-                        bringPadIntoViewRequester.bringIntoView()
+                        val padSize = padComponentSize
+                        if (padSize == IntSize.Zero) {
+                            bringPadIntoViewRequester.bringIntoView()
+                        } else {
+                            // Extend the requested rect below the pad so it settles around the
+                            // viewport centre (readouts clear of the bottom bar/FAB); the default
+                            // spec top-aligns when the rect exceeds the viewport, and the end of
+                            // the list naturally bounds the lift.
+                            val extraPx = ((with(density) { viewportHeight.toPx() } - padSize.height) / 2f)
+                                .coerceAtLeast(0f)
+                            bringPadIntoViewRequester.bringIntoView(
+                                Rect(0f, 0f, padSize.width.toFloat(), padSize.height + extraPx)
+                            )
+                        }
                     }
                 }
                 AnimatedVisibility(
@@ -627,6 +680,7 @@ fun FontOptionsCard(
                     IconPositionPad(
                         horizontal = timeoutIconStyle.iconStyleFontHorizontalSpacing,
                         vertical = timeoutIconStyle.iconStyleFontVerticalSpacing,
+                        maxPadHeight = padMaxHeight,
                         onPositionChange = { newHorizontal, newVertical ->
                             onEvent(
                                 MainUIEvent.UpdateTimeoutIconStyle(
@@ -640,6 +694,7 @@ fun FontOptionsCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = StyleContentInset, end = StyleContentInset, bottom = 22.dp)
+                            .onSizeChanged { padComponentSize = it }
                             .bringIntoViewRequester(bringPadIntoViewRequester),
                     )
                 }

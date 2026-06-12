@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -45,6 +46,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -75,7 +77,8 @@ private val ReadoutGroupSpacing = 16.dp
  * 0,0 default). WYSIWYG mapping: dragging right/up increases [horizontal]/[vertical], matching the
  * directions the icon generator moves the glyph. Center guides plus a crosshair through the knob
  * mirror the current offset; readouts (and a drag hint) sit below the pad. Tapping places the knob
- * directly; releasing animates it onto the nearest notch.
+ * directly; releasing animates it onto the nearest notch. [maxPadHeight] caps the pad surface alone
+ * (readout excluded): when it binds, the pad keeps its aspect ratio, narrows and centers.
  */
 @Composable
 fun IconPositionPad(
@@ -83,6 +86,7 @@ fun IconPositionPad(
     vertical: Int,
     onPositionChange: (horizontal: Int, vertical: Int) -> Unit,
     modifier: Modifier = Modifier,
+    maxPadHeight: Dp = Dp.Unspecified,
     range: IntRange = -5..5,
 ) {
     val colorScheme = MaterialTheme.colorScheme
@@ -138,10 +142,12 @@ fun IconPositionPad(
         )
     }
 
-    Column(modifier = modifier) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
+            // No fillMaxWidth here: a min-width constraint would defeat the height-first fallback
+            // of aspectRatio when the cap binds (the pad would stretch out of its 1.5:1 ratio).
             modifier = Modifier
-                .fillMaxWidth()
+                .heightIn(max = maxPadHeight)
                 .aspectRatio(PAD_ASPECT_RATIO)
                 .clip(PadShape)
                 .background(colorScheme.surfaceVariant.copy(alpha = PAD_BACKGROUND_ALPHA))
