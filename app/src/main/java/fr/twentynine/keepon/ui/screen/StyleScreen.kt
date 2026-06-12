@@ -586,7 +586,7 @@ fun FontOptionsCard(
                     label = "positionPadChevron",
                 )
                 // The card's bottom inset lives inside this clickable while the block is the card's
-                // last element (pad collapsed), so the press ripple reaches the card's bottom edge;
+                // last element (pad collapsed), so the tap target reaches the card's bottom edge;
                 // expanded, the inset moves below the pad and the block keeps its usual spacing.
                 val toggleBottomPadding by animateDpAsState(
                     targetValue = if (positionPadExpanded) 12.dp else 26.dp,
@@ -600,7 +600,11 @@ fun FontOptionsCard(
                         .padding(
                             top = 10.dp,
                         )
-                        .clickable { onEvent(MainUIEvent.SetStylePositionPadExpanded(!positionPadExpanded)) }
+                        .clickable(
+                            // No ripple: the expand animation and the pad centering are feedback enough.
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() },
+                        ) { onEvent(MainUIEvent.SetStylePositionPadExpanded(!positionPadExpanded)) }
                         .padding(
                             start = StyleContentInset,
                             end = StyleContentInset,
