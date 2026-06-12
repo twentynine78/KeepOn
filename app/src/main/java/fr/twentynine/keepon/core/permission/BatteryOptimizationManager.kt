@@ -24,7 +24,7 @@ class BatteryOptimizationManagerImpl @Inject constructor(
     @SuppressLint("BatteryLife")
     override fun requestDisableBatteryOptimization() {
         val batteryOptimizationIntent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-            .setData(("package:" + context.packageName).toUri())
+            .setData("package:${context.packageName}".toUri())
             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)

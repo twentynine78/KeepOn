@@ -33,7 +33,7 @@ class SystemSettingPermissionManagerImpl @Inject constructor(@param:ActivityCont
 
     override fun requestWriteSystemSettingsPermission() {
         val permissionIntent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
-            .setData(("package:" + context.packageName).toUri())
+            .setData("package:${context.packageName}".toUri())
             .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
 

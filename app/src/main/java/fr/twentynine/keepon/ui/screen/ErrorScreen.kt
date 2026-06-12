@@ -28,7 +28,7 @@ fun ErrorScreen(
     val errorMessageWithPrefix = remember(errorMessage) {
         buildString {
             append(errorMessagePrefix)
-            append(" ")
+            append(' ')
             append(errorMessage)
         }
     }

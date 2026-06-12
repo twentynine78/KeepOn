@@ -631,11 +631,10 @@ fun FontOptionsCard(
                     ) {
                         Text(
                             // H/V match the pad's own legend, deliberately not localized.
-                            text = stringResource(R.string.font_options_position_horizontal) +
-                                " ${signedStep(timeoutIconStyle.iconStyleFontHorizontalSpacing)}" +
-                                " · " +
-                                stringResource(R.string.font_options_position_vertical) +
-                                " ${signedStep(timeoutIconStyle.iconStyleFontVerticalSpacing)}",
+                            text = "${stringResource(R.string.font_options_position_horizontal)} " +
+                                "${signedStep(timeoutIconStyle.iconStyleFontHorizontalSpacing)} · " +
+                                "${stringResource(R.string.font_options_position_vertical)} " +
+                                signedStep(timeoutIconStyle.iconStyleFontVerticalSpacing),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(top = 2.dp),
