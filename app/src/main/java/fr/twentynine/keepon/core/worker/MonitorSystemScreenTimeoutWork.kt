@@ -7,6 +7,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import fr.twentynine.keepon.domain.gateway.DebugTracer
 import fr.twentynine.keepon.domain.usecase.timeout.SynchronizeSystemTimeoutUseCase
 
 /**
@@ -20,12 +21,14 @@ class MonitorSystemScreenTimeoutWork @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted private val workerParams: WorkerParameters,
     private val synchronizeSystemTimeoutUseCase: SynchronizeSystemTimeoutUseCase,
+    private val tracer: DebugTracer,
 ) : CoroutineWorker(appContext, workerParams) {
 
     private val workManager = WorkManager.getInstance(appContext)
 
     override suspend fun doWork(): Result {
         return try {
+            tracer.trace(TAG) { "SCREEN_OFF_TIMEOUT change detected, synchronizing" }
             synchronizeSystemTimeoutUseCase()
 
             // Re-schedule the worker
@@ -33,10 +36,16 @@ class MonitorSystemScreenTimeoutWork @AssistedInject constructor(
                 workManager = workManager,
                 requeueIfRunning = true
             )
+            tracer.trace(TAG) { "synchronized + monitor re-armed" }
 
             Result.success()
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            tracer.trace(TAG) { "synchronization failed: $e" }
             Result.failure()
         }
+    }
+
+    private companion object {
+        const val TAG = "Monitor"
     }
 }

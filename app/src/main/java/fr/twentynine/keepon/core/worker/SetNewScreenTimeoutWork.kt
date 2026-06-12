@@ -8,6 +8,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.usecase.timeout.UpdateSystemScreenTimeoutUseCase
+import fr.twentynine.keepon.domain.gateway.DebugTracer
 import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
 import fr.twentynine.keepon.domain.gateway.UserNotifier
 import fr.twentynine.keepon.core.worker.SetNewScreenTimeoutWorkScheduler.Companion.NEW_SCREEN_TIMEOUT_DATA_KEY
@@ -25,6 +26,7 @@ class SetNewScreenTimeoutWork @AssistedInject constructor(
     private val updateSystemScreenTimeoutUseCase: UpdateSystemScreenTimeoutUseCase,
     private val permissionStateGateway: PermissionStateGateway,
     private val userNotifier: UserNotifier,
+    private val tracer: DebugTracer,
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -34,21 +36,31 @@ class SetNewScreenTimeoutWork @AssistedInject constructor(
                 val updatePreviousTimeout = inputData.getBoolean(UPDATE_PREVIOUS_TIMEOUT_DATA_KEY, false)
 
                 if (newScreenTimeout != -1) {
+                    tracer.trace(TAG) {
+                        "applying $newScreenTimeout (updatePrevious=$updatePreviousTimeout)"
+                    }
                     updateSystemScreenTimeoutUseCase(
                         ScreenTimeout(newScreenTimeout),
                         updatePreviousTimeout
                     )
                 }
             } else {
+                tracer.trace(TAG) { "skipped: required permissions missing" }
                 userNotifier.notifyMissingPermission()
             }
 
             Result.success()
         } catch (_: SecurityException) {
+            tracer.trace(TAG) { "SecurityException: WRITE_SETTINGS revoked mid-run" }
             userNotifier.notifyMissingPermission()
             Result.failure()
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            tracer.trace(TAG) { "transient failure, retrying: $e" }
             Result.retry()
         }
+    }
+
+    private companion object {
+        const val TAG = "ApplyWork"
     }
 }

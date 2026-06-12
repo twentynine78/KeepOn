@@ -1,6 +1,7 @@
 package fr.twentynine.keepon.domain.usecase.timeout
 
 import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
+import fr.twentynine.keepon.domain.gateway.DebugTracer
 import fr.twentynine.keepon.domain.gateway.SystemScreenTimeoutController
 import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import javax.inject.Inject
@@ -18,6 +19,7 @@ class SynchronizeSystemTimeoutUseCase @Inject constructor(
     private val timeoutPreferencesRepository: TimeoutPreferencesRepository,
     private val manageScreenOffServiceUseCase: ManageScreenOffServiceUseCase,
     private val appComponentsUpdater: AppComponentsUpdater,
+    private val tracer: DebugTracer,
 ) {
     suspend operator fun invoke() {
         val currentSystemTimeout = systemScreenTimeoutController.getSystemScreenTimeout()
@@ -26,7 +28,10 @@ class SynchronizeSystemTimeoutUseCase @Inject constructor(
         // A mismatch means the change did not come from the app (system settings):
         // adopt the new system value as the default.
         if (desiredTimeout != currentSystemTimeout) {
+            tracer.trace(TAG) { "external change: adopting ${currentSystemTimeout.value} as the new default" }
             timeoutPreferencesRepository.setDefaultScreenTimeout(currentSystemTimeout)
+        } else {
+            tracer.trace(TAG) { "app-initiated change to ${currentSystemTimeout.value}: default kept" }
         }
 
         val storedCurrentTimeout = timeoutPreferencesRepository.getCurrentScreenTimeout()
@@ -37,5 +42,9 @@ class SynchronizeSystemTimeoutUseCase @Inject constructor(
 
         manageScreenOffServiceUseCase()
         appComponentsUpdater.requestUpdate()
+    }
+
+    private companion object {
+        const val TAG = "Sync"
     }
 }

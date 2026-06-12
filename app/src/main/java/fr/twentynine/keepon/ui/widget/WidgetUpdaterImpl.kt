@@ -6,6 +6,7 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.setWidgetPreviews
 import androidx.glance.appwidget.updateAll
 import dagger.hilt.android.qualifiers.ApplicationContext
+import fr.twentynine.keepon.domain.gateway.DebugTracer
 import fr.twentynine.keepon.domain.gateway.WidgetUpdater
 import fr.twentynine.keepon.receiver.KeepOnWidgetReceiver
 import kotlinx.coroutines.Dispatchers
@@ -17,8 +18,12 @@ import javax.inject.Inject
  * `requestUpdateWidgetPreview` refreshes the launcher widget-picker preview (Android 15+, a no-op on
  * older versions).
  */
-class WidgetUpdaterImpl @Inject constructor(@param:ApplicationContext private val context: Context) : WidgetUpdater {
+class WidgetUpdaterImpl @Inject constructor(
+    @param:ApplicationContext private val context: Context,
+    private val tracer: DebugTracer,
+) : WidgetUpdater {
     override suspend fun requestUpdateWidget() {
+        tracer.trace("Widget") { "updateAll requested" }
         withContext(Dispatchers.IO) {
             KeepOnWidget().updateAll(context)
         }

@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
+import fr.twentynine.keepon.domain.gateway.DebugTracer
 import fr.twentynine.keepon.domain.usecase.timeout.RestoreStateOnPackageReplacedUseCase
 import fr.twentynine.keepon.domain.usecase.timeout.ScheduleDefaultTimeoutOnBootUseCase
 import fr.twentynine.keepon.core.util.goAsync
@@ -25,6 +26,9 @@ class RebootAppReceiver : BroadcastReceiver() {
     @Inject
     lateinit var restoreStateOnPackageReplacedUseCase: RestoreStateOnPackageReplacedUseCase
 
+    @Inject
+    lateinit var tracer: DebugTracer
+
     override fun onReceive(context: Context, intent: Intent) {
         // Ignore implicit intents, because they are not valid.
         if (context.packageName != intent.getPackage() && ComponentName(context, this.javaClass.name) != intent.component) {
@@ -33,15 +37,21 @@ class RebootAppReceiver : BroadcastReceiver() {
 
         when (intent.action) {
             Intent.ACTION_BOOT_COMPLETED -> {
+                tracer.trace(TAG) { "BOOT_COMPLETED: scheduling the default timeout" }
                 goAsync(Dispatchers.Default) {
                     scheduleDefaultTimeoutOnBootUseCase()
                 }
             }
             Intent.ACTION_MY_PACKAGE_REPLACED -> {
+                tracer.trace(TAG) { "MY_PACKAGE_REPLACED: restoring the saved state" }
                 goAsync(Dispatchers.Default) {
                     restoreStateOnPackageReplacedUseCase()
                 }
             }
         }
+    }
+
+    private companion object {
+        const val TAG = "Boot"
     }
 }

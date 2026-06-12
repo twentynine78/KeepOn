@@ -33,14 +33,17 @@ class SetNextTimeoutActionCallback : ActionCallback {
             // Re-evaluate at click time (the rendered action can be stale): if the timeout
             // cannot be cycled or a required permission is missing, open the app instead,
             // mirroring the QS tile.
+            val tracer = hiltEntryPoint.debugTracer()
             val shouldRouteToAppUseCase = hiltEntryPoint.shouldRouteToAppUseCase()
             if (shouldRouteToAppUseCase()) {
+                tracer.trace(TAG) { "tap: routing to the app (cycle unavailable or permission missing)" }
                 val mainActivityIntent = Intent(appContext, MainActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
                 appContext.startActivity(mainActivityIntent)
             } else {
                 val currentTimeoutValue: Int = parameters[currentTimeoutParameterKey] ?: return@withContext
+                tracer.trace(TAG) { "tap: cycling from $currentTimeoutValue" }
                 val setNextSystemScreenTimeoutUseCase = hiltEntryPoint.setNextSystemScreenTimeoutUseCase()
                 setNextSystemScreenTimeoutUseCase(ScreenTimeout(currentTimeoutValue))
             }
@@ -51,5 +54,6 @@ class SetNextTimeoutActionCallback : ActionCallback {
         val currentTimeoutParameterKey = ActionParameters.Key<Int>(
             "CURRENT_TIMEOUT"
         )
+        private const val TAG = "Widget"
     }
 }

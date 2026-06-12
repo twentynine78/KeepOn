@@ -5,6 +5,7 @@ import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.DISMISSED_TI
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.TIMEOUT_ICON_STYLE
 import fr.twentynine.keepon.data.local.PreferenceDataStoreHelper
 import fr.twentynine.keepon.data.migration.LegacyPreferencesRepository
+import fr.twentynine.keepon.domain.gateway.DebugTracer
 import fr.twentynine.keepon.domain.model.DismissedTips
 import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
@@ -30,6 +31,7 @@ class MigratingUiPreferencesRepository @Inject constructor(
     private val delegate: UiPreferencesRepositoryImpl,
     private val legacyPreferencesRepository: LegacyPreferencesRepository,
     private val preferenceDataStoreHelper: PreferenceDataStoreHelper,
+    private val tracer: DebugTracer,
 ) : UiPreferencesRepository {
 
     private val ioDispatcher = Dispatchers.IO
@@ -71,6 +73,7 @@ class MigratingUiPreferencesRepository @Inject constructor(
                 if (current.isNullOrEmpty()) {
                     val old = legacyPreferencesRepository.getOldTimeoutIconStyle()
                     if (old != null) {
+                        tracer.trace(TAG) { "migrating legacy timeout-icon style" }
                         delegate.setTimeoutIconStyle(old.toTimeoutIconStyle)
                         legacyPreferencesRepository.removeOldTimeoutIconStyle()
                     }
@@ -90,6 +93,7 @@ class MigratingUiPreferencesRepository @Inject constructor(
                     DataStoreSourceType.DATA_SOURCE_BACKED_UP
                 )
                 if (current.isNullOrEmpty() && legacyPreferencesRepository.getOldAppReviewAsked()) {
+                    tracer.trace(TAG) { "migrating legacy appReviewAsked flag into the dismissed rate tip" }
                     delegate.setDismissedTip(DismissedTips(RATE_APP_TIP_ID))
                     legacyPreferencesRepository.removeOldAppReviewAsked()
                 }
@@ -124,6 +128,7 @@ class MigratingUiPreferencesRepository @Inject constructor(
         // Persisted id of the "rate app" tip (TipsInfo.RateApp.id); a stored DismissedTips
         // id can never change, so it is safe to reference by value from the data layer.
         const val RATE_APP_TIP_ID = 300
+        const val TAG = "Migration"
     }
 }
 

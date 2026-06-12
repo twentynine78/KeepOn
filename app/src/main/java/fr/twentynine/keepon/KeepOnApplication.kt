@@ -1,6 +1,7 @@
 package fr.twentynine.keepon
 
 import android.app.Application
+import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import androidx.work.WorkManager
@@ -9,6 +10,7 @@ import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.request.CachePolicy
 import coil3.size.Precision
+import coil3.util.DebugLogger
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.HiltAndroidApp
 import fr.twentynine.keepon.domain.usecase.app.RunAppMigrationUseCase
@@ -84,6 +86,7 @@ class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configura
             .precision(Precision.INEXACT)
             .memoryCachePolicy(CachePolicy.ENABLED)
             .diskCachePolicy(CachePolicy.DISABLED)
+            .apply { if (BuildConfig.DEBUG) logger(DebugLogger()) }
             .build()
     }
 
@@ -92,5 +95,6 @@ class KeepOnApplication : Application(), SingletonImageLoader.Factory, Configura
             .setWorkerFactory(hiltWorkerFactory)
             .setWorkerCoroutineContext(Dispatchers.IO)
             .setDefaultProcessName(this.applicationInfo.processName)
+            .apply { if (BuildConfig.DEBUG) setMinimumLoggingLevel(Log.DEBUG) }
             .build()
 }

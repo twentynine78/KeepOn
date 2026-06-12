@@ -4,6 +4,7 @@ import fr.twentynine.keepon.data.enums.DataStoreSourceType
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.IS_FIRST_LAUNCH
 import fr.twentynine.keepon.data.local.PreferenceDataStoreHelper
 import fr.twentynine.keepon.data.migration.LegacyPreferencesRepository
+import fr.twentynine.keepon.domain.gateway.DebugTracer
 import fr.twentynine.keepon.domain.repository.AppPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -26,6 +27,7 @@ class MigratingAppPreferencesRepository @Inject constructor(
     private val delegate: AppPreferencesRepositoryImpl,
     private val legacyPreferencesRepository: LegacyPreferencesRepository,
     private val preferenceDataStoreHelper: PreferenceDataStoreHelper,
+    private val tracer: DebugTracer,
 ) : AppPreferencesRepository {
 
     private val ioDispatcher = Dispatchers.IO
@@ -54,6 +56,7 @@ class MigratingAppPreferencesRepository @Inject constructor(
                 )
                 // Migrate from the deprecated "skipIntro" flag, once, when unset.
                 if (isFirstLaunch == null && legacyPreferencesRepository.getOldSkipIntro()) {
+                    tracer.trace("Migration") { "migrating legacy skipIntro flag into isFirstLaunch=false" }
                     delegate.setIsFirstLaunch(false)
                     legacyPreferencesRepository.removeOldSkipIntro()
                 }

@@ -5,6 +5,7 @@ import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.RESET_TIMEOU
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.SELECTED_SCREEN_TIMEOUT
 import fr.twentynine.keepon.data.local.PreferenceDataStoreHelper
 import fr.twentynine.keepon.data.migration.LegacyPreferencesRepository
+import fr.twentynine.keepon.domain.gateway.DebugTracer
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +30,7 @@ class MigratingTimeoutPreferencesRepository @Inject constructor(
     private val delegate: TimeoutPreferencesRepositoryImpl,
     private val legacyPreferencesRepository: LegacyPreferencesRepository,
     private val preferenceDataStoreHelper: PreferenceDataStoreHelper,
+    private val tracer: DebugTracer,
 ) : TimeoutPreferencesRepository {
 
     private val ioDispatcher = Dispatchers.IO
@@ -78,6 +80,7 @@ class MigratingTimeoutPreferencesRepository @Inject constructor(
                     val old = legacyPreferencesRepository.getOldSelectedScreenTimeouts()
                     if (old.isNotEmpty()) {
                         val migrated = intListFromStr(old).map { ScreenTimeout(it) }
+                        tracer.trace(TAG) { "migrating legacy selected timeouts (${migrated.size} entries)" }
                         delegate.setSelectedScreenTimeouts(migrated)
                         legacyPreferencesRepository.removeOldSelectedScreenTimeouts()
                     }
@@ -99,6 +102,7 @@ class MigratingTimeoutPreferencesRepository @Inject constructor(
                 if (current == null) {
                     val old = legacyPreferencesRepository.getOldResetTimeoutWhenScreenOff()
                     if (old != null) {
+                        tracer.trace(TAG) { "migrating legacy reset-on-screen-off flag (inverted: $old -> ${!old})" }
                         // The legacy flag had inverted semantics, hence !old.
                         preferenceDataStoreHelper.putPreference(
                             RESET_TIMEOUT_WHEN_SCREEN_OFF,
@@ -111,6 +115,10 @@ class MigratingTimeoutPreferencesRepository @Inject constructor(
                 resetTimeoutWhenScreenOffMigrated = true
             }
         }
+    }
+
+    private companion object {
+        const val TAG = "Migration"
     }
 
     private fun intListFromStr(stringIntList: String?): List<Int> {

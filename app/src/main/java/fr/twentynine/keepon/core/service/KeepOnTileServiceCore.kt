@@ -39,6 +39,7 @@ import fr.twentynine.keepon.domain.usecase.timeout.ShouldRouteToAppUseCase
 import fr.twentynine.keepon.core.coil.timeoutIconImageRequest
 import fr.twentynine.keepon.core.transition.TransitionPlayer
 import fr.twentynine.keepon.core.util.BundleScrubber
+import fr.twentynine.keepon.domain.gateway.DebugTracer
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
@@ -83,6 +84,9 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
     lateinit var stringResourceProvider: StringResourceProvider
 
     @Inject
+    lateinit var tracer: DebugTracer
+
+    @Inject
     @ApplicationScope
     lateinit var applicationScope: CoroutineScope
 
@@ -121,6 +125,7 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
     override fun onStartListening() {
         super.onStartListening()
 
+        tracer.trace(TAG) { "onStartListening: QS panel open, collector armed" }
         listeningJob?.cancel()
         listeningJob = serviceScope.launch {
             combine(
@@ -132,13 +137,19 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
                 TileRenderState(currentTimeout, iconStyle, keepOnIsActive, transition)
             }
                 .distinctUntilChanged()
-                .collect { state -> updateQSTile(state) }
+                .collect { state ->
+                    tracer.trace(TAG) {
+                        "redraw: timeout=${state.currentScreenTimeout.value} active=${state.keepOnIsActive}"
+                    }
+                    updateQSTile(state)
+                }
         }
     }
 
     override fun onStopListening() {
         super.onStopListening()
 
+        tracer.trace(TAG) { "onStopListening: QS panel closed" }
         listeningJob?.cancel()
         listeningJob = null
     }
@@ -147,15 +158,18 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
         super.onClick()
 
         if (isLocked) {
+            tracer.trace(TAG) { "onClick ignored: device locked" }
             return
         }
 
         serviceScope.launch {
             if (shouldRouteToAppUseCase()) {
+                tracer.trace(TAG) { "onClick: routing to the app (cycle unavailable or permission missing)" }
                 withContext(Dispatchers.Main.immediate) {
                     startMainActivityAndCollapse()
                 }
             } else {
+                tracer.trace(TAG) { "onClick: cycling to the next timeout" }
                 // The listening collector redraws (and animates) the tile once the new
                 // timeout is persisted.
                 setNextSystemScreenTimeoutUseCase()
@@ -185,6 +199,7 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
     override fun onTileAdded() {
         super.onTileAdded()
 
+        tracer.trace(TAG) { "onTileAdded: requesting initial render" }
         requestQSTileUpdate()
     }
 
@@ -233,6 +248,7 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
                     if (state.transition.enabled && previousBitmap != null && timeoutChanged) {
                         val transition = IconTransitionCatalog.fromId(state.transition.typeId)
                         val durationMs = IconTransitionTiming.durationMs(state.transition.durationStep)
+                        tracer.trace(TAG) { "playing '${state.transition.typeId}' transition (${durationMs}ms)" }
                         playTransition(tile, previousBitmap, newBitmap, transition, durationMs)
                     } else {
                         tile.icon = newBitmap.toIcon()
@@ -244,6 +260,7 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
             }
 
             is ErrorResult -> {
+                tracer.trace(TAG) { "icon generation failed (${result.throwable}), fallback icon + retry" }
                 qsTile?.let { tile ->
                     tile.icon = Icon.createWithResource(this, R.drawable.ic_keepon)
                     tile.label = getString(R.string.qs_service_name)
@@ -325,5 +342,6 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
 
     companion object {
         private val DELAY_BEFORE_RETRY_UPDATE = 10.seconds
+        private const val TAG = "Tile"
     }
 }

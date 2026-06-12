@@ -16,6 +16,7 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.core.receiver.ScreenOffReceiver
 import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager
 import fr.twentynine.keepon.core.permission.PostNotificationPermissionManager.Companion.NOTIFICATION_CHANNEL_SCREEN_MONITOR_ID
+import fr.twentynine.keepon.domain.gateway.DebugTracer
 import fr.twentynine.keepon.domain.usecase.timeout.ResetSystemScreenTimeoutUseCase
 import fr.twentynine.keepon.di.qualifier.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
@@ -37,6 +38,9 @@ class ScreenOffReceiverService : LifecycleService() {
 
     @Inject
     lateinit var screenOffServiceState: ScreenOffServiceState
+
+    @Inject
+    lateinit var tracer: DebugTracer
 
     // Run on the app scope so the reset (which stops this service mid-way) completes
     // the system write even after the service is destroyed.
@@ -76,10 +80,12 @@ class ScreenOffReceiverService : LifecycleService() {
 
         when (intent?.action) {
             ScreenOffReceiverServiceManagerImpl.ACTION_STOP_FOREGROUND_SCREEN_OFF_SERVICE -> {
+                tracer.trace(TAG) { "stop command received, stopping" }
                 stopSelf()
                 return START_NOT_STICKY
             }
             ACTION_STOP_KEEPON -> {
+                tracer.trace(TAG) { "notification 'Stop KeepOn' action: resetting the timeout" }
                 applicationScope.launch {
                     try {
                         resetSystemScreenTimeoutUseCase()
@@ -105,11 +111,13 @@ class ScreenOffReceiverService : LifecycleService() {
                 }
             )
             screenOffServiceState.isRunning = true
+            tracer.trace(TAG) { "foreground started, screen-off receiver active" }
             START_STICKY
-        } catch (_: Exception) {
+        } catch (e: Exception) {
             // If startForeground fails, we must stop the service immediately.
             // This prevents RemoteServiceException (crash) triggered by the system
             // if a service promised as "foreground" doesn't call startForeground() within 5s.
+            tracer.trace(TAG) { "startForeground failed ($e), stopping to avoid RemoteServiceException" }
             screenOffServiceState.isRunning = false
             stopSelf()
             START_NOT_STICKY
@@ -117,6 +125,7 @@ class ScreenOffReceiverService : LifecycleService() {
     }
 
     override fun onDestroy() {
+        tracer.trace(TAG) { "destroyed, screen-off receiver unregistered" }
         screenOffServiceState.isRunning = false
 
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
@@ -169,5 +178,6 @@ class ScreenOffReceiverService : LifecycleService() {
     companion object {
         private const val NOTIFICATION_ID = 1111
         const val ACTION_STOP_KEEPON = "ACTION_STOP_KEEPON"
+        private const val TAG = "Service"
     }
 }
