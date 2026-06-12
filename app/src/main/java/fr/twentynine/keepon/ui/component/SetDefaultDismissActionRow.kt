@@ -33,7 +33,7 @@ fun SetDefaultDismissActionRow(
     val backgroundEnabledColor = MaterialTheme.colorScheme.secondaryContainer
     val backgroundDisabledColor = MaterialTheme.colorScheme.outlineVariant
     val contentEnabledTint = MaterialTheme.colorScheme.onSecondaryContainer
-    val contentDisabledTint = MaterialTheme.colorScheme.outline
+    val contentDisabledTint = MaterialTheme.colorScheme.onSurfaceVariant
 
     val enabledText = stringResource(R.string.select_timeouts_swipe_set_default_text)
     val disabledText = stringResource(R.string.select_timeouts_swipe_already_default_text)
@@ -55,7 +55,7 @@ fun SetDefaultDismissActionRow(
 
     val animatedContentColor by animateColorAsState(
         targetValue = currentContentTintForAnimation.copy(
-            alpha = if (screenTimeoutUI.isDefault || (dismissProgress < swipeThresholdFraction && dismissProgress != 0f)) 0.5f else 1f
+            alpha = if (!screenTimeoutUI.isDefault && dismissProgress < swipeThresholdFraction && dismissProgress != 0f) 0.5f else 1f
         ),
         animationSpec = tween(durationMillis = CONTENT_COLOR_ANIMATION_DURATION_MS),
         label = "contentColorAnimation"
