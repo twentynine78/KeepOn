@@ -46,7 +46,7 @@ import kotlin.math.max
 private val RoundedCheckboxCornerRadius = 6.dp
 
 private const val SNAP_ANIMATION_DELAY = 100
-private val CheckboxDefaultPadding = 2.dp
+private val CheckboxDefaultPadding = 0.dp
 private val CheckboxSize = 22.dp
 private val CheckboxRippleRadius = 20.dp
 
