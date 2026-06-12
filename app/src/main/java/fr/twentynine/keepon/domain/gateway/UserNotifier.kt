@@ -27,4 +27,10 @@ interface UserNotifier {
 
     /** Notifies the user that the screen-off monitoring service failed to start or stop. */
     fun notifyScreenOffServiceError()
+
+    /**
+     * Notifies the user that a Tasker action fired with a timeout value the app doesn't
+     * know, so the change was skipped.
+     */
+    fun notifyInvalidScreenTimeout()
 }

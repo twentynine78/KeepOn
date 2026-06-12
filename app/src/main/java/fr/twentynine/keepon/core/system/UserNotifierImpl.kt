@@ -33,6 +33,10 @@ class UserNotifierImpl @Inject constructor(
         showToast(R.string.toast_screen_off_service_error)
     }
 
+    override fun notifyInvalidScreenTimeout() {
+        showToast(R.string.toast_invalid_screen_timeout)
+    }
+
     private fun showToast(@StringRes messageRes: Int) {
         // Toast must be posted on the main thread; this port is called from background
         // coroutines (tile, widget, worker, app).

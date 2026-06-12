@@ -32,7 +32,7 @@ class EditActivity : BasePermissionActivity() {
 
     private var isCancelled = true
 
-    public override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().apply {
             setKeepOnScreenCondition {
                 taskerEditViewModel.uiState.value is TaskerEditUIState.Loading
@@ -68,21 +68,27 @@ class EditActivity : BasePermissionActivity() {
 
         val forwardedBundle = intent.getBundleExtra(TaskerIntent.EXTRA_BUNDLE)
 
-        if (forwardedBundle != null && !PluginBundleManager.isBundleValid(forwardedBundle)) {
+        // Nested bundles unparcel lazily, so the forwarded bundle needs its own scrub before
+        // isBundleValid/getInt touch it.
+        if (BundleScrubber.scrub(forwardedBundle)) {
             setResult(RESULT_CANCELED)
             finish()
             return
         }
 
         if (forwardedBundle != null) {
-            val forwardedTimeout = forwardedBundle
-                .getInt(PluginBundleManager.BUNDLE_EXTRA_TIMEOUT_VALUE, -1)
-
-            if (forwardedTimeout != -1 &&
-                forwardedTimeout <= taskerEditViewModel.getMaxAllowedScreenTimeout()
-            ) {
-                taskerEditViewModel.setInitialSelectedScreenTimeout(forwardedTimeout)
+            if (!PluginBundleManager.isBundleValid(forwardedBundle)) {
+                setResult(RESULT_CANCELED)
+                finish()
+                return
             }
+
+            // The view model only preselects values present in the timeout catalog (falling back
+            // to the last unlocked one for policy-locked values), so the missing-extra -1 simply
+            // matches nothing.
+            taskerEditViewModel.setInitialSelectedScreenTimeout(
+                forwardedBundle.getInt(PluginBundleManager.BUNDLE_EXTRA_TIMEOUT_VALUE, -1)
+            )
         }
 
         setContent {
@@ -103,7 +109,8 @@ class EditActivity : BasePermissionActivity() {
                     uiState = uiState,
                     onEvent = onEvent,
                     saveTaskerConfiguration = {
-                        isCancelled = (taskerEditViewModel.uiState.value as? TaskerEditUIState.Success)?.selectedScreenTimeout == null
+                        // finish() still returns RESULT_CANCELED when no timeout is selected.
+                        isCancelled = false
                         finish()
                     }
                 )

@@ -54,8 +54,6 @@ class MainActivity : BasePermissionActivity() {
             return
         }
 
-        mainViewModel.incrementAppLaunchCount()
-
         setContent {
             KeepOnTheme {
                 val onEvent: (MainUIEvent) -> Unit = remember {

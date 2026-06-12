@@ -11,7 +11,6 @@ import fr.twentynine.keepon.ui.producer.BuildScreenTimeoutUiListProducer
 import fr.twentynine.keepon.ui.producer.TaskerEditStateProducer
 import fr.twentynine.keepon.domain.gateway.PermissionStateGateway
 import fr.twentynine.keepon.domain.usecase.app.SetIsFirstLaunchUseCase
-import fr.twentynine.keepon.domain.usecase.timeout.GetMaxAllowedScreenTimeoutUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -31,7 +30,6 @@ class TaskerEditViewModel @Inject constructor(
     taskerEditStateProducer: TaskerEditStateProducer,
     permissionStateGateway: PermissionStateGateway,
     private val buildScreenTimeoutUiListProducer: BuildScreenTimeoutUiListProducer,
-    private val getMaxAllowedScreenTimeoutUseCase: GetMaxAllowedScreenTimeoutUseCase,
     private val setIsFirstLaunchUseCase: SetIsFirstLaunchUseCase,
 ) : ViewModel() {
 
@@ -91,8 +89,6 @@ class TaskerEditViewModel @Inject constructor(
             }
         }
     }
-
-    fun getMaxAllowedScreenTimeout() = getMaxAllowedScreenTimeoutUseCase()
 
     private fun setSelectedScreenTimeout(screenTimeout: ScreenTimeoutUI) {
         selectedScreenTimeoutUI.update { screenTimeout }

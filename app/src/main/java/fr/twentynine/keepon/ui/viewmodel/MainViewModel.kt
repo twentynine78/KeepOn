@@ -103,7 +103,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun incrementAppLaunchCount() {
+    private fun incrementAppLaunchCount() {
         viewModelScope.launch {
             if (!appLaunchIncremented && permissionStateGateway.areRequiredPermissionsGranted()) {
                 incrementAppLaunchCountUseCase()
