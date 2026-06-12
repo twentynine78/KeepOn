@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceModifier
+import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionStartActivity
@@ -17,7 +18,6 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import fr.twentynine.keepon.MainActivity
 import fr.twentynine.keepon.ui.state.WidgetUIState
-import fr.twentynine.keepon.ui.widget.theme.KeepOnWidgetColorScheme
 import fr.twentynine.keepon.ui.widget.theme.applyRootBackground
 import fr.twentynine.keepon.ui.widget.theme.rememberLegacyCircleBackground
 import fr.twentynine.keepon.ui.widget.theme.rememberWidgetDimens
@@ -33,7 +33,7 @@ fun KeepOnWidgetError(
         flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
     }
     // On API < 31 cornerRadius() is a no-op; round the error circle with a bitmap fallback.
-    val legacyBackground = rememberLegacyCircleBackground(KeepOnWidgetColorScheme.colors.background)
+    val legacyBackground = rememberLegacyCircleBackground(GlanceTheme.colors.background)
 
     Box(
         contentAlignment = Alignment.Center,
@@ -41,13 +41,13 @@ fun KeepOnWidgetError(
             .appWidgetBackground()
             .cornerRadius(dimens.cornerRadius)
             .size(dimens.widgetMinSize)
-            .applyRootBackground(legacyBackground, KeepOnWidgetColorScheme.colors.background)
+            .applyRootBackground(legacyBackground, GlanceTheme.colors.background)
             .clickable(actionStartActivity(mainActivityIntent)),
     ) {
         Text(
             text = widgetUIState.error,
             style = TextStyle(
-                KeepOnWidgetColorScheme.colors.tertiary
+                GlanceTheme.colors.tertiary
             ),
             modifier = GlanceModifier.padding(8.dp)
         )

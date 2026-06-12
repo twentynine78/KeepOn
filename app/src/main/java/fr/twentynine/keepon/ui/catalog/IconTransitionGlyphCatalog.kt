@@ -28,4 +28,11 @@ object IconTransitionGlyphCatalog {
     /** Falls back to the default transition's glyph, mirroring [IconTransitionCatalog.fromId]. */
     fun glyphFor(id: String): ImageVector =
         glyphById[id] ?: glyphById.getValue(IconTransitionCatalog.default.id)
+
+    /**
+     * Rotation (degrees) applied to the glyph wherever it is drawn: the M3 Flip icon mirrors
+     * around a vertical axis while the flip animation tips horizontally, so it is turned 90°.
+     */
+    fun glyphRotationFor(id: String): Float =
+        if (id == IconTransitionCatalog.flip.id) 90f else 0f
 }

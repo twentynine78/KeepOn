@@ -14,6 +14,7 @@ import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.createBitmap
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceModifier
+import androidx.glance.GlanceTheme
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
@@ -22,34 +23,37 @@ import androidx.glance.unit.ColorProvider
 import fr.twentynine.keepon.ui.widget.KeepOnWidget.Companion.SMALL_SQUARE
 
 /**
- * Resolved colors for the widget, derived from the active/inactive state. Bundled so the live
- * content ([KeepOnWidgetView]) and the preview ([KeepOnWidgetPreview]) build them the same way —
- * the preview is simply the inactive palette.
+ * Colors for the widget, derived from the active/inactive state. Bundled so the live content
+ * ([KeepOnWidgetView]) and the preview ([KeepOnWidgetPreview]) build them the same way — the
+ * preview is simply the inactive palette.
  */
 class WidgetColors(
-    val borderColor: Color,
+    val borderColor: ColorProvider,
     val backgroundColor: ColorProvider,
     val widgetBackgroundColor: Color,
     val imageColorFilter: ColorFilter,
     val contentColor: ColorProvider,
 )
 
+/**
+ * Builds the [WidgetColors] from the ambient [GlanceTheme]: the dynamic Material You palette on
+ * Android 12+ and the app's static scheme below (installed by [KeepOnWidgetTheme]), so the widget
+ * follows the wallpaper like the in-app FAB does. Must be called inside the theme wrapper.
+ */
 @Composable
-fun rememberWidgetColors(keepOnIsActive: Boolean): WidgetColors {
+fun widgetColors(keepOnIsActive: Boolean): WidgetColors {
     val context = LocalContext.current
-    return remember(keepOnIsActive) {
-        val scheme = KeepOnWidgetColorScheme.colors
-        val border = if (keepOnIsActive) scheme.background else scheme.primaryContainer
-        val background = if (keepOnIsActive) scheme.primaryContainer else scheme.background
-        val content = if (keepOnIsActive) scheme.onPrimaryContainer else scheme.onBackground
-        WidgetColors(
-            borderColor = border.getColor(context),
-            backgroundColor = background,
-            widgetBackgroundColor = scheme.widgetBackground.getColor(context).copy(alpha = WIDGET_BACKGROUND_COLOR_ALPHA),
-            imageColorFilter = ColorFilter.tint(content),
-            contentColor = content,
-        )
-    }
+    val scheme = GlanceTheme.colors
+    val border = if (keepOnIsActive) scheme.background else scheme.primaryContainer
+    val background = if (keepOnIsActive) scheme.primaryContainer else scheme.background
+    val content = if (keepOnIsActive) scheme.onPrimaryContainer else scheme.onBackground
+    return WidgetColors(
+        borderColor = border,
+        backgroundColor = background,
+        widgetBackgroundColor = scheme.widgetBackground.getColor(context).copy(alpha = WIDGET_BACKGROUND_COLOR_ALPHA),
+        imageColorFilter = ColorFilter.tint(content),
+        contentColor = content,
+    )
 }
 
 /**
@@ -128,7 +132,7 @@ private fun concentricCirclesBitmap(
  */
 @Composable
 fun rememberLegacyWidgetBackground(
-    borderColor: Color,
+    borderColor: ColorProvider,
     backgroundColor: ColorProvider,
     widgetBackgroundColor: Color,
 ): ImageProvider? {
@@ -136,7 +140,7 @@ fun rememberLegacyWidgetBackground(
     val context = LocalContext.current
     val dimens = rememberWidgetDimens()
     val density = context.resources.displayMetrics.density
-    val borderArgb = borderColor.toArgb()
+    val borderArgb = borderColor.getColor(context).toArgb()
     val backgroundArgb = backgroundColor.getColor(context).toArgb()
     val widgetBackgroundArgb = widgetBackgroundColor.toArgb()
     val outerSizeDp = (dimens.widgetMinSize + dimens.outerBoxPadding * 2).value

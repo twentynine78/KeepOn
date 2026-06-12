@@ -43,7 +43,7 @@ import kotlin.math.floor
 import kotlin.math.max
 
 /** Corner radius giving the box the same rounded personality as the app's cards and chips. */
-private val RoundedCheckboxCornerRadius = 4.dp
+private val RoundedCheckboxCornerRadius = 6.dp
 
 private const val SNAP_ANIMATION_DELAY = 100
 private val CheckboxDefaultPadding = 2.dp

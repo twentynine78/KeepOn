@@ -10,7 +10,7 @@ import androidx.glance.LocalContext
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.state.WidgetUIState
 import fr.twentynine.keepon.ui.widget.theme.KeepOnWidgetTheme
-import fr.twentynine.keepon.ui.widget.theme.rememberWidgetColors
+import fr.twentynine.keepon.ui.widget.theme.widgetColors
 
 /**
  * The app icon inset by 10dp, used as the stand-in for the generated timeout icon wherever there is
@@ -37,7 +37,7 @@ fun KeepOnWidgetPreview(
             is WidgetUIState.Loading -> KeepOnWidgetLoading()
             is WidgetUIState.Success -> {
                 // The preview shows the inactive palette (no live state to drive it).
-                val colors = rememberWidgetColors(keepOnIsActive = false)
+                val colors = widgetColors(keepOnIsActive = false)
                 val bitmap = widgetPlaceholderBitmap(LocalContext.current)
 
                 KeepOnWidgetContent(

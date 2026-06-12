@@ -24,7 +24,7 @@ import fr.twentynine.keepon.ui.state.WidgetUIState
 import fr.twentynine.keepon.ui.widget.SetNextTimeoutActionCallback
 import fr.twentynine.keepon.ui.widget.getContentBitmap
 import fr.twentynine.keepon.ui.widget.theme.KeepOnWidgetTheme
-import fr.twentynine.keepon.ui.widget.theme.rememberWidgetColors
+import fr.twentynine.keepon.ui.widget.theme.widgetColors
 
 // ── Widget icon-change animation (EXPERIMENTAL) ────────────────────────────────────────────────
 // Glance has no frame clock: the transition is played by mutating the displayed bitmap, each change
@@ -128,7 +128,7 @@ fun KeepOnWidgetView(
                 }
 
                 // Get colors (active vs inactive palette; the preview reuses the inactive one)
-                val colors = rememberWidgetColors(currentState.keepOnIsActive)
+                val colors = widgetColors(currentState.keepOnIsActive)
 
                 // Get click action. Permission is enforced at click time by the callback
                 // (the rendered action can be stale), so the render only routes straight to

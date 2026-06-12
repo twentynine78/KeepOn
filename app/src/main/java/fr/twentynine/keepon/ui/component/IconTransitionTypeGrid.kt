@@ -40,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
@@ -48,6 +49,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
@@ -290,6 +292,7 @@ private fun TilePreviewIcon(
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val glyph = remember(option.id) { IconTransitionGlyphCatalog.glyphFor(option.id) }
+    val glyphRotation = remember(option.id) { IconTransitionGlyphCatalog.glyphRotationFor(option.id) }
     val glyphPainter = rememberVectorPainter(glyph)
     val transition = remember(option.id) { IconTransitionCatalog.fromId(option.id) }
     val durationMs = remember(durationStep) { IconTransitionTiming.durationMs(durationStep) }
@@ -317,7 +320,8 @@ private fun TilePreviewIcon(
         // MEDIUM: the preview chip renders at 24dp, and smaller layers keep the compositing cheap.
         val timeoutIcon = loadIconBitmap(context, currentScreenTimeout, timeoutIconStyle, TimeoutIconSize.MEDIUM)
             ?: return@LaunchedEffect
-        val glyphBitmap = renderGlyphBitmap(glyphPainter, density, layoutDirection, timeoutIcon.width, timeoutIcon.height)
+        val glyphBitmap =
+            renderGlyphBitmap(glyphPainter, density, layoutDirection, timeoutIcon.width, timeoutIcon.height, glyphRotation)
         // Double pass: the tile's glyph morphs into the current timeout icon and back, so the
         // effect previews a real transition in both directions and the tile settles on its glyph.
         playPreviewPass(transition, glyphBitmap, timeoutIcon, durationMs) { frame -> previewFrame = frame }
@@ -339,7 +343,9 @@ private fun TilePreviewIcon(
             imageVector = glyph,
             contentDescription = null,
             tint = tint,
-            modifier = Modifier.size(TileIconSize),
+            modifier = Modifier
+                .size(TileIconSize)
+                .rotate(glyphRotation),
         )
     }
 }
@@ -372,6 +378,7 @@ private fun renderGlyphBitmap(
     layoutDirection: LayoutDirection,
     widthPx: Int,
     heightPx: Int,
+    rotationDegrees: Float = 0f,
 ): Bitmap {
     val imageBitmap = ImageBitmap(widthPx, heightPx)
     CanvasDrawScope().draw(
@@ -380,8 +387,12 @@ private fun renderGlyphBitmap(
         canvas = Canvas(imageBitmap),
         size = Size(widthPx.toFloat(), heightPx.toFloat()),
     ) {
-        with(painter) {
-            draw(size = size, colorFilter = ColorFilter.tint(Color.White))
+        // Same per-glyph rotation as the tile's static Icon, so the preview frames start
+        // and settle on the exact orientation shown at rest.
+        rotate(degrees = rotationDegrees) {
+            with(painter) {
+                draw(size = size, colorFilter = ColorFilter.tint(Color.White))
+            }
         }
     }
     return imageBitmap.asAndroidBitmap()

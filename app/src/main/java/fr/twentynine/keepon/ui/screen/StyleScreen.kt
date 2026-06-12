@@ -370,6 +370,7 @@ fun FontSelectionRow(
             },
             trailing = {
                 RadioButton(
+                    modifier = Modifier.padding(end = 4.dp),
                     selected = selected,
                     onClick = null,
                 )
@@ -562,11 +563,14 @@ fun FontOptionsCard(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(
+                            top = 10.dp,
+                        )
                         .clickable { positionPadExpanded = !positionPadExpanded }
                         .padding(
                             start = StyleContentInset,
                             end = StyleContentInset,
-                            top = 20.dp,
+                            top = 10.dp,
                             bottom = toggleBottomPadding,
                         ),
                 ) {

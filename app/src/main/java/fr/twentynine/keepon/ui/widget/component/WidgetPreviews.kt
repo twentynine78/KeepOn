@@ -7,7 +7,7 @@ import androidx.glance.LocalContext
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import fr.twentynine.keepon.ui.widget.theme.KeepOnWidgetColorScheme
-import fr.twentynine.keepon.ui.widget.theme.rememberWidgetColors
+import fr.twentynine.keepon.ui.widget.theme.widgetColors
 
 // Design-time previews of the Glance widget for Android Studio. The generated timeout icon needs the
 // Coil pipeline at runtime, so these use the app icon as a placeholder bitmap — the previews are for
@@ -30,10 +30,11 @@ private fun KeepOnWidgetInactivePreview() {
 @Composable
 private fun WidgetContentPreview(keepOnIsActive: Boolean) {
     val context = LocalContext.current
-    val colors = rememberWidgetColors(keepOnIsActive)
     val placeholderBitmap = remember { widgetPlaceholderBitmap(context) }
 
     GlanceTheme(KeepOnWidgetColorScheme.colors) {
+        // Inside the theme wrapper, so it reads the scheme installed just above.
+        val colors = widgetColors(keepOnIsActive)
         KeepOnWidgetContent(
             borderColor = colors.borderColor,
             backgroundColor = colors.backgroundColor,

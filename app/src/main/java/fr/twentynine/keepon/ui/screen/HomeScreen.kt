@@ -299,7 +299,7 @@ fun ScreenTimeoutRow(
                 visible = item.isCurrent,
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .padding(start = 31.dp, top = 1.dp),
+                    .padding(start = 29.dp, top = 1.dp),
             )
 
             Row(

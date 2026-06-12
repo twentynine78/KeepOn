@@ -31,7 +31,7 @@ import fr.twentynine.keepon.ui.widget.theme.rememberWidgetDimens
  */
 @Composable
 fun KeepOnWidgetContent(
-    borderColor: Color,
+    borderColor: ColorProvider,
     backgroundColor: ColorProvider,
     widgetBackgroundColor: Color,
     imageColorFilter: ColorFilter,
