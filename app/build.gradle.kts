@@ -48,13 +48,18 @@ android {
 
     androidResources {
         // Keep only the app's locales: the androidx/material libraries ship their strings in
-        // ~85 languages, which would otherwise all land in resources.arsc.
-        localeFilters += listOf("en", "fr", "zh-rCN")
+        // ~85 languages, which would otherwise all land in resources.arsc. localeFilters is
+        // AGP's replacement for the deprecated resourceConfigurations, still marked @Incubating.
+        @Suppress("UnstableApiUsage")
+        localeFilters.addAll(listOf("en", "fr", "zh-rCN"))
     }
 
     buildFeatures {
         compose = true
         resValues = true
+        // Generates BuildConfig: its compile-time DEBUG constant gates the debug tracing
+        // (TracingModule, Coil/WorkManager debug logging) so R8 strips it all in release.
+        buildConfig = true
     }
 
     compileOptions {
