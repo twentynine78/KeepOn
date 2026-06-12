@@ -39,10 +39,10 @@
     <string name="general_behavior_title">Behavior</string>
     <string name="general_behavior_switch_title">Auto-reset timeout</string>
     <string name="general_behavior_short_text">Reset the screen timeout to %s when it switches off</string>
-    <string name="general_behavior_text">Choose if the screen timeout should be reset to its default value when the screen turns off.</string>
+    <string name="general_behavior_text">Choose whether the timeout returns to the default value set below when the screen turns off.</string>
 
     <string name="select_timeouts_title">Screen timeouts</string>
-    <string name="select_timeouts_text">Select screen timeouts that will be available in the quick settings. To set a default value, swipe it left or right.</string>
+    <string name="select_timeouts_text">Pick the timeouts the quick settings tile cycles through. With auto-reset on, swipe a row to set the default value.</string>
 
     <string name="select_timeouts_swipe_set_default_text">Set as default</string>
     <string name="select_timeouts_swipe_already_default_text">Already default</string>
@@ -53,7 +53,7 @@
     <string name="default_timeout_badge_text">Default</string>
 
     <string name="font_options_title">Icon placement</string>
-    <string name="font_options_text">Change the size of the font and the location of the icon.</string>
+    <string name="font_options_text">Adjust the text size and its position inside the icon.</string>
     <string name="font_options_size_subtitle">Size</string>
     <string name="font_options_position_subtitle">Position</string>
     <string name="font_options_position_toggle_desc">Show or hide the position pad</string>
@@ -62,11 +62,11 @@
     <string name="font_options_position_drag_hint">Drag to place</string>
 
     <string name="font_selection_tile">Icon font</string>
-    <string name="font_selection_text">Select the font used to generate icons.</string>
+    <string name="font_selection_text">Select the font for the timeout icons.</string>
     <string name="font_preview_glyph" translatable="false">Aa</string>
 
     <string name="font_style_tile">Icon style</string>
-    <string name="font_style_text">Choose the font style for the generated icons.</string>
+    <string name="font_style_text">Choose the font style of the timeout icons.</string>
     <string name="font_style_parameters_subtitle">Font parameters</string>
     <string name="font_style_parameters_bold">Bold</string>
     <string name="font_style_parameters_italic">Italic</string>

@@ -38,11 +38,11 @@
 
     <string name="general_behavior_title">Comportement</string>
     <string name="general_behavior_switch_title">Réinitialisation automatique</string>
-    <string name="general_behavior_short_text">Rétablir le délai d\'expiration sur %s lorsque l\'ecran s\'éteint</string>
-    <string name="general_behavior_text">Choisissez si le délai d\'extinction de l\'écran doit être réinitialisé à sa valeur par défaut lorsque l\'écran s\'éteint.</string>
+    <string name="general_behavior_short_text">Rétablir le délai d\'expiration sur %s lorsque l\'écran s\'éteint</string>
+    <string name="general_behavior_text">Choisissez si le délai d\'expiration doit revenir à la valeur par défaut définie ci-dessous quand l\'écran s\'éteint.</string>
 
     <string name="select_timeouts_title">Délais d\'expiration de l\'écran</string>
-    <string name="select_timeouts_text">Sélectionnez les délais d\'expiration de l\'écran qui seront disponibles dans les paramètres rapides. Pour définir une valeur par défaut, balayez-la vers la gauche ou vers la droite.</string>
+    <string name="select_timeouts_text">Choisissez les délais que la tuile des paramètres rapides fait défiler. Avec la réinitialisation automatique activée, balayez une ligne pour en faire la valeur par défaut.</string>
 
     <string name="select_timeouts_swipe_set_default_text">Définir par défaut</string>
     <string name="select_timeouts_swipe_already_default_text">Déjà par défaut</string>
@@ -53,7 +53,7 @@
     <string name="default_timeout_badge_text">Par défaut</string>
 
     <string name="font_options_title">Placement de l\'icône</string>
-    <string name="font_options_text">Modifiez la taille de la police d\'écriture et l\'emplacement de l\'icône.</string>
+    <string name="font_options_text">Ajustez la taille du texte et sa position dans l\'icône.</string>
     <string name="font_options_size_subtitle">Taille</string>
     <string name="font_options_position_subtitle">Position</string>
     <string name="font_options_position_toggle_desc">Afficher ou masquer le pad de position</string>
@@ -62,10 +62,10 @@
     <string name="font_options_position_drag_hint">Glissez pour placer</string>
 
     <string name="font_selection_tile">Police de l\'icône</string>
-    <string name="font_selection_text">Sélectionnez la police d\'écriture utilisée pour générer les icônes.</string>
+    <string name="font_selection_text">Sélectionnez la police d\'écriture de l\'icône du délai.</string>
 
     <string name="font_style_tile">Style de l\'icône</string>
-    <string name="font_style_text">Choisissez le style de la police d\'écriture des icônes générées.</string>
+    <string name="font_style_text">Choisissez le style de la police d\'écriture de l\'icône du délai.</string>
     <string name="font_style_parameters_subtitle">Paramètres de la police</string>
     <string name="font_style_parameters_bold">Gras</string>
     <string name="font_style_parameters_italic">Italique</string>

@@ -33,10 +33,10 @@
     <string name="general_behavior_title">行为</string>
     <string name="general_behavior_switch_title">自动重置亮屏时长</string>
     <string name="general_behavior_short_text">屏幕关闭时将亮屏时长重置为%s</string>
-    <string name="general_behavior_text">选择当屏幕关闭时，是否将亮屏时长重置为默认值。</string>
+    <string name="general_behavior_text">屏幕关闭时，是否恢复为下方设定的默认亮屏时长。</string>
 
     <string name="select_timeouts_title">亮屏时长</string>
-    <string name="select_timeouts_text">选择要在系统快捷开关中显示的时长选项，向左或向右滑动条目可将其设为默认值。</string>
+    <string name="select_timeouts_text">选择系统快捷开关循环切换的时长；开启自动重置后，滑动条目可将其设为默认值。</string>
 
     <string name="select_timeouts_swipe_set_default_text">设为默认</string>
     <string name="select_timeouts_swipe_already_default_text">当前默认</string>
@@ -47,7 +47,7 @@
     <string name="default_timeout_badge_text">默认</string>
 
     <string name="font_options_title">图标布局</string>
-    <string name="font_options_text">更改字体大小和图标位置。</string>
+    <string name="font_options_text">调整图标文字大小和位置。</string>
     <string name="font_options_size_subtitle">字体大小</string>
     <string name="font_options_position_subtitle">位置</string>
     <string name="font_options_position_toggle_desc">显示或隐藏位置触控板</string>
@@ -56,10 +56,10 @@
     <string name="font_options_position_drag_hint">拖动以定位</string>
 
     <string name="font_selection_tile">图标字体</string>
-    <string name="font_selection_text">选择用于生成图标的字体。</string>
+    <string name="font_selection_text">选择超时图标使用的字体。</string>
 
     <string name="font_style_tile">图标样式</string>
-    <string name="font_style_text">选择生成图标的字体样式。</string>
+    <string name="font_style_text">选择超时图标的字体样式。</string>
     <string name="font_style_parameters_subtitle">字体参数</string>
     <string name="font_style_parameters_bold">粗体</string>
     <string name="font_style_parameters_italic">斜体</string>
