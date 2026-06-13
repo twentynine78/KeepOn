@@ -306,7 +306,7 @@ fun IconTransitionAnimationCard(
                     text = stringResource(R.string.icon_transition_type_subtitle),
                     modifier = Modifier
                         .align(Alignment.Start)
-                        .padding(bottom = 4.dp, start = StyleContentInset, end = StyleContentInset)
+                        .padding(bottom = 8.dp, start = StyleContentInset, end = StyleContentInset)
                         .alpha(if (animationsEnabled) 1f else DISABLED_CONTENT_ALPHA),
                 )
                 IconTransitionTypeGrid(
@@ -641,7 +641,7 @@ fun FontOptionsCard(
                                 signedStep(timeoutIconStyle.iconStyleFontVerticalSpacing),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 2.dp),
+                            modifier = Modifier.padding(top = 8.dp),
                         )
                     }
                 }

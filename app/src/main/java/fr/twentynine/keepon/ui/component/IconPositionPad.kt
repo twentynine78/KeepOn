@@ -69,7 +69,7 @@ private val KnobInnerSize = 20.dp
 private val PadLegendPadding = 10.dp
 private val ReadoutTopPadding = 8.dp
 private val ReadoutValueSpacing = 4.dp
-private val ReadoutGroupSpacing = 16.dp
+private val ReadoutGroupSpacing = 8.dp
 
 /**
  * A 2D position picker replacing a pair of horizontal/vertical sliders: a rounded pad where a
@@ -281,6 +281,13 @@ fun IconPositionPad(
             Spacer(modifier = Modifier.width(ReadoutValueSpacing))
             Text(
                 text = signedLabel(horizontal),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                color = colorScheme.onSurface,
+            )
+            Spacer(modifier = Modifier.width(ReadoutGroupSpacing))
+            Text(
+                text = "·",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
                 color = colorScheme.onSurface,

@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -42,6 +44,7 @@ import fr.twentynine.keepon.ui.util.itemBottomBorderPaddingFor
 import fr.twentynine.keepon.ui.util.topPaddingFor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.with
 
@@ -224,6 +227,10 @@ fun <T : Parcelable> SwipeableItemCard(
     }
 
     val animatedTranslationX = remember { Animatable(0f) }
+    // Width of the swiped content, used to derive a real swipe fraction (abs(offset) / width). The
+    // state's deprecated `progress` is unusable for the reveal: it stays at 1f until the target
+    // anchor flips at the mid-point, so it never reports the early-swipe range the background fades on.
+    var swipeWidthPx by remember { mutableIntStateOf(0) }
     val playAnimation by remember(swipeEnabled, backgroundContent) {
         derivedStateOf { swipeEnabled && backgroundContent != null }
     }
@@ -263,7 +270,13 @@ fun <T : Parcelable> SwipeableItemCard(
                 state = swipeToDismissState,
                 gesturesEnabled = swipeEnabled && onSwipeAction != null && backgroundContent != null,
                 backgroundContent = {
-                    backgroundContent?.invoke(swipeToDismissState.dismissDirection, swipeToDismissState.progress, item)
+                    val dismissFraction = if (swipeWidthPx > 0) {
+                        (abs(runCatching { swipeToDismissState.requireOffset() }.getOrDefault(0f)) / swipeWidthPx)
+                            .coerceIn(0f, 1f)
+                    } else {
+                        0f
+                    }
+                    backgroundContent?.invoke(swipeToDismissState.dismissDirection, dismissFraction, item)
                 },
                 onDismiss = { dismissValue ->
                     if (dismissValue != SwipeToDismissBoxValue.Settled && onSwipeAction != null && item != null) {
@@ -278,6 +291,7 @@ fun <T : Parcelable> SwipeableItemCard(
                                 translationX = animatedTranslationX.value
                             }
                             .fillMaxSize()
+                            .onSizeChanged { swipeWidthPx = it.width }
                             .background(containerColor, shape),
                         contentAlignment = Alignment.CenterStart
                     ) {
