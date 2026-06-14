@@ -51,9 +51,6 @@ fun PositionedCard(
                 .padding(bottom = itemBottomBorderPadding),
             colors = CardDefaults.cardColors().copy(containerColor = Color.Transparent),
             shape = shape,
-            // The container is transparent (the inner Box paints the background on the same
-            // shape), but the shadow comes from the shape outline, so it still casts.
-            elevation = CardDefaults.cardElevation(defaultElevation = KeepOnCardElevation),
         ) {
             Box(
                 modifier = Modifier

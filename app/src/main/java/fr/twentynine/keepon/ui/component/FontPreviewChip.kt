@@ -48,7 +48,7 @@ fun FontPreviewChip(
         targetValue = if (selected) {
             colorScheme.primary
         } else {
-            colorScheme.surface.copy(alpha = CHIP_BACKGROUND_ALPHA)
+            colorScheme.background.copy(alpha = CHIP_BACKGROUND_ALPHA)
         },
         animationSpec = tween(CHIP_COLOR_ANIMATION_MS),
         label = "FontChipBackgroundColor",

@@ -7,23 +7,28 @@ import fr.twentynine.keepon.ui.theme.KeepOnCardCornerRadius
 import fr.twentynine.keepon.ui.model.ItemPosition
 
 val defaultRoundedCornerSize = KeepOnCardCornerRadius
+val middleRoundedCornerSize = 4.dp
 val defaultBorderWidth = 1.dp
 val defaultCardHorizontalPadding = 16.dp
 val itemPaddingTopFirst = 0.dp
 val itemPaddingBottomLast = 12.dp
-val itemPaddingDefault = 0.dp
+val itemPaddingDefault = 0.5.dp
 
 // The four shapes a positioned list card can take, precomputed once.
 private val firstCardShape = RoundedCornerShape(
     topStart = defaultRoundedCornerSize,
     topEnd = defaultRoundedCornerSize,
+    bottomStart = middleRoundedCornerSize,
+    bottomEnd = middleRoundedCornerSize,
 )
 private val lastCardShape = RoundedCornerShape(
+    topStart = middleRoundedCornerSize,
+    topEnd = middleRoundedCornerSize,
     bottomStart = defaultRoundedCornerSize,
     bottomEnd = defaultRoundedCornerSize,
 )
 private val singleCardShape = RoundedCornerShape(size = defaultRoundedCornerSize)
-private val middleCardShape = RoundedCornerShape(0.dp)
+private val middleCardShape = RoundedCornerShape(middleRoundedCornerSize)
 
 fun topPaddingFor(itemPosition: ItemPosition): Dp = when (itemPosition) {
     ItemPosition.FIRST, ItemPosition.FIRST_AND_LAST -> itemPaddingTopFirst

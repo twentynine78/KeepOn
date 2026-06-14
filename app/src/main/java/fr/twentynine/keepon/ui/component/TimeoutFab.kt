@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.ScreenTimeout
@@ -23,6 +24,7 @@ private val FabShape = RoundedCornerShape(KeepOnCardCornerRadius)
 private val FabSize = 68.dp
 private val FabIconSize = 40.dp
 private const val FAB_DEFAULT_ANIMATION_DURATION_MS = 50
+private const val FAB_BORDER_COLOR_FRACTION = 0.3f
 
 /**
  * The current-timeout floating action button: shows the generated timeout icon and animates its
@@ -49,7 +51,11 @@ fun TimeoutFab(
         label = "fabBackgroundColor",
     )
     val fabBorderColor by animateColorAsState(
-        targetValue = if (keepOnIsActive) colorScheme.background else colorScheme.primaryContainer,
+        targetValue = lerp(
+            colorScheme.primaryContainer,
+            colorScheme.primary,
+            FAB_BORDER_COLOR_FRACTION
+        ),
         animationSpec = tween(animationDurationMs),
         label = "fabBorderColor",
     )

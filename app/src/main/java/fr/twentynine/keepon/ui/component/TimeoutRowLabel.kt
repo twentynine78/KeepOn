@@ -19,6 +19,7 @@ fun TimeoutRowLabel(
         text = text,
         modifier = modifier,
         style = MaterialTheme.typography.titleSmall,
+        color = MaterialTheme.colorScheme.onSurface,
         fontSize = 17.sp,
         fontWeight = FontWeight.Bold,
     )

@@ -261,9 +261,6 @@ fun <T : Parcelable> SwipeableItemCard(
                 .padding(bottom = itemBottomBorderPadding),
             colors = CardDefaults.cardColors().copy(containerColor = Color.Transparent),
             shape = shape,
-            // The container is transparent (the swipe content paints its own background), but the
-            // shadow comes from the shape outline, so it stays on the card bounds during a swipe.
-            elevation = CardDefaults.cardElevation(defaultElevation = KeepOnCardElevation),
         ) {
             SwipeToDismissBox(
                 modifier = cardModifier,

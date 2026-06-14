@@ -195,7 +195,6 @@ fun KeepOnBehaviorCard(
                 .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
                 .align(alignment = Alignment.Start),
             shape = KeepOnCardShape,
-            elevation = CardDefaults.cardElevation(defaultElevation = KeepOnCardElevation),
         ) {
             LabeledControlRow(
                 onClick = {
@@ -214,6 +213,7 @@ fun KeepOnBehaviorCard(
                         Text(
                             modifier = Modifier.padding(bottom = 4.dp),
                             text = stringResource(R.string.general_behavior_switch_title),
+                            color = MaterialTheme.colorScheme.onSurface,
                             style = MaterialTheme.typography.titleSmall,
                         )
                         Text(

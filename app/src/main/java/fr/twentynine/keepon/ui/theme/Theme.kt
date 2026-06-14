@@ -10,9 +10,14 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+
+private const val LIGHT_THEME_BACKGROUND_FRACTION = 0.5f
+private const val LIGHT_THEME_SURFACE_CONTAINER_HIGHEST_FRACTION = 0.3f
 
 val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
@@ -88,11 +93,32 @@ fun KeepOnTheme(
     val view = LocalView.current
 
     val isDynamicColor = dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-    val colorScheme = when {
+    val baseColorScheme = when {
         isDynamicColor && darkTheme -> dynamicDarkColorScheme(context)
         isDynamicColor && !darkTheme -> dynamicLightColorScheme(context)
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
+    }
+
+    // In the light theme, Material 3's tonal surfaces place the cards (surfaceContainerHighest) a
+    // step DARKER than the page (background) — the opposite of the dark theme, where cards read
+    // lighter than the page. Swap the two roles so the cards stay lighter than the page in both
+    // themes. The dark theme already reads that way, so it is left untouched.
+    val colorScheme = if (darkTheme) {
+        baseColorScheme
+    } else {
+        baseColorScheme.copy(
+            background = lerp(
+                start = baseColorScheme.surfaceContainerHighest,
+                stop = baseColorScheme.background,
+                fraction = LIGHT_THEME_BACKGROUND_FRACTION
+            ),
+            surfaceContainerHighest = lerp(
+                start = baseColorScheme.background,
+                stop = Color.White,
+                fraction = LIGHT_THEME_SURFACE_CONTAINER_HIGHEST_FRACTION
+            )
+        )
     }
 
     // Keep the system-bar icon appearance in sync with the theme. Edge-to-edge itself is set up

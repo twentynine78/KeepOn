@@ -187,7 +187,7 @@ private fun IconTransitionTile(
         label = "TileLabelColor",
     )
     val chipColor by animateColorAsState(
-        targetValue = if (selected) colorScheme.primary else colorScheme.surface,
+        targetValue = if (selected) colorScheme.primary else colorScheme.background,
         animationSpec = tween(TILE_COLOR_ANIMATION_MS),
         label = "TileChipColor",
     )

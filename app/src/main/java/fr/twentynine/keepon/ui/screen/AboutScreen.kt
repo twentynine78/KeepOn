@@ -23,6 +23,7 @@ import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -158,7 +159,6 @@ fun AppInfoCard(
                 .padding(start = 16.dp, end = 16.dp, bottom = 6.dp)
                 .align(alignment = Alignment.Start),
             shape = KeepOnCardShape,
-            elevation = CardDefaults.cardElevation(defaultElevation = KeepOnCardElevation),
         ) {
             Row(
                 modifier = Modifier
@@ -174,18 +174,21 @@ fun AppInfoCard(
                         modifier = Modifier.padding(horizontal = 8.dp),
                         text = stringResource(R.string.app_info_version_text),
                         fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
 
                     Text(
                         modifier = Modifier.padding(horizontal = 8.dp),
                         text = stringResource(R.string.app_info_author_text),
                         fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
 
                     Text(
                         modifier = Modifier.padding(horizontal = 8.dp),
                         text = stringResource(R.string.app_info_source_code_text),
                         fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
 
@@ -199,11 +202,13 @@ fun AppInfoCard(
                     Text(
                         modifier = Modifier.padding(horizontal = 8.dp),
                         text = appInfo.version,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
 
                     Text(
                         modifier = Modifier.padding(horizontal = 8.dp),
                         text = appInfo.author,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
 
                     MarqueeUrlRow(url = appInfo.sourceCodeUrl)
@@ -238,6 +243,7 @@ fun CreditInfoCardRow(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     text = stringResource(R.string.credit_info_name_text),
                     fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 credit.version?.let {
@@ -245,6 +251,7 @@ fun CreditInfoCardRow(
                         modifier = Modifier.padding(horizontal = 8.dp),
                         text = stringResource(R.string.app_info_version_text),
                         fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
 
@@ -252,12 +259,14 @@ fun CreditInfoCardRow(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     text = stringResource(R.string.credit_info_author_text),
                     fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 Text(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     text = stringResource(R.string.credit_info_source_text),
                     fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
 
@@ -271,18 +280,21 @@ fun CreditInfoCardRow(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     text = credit.name,
                     fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 credit.version?.let { version ->
                     Text(
                         modifier = Modifier.padding(horizontal = 8.dp),
                         text = version,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
 
                 Text(
                     modifier = Modifier.padding(horizontal = 8.dp),
                     text = credit.author,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 MarqueeUrlRow(url = credit.url)
@@ -315,6 +327,7 @@ private fun MarqueeUrlRow(url: String, modifier: Modifier = Modifier) {
                 .focusable()
                 .clickable { focusRequester.requestFocus() },
             text = url,
+            color = MaterialTheme.colorScheme.onSurface,
         )
         Icon(
             imageVector = Icons.AutoMirrored.Rounded.ExitToApp,

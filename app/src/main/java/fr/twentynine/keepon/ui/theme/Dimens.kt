@@ -6,7 +6,7 @@ import androidx.compose.ui.unit.dp
 // Shared design tokens used across multiple screens/components (single source of truth).
 
 /** Corner radius of the app's rounded content cards and FAB. */
-val KeepOnCardCornerRadius = 24.dp
+val KeepOnCardCornerRadius = 22.dp
 
 /** Shape of the app's fully-rounded content cards. */
 val KeepOnCardShape = RoundedCornerShape(KeepOnCardCornerRadius)

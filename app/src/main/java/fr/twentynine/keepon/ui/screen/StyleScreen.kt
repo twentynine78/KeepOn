@@ -279,7 +279,6 @@ fun IconTransitionAnimationCard(
                 .padding(horizontal = defaultCardHorizontalPadding)
                 .align(alignment = Alignment.Start),
             shape = KeepOnCardShape,
-            elevation = CardDefaults.cardElevation(defaultElevation = KeepOnCardElevation),
         ) {
             Column(
                 modifier = Modifier
@@ -402,6 +401,7 @@ fun FontSelectionRow(
                     text = iconFontFamily.displayName,
                     fontFamily = fontFamily,
                     fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             },
         )
@@ -461,7 +461,6 @@ fun FontStyleCard(
                 .padding(horizontal = defaultCardHorizontalPadding)
                 .align(alignment = Alignment.Start),
             shape = KeepOnCardShape,
-            elevation = CardDefaults.cardElevation(defaultElevation = KeepOnCardElevation),
         ) {
             Column(
                 modifier = Modifier
@@ -540,7 +539,6 @@ fun FontOptionsCard(
                 .padding(horizontal = defaultCardHorizontalPadding)
                 .align(alignment = Alignment.Start),
             shape = KeepOnCardShape,
-            elevation = CardDefaults.cardElevation(defaultElevation = KeepOnCardElevation),
         ) {
             Column(
                 modifier = Modifier

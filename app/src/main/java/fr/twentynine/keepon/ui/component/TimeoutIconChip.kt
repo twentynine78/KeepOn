@@ -39,7 +39,7 @@ fun TimeoutIconChip(
     Box(
         modifier = modifier
             .clip(KeepOnChipShape)
-            .background(MaterialTheme.colorScheme.surface.copy(alpha = CHIP_BACKGROUND_ALPHA))
+            .background(MaterialTheme.colorScheme.background.copy(alpha = CHIP_BACKGROUND_ALPHA))
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.outline.copy(alpha = CHIP_BORDER_ALPHA),
@@ -51,7 +51,7 @@ fun TimeoutIconChip(
         TimeoutIconAsyncImage(
             data = imageData,
             contentDescription = contentDescription,
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant),
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),
             modifier = Modifier.size(20.dp),
         )
     }
