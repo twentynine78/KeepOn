@@ -86,7 +86,9 @@ class WarpTransitionRenderer(private val transition: WarpTransition) : IconTrans
     }
 
     private companion object {
-        const val MESH_CELLS = 10
+        // Mesh resolution: fine enough that the stronger displacement bends the glyph as a smooth curve
+        // rather than showing the straight edges of the mesh cells.
+        const val MESH_CELLS = 16
         const val NOISE_GRID = 4
         const val SEED_X = 0x9E3779B9L
         const val SEED_Y = 0x85EBCA77L

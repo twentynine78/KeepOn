@@ -29,6 +29,7 @@ object IconTransitionCatalog {
 
     val warp = WarpTransition(
         id = "warp",
+        amplitude = 0.12f, // ~2.4× la valeur par défaut : distorsion bien visible, glyphe encore lisible
     )
 
     val vortex = VortexTransition(
