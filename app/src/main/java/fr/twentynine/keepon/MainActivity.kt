@@ -19,7 +19,6 @@ import fr.twentynine.keepon.ui.theme.KeepOnTheme
 import fr.twentynine.keepon.ui.screen.MainScreen
 import fr.twentynine.keepon.ui.viewmodel.MainViewModel
 import fr.twentynine.keepon.core.util.BundleScrubber
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -85,7 +84,10 @@ class MainActivity : BasePermissionActivity() {
     }
 
     private fun startScreenOffReceiverServiceIfNeeded() {
-        lifecycleScope.launch(Dispatchers.Default) {
+        // Stay on the main dispatcher: the first touch of the `by viewModels()` delegate must create
+        // the ViewModel on the main thread, and the body only suspends on the flow and issues a
+        // foreground-service start — there is no CPU-bound work to offload.
+        lifecycleScope.launch {
             val successUIState = mainViewModel.uiState
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .filterIsInstance<MainViewUIState.Success>()
