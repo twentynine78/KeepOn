@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.domain.catalog
+package fr.twentynine.keepon.ui.catalog
 
 import kotlinx.collections.immutable.toImmutableMap
 

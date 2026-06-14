@@ -3,12 +3,12 @@ package fr.twentynine.keepon.ui.producer
 import fr.twentynine.keepon.ui.catalog.CreditLabelCatalog
 import fr.twentynine.keepon.ui.catalog.IconTransitionLabelCatalog
 import fr.twentynine.keepon.ui.catalog.TipsCatalog
-import fr.twentynine.keepon.ui.catalog.TipsInfo
-import fr.twentynine.keepon.domain.catalog.CreditCatalog
+import fr.twentynine.keepon.ui.catalog.TipInfo
+import fr.twentynine.keepon.ui.catalog.CreditCatalog
 import fr.twentynine.keepon.domain.catalog.IconTransitionCatalog
 import fr.twentynine.keepon.domain.catalog.ScreenTimeoutCatalog
-import fr.twentynine.keepon.domain.model.DismissedTips
-import fr.twentynine.keepon.domain.model.TipsConstraintState
+import fr.twentynine.keepon.domain.model.DismissedTip
+import fr.twentynine.keepon.ui.state.TipsConstraintState
 import fr.twentynine.keepon.domain.gateway.AppInfoProvider
 import fr.twentynine.keepon.domain.gateway.StringResourceProvider
 import fr.twentynine.keepon.domain.repository.AppPreferencesRepository
@@ -149,7 +149,7 @@ class MainViewStateProducer @Inject constructor(
 
     private fun tipsListFlow(
         canPostNotificationFlow: Flow<Boolean>,
-    ): Flow<List<TipsInfo>> {
+    ): Flow<List<TipInfo>> {
         return combine(
             uiPreferencesRepository.getDismissedTipsFlow(),
             canPostNotificationFlow,
@@ -162,9 +162,9 @@ class MainViewStateProducer @Inject constructor(
                 showRateApp = checkIfRateTipNeededUseCase(appLaunchCount),
             )
 
-            TipsCatalog.tipsInfoList.filter { tipsInfo ->
-                !dismissedTips.contains(DismissedTips(tipsInfo.id)) &&
-                    tipsInfo.constraint(constraintState)
+            TipsCatalog.tipsInfoList.filter { tipInfo ->
+                !dismissedTips.contains(DismissedTip(tipInfo.id)) &&
+                    tipInfo.constraint(constraintState)
             }
         }
     }

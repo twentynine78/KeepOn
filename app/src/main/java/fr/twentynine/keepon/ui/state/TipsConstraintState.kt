@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.domain.model
+package fr.twentynine.keepon.ui.state
 
 /**
  * The device/permission conditions a tip can be gated on. The tips catalog matches each tip's

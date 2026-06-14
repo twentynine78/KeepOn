@@ -1,4 +1,4 @@
-package fr.twentynine.keepon.domain.catalog
+package fr.twentynine.keepon.ui.catalog
 
 /** One credited third-party work (library or font): its name, author, project [url] and [type]. */
 sealed class CreditInfo(

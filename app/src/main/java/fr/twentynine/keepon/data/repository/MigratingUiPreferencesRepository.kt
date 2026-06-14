@@ -6,7 +6,7 @@ import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.TIMEOUT_ICON
 import fr.twentynine.keepon.data.local.PreferenceDataStoreHelper
 import fr.twentynine.keepon.data.migration.LegacyPreferencesRepository
 import fr.twentynine.keepon.domain.gateway.DebugTracer
-import fr.twentynine.keepon.domain.model.DismissedTips
+import fr.twentynine.keepon.domain.model.DismissedTip
 import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
@@ -56,7 +56,7 @@ class MigratingUiPreferencesRepository @Inject constructor(
         return delegate.getTimeoutIconStyle()
     }
 
-    override fun getDismissedTipsFlow(): Flow<List<DismissedTips>> = flow {
+    override fun getDismissedTipsFlow(): Flow<List<DismissedTip>> = flow {
         migrateDismissedTipsIfNeeded()
         emitAll(delegate.getDismissedTipsFlow())
     }
@@ -94,7 +94,7 @@ class MigratingUiPreferencesRepository @Inject constructor(
                 )
                 if (current.isNullOrEmpty() && legacyPreferencesRepository.getOldAppReviewAsked()) {
                     tracer.trace(TAG) { "migrating legacy appReviewAsked flag into the dismissed rate tip" }
-                    delegate.setDismissedTip(DismissedTips(RATE_APP_TIP_ID))
+                    delegate.setDismissedTip(DismissedTip(RATE_APP_TIP_ID))
                     legacyPreferencesRepository.removeOldAppReviewAsked()
                 }
                 dismissedTipsMigrated = true
@@ -121,11 +121,11 @@ class MigratingUiPreferencesRepository @Inject constructor(
     override suspend fun setQSTileAdded(isAdded: Boolean) =
         delegate.setQSTileAdded(isAdded)
 
-    override suspend fun setDismissedTip(dismissedTips: DismissedTips) =
-        delegate.setDismissedTip(dismissedTips)
+    override suspend fun setDismissedTip(dismissedTip: DismissedTip) =
+        delegate.setDismissedTip(dismissedTip)
 
     private companion object {
-        // Persisted id of the "rate app" tip (TipsInfo.RateApp.id); a stored DismissedTips
+        // Persisted id of the "rate app" tip (TipInfo.RateApp.id); a stored DismissedTip
         // id can never change, so it is safe to reference by value from the data layer.
         const val RATE_APP_TIP_ID = 300
         const val TAG = "Migration"

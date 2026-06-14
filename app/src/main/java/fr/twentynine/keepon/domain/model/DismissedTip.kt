@@ -7,6 +7,6 @@ import kotlinx.serialization.Serializable
  * stays hidden across launches.
  */
 @Serializable
-data class DismissedTips(
+data class DismissedTip(
     val id: Int
 )

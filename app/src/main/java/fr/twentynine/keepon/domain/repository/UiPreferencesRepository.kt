@@ -1,6 +1,6 @@
 package fr.twentynine.keepon.domain.repository
 
-import fr.twentynine.keepon.domain.model.DismissedTips
+import fr.twentynine.keepon.domain.model.DismissedTip
 import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +18,6 @@ interface UiPreferencesRepository {
     suspend fun setIconTransitionAnimation(iconTransitionAnimation: IconTransitionAnimation)
     fun getQSTileAddedFlow(): Flow<Boolean>
     suspend fun setQSTileAdded(isAdded: Boolean)
-    fun getDismissedTipsFlow(): Flow<List<DismissedTips>>
-    suspend fun setDismissedTip(dismissedTips: DismissedTips)
+    fun getDismissedTipsFlow(): Flow<List<DismissedTip>>
+    suspend fun setDismissedTip(dismissedTip: DismissedTip)
 }

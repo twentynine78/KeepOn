@@ -1,7 +1,7 @@
 package fr.twentynine.keepon.ui.state
 
 import androidx.compose.runtime.Immutable
-import fr.twentynine.keepon.ui.catalog.TipsInfo
+import fr.twentynine.keepon.ui.catalog.TipInfo
 import fr.twentynine.keepon.domain.model.AppInfo
 import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.ScreenTimeout
@@ -25,7 +25,7 @@ sealed interface MainViewUIState {
         val canPostNotification: Boolean,
         val batteryIsNotOptimized: Boolean,
         val screenTimeouts: List<ScreenTimeoutUI>,
-        val tipsList: List<TipsInfo>,
+        val tipsList: List<TipInfo>,
         val resetTimeoutWhenScreenOff: Boolean,
         val currentScreenTimeout: ScreenTimeout,
         val currentTimeoutDisplay: String,

@@ -1,11 +1,11 @@
 package fr.twentynine.keepon.ui.catalog
 
-/** The full set of [TipsInfo] the app can surface; the producer filters it by the live constraint state. */
+/** The full set of [TipInfo] the app can surface; the producer filters it by the live constraint state. */
 object TipsCatalog {
 
     val tipsInfoList = listOf(
-        TipsInfo.PostNotification,
-        TipsInfo.AddQSTile,
-        TipsInfo.RateApp,
+        TipInfo.PostNotification,
+        TipInfo.AddQSTile,
+        TipInfo.RateApp,
     )
 }

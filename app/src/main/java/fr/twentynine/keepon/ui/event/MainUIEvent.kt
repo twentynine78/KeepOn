@@ -25,5 +25,5 @@ sealed interface MainUIEvent {
         val iconTransitionAnimation: IconTransitionAnimation,
     ) : MainUIEvent
     data class SetStylePositionPadExpanded(val expanded: Boolean) : MainUIEvent
-    data class DismissTips(val tipsId: Int) : MainUIEvent
+    data class DismissTip(val tipId: Int) : MainUIEvent
 }

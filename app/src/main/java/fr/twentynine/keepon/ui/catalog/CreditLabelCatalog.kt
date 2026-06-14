@@ -1,11 +1,9 @@
 package fr.twentynine.keepon.ui.catalog
 
 import fr.twentynine.keepon.R
-import fr.twentynine.keepon.domain.catalog.CreditInfo
-import fr.twentynine.keepon.domain.catalog.CreditInfoType
 
 /**
- * Localized presentation labels for the domain credit catalog. Kept in the UI layer (like
+ * Localized presentation labels for the credit catalog. Kept in the UI layer (like
  * [IconTransitionLabelCatalog]) so the presentation wording stays out of the domain catalog; the
  * text is resolved through the StringResourceProvider where the credit sections are built.
  */

@@ -3,7 +3,7 @@ package fr.twentynine.keepon.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.twentynine.keepon.ui.catalog.TipsInfo
+import fr.twentynine.keepon.ui.catalog.TipInfo
 import fr.twentynine.keepon.ui.mapper.ScreenTimeoutUIToScreenTimeoutMapper
 import fr.twentynine.keepon.ui.producer.MainViewStateProducer
 import fr.twentynine.keepon.ui.event.MainUIEvent
@@ -93,7 +93,7 @@ class MainViewModel @Inject constructor(
             is MainUIEvent.UpdateIconTransitionAnimation ->
                 updateIconTransitionAnimation(event.iconTransitionAnimation)
             is MainUIEvent.SetStylePositionPadExpanded -> stylePositionPadState.setExpanded(event.expanded)
-            is MainUIEvent.DismissTips -> setDismissedTips(event.tipsId)
+            is MainUIEvent.DismissTip -> setDismissedTip(event.tipId)
 
             // Permission request/check events are handled by the host Activity.
             MainUIEvent.RequestWriteSystemSettingPermission,
@@ -164,7 +164,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun setDismissedTips(dismissedTipId: Int) {
+    private fun setDismissedTip(dismissedTipId: Int) {
         viewModelScope.launch {
             dismissTipUseCase(dismissedTipId)
         }
@@ -179,7 +179,7 @@ class MainViewModel @Inject constructor(
     private fun requestAppRate() {
         appRateHelper.openPlayStore()
         viewModelScope.launch {
-            dismissTipUseCase(TipsInfo.RateApp.id)
+            dismissTipUseCase(TipInfo.RateApp.id)
         }
     }
 }

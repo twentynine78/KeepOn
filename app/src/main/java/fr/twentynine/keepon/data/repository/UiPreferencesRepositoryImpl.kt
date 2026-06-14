@@ -7,7 +7,7 @@ import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.QSTILE_ADDED
 import fr.twentynine.keepon.data.local.PreferenceDataStoreConstants.TIMEOUT_ICON_STYLE
 import fr.twentynine.keepon.data.local.PreferenceDataStoreHelper
 import fr.twentynine.keepon.data.local.PreferencesJson
-import fr.twentynine.keepon.domain.model.DismissedTips
+import fr.twentynine.keepon.domain.model.DismissedTip
 import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.domain.repository.UiPreferencesRepository
@@ -88,7 +88,7 @@ class UiPreferencesRepositoryImpl @Inject constructor(
             DataStoreSourceType.DATA_SOURCE
         )
 
-    override fun getDismissedTipsFlow(): Flow<List<DismissedTips>> =
+    override fun getDismissedTipsFlow(): Flow<List<DismissedTip>> =
         preferenceDataStoreHelper.getPreference(
             DISMISSED_TIPS,
             DataStoreSourceType.DATA_SOURCE_BACKED_UP
@@ -96,13 +96,13 @@ class UiPreferencesRepositoryImpl @Inject constructor(
             .distinctUntilChanged()
             .map(::decodeDismissedTips)
 
-    override suspend fun setDismissedTip(dismissedTips: DismissedTips) =
+    override suspend fun setDismissedTip(dismissedTip: DismissedTip) =
         // Atomic read-modify-write so two concurrent dismissals cannot drop one another.
         preferenceDataStoreHelper.updatePreference(
             DISMISSED_TIPS,
             DataStoreSourceType.DATA_SOURCE_BACKED_UP
         ) { storedJson ->
-            PreferencesJson.encodeToString(decodeDismissedTips(storedJson) + dismissedTips)
+            PreferencesJson.encodeToString(decodeDismissedTips(storedJson) + dismissedTip)
         }
 
     private fun decodeTimeoutIconStyle(json: String?): TimeoutIconStyle =
@@ -121,11 +121,11 @@ class UiPreferencesRepositoryImpl @Inject constructor(
                 .getOrDefault(IconTransitionAnimation())
         }
 
-    private fun decodeDismissedTips(json: String?): List<DismissedTips> =
+    private fun decodeDismissedTips(json: String?): List<DismissedTip> =
         if (json.isNullOrEmpty()) {
             emptyList()
         } else {
-            runCatching { PreferencesJson.decodeFromString<List<DismissedTips>>(json) }
+            runCatching { PreferencesJson.decodeFromString<List<DismissedTip>>(json) }
                 .getOrDefault(emptyList())
         }
 }

@@ -42,8 +42,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.ui.theme.KeepOnCardElevation
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
-import fr.twentynine.keepon.ui.catalog.TipsInfo
-import fr.twentynine.keepon.ui.catalog.TipsAction
+import fr.twentynine.keepon.ui.catalog.TipInfo
+import fr.twentynine.keepon.ui.catalog.TipAction
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import kotlinx.coroutines.launch
 
@@ -53,7 +53,7 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun TipsSection(
-    tipsList: List<TipsInfo>,
+    tipsList: List<TipInfo>,
     onEvent: (MainUIEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -171,7 +171,7 @@ fun TipsSection(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 TextButton(
-                                    onClick = { onEvent(MainUIEvent.DismissTips(tip.id)) },
+                                    onClick = { onEvent(MainUIEvent.DismissTip(tip.id)) },
                                     colors = ButtonDefaults.textButtonColors(
                                         contentColor = MaterialTheme.colorScheme.onTertiaryContainer
                                     ),
@@ -186,9 +186,9 @@ fun TipsSection(
                                     onClick = {
                                         onEvent(
                                             when (tip.buttonAction) {
-                                                TipsAction.RequestPostNotification -> MainUIEvent.RequestPostNotification
-                                                TipsAction.RequestAddTileService -> MainUIEvent.RequestAddTileService
-                                                TipsAction.RequestAppRate -> MainUIEvent.RequestAppRate
+                                                TipAction.RequestPostNotification -> MainUIEvent.RequestPostNotification
+                                                TipAction.RequestAddTileService -> MainUIEvent.RequestAddTileService
+                                                TipAction.RequestAppRate -> MainUIEvent.RequestAppRate
                                             }
                                         )
                                     },

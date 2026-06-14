@@ -52,7 +52,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.domain.model.ScreenTimeout
-import fr.twentynine.keepon.ui.catalog.TipsInfo
+import fr.twentynine.keepon.ui.catalog.TipInfo
 import fr.twentynine.keepon.ui.component.PrefetchTimeoutIcons
 import fr.twentynine.keepon.ui.component.TimeoutFab
 import fr.twentynine.keepon.ui.event.MainUIEvent
@@ -314,7 +314,7 @@ private fun KeepOnView(
 }
 
 @Composable
-private fun rememberTopLevelDestinations(tipsList: List<TipsInfo>): List<NavigationDestinationWithBadge> {
+private fun rememberTopLevelDestinations(tipsList: List<TipInfo>): List<NavigationDestinationWithBadge> {
     return remember(tipsList) {
         TOP_LEVEL_DESTINATIONS.map { destination ->
             when (destination) {

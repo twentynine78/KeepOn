@@ -5,7 +5,7 @@ import fr.twentynine.keepon.domain.catalog.IconTransitionCatalog
 
 /**
  * Localized presentation labels for the domain [IconTransitionCatalog] transitions. Kept in the UI
- * layer (like [TipsInfo]) so the presentation wording stays out of the domain catalog; the label
+ * layer (like [TipInfo]) so the presentation wording stays out of the domain catalog; the label
  * text is resolved through the StringResourceProvider where the list is built.
  */
 object IconTransitionLabelCatalog {

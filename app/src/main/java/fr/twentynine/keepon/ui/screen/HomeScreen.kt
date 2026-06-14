@@ -45,7 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.model.ItemPosition
-import fr.twentynine.keepon.ui.catalog.TipsInfo
+import fr.twentynine.keepon.ui.catalog.TipInfo
 import fr.twentynine.keepon.ui.mapper.ScreenTimeoutUIToScreenTimeoutMapper
 import fr.twentynine.keepon.ui.event.MainUIEvent
 import fr.twentynine.keepon.ui.state.MainViewUIState
@@ -101,7 +101,7 @@ fun HomeRoute(
  */
 @Composable
 fun HomeScreen(
-    tipsList: List<TipsInfo>,
+    tipsList: List<TipInfo>,
     resetTimeoutWhenScreenOff: Boolean,
     screenTimeouts: List<ScreenTimeoutUI>,
     timeoutIconStyle: TimeoutIconStyle,
