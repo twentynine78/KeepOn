@@ -16,7 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private const val LIGHT_THEME_BACKGROUND_FRACTION = 0.5f
+private const val LIGHT_THEME_BACKGROUND_FRACTION = 0.6f
 private const val LIGHT_THEME_SURFACE_CONTAINER_HIGHEST_FRACTION = 0.3f
 
 val LightColorScheme = lightColorScheme(
