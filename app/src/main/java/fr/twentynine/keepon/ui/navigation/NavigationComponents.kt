@@ -38,6 +38,7 @@ import fr.twentynine.keepon.domain.model.IconTransitionAnimation
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.component.TimeoutFab
+import fr.twentynine.keepon.ui.theme.KeepOnBottomBarElevation
 import fr.twentynine.keepon.ui.util.KeepOnNavigationContentPosition
 
 /**
@@ -118,8 +119,12 @@ fun BottomNavigationBar(
     BottomAppBar(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(6.dp),
+            // BottomAppBar's scrollBehavior overload exposes no shadowElevation, so the drop shadow
+            // is cast here (clip = false → shadow only) while the tonal tint uses the same token
+            // below — both facets of the bar's elevation driven by one value.
+            .shadow(elevation = KeepOnBottomBarElevation, clip = false),
         scrollBehavior = scrollBehavior,
+        tonalElevation = KeepOnBottomBarElevation,
     ) {
         // Fade the items out as the bar collapses, reading the scroll state at draw time so the
         // per-frame fraction changes never recompose the bar content.

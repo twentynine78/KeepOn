@@ -14,6 +14,10 @@ val KeepOnCardShape = RoundedCornerShape(KeepOnCardCornerRadius)
 /** Resting elevation (soft drop shadow) shared by every card-based component. */
 val KeepOnCardElevation = 2.dp
 
+/** Resting elevation of the bottom navigation bar — drives both its tonal tint and its drop shadow.
+ *  Sits above the cards so the bar reads as floating over the content that scrolls beneath it. */
+val KeepOnBottomBarElevation = 6.dp
+
 /** Alpha applied to secondary (subtitle) text drawn over the background color. */
 const val SUBTITLE_CONTENT_ALPHA = 0.8f
 
