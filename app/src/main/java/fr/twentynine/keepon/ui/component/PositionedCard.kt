@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import fr.twentynine.keepon.ui.model.ItemPosition
-import fr.twentynine.keepon.ui.theme.KeepOnCardElevation
 import fr.twentynine.keepon.ui.util.bottomPaddingFor
 import fr.twentynine.keepon.ui.util.cardShapeFor
 import fr.twentynine.keepon.ui.util.defaultCardHorizontalPadding

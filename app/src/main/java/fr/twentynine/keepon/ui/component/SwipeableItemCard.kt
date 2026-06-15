@@ -36,7 +36,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.ui.model.ItemPosition
-import fr.twentynine.keepon.ui.theme.KeepOnCardElevation
 import fr.twentynine.keepon.ui.util.bottomPaddingFor
 import fr.twentynine.keepon.ui.util.cardShapeFor
 import fr.twentynine.keepon.ui.util.defaultCardHorizontalPadding

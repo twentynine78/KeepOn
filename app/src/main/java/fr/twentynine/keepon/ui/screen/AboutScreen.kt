@@ -21,7 +21,6 @@ import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -44,7 +43,6 @@ import fr.twentynine.keepon.domain.model.AppInfo
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.screenContentModifier
-import fr.twentynine.keepon.ui.theme.KeepOnCardElevation
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.ItemCard
@@ -148,7 +146,7 @@ fun AppInfoCard(
 ) {
     Column(
         modifier = modifier
-            .padding(top = 28.dp, bottom = 12.dp),
+            .padding(top = 28.dp, bottom = 6.dp),
     ) {
         CardHeader(
             iconVector = Icons.Outlined.Info,
