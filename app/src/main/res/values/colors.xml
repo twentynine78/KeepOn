@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Circular background drawn behind the splash icon (windowSplashScreenIconBackgroundColor).
+         This fallback (brand tint) is used on pre-Android-12 devices that have no dynamic palette;
+         values-v31 overrides it with the Material You primary so the circle follows the system theme. -->
+    <color name="splash_icon_background">#83D0F8</color>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 12+ dynamic palette: the splash icon's circular background uses the Material You
+         primary (accent1 tone 40), so it shifts with the device wallpaper. A medium-dark tone keeps
+         the white base icon clearly visible in both light and dark. -->
+    <color name="splash_icon_background">@android:color/system_accent1_600</color>
+</resources>
