@@ -188,8 +188,5 @@ fun GlanceModifier.applyRootBackground(legacy: ImageProvider?, color: ColorProvi
  * Inner-layer background: skipped when the legacy composite is in use (the layer is already painted
  * inside the root bitmap), otherwise the solid color (API 31+).
  */
-fun GlanceModifier.applyLayerBackground(legacy: ImageProvider?, color: Color): GlanceModifier =
-    if (legacy != null) this else background(color)
-
 fun GlanceModifier.applyLayerBackground(legacy: ImageProvider?, color: ColorProvider): GlanceModifier =
     if (legacy != null) this else background(color)
