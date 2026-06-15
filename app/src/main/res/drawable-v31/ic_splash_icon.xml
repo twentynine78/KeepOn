@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Splash icon, Android 12+ variant. The platform SplashScreen API natively renders an adaptive
+     icon: it draws the solid-colour background as the icon circle and scales the foreground into the
+     safe zone, so the mark fits. @color/splash_icon_background resolves to the Material You primary
+     here (values-v31). The pre-31 core-splashscreen library does NOT replicate that foreground
+     scaling (the mark overflows the circle), so API <31 uses the self-contained drawable in
+     drawable/ic_splash_icon.xml instead. -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/splash_icon_background"/>
+    <foreground android:drawable="@drawable/ic_launcher_foreground"/>
+</adaptive-icon>
