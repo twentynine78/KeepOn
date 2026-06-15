@@ -9,7 +9,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.stringResource
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.model.ScreenTimeoutUI
@@ -30,9 +32,14 @@ fun SetDefaultDismissActionRow(
     swipeEnabledState: Boolean,
     swipeThresholdFraction: Float,
 ) {
-    val backgroundEnabledColor = MaterialTheme.colorScheme.secondaryContainer
+    val backgroundEnabledColor = MaterialTheme.colorScheme.primaryContainer
     val backgroundDisabledColor = MaterialTheme.colorScheme.outlineVariant
-    val contentEnabledTint = MaterialTheme.colorScheme.onSecondaryContainer
+    val onPrimaryContainerColor = MaterialTheme.colorScheme.onPrimaryContainer
+    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
+    // Theme-derived, so cache it across the per-frame recompositions of an in-progress swipe.
+    val contentEnabledTint = remember(onPrimaryContainerColor, onSurfaceColor) {
+        lerp(onPrimaryContainerColor, onSurfaceColor, 0.5f)
+    }
     val contentDisabledTint = MaterialTheme.colorScheme.onSurfaceVariant
 
     val enabledText = stringResource(R.string.select_timeouts_swipe_set_default_text)
