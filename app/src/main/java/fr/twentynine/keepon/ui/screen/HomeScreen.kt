@@ -10,12 +10,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
@@ -43,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.model.ItemPosition
@@ -57,7 +59,10 @@ import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.screenContentModifier
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
+import fr.twentynine.keepon.ui.theme.LabelBadgeGap
 import fr.twentynine.keepon.ui.theme.StyleTopSwitchRowVerticalPadding
+import fr.twentynine.keepon.ui.theme.TimeoutRowCheckboxReserve
+import fr.twentynine.keepon.ui.theme.TimeoutRowLockReserve
 import fr.twentynine.keepon.ui.component.CardHeader
 import fr.twentynine.keepon.ui.component.rememberBehaviorSwitchLabel
 import fr.twentynine.keepon.ui.component.KeepOnRichTooltip
@@ -65,6 +70,7 @@ import fr.twentynine.keepon.ui.component.LabeledControlRow
 import fr.twentynine.keepon.ui.component.RoundedCheckbox
 import fr.twentynine.keepon.ui.component.SwipeableScreenTimeoutCard
 import fr.twentynine.keepon.ui.component.TimeoutIconChip
+import fr.twentynine.keepon.ui.component.TimeoutRowText
 import fr.twentynine.keepon.ui.component.TipsSection
 import kotlinx.coroutines.launch
 
@@ -313,16 +319,22 @@ fun ScreenTimeoutRow(
                     .padding(start = 31.dp),
             )
 
-            Row(
+            TimeoutRowText(
+                label = item.displayName,
+                badgeVisible = item.isDefault && resetTimeoutWhenScreenOff,
                 modifier = Modifier
-                    .padding(start = 72.dp)
+                    .fillMaxWidth()
+                    .padding(
+                        start = 72.dp,
+                        end = if (item.isLocked) TimeoutRowLockReserve else TimeoutRowCheckboxReserve,
+                    )
                     .align(Alignment.CenterStart),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                TimeoutRowLabel(text = item.displayName)
+            ) { visible, badgeMaxWidth ->
                 DefaultTimeoutBadge(
-                    visible = item.isDefault && resetTimeoutWhenScreenOff,
-                    modifier = Modifier.padding(start = 24.dp),
+                    visible = visible,
+                    modifier = Modifier
+                        .padding(start = LabelBadgeGap)
+                        .widthIn(max = badgeMaxWidth),
                 )
             }
 
@@ -453,6 +465,7 @@ private fun DefaultTimeoutBadge(visible: Boolean, modifier: Modifier = Modifier)
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }

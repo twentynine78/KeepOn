@@ -32,6 +32,26 @@ const val CHIP_BACKGROUND_ALPHA = 0.65f
 /** Alpha of a chip's outline border. */
 const val CHIP_BORDER_ALPHA = 0.35f
 
+// Home timeout rows — adaptive layout of the row text on narrow screens. The icon chip and the
+// trailing control (checkbox/lock) stay put; only the central text area flexes: the "default" pill
+// shrinks (its text ellipsizing) then disappears before the row label itself starts to ellipsize.
+
+/** Gap between the row label and the "default" pill. */
+val LabelBadgeGap = 24.dp
+
+/** Smallest the "default" pill may shrink to (border + horizontal padding + a few glyphs) before it
+ *  is dropped entirely. Kept generous so verbose locales ("Par défaut") and large font scales still
+ *  show a meaningful pill rather than a bare ellipsis. */
+val DefaultBadgeMinWidth = 44.dp
+
+/** Right-side space the text area reserves for the trailing checkbox (22dp glyph + 8dp end padding +
+ *  a small gap), so the ellipsized label never touches it. */
+val TimeoutRowCheckboxReserve = 38.dp
+
+/** Right-side space the text area reserves for the trailing lock icon (20dp glyph + 12dp end padding
+ *  + a small gap). */
+val TimeoutRowLockReserve = 40.dp
+
 // Card header — paddings of the section header used inside every settings card.
 
 /** Padding around the header row (below it and on both sides). */

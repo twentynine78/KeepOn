@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.model.ItemPosition
@@ -351,10 +352,13 @@ fun TaskerScreenTimeoutRow(
 
             TimeoutRowLabel(
                 text = item.displayName,
-                modifier = Modifier.padding(start = 24.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 24.dp),
+                maxLines = 1,
+                softWrap = false,
+                overflow = TextOverflow.Ellipsis,
             )
-
-            Spacer(Modifier.weight(1f))
 
             if (item.isLocked) {
                 val iconClickLambda: () -> Unit = remember(tooltipState) {
