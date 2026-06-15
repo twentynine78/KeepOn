@@ -42,7 +42,7 @@
     <string name="general_behavior_text">Choisissez si le délai d\'expiration doit revenir à la valeur par défaut définie ci-dessous quand l\'écran s\'éteint.</string>
 
     <string name="select_timeouts_title">Délais d\'expiration de l\'écran</string>
-    <string name="select_timeouts_text">Choisissez les délais que la tuile des paramètres rapides fait défiler. Avec la réinitialisation automatique activée, balayez une ligne pour en faire la valeur par défaut.</string>
+    <string name="select_timeouts_text">Choisissez les délais à faire défiler. Avec la réinitialisation automatique activée, balayez une ligne pour en faire la valeur par défaut.</string>
 
     <string name="select_timeouts_swipe_set_default_text">Définir par défaut</string>
     <string name="select_timeouts_swipe_already_default_text">Déjà par défaut</string>

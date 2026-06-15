@@ -36,7 +36,7 @@
     <string name="general_behavior_text">屏幕关闭时，是否恢复为下方设定的默认亮屏时长。</string>
 
     <string name="select_timeouts_title">亮屏时长</string>
-    <string name="select_timeouts_text">选择系统快捷开关循环切换的时长；开启自动重置后，滑动条目可将其设为默认值。</string>
+    <string name="select_timeouts_text">选择需要循环切换的时长；开启自动重置后，滑动条目可将其设为默认值。</string>
 
     <string name="select_timeouts_swipe_set_default_text">设为默认</string>
     <string name="select_timeouts_swipe_already_default_text">当前默认</string>
