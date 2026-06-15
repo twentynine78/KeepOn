@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -32,6 +33,8 @@ import fr.twentynine.keepon.ui.theme.CardHeaderDescHorizontalPadding
 import fr.twentynine.keepon.ui.theme.CardHeaderInfoIconSpacing
 import fr.twentynine.keepon.ui.theme.CardHeaderPadding
 import fr.twentynine.keepon.ui.theme.CardHeaderTitleSpacing
+
+private const val CONTENT_COLOR_FRACTION = 0.5f
 
 /**
  * Section header inside a settings card: an optional leading icon and a [title]. When [descText] is
@@ -48,6 +51,16 @@ fun CardHeader(
 ) {
     val infoVisible = rememberSaveable { mutableStateOf(false) }
     val moreInfoContentDesc = stringResource(R.string.more_info_icon_desc)
+
+    val secondaryContainerColor = MaterialTheme.colorScheme.onSecondaryContainer
+    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
+    val contentColor = remember(secondaryContainerColor, onSurfaceColor) {
+        lerp(
+            start = secondaryContainerColor,
+            stop = onSurfaceColor,
+            fraction = CONTENT_COLOR_FRACTION,
+        )
+    }
 
     Column(modifier = modifier) {
         Row(
@@ -69,13 +82,13 @@ fun CardHeader(
                 icon != null -> Icon(
                     painter = icon,
                     contentDescription = title,
-                    tint = MaterialTheme.colorScheme.onSurface,
+                    tint = contentColor,
                     modifier = Modifier.size(iconSize.dp),
                 )
                 iconVector != null -> Icon(
                     imageVector = iconVector,
                     contentDescription = title,
-                    tint = MaterialTheme.colorScheme.onSurface,
+                    tint = contentColor,
                     modifier = Modifier.size(iconSize.dp),
                 )
             }
@@ -83,6 +96,7 @@ fun CardHeader(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
+                color = contentColor,
                 modifier = Modifier
                     .padding(start = CardHeaderTitleSpacing)
                     .weight(1f)
@@ -91,7 +105,7 @@ fun CardHeader(
                 Icon(
                     imageVector = Icons.Outlined.Info,
                     contentDescription = moreInfoContentDesc,
-                    tint = MaterialTheme.colorScheme.onSurface,
+                    tint = contentColor,
                     modifier = Modifier
                         .padding(start = CardHeaderInfoIconSpacing)
                         .size(14.dp),

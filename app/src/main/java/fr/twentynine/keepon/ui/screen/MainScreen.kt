@@ -40,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
@@ -75,6 +76,8 @@ private fun NavigationSuiteType.toKeepOnNavType() = when (this) {
 }
 
 private const val SLIDE_ANIMATION_DURATION_MS = 300
+
+private const val TOP_APPBAR_CONTENT_COLOR_FRACTION = 0.7f
 
 private val enterPageTransitionSpec = tween<Float>(SLIDE_ANIMATION_DURATION_MS)
 private val exitPageTransitionSpec = tween<Float>(SLIDE_ANIMATION_DURATION_MS)
@@ -224,7 +227,16 @@ private fun KeepOnView(
     }
 
     val backgroundColor = MaterialTheme.colorScheme.background
-    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+    /*val onBackgroundColor = MaterialTheme.colorScheme.onSecondaryContainer*/
+    val secondaryContainerColor = MaterialTheme.colorScheme.onSecondaryContainer
+    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
+    val topAppBarContentColor = remember(secondaryContainerColor, onSurfaceColor) {
+        lerp(
+            start = secondaryContainerColor,
+            stop = onSurfaceColor,
+            fraction = TOP_APPBAR_CONTENT_COLOR_FRACTION,
+        )
+    }
 
     val fabOnClick = remember(onEvent) {
         {
@@ -275,7 +287,7 @@ private fun KeepOnView(
                 KeepOnTopAppBar(
                     scrollBehavior = topBarScrollBehavior,
                     backgroundColor = backgroundColor,
-                    onBackgroundColor = onBackgroundColor
+                    onBackgroundColor = topAppBarContentColor
                 )
             },
             floatingActionButton = {
