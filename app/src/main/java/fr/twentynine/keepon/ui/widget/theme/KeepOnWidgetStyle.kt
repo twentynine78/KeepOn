@@ -21,6 +21,9 @@ import androidx.glance.LocalSize
 import androidx.glance.background
 import androidx.glance.unit.ColorProvider
 import fr.twentynine.keepon.ui.widget.KeepOnWidget.Companion.SMALL_SQUARE
+import fr.twentynine.keepon.ui.widget.component.KeepOnWidgetContent
+import fr.twentynine.keepon.ui.widget.component.KeepOnWidgetPreview
+import fr.twentynine.keepon.ui.widget.component.KeepOnWidgetView
 
 /**
  * Colors for the widget, derived from the active/inactive state. Bundled so the live content

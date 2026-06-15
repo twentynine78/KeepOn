@@ -17,8 +17,6 @@ import javax.inject.Singleton
  * Singleton with a mutex around the read-modify-write so concurrent taps — rapid
  * FAB taps or taps from two surfaces at once — each advance from the freshly
  * written current timeout instead of racing on the same read.
- *
- * @param currentTimeout the timeout to cycle from; defaults to the stored current one.
  */
 @Singleton
 class SetNextSystemScreenTimeoutUseCase @Inject constructor(
@@ -28,6 +26,7 @@ class SetNextSystemScreenTimeoutUseCase @Inject constructor(
 ) {
     private val cycleMutex = Mutex()
 
+    /** @param currentTimeout the timeout to cycle from; defaults to the stored current one. */
     suspend operator fun invoke(currentTimeout: ScreenTimeout? = null) {
         cycleMutex.withLock {
             val resolvedCurrentTimeout = currentTimeout ?: timeoutPreferencesRepository.getCurrentScreenTimeout()

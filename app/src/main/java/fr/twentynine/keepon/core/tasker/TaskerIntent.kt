@@ -310,7 +310,7 @@ class TaskerIntent private constructor() {
     /**
      * Private constructor prevents instantiation.
      *
-     * @throws - UnsupportedOperationException because this class cannot be
+     * @throws UnsupportedOperationException because this class cannot be
      * instantiated.
      */
     init {

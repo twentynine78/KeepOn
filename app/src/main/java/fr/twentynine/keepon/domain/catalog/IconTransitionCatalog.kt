@@ -6,6 +6,7 @@ import fr.twentynine.keepon.domain.model.LayerTransform
 import fr.twentynine.keepon.domain.model.MorphTransition
 import fr.twentynine.keepon.domain.model.ParticleTransition
 import fr.twentynine.keepon.domain.model.ReelTransition
+import fr.twentynine.keepon.domain.model.RenderedTransition
 import fr.twentynine.keepon.domain.model.VortexTransition
 import fr.twentynine.keepon.domain.model.WarpTransition
 
