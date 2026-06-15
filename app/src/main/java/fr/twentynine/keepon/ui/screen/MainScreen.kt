@@ -64,6 +64,7 @@ import fr.twentynine.keepon.ui.navigation.NavigationDestinationWithBadge
 import fr.twentynine.keepon.ui.navigation.TOP_LEVEL_DESTINATIONS
 import fr.twentynine.keepon.ui.navigation.withBadge
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
+import fr.twentynine.keepon.ui.util.bottomNavFabScaffoldInsets
 import fr.twentynine.keepon.ui.util.expand
 import fr.twentynine.keepon.ui.util.plus
 
@@ -253,12 +254,22 @@ private fun KeepOnView(
         val navType = navSuiteType.toKeepOnNavType()
 
         val combinedInsets = WindowInsets.safeDrawing.union(WindowInsets.captionBar)
+        // The bottom-navigation Scaffold hosts the timeout FAB but has no bottomBar slot, so on its own
+        // it would add the full bottom system-bar inset to the FAB offset — double-counting it against
+        // the BottomAppBar (rendered by NavigationSuiteScaffoldLayout) whose height already includes it.
+        // bottomNavFabScaffoldInsets gives back only the inset the collapsing bar no longer covers, so
+        // the FAB sits just above the bar when visible and just above the system bar once it is gone.
+        val scaffoldInsets = if (navType == KeepOnNavigationType.BOTTOM_NAVIGATION) {
+            bottomNavFabScaffoldInsets(combinedInsets, bottomBarScrollBehavior)
+        } else {
+            combinedInsets
+        }
 
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(combinedNestedScrollConnection),
-            contentWindowInsets = combinedInsets,
+            contentWindowInsets = scaffoldInsets,
             containerColor = backgroundColor,
             topBar = {
                 KeepOnTopAppBar(

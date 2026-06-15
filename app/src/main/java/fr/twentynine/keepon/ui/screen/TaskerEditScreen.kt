@@ -51,6 +51,7 @@ import fr.twentynine.keepon.ui.state.TaskerEditUIState
 import fr.twentynine.keepon.ui.event.TaskerUIEvent
 import fr.twentynine.keepon.domain.model.TimeoutIconStyle
 import fr.twentynine.keepon.ui.component.TimeoutRowLabel
+import fr.twentynine.keepon.ui.util.FabBottomClearance
 import fr.twentynine.keepon.ui.util.screenContentModifier
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
 import fr.twentynine.keepon.ui.component.CardHeader
@@ -284,8 +285,11 @@ fun TaskerScreenTimeoutList(
         }
 
         item(key = "bottomSpacer") {
+            // The list's paddingValue already carries the system-navigation-bar inset, so the spacer
+            // only needs the shared FAB clearance on top (same total as the home/style/about lists);
+            // with no selection there is no FAB, so a small breathing gap is enough.
             if (selectedScreenTimeout != null) {
-                Spacer(modifier = Modifier.padding(bottom = 96.dp))
+                Spacer(modifier = Modifier.padding(bottom = FabBottomClearance))
             } else {
                 Spacer(modifier = Modifier.padding(bottom = 18.dp))
             }
