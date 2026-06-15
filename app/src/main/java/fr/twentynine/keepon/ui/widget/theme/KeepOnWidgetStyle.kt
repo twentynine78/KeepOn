@@ -44,9 +44,9 @@ class WidgetColors(
 fun widgetColors(keepOnIsActive: Boolean): WidgetColors {
     val context = LocalContext.current
     val scheme = GlanceTheme.colors
-    val border = if (keepOnIsActive) scheme.background else scheme.primaryContainer
-    val background = if (keepOnIsActive) scheme.primaryContainer else scheme.background
-    val content = if (keepOnIsActive) scheme.onPrimaryContainer else scheme.onBackground
+    val border = if (keepOnIsActive) scheme.background else scheme.primary
+    val background = if (keepOnIsActive) scheme.primary else scheme.background
+    val content = if (keepOnIsActive) scheme.onPrimary else scheme.onBackground
     return WidgetColors(
         borderColor = border,
         backgroundColor = background,
