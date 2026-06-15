@@ -6,7 +6,7 @@ import androidx.compose.ui.unit.dp
 // Shared design tokens used across multiple screens/components (single source of truth).
 
 /** Corner radius of the app's rounded content cards and FAB. */
-val KeepOnCardCornerRadius = 22.dp
+val KeepOnCardCornerRadius = 20.dp
 
 /** Shape of the app's fully-rounded content cards. */
 val KeepOnCardShape = RoundedCornerShape(KeepOnCardCornerRadius)
@@ -21,7 +21,7 @@ const val SUBTITLE_CONTENT_ALPHA = 0.8f
 // preview, transition-tile glyph).
 
 /** Shape of the icon chips. */
-val KeepOnChipShape = RoundedCornerShape(14.dp)
+val KeepOnChipShape = RoundedCornerShape(10.dp)
 
 /** Edge size of the standard square icon chip (the transition-tile chip is larger). */
 val KeepOnChipSize = 38.dp

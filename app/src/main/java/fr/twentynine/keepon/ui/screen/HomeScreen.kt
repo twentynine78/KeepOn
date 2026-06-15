@@ -25,7 +25,6 @@ import androidx.compose.material.icons.automirrored.rounded.PlaylistAddCheck
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -57,7 +56,6 @@ import fr.twentynine.keepon.ui.component.TimeoutRowLabel
 import fr.twentynine.keepon.ui.util.KeepOnNavigationType
 import fr.twentynine.keepon.ui.util.bottomSpacerHeight
 import fr.twentynine.keepon.ui.util.screenContentModifier
-import fr.twentynine.keepon.ui.theme.KeepOnCardElevation
 import fr.twentynine.keepon.ui.theme.KeepOnCardShape
 import fr.twentynine.keepon.ui.theme.StyleTopSwitchRowVerticalPadding
 import fr.twentynine.keepon.ui.component.CardHeader
@@ -312,7 +310,7 @@ fun ScreenTimeoutRow(
                 visible = item.isCurrent,
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .padding(start = 29.dp, top = 1.dp),
+                    .padding(start = 31.dp),
             )
 
             Row(
