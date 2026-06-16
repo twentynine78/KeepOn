@@ -21,7 +21,7 @@ import fr.twentynine.keepon.ui.theme.StyleSwitchRowVerticalPadding
  * A settings switch row with a [title] and an optional [subtitle], the switch sitting on the shared
  * left rail (via [LabeledControlRow]) so it lines up with the other controls in the card. Tapping
  * anywhere on the row toggles [checked]. Reusable across cards (e.g. the animation toggle, the
- * "outline only" toggle). Title and subtitle use the theme typography (titleSmall / bodyMedium), the
+ * "outline only" toggle). Title and subtitle use the theme typography (bodyLarge / bodyMedium), the
  * subtitle tinted with the secondary content color.
  */
 @Composable

@@ -45,7 +45,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.with
 
 const val DEFAULT_SWIPE_THRESHOLD_FRACTION = 0.30f
 

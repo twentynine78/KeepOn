@@ -41,6 +41,9 @@ import fr.twentynine.keepon.ui.component.TimeoutFab
 import fr.twentynine.keepon.ui.theme.KeepOnBottomBarElevation
 import fr.twentynine.keepon.ui.util.KeepOnNavigationContentPosition
 
+private const val NAV_ICON_FADE_IN_DURATION_MS = 500
+private const val NAV_ICON_FADE_OUT_DURATION_MS = 1000
+
 /**
  * Adaptive navigation host: picks a bottom navigation bar or a navigation rail from the current
  * window size/posture and wraps [content] in a [KeepOnNavSuiteScope] exposing that choice. The rail
@@ -269,7 +272,10 @@ fun NavigationBarItemIcon(
 ) {
     AnimatedContent(
         targetState = isSelected,
-        transitionSpec = { fadeIn(animationSpec = tween(500)).togetherWith(fadeOut(animationSpec = tween(1000))) },
+        transitionSpec = {
+            fadeIn(animationSpec = tween(NAV_ICON_FADE_IN_DURATION_MS))
+                .togetherWith(fadeOut(animationSpec = tween(NAV_ICON_FADE_OUT_DURATION_MS)))
+        },
     ) { isSelected ->
         Icon(
             imageVector = if (isSelected) topLevelDestination.selectedIcon else topLevelDestination.unSelectedIcon,

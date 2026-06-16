@@ -306,12 +306,12 @@ fun CreditInfoCardRow(
  * opens it in the browser. Shared by the app-info card and the credit rows.
  */
 @Composable
-private fun MarqueeUrlRow(url: String, modifier: Modifier = Modifier) {
+private fun MarqueeUrlRow(url: String) {
     val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }
 
     Row(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically

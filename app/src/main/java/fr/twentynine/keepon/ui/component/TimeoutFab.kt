@@ -49,8 +49,8 @@ fun TimeoutFab(
     elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation(),
 ) {
     val colorScheme = MaterialTheme.colorScheme
-    // Inactive container sits two tonal-elevation steps above the cards (surfaceContainerLow), so
-    // the FAB reads as floating over the page instead of blending into it.
+    // Inactive container uses surfaceContainerHigh, one tonal step below the cards
+    // (surfaceContainerHighest), so the FAB still reads as a distinct floating surface over the page.
     val fabBackgroundColor by animateColorAsState(
         targetValue = if (keepOnIsActive) colorScheme.primary else colorScheme.surfaceContainerHigh,
         animationSpec = tween(animationDurationMs),
@@ -62,7 +62,7 @@ fun TimeoutFab(
         label = "fabContentColor",
     )
 
-    // Sweep-gradient border that rotates continuously around the FAB (primary <-> secondary).
+    // Sweep-gradient border that rotates continuously around the FAB (primaryContainer/secondaryContainer with a primary accent).
     val borderTransition = rememberInfiniteTransition(label = "fabBorderRotation")
     val borderAngle by borderTransition.animateFloat(
         initialValue = 0f,
@@ -74,7 +74,7 @@ fun TimeoutFab(
         label = "fabBorderAngle",
     )
     // First == last color so the sweep gradient has no visible seam at its 360 -> 0 wrap.
-    val borderColors = remember(colorScheme.primary, colorScheme.secondary) {
+    val borderColors = remember(colorScheme.primaryContainer, colorScheme.secondaryContainer, colorScheme.primary) {
         listOf(
             colorScheme.primaryContainer,
             colorScheme.secondaryContainer,

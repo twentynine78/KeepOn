@@ -228,7 +228,6 @@ private fun KeepOnView(
     }
 
     val backgroundColor = MaterialTheme.colorScheme.background
-    /*val onBackgroundColor = MaterialTheme.colorScheme.onSecondaryContainer*/
     val secondaryContainerColor = MaterialTheme.colorScheme.onSecondaryContainer
     val onSurfaceColor = MaterialTheme.colorScheme.onSurface
     val topAppBarContentColor = remember(secondaryContainerColor, onSurfaceColor) {

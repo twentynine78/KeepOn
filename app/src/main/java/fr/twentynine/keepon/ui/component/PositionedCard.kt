@@ -33,7 +33,8 @@ fun PositionedCard(
     val bottomPadding = bottomPaddingFor(itemPosition)
     val itemBottomBorderPadding = itemBottomBorderPaddingFor(itemPosition)
     val shape = cardShapeFor(itemPosition)
-    val cardContainerColor = CardDefaults.cardColors().containerColor
+    val cardColors = CardDefaults.cardColors()
+    val cardContainerColor = cardColors.containerColor
 
     Box(
         modifier = modifier
@@ -48,7 +49,7 @@ fun PositionedCard(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = itemBottomBorderPadding),
-            colors = CardDefaults.cardColors().copy(containerColor = Color.Transparent),
+            colors = cardColors.copy(containerColor = Color.Transparent),
             shape = shape,
         ) {
             Box(

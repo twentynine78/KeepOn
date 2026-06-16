@@ -254,6 +254,9 @@ private val PadMinHeight = 120.dp
 private const val FONT_SIZE_SLIDER_STEPS = 10
 private val FontSizeSliderRange = -(FONT_SIZE_SLIDER_STEPS / 2f)..FONT_SIZE_SLIDER_STEPS / 2f
 
+// Shared corner shape for the font-size slider value tooltip (container and its outline border).
+private val SliderTooltipShape = RoundedCornerShape(8.dp)
+
 @Composable
 fun IconTransitionAnimationCard(
     iconTransitionAnimation: IconTransitionAnimation,
@@ -412,7 +415,7 @@ fun FontStyleCard(
     onEvent: (MainUIEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val onBoldChange = remember(timeoutIconStyle) {
+    val onBoldChange = remember(timeoutIconStyle, onEvent) {
         {
                 newBoldValue: Boolean ->
             onEvent(
@@ -420,7 +423,7 @@ fun FontStyleCard(
             )
         }
     }
-    val onItalicChange = remember(timeoutIconStyle) {
+    val onItalicChange = remember(timeoutIconStyle, onEvent) {
         {
                 newItalicValue: Boolean ->
             onEvent(
@@ -428,7 +431,7 @@ fun FontStyleCard(
             )
         }
     }
-    val onUnderlineChange = remember(timeoutIconStyle) {
+    val onUnderlineChange = remember(timeoutIconStyle, onEvent) {
         {
                 newUnderlineValue: Boolean ->
             onEvent(
@@ -436,7 +439,7 @@ fun FontStyleCard(
             )
         }
     }
-    val onOutlinedChange = remember(timeoutIconStyle) {
+    val onOutlinedChange = remember(timeoutIconStyle, onEvent) {
         {
                 newOutlinedValue: Boolean ->
             onEvent(
@@ -766,11 +769,11 @@ private fun FontOptionSlider(
                         PlainTooltip(
                             containerColor = MaterialTheme.colorScheme.surfaceVariant,
                             contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            shape = RoundedCornerShape(8.dp),
+                            shape = SliderTooltipShape,
                             modifier = Modifier
                                 .padding(bottom = 8.dp)
                                 .wrapContentWidth()
-                                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp)),
+                                .border(1.dp, MaterialTheme.colorScheme.outline, SliderTooltipShape),
                         ) {
                             Box(
                                 contentAlignment = Alignment.Center,

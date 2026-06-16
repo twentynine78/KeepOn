@@ -280,7 +280,7 @@ fun ScreenTimeoutRow(
 
     val swipeEnable = remember(item.isLocked, resetTimeoutWhenScreenOff) { !item.isLocked && resetTimeoutWhenScreenOff }
 
-    val onClickAction = remember<(ScreenTimeoutUI) -> Unit>(item, tooltipState, onEvent) {
+    val onClickAction = remember<(ScreenTimeoutUI) -> Unit>(tooltipState, onEvent) {
         {
                 clickedItem ->
             if (clickedItem.isLocked || clickedItem.isDefault) {
