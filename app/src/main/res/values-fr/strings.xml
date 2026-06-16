@@ -44,6 +44,9 @@
     <string name="select_timeouts_title">Délais d\'expiration de l\'écran</string>
     <string name="select_timeouts_text">Choisissez les délais à faire défiler. Avec la réinitialisation automatique activée, balayez une ligne pour en faire la valeur par défaut.</string>
 
+    <string name="select_timeouts_warning_title">Sélectionnez un délai</string>
+    <string name="select_timeouts_warning_text">Cochez au moins un délai ci-dessous pour pouvoir les faire défiler.</string>
+
     <string name="select_timeouts_swipe_set_default_text">Définir par défaut</string>
     <string name="select_timeouts_swipe_already_default_text">Déjà par défaut</string>
 

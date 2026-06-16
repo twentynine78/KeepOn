@@ -64,6 +64,7 @@ private fun HomeScreenPreview() {
             screenTimeouts = previewScreenTimeouts,
             timeoutIconStyle = TimeoutIconStyle(),
             showFirstLaunchHint = false,
+            promptSelectTimeoutTick = 0,
             onEvent = {},
             navType = KeepOnNavigationType.BOTTOM_NAVIGATION,
             paddingValue = PaddingValues(0.dp),

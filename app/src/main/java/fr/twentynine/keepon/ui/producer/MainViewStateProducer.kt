@@ -125,6 +125,17 @@ class MainViewStateProducer @Inject constructor(
             screenTimeoutListFlow(),
             stylePositionPadState.expanded,
         ) { permissions, preferences, tipsList, screenTimeouts, stylePositionPadExpanded ->
+            // No selectable timeout other than the always-selected default means there is nothing to
+            // cycle to, so the FAB/tile/widget would no-op. Derived from the already-built list (locked
+            // rows are never isSelected) so it's current-independent. Surface the SelectTimeout advisory
+            // as the FIRST tip so it counts toward the Home badge like the others, and let the FAB branch
+            // on the same flag.
+            val needsTimeoutSelection = screenTimeouts.none { it.isSelected && !it.isDefault }
+            val tipsWithWarning = if (needsTimeoutSelection) {
+                listOf(TipInfo.SelectTimeout) + tipsList
+            } else {
+                tipsList
+            }
             MainViewUIState.Success(
                 canWriteSystemSettings = permissions.canWriteSystemSettings,
                 batteryIsNotOptimized = permissions.batteryIsNotOptimized,
@@ -139,8 +150,9 @@ class MainViewStateProducer @Inject constructor(
                 timeoutIconStyle = preferences.timeoutIconStyle,
                 iconTransitionAnimation = preferences.iconTransitionAnimation,
                 iconTransitionOptions = iconTransitionOptions,
-                tipsList = tipsList,
+                tipsList = tipsWithWarning,
                 screenTimeouts = screenTimeouts,
+                needsTimeoutSelection = needsTimeoutSelection,
                 appInfo = appInfo,
                 creditSections = creditSections,
             )

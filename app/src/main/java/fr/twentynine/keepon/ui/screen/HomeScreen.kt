@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -84,6 +85,7 @@ fun HomeRoute(
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
     paddingValue: PaddingValues,
+    promptSelectTimeoutTick: Int,
 ) {
     LaunchedEffect(Unit) {
         onEvent(MainUIEvent.IncrementAppLaunchCount)
@@ -95,6 +97,7 @@ fun HomeRoute(
         screenTimeouts = uiState.screenTimeouts,
         timeoutIconStyle = uiState.timeoutIconStyle,
         showFirstLaunchHint = uiState.showFirstLaunchHint,
+        promptSelectTimeoutTick = promptSelectTimeoutTick,
         onEvent = onEvent,
         navType = navType,
         paddingValue = paddingValue,
@@ -112,13 +115,24 @@ fun HomeScreen(
     screenTimeouts: List<ScreenTimeoutUI>,
     timeoutIconStyle: TimeoutIconStyle,
     showFirstLaunchHint: Boolean,
+    promptSelectTimeoutTick: Int,
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
     paddingValue: PaddingValues,
 ) {
     val baseMaxWidthModifier = screenContentModifier
+    val listState = rememberLazyListState()
+
+    // A FAB tap with nothing selected bumps the tick: scroll the tips carousel (which then snaps to and
+    // pulses the warning tip via the same tick) into view. Guarded so it never fires on first composition.
+    LaunchedEffect(promptSelectTimeoutTick) {
+        if (promptSelectTimeoutTick > 0) {
+            listState.animateScrollToItem(0)
+        }
+    }
 
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .padding(paddingValue)
             .fillMaxSize(),
@@ -126,7 +140,12 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item(key = "tipsCard") {
-            TipsSection(tipsList = tipsList, onEvent = onEvent, modifier = baseMaxWidthModifier.padding(top = 8.dp))
+            TipsSection(
+                tipsList = tipsList,
+                onEvent = onEvent,
+                modifier = baseMaxWidthModifier.padding(top = 8.dp),
+                emphasisTick = promptSelectTimeoutTick,
+            )
         }
 
         item(key = "behaviorCard") {

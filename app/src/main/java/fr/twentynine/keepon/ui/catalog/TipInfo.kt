@@ -2,6 +2,7 @@ package fr.twentynine.keepon.ui.catalog
 
 import android.os.Build
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material.icons.rounded.AddCircleOutline
 import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material.icons.rounded.StarOutline
@@ -11,20 +12,24 @@ import fr.twentynine.keepon.R
 import fr.twentynine.keepon.ui.state.TipsConstraintState
 
 /**
- * A contextual tip shown on the Home screen: its texts/icon, primary [buttonAction], and a
+ * A contextual tip shown on the Home screen: its texts/icon, optional primary [buttonAction], and a
  * [constraint] predicate over the current [TipsConstraintState] that decides whether it is relevant
  * right now. The stable [id] is what gets persisted when the user dismisses it.
+ *
+ * A tip with neither [buttonAction] nor [buttonDismissTextId] renders no button row (e.g. the
+ * functional [SelectTimeout] advisory, which the producer surfaces/removes on its own).
  */
 @Immutable
 sealed class TipInfo(
     val id: Int,
     val titleId: Int,
     val textId: Int,
-    val buttonAction: TipAction,
-    val buttonTextId: Int,
-    val buttonDismissTextId: Int,
     val iconImageVector: ImageVector,
-    val constraint: (tipsConstraintState: TipsConstraintState) -> Boolean,
+    val buttonAction: TipAction? = null,
+    val buttonTextId: Int? = null,
+    val buttonDismissTextId: Int? = null,
+    val isWarning: Boolean = false,
+    val constraint: (tipsConstraintState: TipsConstraintState) -> Boolean = { false },
 ) {
     data object PostNotification : TipInfo(
         id = 100,
@@ -57,5 +62,18 @@ sealed class TipInfo(
         iconImageVector = Icons.Rounded.StarOutline,
         buttonAction = TipAction.RequestAppRate,
         constraint = { uiState -> uiState.showRateApp }
+    )
+
+    /**
+     * Advisory shown when no timeout other than the always-selected default is enabled, so there is
+     * nothing to cycle to. No buttons and not dismissible: the producer adds it / removes it from the
+     * tips list directly from the selection state, so its [constraint] is unused.
+     */
+    data object SelectTimeout : TipInfo(
+        id = 400,
+        titleId = R.string.select_timeouts_warning_title,
+        textId = R.string.select_timeouts_warning_text,
+        iconImageVector = Icons.Outlined.WarningAmber,
+        isWarning = true,
     )
 }

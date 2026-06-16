@@ -25,6 +25,7 @@ sealed interface MainViewUIState {
         val canPostNotification: Boolean,
         val batteryIsNotOptimized: Boolean,
         val screenTimeouts: List<ScreenTimeoutUI>,
+        val needsTimeoutSelection: Boolean,
         val tipsList: List<TipInfo>,
         val resetTimeoutWhenScreenOff: Boolean,
         val currentScreenTimeout: ScreenTimeout,

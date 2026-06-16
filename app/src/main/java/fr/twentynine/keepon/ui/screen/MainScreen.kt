@@ -34,6 +34,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -238,9 +239,18 @@ private fun KeepOnView(
         )
     }
 
-    val fabOnClick = remember(onEvent) {
+    // Bumped when the FAB is tapped while nothing is selected: a one-shot UI signal threaded down to
+    // HomeScreen, which scrolls to and pulses the "select a timeout" warning instead of the FAB
+    // silently no-opping. Kept in the Compose layer (no ViewModel round-trip) since it only drives UI.
+    val promptSelectTimeoutTick = remember { mutableIntStateOf(0) }
+
+    val fabOnClick = remember(onEvent, uiState.needsTimeoutSelection) {
         {
-            onEvent(MainUIEvent.SetNextSelectedSystemScreenTimeout)
+            if (uiState.needsTimeoutSelection) {
+                promptSelectTimeoutTick.intValue += 1
+            } else {
+                onEvent(MainUIEvent.SetNextSelectedSystemScreenTimeout)
+            }
         }
     }
 
@@ -330,7 +340,8 @@ private fun KeepOnView(
                 navController = navController,
                 uiState = uiState,
                 onEvent = onEvent,
-                navType = navType
+                navType = navType,
+                promptSelectTimeoutTick = promptSelectTimeoutTick.intValue,
             )
         }
     }
@@ -384,7 +395,8 @@ private fun KeepOnContent(
     navController: NavHostController,
     uiState: MainViewUIState.Success,
     onEvent: (MainUIEvent) -> Unit,
-    navType: KeepOnNavigationType
+    navType: KeepOnNavigationType,
+    promptSelectTimeoutTick: Int,
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -396,6 +408,7 @@ private fun KeepOnContent(
             onEvent = onEvent,
             navType = navType,
             paddingValue = paddingValue,
+            promptSelectTimeoutTick = promptSelectTimeoutTick,
         )
     }
 }
@@ -407,6 +420,7 @@ private fun KeepOnNavHost(
     onEvent: (MainUIEvent) -> Unit,
     navType: KeepOnNavigationType,
     paddingValue: PaddingValues,
+    promptSelectTimeoutTick: Int,
 ) {
     NavHost(
         modifier = Modifier
@@ -424,6 +438,7 @@ private fun KeepOnNavHost(
                 onEvent = onEvent,
                 navType = navType,
                 paddingValue = paddingValue,
+                promptSelectTimeoutTick = promptSelectTimeoutTick,
             )
         }
         composable(
