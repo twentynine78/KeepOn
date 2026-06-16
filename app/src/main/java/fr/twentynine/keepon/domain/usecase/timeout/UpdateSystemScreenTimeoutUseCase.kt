@@ -1,5 +1,6 @@
 package fr.twentynine.keepon.domain.usecase.timeout
 
+import fr.twentynine.keepon.domain.gateway.DebugTracer
 import fr.twentynine.keepon.domain.gateway.DevicePolicyController
 import fr.twentynine.keepon.domain.gateway.UserNotifier
 import fr.twentynine.keepon.domain.model.ScreenTimeout
@@ -21,6 +22,7 @@ class UpdateSystemScreenTimeoutUseCase @Inject constructor(
     private val applyScreenTimeoutUseCase: ApplyScreenTimeoutUseCase,
     private val revertScreenTimeoutChangeUseCase: RevertScreenTimeoutChangeUseCase,
     private val userNotifier: UserNotifier,
+    private val tracer: DebugTracer,
 ) {
     suspend operator fun invoke(newTimeout: ScreenTimeout, forceUpdatePreviousTimeout: Boolean = false) {
         val defaultTimeout = timeoutPreferencesRepository.getDefaultScreenTimeout()
@@ -42,6 +44,7 @@ class UpdateSystemScreenTimeoutUseCase @Inject constructor(
             // The device silently refused the write: restore the stored state to the real
             // current value and tell the user, instead of leaving the tile/widget showing
             // a value that never took effect.
+            tracer.trace(TAG) { "NOT adopted -> reverting stored current to ${currentTimeout.value} + notifying user" }
             revertScreenTimeoutChangeUseCase(currentTimeout)
             userNotifier.notifyScreenTimeoutNotApplied()
             return
@@ -70,5 +73,9 @@ class UpdateSystemScreenTimeoutUseCase @Inject constructor(
         }
 
         timeoutPreferencesRepository.setDefaultScreenTimeout(appliedTimeout)
+    }
+
+    private companion object {
+        const val TAG = "Update"
     }
 }

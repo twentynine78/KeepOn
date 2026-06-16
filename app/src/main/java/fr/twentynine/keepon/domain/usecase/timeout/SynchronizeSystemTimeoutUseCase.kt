@@ -9,10 +9,12 @@ import javax.inject.Inject
 /**
  * Reconciles the stored state with the live system screen timeout (run by the monitor
  * worker when the system value changes). If the change was app-initiated (it matches a
- * pending desired timeout) the base is left as-is; otherwise the user changed it from
- * the system settings, so the new value becomes the default. The stored current value
- * is updated either way (recording the old one as previous), the screen-off service is
- * brought in line, and the external surfaces are refreshed.
+ * pending desired timeout) the stored state is left untouched — [ApplyScreenTimeoutUseCase]
+ * already wrote the current value optimistically, and reconciling it from this (possibly
+ * stale, monitor-coalesced) system read would clobber a value a later rapid tap may already
+ * have advanced past. Otherwise the user changed it from the system settings, so the new
+ * value becomes both the default and the current timeout (recording the old one as previous).
+ * Either way the screen-off service is brought in line and the external surfaces are refreshed.
  */
 class SynchronizeSystemTimeoutUseCase @Inject constructor(
     private val systemScreenTimeoutController: SystemScreenTimeoutController,
@@ -23,22 +25,28 @@ class SynchronizeSystemTimeoutUseCase @Inject constructor(
 ) {
     suspend operator fun invoke() {
         val currentSystemTimeout = systemScreenTimeoutController.getSystemScreenTimeout()
+        tracer.trace(TAG) { "monitor read system=${currentSystemTimeout.value}" }
         val desiredTimeout = systemScreenTimeoutController.consumeDesiredScreenTimeout(currentSystemTimeout)
 
-        // A mismatch means the change did not come from the app (system settings):
-        // adopt the new system value as the default.
+        // A mismatch means the change did not come from the app (the user edited the timeout
+        // in the system settings): adopt the new system value as both the default and the
+        // current timeout. When it matches, the change is app-initiated and the optimistic
+        // write in ApplyScreenTimeoutUseCase already owns the current value — reconciling it
+        // here would clobber a value a later rapid tap may already have advanced past this
+        // now-stale system read.
         if (desiredTimeout != currentSystemTimeout) {
-            tracer.trace(TAG) { "external change: adopting ${currentSystemTimeout.value} as the new default" }
+            val storedCurrentTimeout = timeoutPreferencesRepository.getCurrentScreenTimeout()
+            tracer.trace(TAG) {
+                "external change: adopting ${currentSystemTimeout.value} as default + current (was ${storedCurrentTimeout.value})"
+            }
             timeoutPreferencesRepository.setDefaultScreenTimeout(currentSystemTimeout)
+            if (storedCurrentTimeout != currentSystemTimeout) {
+                timeoutPreferencesRepository.setPreviousScreenTimeout(storedCurrentTimeout)
+            }
+            timeoutPreferencesRepository.setCurrentScreenTimeout(currentSystemTimeout)
         } else {
-            tracer.trace(TAG) { "app-initiated change to ${currentSystemTimeout.value}: default kept" }
+            tracer.trace(TAG) { "app-initiated change to ${currentSystemTimeout.value}: stored current left to the optimistic write" }
         }
-
-        val storedCurrentTimeout = timeoutPreferencesRepository.getCurrentScreenTimeout()
-        if (storedCurrentTimeout != currentSystemTimeout) {
-            timeoutPreferencesRepository.setPreviousScreenTimeout(storedCurrentTimeout)
-        }
-        timeoutPreferencesRepository.setCurrentScreenTimeout(currentSystemTimeout)
 
         manageScreenOffServiceUseCase()
         appComponentsUpdater.requestUpdate()

@@ -1,5 +1,6 @@
 package fr.twentynine.keepon.domain.usecase.timeout
 
+import fr.twentynine.keepon.domain.gateway.DebugTracer
 import fr.twentynine.keepon.domain.gateway.DevicePolicyController
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
@@ -23,6 +24,7 @@ class SetNextSystemScreenTimeoutUseCase @Inject constructor(
     private val timeoutPreferencesRepository: TimeoutPreferencesRepository,
     private val devicePolicyController: DevicePolicyController,
     private val updateSystemScreenTimeoutUseCase: UpdateSystemScreenTimeoutUseCase,
+    private val tracer: DebugTracer,
 ) {
     private val cycleMutex = Mutex()
 
@@ -31,8 +33,10 @@ class SetNextSystemScreenTimeoutUseCase @Inject constructor(
         cycleMutex.withLock {
             val resolvedCurrentTimeout = currentTimeout ?: timeoutPreferencesRepository.getCurrentScreenTimeout()
             val nextTimeout = getNextSelectedScreenTimeout(resolvedCurrentTimeout)
+            tracer.trace(TAG) { "cycle: ${resolvedCurrentTimeout.value} -> ${nextTimeout.value}" }
 
             if (!devicePolicyController.isValidTimeout(nextTimeout)) {
+                tracer.trace(TAG) { "rejected by policy: ${nextTimeout.value}" }
                 return
             }
 
@@ -59,5 +63,9 @@ class SetNextSystemScreenTimeoutUseCase @Inject constructor(
             if (currentIndex == -1 || currentIndex == sortedScreenTimeouts.size - 1) 0 else currentIndex + 1
         }
         return sortedScreenTimeouts[nextIndex]
+    }
+
+    private companion object {
+        const val TAG = "Cycle"
     }
 }

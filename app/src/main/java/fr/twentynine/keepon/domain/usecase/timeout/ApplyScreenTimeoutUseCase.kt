@@ -1,6 +1,7 @@
 package fr.twentynine.keepon.domain.usecase.timeout
 
 import fr.twentynine.keepon.domain.gateway.AppComponentsUpdater
+import fr.twentynine.keepon.domain.gateway.DebugTracer
 import fr.twentynine.keepon.domain.gateway.DevicePolicyController
 import fr.twentynine.keepon.domain.gateway.SystemScreenTimeoutController
 import fr.twentynine.keepon.domain.model.ScreenTimeout
@@ -25,6 +26,7 @@ class ApplyScreenTimeoutUseCase @Inject constructor(
     private val systemScreenTimeoutController: SystemScreenTimeoutController,
     private val appComponentsUpdater: AppComponentsUpdater,
     private val manageScreenOffServiceUseCase: ManageScreenOffServiceUseCase,
+    private val tracer: DebugTracer,
 ) {
     suspend operator fun invoke(timeout: ScreenTimeout, forceUpdatePreviousTimeout: Boolean = false): Boolean {
         if (!devicePolicyController.isValidTimeout(timeout)) {
@@ -39,9 +41,16 @@ class ApplyScreenTimeoutUseCase @Inject constructor(
         // Update the stored current timeout first to prevent UI lag (it will be
         // reconciled by the monitor worker once the system applies the value).
         timeoutPreferencesRepository.setCurrentScreenTimeout(timeout)
+        tracer.trace(TAG) { "optimistic store: current ${currentTimeout.value} -> ${timeout.value}" }
         manageScreenOffServiceUseCase()
         appComponentsUpdater.requestUpdate()
 
-        return systemScreenTimeoutController.applyDesiredScreenTimeout(timeout)
+        val adopted = systemScreenTimeoutController.applyDesiredScreenTimeout(timeout)
+        tracer.trace(TAG) { "apply result for ${timeout.value}: adopted=$adopted" }
+        return adopted
+    }
+
+    private companion object {
+        const val TAG = "Apply"
     }
 }
