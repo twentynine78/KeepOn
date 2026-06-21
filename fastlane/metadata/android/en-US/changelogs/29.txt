@@ -1,0 +1,6 @@
+- New: the timeout icon now animates when the screen timeout changes — choose from 6 styles (Liquid morph, Turbulent warp, Particles, Vortex, Flip, Reel) on the tile, widget and in-app button, or turn it off
+- Redesigned Style screen: drag-to-place icon pad, live animation previews, segmented font toggles and clearer settings
+- The widget now follows your Material You colors, with rounded corners and proper support on Android 9–11
+- More reliable Quick Settings tile and screen-timeout syncing; the app now warns you when your device blocks a timeout change
+- Crash fixes, a smaller download and many interface refinements
+- Dependency updates

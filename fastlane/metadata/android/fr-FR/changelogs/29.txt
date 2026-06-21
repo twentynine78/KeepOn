@@ -1,0 +1,6 @@
+- Nouveau : l'icône du délai s'anime à chaque changement — 6 styles au choix (Métamorphose fluide, Distorsion turbulente, Particules, Tourbillon, Bascule, Rouleau) sur la tuile, le widget et le bouton, ou désactivable
+- Écran Style repensé : positionnement de l'icône au doigt, aperçus animés en direct, sélecteurs de police segmentés et réglages plus clairs
+- Le widget suit désormais vos couleurs Material You, avec coins arrondis et prise en charge d'Android 9 à 11
+- Tuile Réglages rapides et synchronisation du délai plus fiables ; l'application vous prévient lorsque votre appareil bloque un changement de délai
+- Corrections de plantages, téléchargement allégé et nombreuses améliorations de l'interface
+- Mises à jour des dépendances
