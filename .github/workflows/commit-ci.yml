@@ -37,13 +37,26 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
 
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug
+      # Builds both variants in a single Gradle invocation. assembleRelease exercises R8
+      # minification + resource shrinking (the path that actually ships); assembleDebug keeps
+      # the debug-only deps (compose.ui.tooling, glance preview) validated.
+      - name: Build Debug and Release APKs
+        run: ./gradlew assembleDebug assembleRelease
 
-      - name: Upload APK artifact
+      - name: Upload Debug APK artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: KeepOn-${{ matrix.os }}
+          name: KeepOn-debug-${{ matrix.os }}
           path: app/build/outputs/apk/debug/
-          # keep 90 days
-          retention-days: 90
+          # keep 30 days
+          retention-days: 30
+
+      # No signingConfig in the repo, so AGP emits app-release-unsigned.apk: not installable
+      # as-is, but R8 + shrinking still run, which is the point of building release here.
+      - name: Upload Release APK artifact (unsigned)
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: KeepOn-release-unsigned-${{ matrix.os }}
+          path: app/build/outputs/apk/release/
+          # keep 30 days
+          retention-days: 30
