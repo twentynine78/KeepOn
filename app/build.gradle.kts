@@ -9,14 +9,14 @@ plugins {
 
 android {
     namespace = "fr.twentynine.keepon"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "fr.twentynine.keepon"
         minSdk = 28
-        targetSdk = 36
         versionCode = 28
         versionName = "2.1.1"
+        targetSdk = 37
 
         vectorDrawables {
             useSupportLibrary = true
@@ -30,6 +30,7 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
+            //noinspection NotShrinkingResources because debug build
             isShrinkResources = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             isDebuggable = true
