@@ -67,6 +67,10 @@ class TaskerEditViewModel @Inject constructor(
 
     fun setInitialSelectedScreenTimeout(screenTimeout: Int) {
         viewModelScope.launch {
+            // onCreate re-invokes this with the original intent on every configuration change:
+            // never clobber a selection the user already made in this session.
+            if (selectedScreenTimeoutUI.value != null) return@launch
+
             val specialScreenTimeoutUI = buildScreenTimeoutUiListProducer(
                 ScreenTimeoutCatalog.specialScreenTimeouts
             )

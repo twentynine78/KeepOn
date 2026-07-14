@@ -55,6 +55,8 @@ import fr.twentynine.keepon.ui.theme.SUBTITLE_CONTENT_ALPHA
 import fr.twentynine.keepon.ui.model.NeededPermission
 import fr.twentynine.keepon.ui.state.TaskerEditUIState
 import fr.twentynine.keepon.ui.event.TaskerUIEvent
+import fr.twentynine.keepon.ui.state.TaskerEventEditUIState
+import fr.twentynine.keepon.ui.event.TaskerEventUIEvent
 
 /**
  * Builds the ordered permission list ([notification?, battery, write settings]) shared by the
@@ -150,6 +152,27 @@ fun TaskerPermissionScreen(
     PermissionRequestScreen(
         neededPermissionList = neededPermissionList,
         updatePermissions = { onEvent(TaskerUIEvent.CheckNeededPermissions) },
+    )
+}
+
+/** Permission flow for the Tasker event-edit activity: the [TaskerEventUIEvent] counterpart of [TaskerPermissionScreen]. */
+@Composable
+fun TaskerEventPermissionScreen(
+    uiState: TaskerEventEditUIState.Success,
+    onEvent: (TaskerEventUIEvent) -> Unit,
+) {
+    val neededPermissionList = rememberNeededPermissions(
+        canPostNotification = uiState.canPostNotification,
+        batteryIsNotOptimized = uiState.batteryIsNotOptimized,
+        canWriteSystemSettings = uiState.canWriteSystemSettings,
+        onRequestPostNotification = { onEvent(TaskerEventUIEvent.RequestPostNotification) },
+        onRequestDisableBatteryOptimization = { onEvent(TaskerEventUIEvent.RequestDisableBatteryOptimization) },
+        onRequestWriteSystemSetting = { onEvent(TaskerEventUIEvent.RequestWriteSystemSettingPermission) },
+    )
+
+    PermissionRequestScreen(
+        neededPermissionList = neededPermissionList,
+        updatePermissions = { onEvent(TaskerEventUIEvent.CheckNeededPermissions) },
     )
 }
 

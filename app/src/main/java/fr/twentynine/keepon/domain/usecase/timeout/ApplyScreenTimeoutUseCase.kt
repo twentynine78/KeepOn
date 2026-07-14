@@ -7,6 +7,7 @@ import fr.twentynine.keepon.domain.gateway.SystemScreenTimeoutController
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.repository.TimeoutPreferencesRepository
 import javax.inject.Inject
+import kotlin.time.Duration
 
 /**
  * Core operation making [timeout] the active screen timeout: validates it against
@@ -28,7 +29,11 @@ class ApplyScreenTimeoutUseCase @Inject constructor(
     private val manageScreenOffServiceUseCase: ManageScreenOffServiceUseCase,
     private val tracer: DebugTracer,
 ) {
-    suspend operator fun invoke(timeout: ScreenTimeout, forceUpdatePreviousTimeout: Boolean = false): Boolean {
+    suspend operator fun invoke(
+        timeout: ScreenTimeout,
+        forceUpdatePreviousTimeout: Boolean = false,
+        adoptionWait: Duration = SystemScreenTimeoutController.DEFAULT_ADOPTION_WAIT,
+    ): Boolean {
         if (!devicePolicyController.isValidTimeout(timeout)) {
             return false
         }
@@ -45,7 +50,7 @@ class ApplyScreenTimeoutUseCase @Inject constructor(
         manageScreenOffServiceUseCase()
         appComponentsUpdater.requestUpdate()
 
-        val adopted = systemScreenTimeoutController.applyDesiredScreenTimeout(timeout)
+        val adopted = systemScreenTimeoutController.applyDesiredScreenTimeout(timeout, adoptionWait)
         tracer.trace(TAG) { "apply result for ${timeout.value}: adopted=$adopted" }
         return adopted
     }

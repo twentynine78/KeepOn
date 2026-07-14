@@ -8,6 +8,14 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
+    <!-- Package visibility (Android 11+): lets the Tasker event plug-in resolve the automation
+         hosts' REQUEST_QUERY receivers to send them explicit re-query broadcasts. -->
+    <queries>
+        <intent>
+            <action android:name="com.twofortyfouram.locale.intent.action.REQUEST_QUERY" />
+        </intent>
+    </queries>
+
     <application
         android:name=".KeepOnApplication"
         android:allowBackup="true"
@@ -85,6 +93,28 @@
             tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="com.twofortyfouram.locale.intent.action.FIRE_SETTING"/>
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".tasker.EditConditionActivity"
+            android:label="@string/tasker_event_activity_name"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.SplashScreen.Splash">
+            <intent-filter>
+                <!-- Locale API: lists the plug-in as a condition (Tasker: State > Plugin). -->
+                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_CONDITION"/>
+                <!-- Tasker extension: also lists it under Event > Plugin (momentary trigger). -->
+                <action android:name="net.dinglisch.android.tasker.ACTION_EDIT_EVENT"/>
+            </intent-filter>
+        </activity>
+
+        <receiver android:name=".tasker.QueryReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="com.twofortyfouram.locale.intent.action.QUERY_CONDITION"/>
             </intent-filter>
         </receiver>
 

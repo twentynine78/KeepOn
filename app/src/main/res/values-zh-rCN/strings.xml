@@ -26,6 +26,7 @@
     <string name="timeout_previous_long">恢复先前值</string>
 
     <string name="tasker_activity_name">更改亮屏时长</string>
+    <string name="tasker_event_activity_name">KeepOn 事件</string>
     <string name="tasker_save_button">保存 Tasker 配置</string>
 
     <string name="more_info_icon_desc">更多信息</string>
@@ -88,6 +89,10 @@
     <string name="select_tasker_timeouts_text">选择用于自动化操作的超时时间。</string>
     <string name="tasker_dynamic_value_text">动态值</string>
     <string name="tasker_static_value_text">静态值</string>
+
+    <string name="select_tasker_event_title">选择事件</string>
+    <string name="select_tasker_event_text">选择将触发自动化条件的 KeepOn 事件。</string>
+    <string name="tasker_event_reset_on_screen_off">熄屏时重置超时</string>
 
     <string name="timeout_locked_icon_desc">不可用</string>
     <string name="timeout_locked_tooltips_text">受设备限制，不可用！</string>

@@ -32,6 +32,7 @@
     <string name="timeout_previous_long">Restaurer la valeur précédente</string>
 
     <string name="tasker_activity_name">Modifier le délai d\'expiration de l\'écran</string>
+    <string name="tasker_event_activity_name">Événement KeepOn</string>
     <string name="tasker_save_button">Enregistrer la configuration</string>
 
     <string name="more_info_icon_desc">Plus d\'informations</string>
@@ -94,6 +95,10 @@
     <string name="select_tasker_timeouts_text">Sélectionnez la valeur du délai d\'expiration de l\'écran qui sera utilisée pour l\'action d\'automatisation.</string>
     <string name="tasker_dynamic_value_text">Valeurs dynamiques</string>
     <string name="tasker_static_value_text">Valeurs statiques</string>
+
+    <string name="select_tasker_event_title">Sélectionnez l\'événement</string>
+    <string name="select_tasker_event_text">Sélectionnez l\'événement KeepOn qui déclenchera la condition d\'automatisation.</string>
+    <string name="tasker_event_reset_on_screen_off">Réinitialisation à l\'extinction de l\'écran</string>
 
     <string name="timeout_locked_icon_desc">Indisponible</string>
     <string name="timeout_locked_tooltips_text">Non disponible en raison de restrictions sur l\'appareil !</string>

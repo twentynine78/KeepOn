@@ -8,6 +8,7 @@ import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.domain.gateway.DebugTracer
 import fr.twentynine.keepon.domain.gateway.SystemScreenTimeoutController
 import javax.inject.Inject
+import kotlin.time.Duration
 import kotlin.time.measureTimedValue
 
 /**
@@ -45,11 +46,11 @@ class SystemScreenTimeoutControllerImpl @Inject constructor(
         }
     }
 
-    override suspend fun applyDesiredScreenTimeout(timeout: ScreenTimeout): Boolean {
+    override suspend fun applyDesiredScreenTimeout(timeout: ScreenTimeout, adoptionWait: Duration): Boolean {
         // The desired-timeout queue is an internal detail of this system-write gateway:
         // it records the app-initiated intent and waits for the system to apply it.
         val (applied, elapsed) = measureTimedValue {
-            DesiredScreenTimeoutController.setDesiredScreenTimeout(timeout, this)
+            DesiredScreenTimeoutController.setDesiredScreenTimeout(timeout, this, adoptionWait)
         }
         tracer.trace(TAG) {
             "apply ${timeout.value}: ${if (applied) "adopted" else "NOT adopted (OEM rejection?)"} after $elapsed"

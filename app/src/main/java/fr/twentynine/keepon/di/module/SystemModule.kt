@@ -20,6 +20,8 @@ import fr.twentynine.keepon.domain.gateway.ScreenTimeoutScheduler
 import fr.twentynine.keepon.core.worker.ScreenTimeoutSchedulerImpl
 import fr.twentynine.keepon.domain.gateway.UserNotifier
 import fr.twentynine.keepon.core.system.UserNotifierImpl
+import fr.twentynine.keepon.domain.gateway.TaskerEventNotifier
+import fr.twentynine.keepon.core.tasker.TaskerEventNotifierImpl
 import javax.inject.Singleton
 
 /** Binds the singleton gateways that wrap Android system services (timeout, policy, version, etc.). */
@@ -58,4 +60,8 @@ interface SystemModule {
     @Binds
     @Singleton
     fun bindUserNotifier(impl: UserNotifierImpl): UserNotifier
+
+    @Binds
+    @Singleton
+    fun bindTaskerEventNotifier(impl: TaskerEventNotifierImpl): TaskerEventNotifier
 }

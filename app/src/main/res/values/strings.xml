@@ -32,6 +32,7 @@
     <string name="timeout_previous_long">Restore the previous value</string>
 
     <string name="tasker_activity_name">Change the screen timeout</string>
+    <string name="tasker_event_activity_name">KeepOn event</string>
     <string name="tasker_save_button">Save Tasker configuration</string>
 
     <string name="more_info_icon_desc">More information</string>
@@ -95,6 +96,10 @@
     <string name="select_tasker_timeouts_text">Select the timeout value that will be used for the automation action.</string>
     <string name="tasker_dynamic_value_text">Dynamic values</string>
     <string name="tasker_static_value_text">Static values</string>
+
+    <string name="select_tasker_event_title">Select event</string>
+    <string name="select_tasker_event_text">Select the KeepOn event that will trigger the automation condition.</string>
+    <string name="tasker_event_reset_on_screen_off">Reset on screen off</string>
 
     <string name="timeout_locked_icon_desc">Unavailable</string>
     <string name="timeout_locked_tooltips_text">Not available due to device restrictions!</string>

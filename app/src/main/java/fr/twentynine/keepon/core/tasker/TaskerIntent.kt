@@ -85,6 +85,23 @@ class TaskerIntent private constructor() {
 
         /**
          *
+         * Tasker-specific extension (NOT part of the Locale plug-in API): `Intent` action sent
+         * by Tasker to create or edit a plug-in condition listed under its Event category.
+         *
+         * An `Activity` declaring this action in its Intent-filter appears in Tasker under
+         * Event > Plugin (momentary trigger) instead of State > Plugin. The rest of the protocol
+         * is unchanged: the plug-in is still queried through [ACTION_QUERY_CONDITION] and still
+         * signals occurrences with [ACTION_REQUEST_QUERY], but only a
+         * [RESULT_CONDITION_SATISFIED] answer is acted upon by the host.
+         *
+         * Declared alongside [ACTION_EDIT_CONDITION] so pure-Locale hosts keep seeing the
+         * plug-in as a regular condition.
+         */
+        internal const val ACTION_EDIT_EVENT =
+            "net.dinglisch.android.tasker.ACTION_EDIT_EVENT"
+
+        /**
+         *
          *
          * `Intent` action sent by the host to create or
          * edit a plug-in setting. When the host sends this `Intent`, it

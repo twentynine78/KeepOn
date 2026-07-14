@@ -3,8 +3,8 @@ package fr.twentynine.keepon.core.system.timeout
 import fr.twentynine.keepon.domain.gateway.SystemScreenTimeoutController
 import fr.twentynine.keepon.domain.model.ScreenTimeout
 import fr.twentynine.keepon.core.util.removeUntil
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
@@ -21,11 +21,6 @@ import java.util.concurrent.LinkedBlockingQueue
  * never adopts (some OEM ROMs accept the call but keep the old value) are reported as not applied.
  */
 object DesiredScreenTimeoutController {
-    // Max time to wait for the system to reflect the written value before considering it
-    // rejected. Successful writes converge in ~100 ms, so this ceiling is only reached on
-    // slow or non-applying (OEM-restricted) devices.
-    private val WAIT_TIME_FOR_TIMEOUT_APPLIED = 5.seconds
-
     private val defaultDispatchers = Dispatchers.Default
     private val screenTimeoutProcessingLock = Mutex()
 
@@ -45,9 +40,16 @@ object DesiredScreenTimeoutController {
         }
     }
 
+    /**
+     * [adoptionWait] caps how long each drained request polls for the system to reflect the
+     * written value (see [SystemScreenTimeoutController.applyDesiredScreenTimeout]). The current
+     * caller's budget applies to any request it drains for others; that only shortens how long
+     * the adopted-report is polled, never the app-initiated marker recording.
+     */
     suspend fun setDesiredScreenTimeout(
         timeout: ScreenTimeout,
         systemScreenTimeoutController: SystemScreenTimeoutController,
+        adoptionWait: Duration,
     ): Boolean {
         return withContext(defaultDispatchers) {
             if (pendingTimeouts.lastOrNull() != timeout) {
@@ -64,7 +66,7 @@ object DesiredScreenTimeoutController {
                         synchronized(desiredScreenTimeouts) { desiredScreenTimeouts.add(requestedTimeout) }
                         systemScreenTimeoutController.setSystemScreenTimeout(requestedTimeout)
 
-                        withTimeoutOrNull(WAIT_TIME_FOR_TIMEOUT_APPLIED) {
+                        withTimeoutOrNull(adoptionWait) {
                             while (requestedTimeout != systemScreenTimeoutController.getSystemScreenTimeout()) {
                                 delay(100.milliseconds)
                             }
