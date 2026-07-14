@@ -113,6 +113,16 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
     @Volatile
     private var lastShownTimeout: ScreenTimeout? = null
 
+    // Set by the manifest shim when Hilt injection failed (process launched in restricted backup
+    // mode with the base Application class): the @Inject fields are then uninitialized, so every
+    // callback that touches them must stay a no-op until the service is recreated normally.
+    private var injectionFailed = false
+
+    /** Marks this instance as non-injected; see the manifest shim's onCreate. */
+    protected fun markInjectionFailed() {
+        injectionFailed = true
+    }
+
     override fun onCreate() {
         lifecycleDispatcher.onServicePreSuperOnCreate()
         super.onCreate()
@@ -124,6 +134,7 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
 
     override fun onStartListening() {
         super.onStartListening()
+        if (injectionFailed) return
 
         tracer.trace(TAG) { "onStartListening: QS panel open, collector armed" }
         listeningJob?.cancel()
@@ -148,6 +159,7 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
 
     override fun onStopListening() {
         super.onStopListening()
+        if (injectionFailed) return
 
         tracer.trace(TAG) { "onStopListening: QS panel closed" }
         listeningJob?.cancel()
@@ -156,6 +168,7 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
 
     override fun onClick() {
         super.onClick()
+        if (injectionFailed) return
 
         if (isLocked) {
             tracer.trace(TAG) { "onClick ignored: device locked" }
@@ -198,6 +211,7 @@ open class KeepOnTileServiceCore : TileService(), LifecycleOwner {
 
     override fun onTileAdded() {
         super.onTileAdded()
+        if (injectionFailed) return
 
         tracer.trace(TAG) { "onTileAdded: requesting initial render" }
         requestQSTileUpdate()

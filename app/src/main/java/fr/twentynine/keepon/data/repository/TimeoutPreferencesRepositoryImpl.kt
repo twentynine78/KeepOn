@@ -99,8 +99,11 @@ class TimeoutPreferencesRepositoryImpl @Inject constructor(
     private suspend fun setDefaultToMaxAllowedValue(): ScreenTimeout =
         withContext(ioDispatcher) {
             val maxAllowedScreenTimeout = devicePolicyController.getMaxAllowedScreenTimeout()
+            // A device admin can enforce a maximum below the smallest catalog value (e.g. a
+            // maximum-time-to-lock under 15 s): fall back to the policy maximum itself, which
+            // isValidTimeout accepts, so a restrictive policy can never crash-loop the app.
             val suitableTimeout = ScreenTimeoutCatalog.screenTimeouts.lastOrNull { it.value <= maxAllowedScreenTimeout }
-                ?: error("No suitable screen timeout found within the allowed maximum.")
+                ?: ScreenTimeout(maxAllowedScreenTimeout.coerceIn(1L, Int.MAX_VALUE.toLong()).toInt())
             setDefaultScreenTimeout(suitableTimeout)
             suitableTimeout
         }
