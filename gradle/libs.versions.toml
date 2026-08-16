@@ -1,8 +1,8 @@
 [versions]
 # Plugins versions
-androidGradlePlugin = "9.2.1"
-kotlin = "2.4.0"
-ksp = "2.3.10"
+androidGradlePlugin = "9.3.1"
+kotlin = "2.4.10"
+ksp = "2.3.11"
 hilt = "2.60.1"
 # Libraries versions
 coreKtxVersion = "1.19.0"
@@ -12,7 +12,7 @@ workVersion = "2.11.2"
 datastorePrefVersion = "1.2.1"
 splashscreenVersion = "1.2.0"
 activityVersion = "1.13.0"
-composeBomVersion = "2026.06.01"
+composeBomVersion = "2026.08.00"
 androidMaterialVersion = "1.14.0"
 androidXHiltVersion = "1.4.0"
 kotlinXCollectionsImmutableVersion = "0.5.1"
@@ -21,7 +21,7 @@ kotlinXSerializationJsonVersion = "1.11.0"
 windowVersion = "1.5.1"
 glanceAppWidgetVersion = "1.3.0-alpha02"
 coilVersion = "3.5.0"
-foundationLayoutVersion = "1.11.4"
+foundationLayoutVersion = "1.12.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
