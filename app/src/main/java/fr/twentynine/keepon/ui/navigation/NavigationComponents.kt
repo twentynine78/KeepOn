@@ -23,7 +23,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
@@ -65,7 +65,7 @@ fun KeepOnNavigationWrapper(
     content: @Composable KeepOnNavSuiteScope.() -> Unit
 ) {
     // Get adaptive screen info
-    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val adaptiveInfo = currentWindowAdaptiveInfoV2()
 
     val navLayoutType = when {
         adaptiveInfo.windowPosture.isTabletop -> NavigationSuiteType.NavigationBar
