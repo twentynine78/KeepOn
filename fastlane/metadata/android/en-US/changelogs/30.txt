@@ -1,0 +1,4 @@
+- New: Tasker/Locale event plugin — trigger your automations when KeepOn resets the screen timeout on screen off
+- Fixed a rare Quick Settings tile crash that could occur during a device backup or restore
+- Improved stability
+- Dependency updates

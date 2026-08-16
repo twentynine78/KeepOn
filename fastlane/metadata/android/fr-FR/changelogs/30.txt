@@ -1,0 +1,4 @@
+- Nouveau : plugin d'événement Tasker/Locale — déclenchez vos automatisations lorsque KeepOn réinitialise le délai de mise en veille à l'extinction de l'écran
+- Correction d'un plantage rare de la tuile Réglages rapides pouvant survenir pendant une sauvegarde ou restauration de l'appareil
+- Stabilité améliorée
+- Mises à jour des dépendances
